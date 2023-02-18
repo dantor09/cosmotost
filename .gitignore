@@ -23,8 +23,9 @@
 # Compiled Static libraries
 *.lai
 *.la
-*.a
+#*.a // isn't including libggfonts.a
 *.lib
+
 
 # Executables
 *.exe
