@@ -1,12 +1,17 @@
+#include <iostream>
+#include <string>
 #include "Menu.h"
 #include "Global.h"
 
 #define BSIZE 5
-#define PADDING 10
+#define PADDING 20
 
 // Constructors
 
-Menu::Menu(unsigned int _n_texts, float w, float h, float x, float y)
+Menu::Menu(unsigned int _n_texts, 
+            float w, float h, 
+            float x, float y,
+            std::string* _words)
     : n_texts{_n_texts}, pos{x, y, 0}
 {
     // dynamially allocate boxes/rects for text display
@@ -20,29 +25,46 @@ Menu::Menu(unsigned int _n_texts, float w, float h, float x, float y)
     try {
         t_boxs = new Box[n_texts];
         texts = new Rect[n_texts];
+        words = new std::string[n_texts];
+        
 
         float spacing = (2*h)/(n_texts+1);
+        std::cout << "spacing: " << spacing << std::endl;
 
-        for(size_t i = 0; i < n_texts; i++) {
-            t_boxs[i].pos[0] = mainbox.pos[0];
-            t_boxs[i].pos[1] = (pos[1]+h)-((i+1)*spacing);
+        for(int i = 0; i < n_texts; i++) {
             t_boxs[i].w = mainbox.w - PADDING;
-            t_boxs[i].h = spacing;
+            t_boxs[i].h = (spacing/2.0) - BSIZE;
+            t_boxs[i].pos[0] = mainbox.pos[0];
+            t_boxs[i].pos[1] = (pos[1]+mainbox.h)-((i+1)*spacing);
+            t_boxs[i].set_color(61, 90, 115);
+            std::cout << "t_box[" << i << "].pos[1]: " 
+                        << t_boxs[i].pos[1] << std::endl;
+            
+            words[i] = _words[i];
 
-            texts[i].bot = t_boxs[i].pos[0];
-            texts[i].left = t_boxs[i].pos[0];
-            texts[i].center = 1;
+            // Leaving this here for the next poor soul that
+            // comes accross this issue:
+
+            // apparently you need to set their position every single time
+            // you print them or they fall off the screen for some stupid reason
+            // so this code will now be found below in the draw() function
+
+            // texts[i].bot = mainbox.pos[1]-(i*20);
+            // texts[i].left = t_boxs[i].pos[0];
+            // texts[i].center = 1;
         }
 
     } catch (std::bad_alloc& ba) {
         // if one was allocated and not the other than delete the one that 
         if (texts) delete [] texts;
         if (t_boxs) delete [] t_boxs;
+        if (words) delete [] words;
         // print to screen for now until we have logging set up
         std::cerr << "Error allocating rectangles in Menu call\n"
                 << ba.what() << '\n';
         texts = nullptr;
         t_boxs = nullptr;
+        words = nullptr;
     }
 }
 
@@ -53,6 +75,9 @@ Menu::~Menu()
     
     if (t_boxs)
         delete [] t_boxs;
+
+    if (words)
+        delete [] words;
         
 }
 
@@ -92,7 +117,7 @@ void Menu::draw()
         glColor3ubv(t_boxs[i].color);
     
         glPushMatrix();
-        glTranslatef(t_boxs[i].pos[0], t_boxs[i].pos[1], t_boxs[i].pos[2]);
+        glTranslatef(t_boxs[i].pos[0], t_boxs[i].pos[1], 0.0f);
         glBegin(GL_QUADS);
             glVertex2f(-t_boxs[i].w, -t_boxs[i].h);
             glVertex2f(-t_boxs[i].w,  t_boxs[i].h);
@@ -105,9 +130,29 @@ void Menu::draw()
 
     // draw texts - need to pass in texts still; this is only for testing
     
-    for(size_t i = 0; i < n_texts; i++) {
-        ggprint8b(texts+i, 16, 0x00FFFFFF, "c0sm0t0asT");
+    // for(int i = 0; i < n_texts; i++) {
+    //     ggprint8b((texts+i), 16, 0x00FFFFFF, "c0sm0t0asT");
+    //     // std::cout << "tests[" << i << "].pos[1]: " << texts[i].pos[1] << std::endl;
+    // }
+
+
+    for(int i = 0; i < n_texts; i++) {
+        texts[i].bot = t_boxs[i].pos[1] - 5;
+        texts[i].left = t_boxs[i].pos[0];
+        texts[i].center = 1;
+
+
+        // r[i].bot = t_boxs[i].pos[1] - 5;
+        // r[i].left = t_boxs[i].pos[0];
+        // //g.r[i].center = box[i].pos[0];
+
+        // r[i].center = 1;
+
+        ggprint8b(texts+i, 16, 0x00ffffff, words[i].c_str());
     }
+    
+
+
     
 }
 

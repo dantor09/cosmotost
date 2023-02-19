@@ -22,10 +22,15 @@ public:
     unsigned char bcolor[3];
     unsigned int n_texts;
     Rect *texts;
+    // Rect texts[4];
     Box *t_boxs;
+    std::string *words;
 
     // constructors
-    Menu(unsigned int n_texts, float _w, float _h, float _x, float _y);
+    Menu(unsigned int n_texts, 
+            float _w, float _h, 
+            float _x, float _y, 
+            std::string* _words);
     ~Menu();
 
     // setters

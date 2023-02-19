@@ -1,5 +1,5 @@
 # add object files here and make a rule down below
-OBJECTS = cosmotost.o Box.o Global.o libggfonts.a
+OBJECTS = cosmotost.o Box.o Global.o libggfonts.a Menu.o
 
 FLAGS =  -Wall -lX11 -lGL -lGLU -lm
 COMP = g++ -std=c++17 
@@ -7,7 +7,7 @@ COMP = g++ -std=c++17
 
 all: cosmotost
 
-cosmotost: cosmotost.o Box.o Global.o
+cosmotost: cosmotost.o Box.o Global.o Menu.o
 	$(COMP) -o cosmotost $(OBJECTS) $(FLAGS)
 
 cosmotost.o: cosmotost.cpp
@@ -20,8 +20,8 @@ Global.o: Global.cpp Global.h
 	$(COMP) -c Global.cpp
 
 # still in development
-# Menu.o: Menu.cpp Menu.h
-# 	$(COMP) -c Menu.cpp
+Menu.o: Menu.cpp Menu.h
+	$(COMP) -c Menu.cpp
 
 clean:
 	rm -f cosmotost *.o

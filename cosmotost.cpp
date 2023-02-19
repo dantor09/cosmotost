@@ -21,11 +21,12 @@
 #include <X11/keysym.h>
 #include <GL/glx.h>
 
+
 // 					LOCAL LIBRARIES
 #include "fonts.h"	// used for fonts
 #include "Box.h"	// base box class
 #include "Global.h"	// global vars
-
+#include "Menu.h"	// menu
 
 using namespace std;
 
@@ -269,33 +270,35 @@ void render()
 	
 
 	if (g.state == MAINMENU) {
-		glClearColor(3.0/255, 38.0/255, 18.0/255, 1.0);	// clear it to a bluish
+		glClearColor(24.0/255, 38.0/255, 37.0/255, 1.0);	// clear it to a bluish
 		glClear(GL_COLOR_BUFFER_BIT);	// clear screen
 		
-		// make text boxes
+		// // make text boxes
 
 
-		// make it so that the box is only visible if the screen is big enough
+		// // make it so that the box is only visible if the screen is big enough
 		
-		s_menu_bg.set_color(2, 115, 104);
-		glColor3ubv(s_menu_bg.color);
+		// s_menu_bg.set_color(2, 115, 104);
+		// glColor3ubv(s_menu_bg.color);
         
-		glPushMatrix();
-		glTranslatef(g.xres/2.0f, g.yres/2.0f, 0.0f);
-		glBegin(GL_QUADS);
-			glVertex2f(-s_menu_bg.w, -s_menu_bg.w);
-			glVertex2f(-s_menu_bg.w,  s_menu_bg.w);
-			glVertex2f( s_menu_bg.w,  s_menu_bg.w);
-			glVertex2f( s_menu_bg.w, -s_menu_bg.w);
-		glEnd();
-		glPopMatrix();
+		// glPushMatrix();
+		// glTranslatef(g.xres/2.0f, g.yres/2.0f, 0.0f);
+		// glBegin(GL_QUADS);
+		// 	glVertex2f(-s_menu_bg.w, -s_menu_bg.w);
+		// 	glVertex2f(-s_menu_bg.w,  s_menu_bg.w);
+		// 	glVertex2f( s_menu_bg.w,  s_menu_bg.w);
+		// 	glVertex2f( s_menu_bg.w, -s_menu_bg.w);
+		// glEnd();
+		// glPopMatrix();
 
-		Rect r;
-		r.bot = g.yres/2.0f;
-		r.left = g.xres/2.0f;
-		r.center = 1;
+		// Rect r;
+		// r.bot = g.yres/2.0f;
+		// r.left = g.xres/2.0f;
+		// r.center = 1;
 
-		ggprint8b(&r, 16, 0x00011F26, "c0sm0t0asT");
+		// ggprint8b(&r, 16, 0x00011F26, "c0sm0t0asT");
+
+		mm.draw();
 
 		
 	} else if (g.state == GAME) {

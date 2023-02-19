@@ -1,27 +1,32 @@
 #pragma once
 #include "Box.h"
+#include "Menu.h"
 
 
 enum Gamestate { MAINMENU, GAME, PAUSE, GAMEOVER };
-class Global {
 
+
+class Global {
 public:
 
 // vars
 int xres, yres;
 Gamestate state;
 
-
 Global();
 
 };
 
+
+
+
 // Global Objects declared here:
-// Note: you use extern keyword to declare them when the header file is included
-//         ~~ Their definition is in cpp file ~~
-//              - This is how you make them accessable in other files without
-//                      causing them to be defined twice.
+// Note: use the inline keyword so that only one var is created acrossed
+//              all files
 
 
 inline Global g;
 inline Box s_menu_bg;
+
+inline std::string mm_text[] = {"Start 1P Game", "Start 2P Game", "Settings"};
+inline Menu mm(3, 120, 120, g.xres/2.0f, g.yres/2.0f, mm_text);
