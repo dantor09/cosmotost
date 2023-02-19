@@ -29,8 +29,9 @@
 
 using namespace std;
 
-Global g;
-Box b1;
+// Global g;
+// Box b1;
+// extern Box b1;
 
 class X11_wrapper {
 private:
@@ -276,16 +277,16 @@ void render()
 
 		// make it so that the box is only visible if the screen is big enough
 		
-		b1.set_color(2, 115, 104);
-		glColor3ubv(b1.color);
+		s_menu_bg.set_color(2, 115, 104);
+		glColor3ubv(s_menu_bg.color);
         
 		glPushMatrix();
 		glTranslatef(g.xres/2.0f, g.yres/2.0f, 0.0f);
 		glBegin(GL_QUADS);
-			glVertex2f(-b1.w, -b1.w);
-			glVertex2f(-b1.w,  b1.w);
-			glVertex2f( b1.w,  b1.w);
-			glVertex2f( b1.w, -b1.w);
+			glVertex2f(-s_menu_bg.w, -s_menu_bg.w);
+			glVertex2f(-s_menu_bg.w,  s_menu_bg.w);
+			glVertex2f( s_menu_bg.w,  s_menu_bg.w);
+			glVertex2f( s_menu_bg.w, -s_menu_bg.w);
 		glEnd();
 		glPopMatrix();
 
