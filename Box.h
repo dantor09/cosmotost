@@ -1,7 +1,5 @@
 #pragma once
 #include <sstream>
-// #include "Global.h"
-
 
 class Box {
 
@@ -19,8 +17,12 @@ public:
     // setters
     void set_color(int r, int g, int b);
     void set_pos(float x, float y, float z);
+    void set_dim(float _w, float _h);
 
     // debug
     std::string get_info();
 
 } ;
+
+
+

@@ -1,9 +1,8 @@
 #pragma once
-// #include "Box.h"
+#include "Box.h"
+
 
 enum Gamestate { MAINMENU, GAME, PAUSE, GAMEOVER };
-
-// class Box;
 class Global {
 
 public:
@@ -11,13 +10,18 @@ public:
 // vars
 int xres, yres;
 Gamestate state;
-// Box b1;
 
-Global()
-{
-	xres = 640;
-	yres = 480;
-}
 
-} ;
+Global();
 
+};
+
+// Global Objects declared here:
+// Note: you use extern keyword to declare them when the header file is included
+//         ~~ Their definition is in cpp file ~~
+//              - This is how you make them accessable in other files without
+//                      causing them to be defined twice.
+
+
+extern Global g;
+extern Box s_menu_bg;

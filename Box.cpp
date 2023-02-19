@@ -5,8 +5,11 @@
 #include "Box.h"
 #include "Global.h"
 
-// class Global;
-extern Global g;
+
+
+// Box objects
+// Box b1;
+
 
 // Constructors
 
@@ -36,6 +39,12 @@ void Box::set_pos(float x, float y, float z)
     pos[0] = x;
     pos[1] = y;
     pos[2] = z;
+}
+
+void Box::set_dim(float _w, float _h)
+{
+    w = _w;
+    h = _h;
 }
 
 std::string Box::get_info()
