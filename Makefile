@@ -2,7 +2,7 @@
 OBJECTS = cosmotost.o Box.o Global.o libggfonts.a
 
 FLAGS =  -Wall -lX11 -lGL -lGLU -lm
-COMP = g++ std=c++17 
+COMP = g++ -std=c++17 
 
 
 all: cosmotost
