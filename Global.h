@@ -23,5 +23,5 @@ Global();
 //                      causing them to be defined twice.
 
 
-extern Global g;
-extern Box s_menu_bg;
+inline Global g;
+inline Box s_menu_bg;

@@ -2,7 +2,7 @@
 OBJECTS = cosmotost.o Box.o Global.o libggfonts.a
 
 FLAGS =  -Wall -lX11 -lGL -lGLU -lm
-COMP = g++
+COMP = g++ std=c++17 
 
 
 all: cosmotost
@@ -18,6 +18,10 @@ Box.o: Box.cpp Box.h
 
 Global.o: Global.cpp Global.h
 	$(COMP) -c Global.cpp
+
+# still in development
+# Menu.o: Menu.cpp Menu.h
+# 	$(COMP) -c Menu.cpp
 
 clean:
 	rm -f cosmotost *.o

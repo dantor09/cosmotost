@@ -6,11 +6,6 @@
 #include "Global.h"
 
 
-
-// Box objects
-// Box b1;
-
-
 // Constructors
 
 Box::Box()
