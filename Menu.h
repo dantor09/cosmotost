@@ -1,4 +1,5 @@
 #pragma once
+#include <GL/glx.h>
 #include <iostream>
 #include <new>
 #include <sstream>
@@ -31,6 +32,9 @@ public:
     void set_bcolor(int r, int g, int b);   // sets boarder color
     void set_color(int r, int g, int b);   // sets mainbox color
     void set_pos(float x, float y, float z);
+
+    // other
+    void draw();
 
     // debug
     std::string get_info();
