@@ -26,7 +26,7 @@
 #include "fonts.h"	// used for fonts
 #include "Box.h"	// base box class
 #include "Global.h"	// global vars
-#include "Menu.h"	// menu
+#include "mkausch.h"	// menu
 
 using namespace std;
 

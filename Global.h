@@ -1,6 +1,6 @@
 #pragma once
 #include "Box.h"
-#include "Menu.h"
+#include "mkausch.h"
 
 
 enum Gamestate { SPLASH, MAINMENU, GAME, PAUSE, GAMEOVER };
