@@ -174,6 +174,10 @@ void X11_wrapper::check_resize(XEvent *e)
 	}
 }
 //-----------------------------------------------------------------------------
+#define rnd() ((float)rand() / (float)RAND_MAX)
+int randnum(int min, int max) {
+    return min + rand() % ((max + 1) - min);
+}
 
 void X11_wrapper::check_mouse(XEvent *e)
 {
@@ -272,9 +276,19 @@ int X11_wrapper::check_keys(XEvent *e)
 					return 1;
 			}
 		}
-
+	} else if (e->type == KeyPress) { 
+			switch (key) {
+				case XK_e:
+					// Enter was pressed
+					g.state = ENTITY;
+					cout << "g.state was changed to " << g.state << endl;
+					break;
+				case XK_Escape:
+					//Escape key was pressed
+					return 1;
+			}
+		}
 	} else {
-	
 		if (e->type == KeyPress) {
 			switch (key) {
 				case XK_Return:
@@ -312,8 +326,6 @@ void init_opengl(void)
 	//Set the screen background color
     // makes it almost black
 	
-
-
     // initialize fonts
     
 	glEnable(GL_TEXTURE_2D);
@@ -368,26 +380,11 @@ void render()
 
 
 	} else if (g.state == MAINMENU) {
-		
-		
-
-
 		mm.draw();
-
-		
 	} else if (g.state == GAME) {
-
-
-
 	} else if (g.state == PAUSE) {
-
-
 	} else if (g.state == GAMEOVER) {
-
-
 	}
-
-	
 
 }
 

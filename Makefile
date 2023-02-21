@@ -23,6 +23,10 @@ Global.o: Global.cpp Global.h
 Menu.o: Menu.cpp Menu.h
 	$(COMP) -c Menu.cpp
 
+# spawning complete, collisions need to be done
+Aparriott.o: Aparriott.cpp Aparriott.h
+	$(COMP) -c Aparriott.cpp
+
 clean:
 	rm -f cosmotost *.o
 
