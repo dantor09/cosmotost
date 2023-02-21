@@ -25,7 +25,7 @@ Menu::Menu(unsigned int _n_texts,
     try {
         t_boxs = new Box[n_texts];
         texts = new Rect[n_texts];
-        words = new std::string[n_texts];
+        // words = new std::string[n_texts];
         
 
         float spacing = (2*h)/(n_texts+1);
@@ -40,7 +40,8 @@ Menu::Menu(unsigned int _n_texts,
             std::cout << "t_box[" << i << "].pos[1]: " 
                         << t_boxs[i].pos[1] << std::endl;
             
-            words[i] = _words[i];
+            // words[i] = _words[i];
+            t_boxs[i].set_text(_words[i]);
 
             // Leaving this here for the next poor soul that
             // comes accross this issue:
@@ -58,13 +59,13 @@ Menu::Menu(unsigned int _n_texts,
         // if one was allocated and not the other than delete the one that 
         if (texts) delete [] texts;
         if (t_boxs) delete [] t_boxs;
-        if (words) delete [] words;
+        // if (words) delete [] words;
         // print to screen for now until we have logging set up
         std::cerr << "Error allocating rectangles in Menu call\n"
                 << ba.what() << '\n';
         texts = nullptr;
         t_boxs = nullptr;
-        words = nullptr;
+        // words = nullptr;
     }
 }
 
@@ -76,8 +77,8 @@ Menu::~Menu()
     if (t_boxs)
         delete [] t_boxs;
 
-    if (words)
-        delete [] words;
+    // if (words)
+    //     delete [] words;
         
 }
 
@@ -148,13 +149,36 @@ void Menu::draw()
 
         // r[i].center = 1;
 
-        ggprint8b(texts+i, 16, 0x00ffffff, words[i].c_str());
+        ggprint8b(texts+i, 16, 0x00ffffff, t_boxs[i].text.c_str());
     }
-    
-
-
-    
+        
 }
+
+// pass in mouse coords to check and see if they are within the bounds
+// of the menu's text boxes
+Box* Menu::check_t_box(int x, int y)
+{
+    Box * box_ptr = nullptr;
+    size_t i;
+
+    for (i = 0; i < n_texts; i++) {
+        // mouse coords are
+        if ((x > (t_boxs[i].pos[0]-t_boxs[i].w)) && 
+            (x < (t_boxs[i].pos[0]+t_boxs[i].w)) &&
+            (y > (t_boxs[i].pos[1]-t_boxs[i].h)) &&
+            (y < (t_boxs[i].pos[1]+t_boxs[i].h))) {
+
+
+            box_ptr = (t_boxs+i);
+            break;
+        }
+    }
+
+    // std::cout << "match for " << box_ptr << " aka " << t_boxs+i << std::endl;
+
+    return box_ptr;
+}
+
 
 
 void Menu::set_bcolor(int r, int g, int b) 
@@ -177,6 +201,11 @@ void Menu::set_pos(float x, float y, float z)
     pos[1] = y;
     pos[2] = z;
 }
+
+// unsigned char * Box::get_tcolor(Box & b)
+// {
+//     return b.color;
+// }
 
 std::string Menu::get_info()
 {

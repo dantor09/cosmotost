@@ -24,7 +24,7 @@ public:
     Rect *texts;
     // Rect texts[4];
     Box *t_boxs;
-    std::string *words;
+    // std::string *words;
 
     // constructors
     Menu(unsigned int n_texts, 
@@ -38,11 +38,15 @@ public:
     void set_color(int r, int g, int b);   // sets mainbox color
     void set_pos(float x, float y, float z);
 
+    // getters
+    // unsigned char * get_tcolor();
+    std::string get_info(); // get debug info
+
     // other
     void draw();
+    Box* check_t_box(int x, int y);
 
-    // debug
-    std::string get_info();
+    
 
 } ;
 

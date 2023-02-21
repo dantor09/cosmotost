@@ -117,7 +117,7 @@ X11_wrapper::X11_wrapper()
 	glXMakeCurrent(dpy, win, glc);
 
 	// set initial game state
-	g.state = MAINMENU;
+	g.state = SPLASH;
 }
 
 void X11_wrapper::set_title()
@@ -179,39 +179,78 @@ void X11_wrapper::check_mouse(XEvent *e)
 {
 	static int savex = 0;
 	static int savey = 0;
+	static Box * selection = nullptr;
+	static Box * prev_selection = nullptr;
+
+	static unsigned char * prev_color;
 
 	//Weed out non-mouse events
-	if (e->type != ButtonRelease &&
-		e->type != ButtonPress &&
-		e->type != MotionNotify) {
-		//This is not a mouse event that we care about.
-		return;
-	}
-	//
-	if (e->type == ButtonRelease) {
-		return;
-	}
-	if (e->type == ButtonPress) {
-		if (e->xbutton.button==1) {
-			//Left button was pressed.
-			//int y = g.yres - e->xbutton.y;
+
+	if (g.state == SPLASH) {
+		// do nothing with mouse at splash screen
+	} else {
+		if (e->type != ButtonRelease &&
+			e->type != ButtonPress &&
+			e->type != MotionNotify) {
+			//This is not a mouse event that we care about.
 			return;
 		}
-		if (e->xbutton.button==3) {
-			//Right button was pressed.
+		//
+		if (e->type == ButtonRelease) {
 			return;
 		}
-	}
-	if (e->type == MotionNotify) {
-		//The mouse moved!
-		if (savex != e->xbutton.x || savey != e->xbutton.y) {
-			savex = e->xbutton.x;
-			savey = e->xbutton.y;
-			//Code placed here will execute whenever the mouse moves.
+		if (e->type == ButtonPress) {
+			if (e->xbutton.button==1) {
+				//Left button was pressed.
+				//int y = g.yres - e->xbutton.y;
+				return;
+			}
+			if (e->xbutton.button==3) {
+				//Right button was pressed.
+				return;
+			}
+		}
+		if (e->type == MotionNotify) {
+			//The mouse moved!
+			if (savex != e->xbutton.x || savey != e->xbutton.y) {
+				savex = e->xbutton.x;
+				savey = e->xbutton.y;
+				//Code placed here will execute whenever the mouse moves.
 
+				// need to send in flipped y coord because window and 
+				// mouse coords have different origins
+				selection = mm.check_t_box(savex, g.yres - savey);
 
+				if (selection) {
+					// cout << "hovering over " << selection->text << endl;
+					prev_color = selection->get_color(); // save color of current
+					selection->set_color(33,136,171); // set hover color
+					cerr << "setting color to 33, 136, 171" << endl;
+					prev_selection = selection; // remember selection
+					selection = nullptr; // reset selection ptr
+					
+				} else {
+
+					// was previously on something and now it's not
+					if (prev_selection) {
+						// set back to the original color
+						// prev_selection->set_color(prev_color[0], 
+						// 					prev_color[1], 
+						// 					prev_color[2]);
+						prev_selection->set_color(61,90,115);
+
+						cerr << "setting color back to " << prev_color[0] << ","
+								<< prev_color[0] << "," 
+								<< prev_color[0] << endl;
+						
+						// point it to nothing
+						prev_selection = nullptr;
+					}
+				}
+			}
 		}
 	}
+	
 }
 
 int X11_wrapper::check_keys(XEvent *e)
@@ -219,16 +258,38 @@ int X11_wrapper::check_keys(XEvent *e)
 	if (e->type != KeyPress && e->type != KeyRelease)
 		return 0;
 	int key = XLookupKeysym(&e->xkey, 0);
-	if (e->type == KeyPress) {
-		switch (key) {
-			case XK_1:
-				//Key 1 was pressed
-				break;
-			case XK_Escape:
-				//Escape key was pressed
-				return 1;
+
+	if (g.state == SPLASH) {
+		if (e->type == KeyPress) { 
+			switch (key) {
+				case XK_Return:
+					// Enter was pressed
+					g.state = MAINMENU;
+					cout << "g.state was changed to " << g.state << endl;
+					break;
+				case XK_Escape:
+					//Escape key was pressed
+					return 1;
+			}
+		}
+
+	} else {
+	
+		if (e->type == KeyPress) {
+			switch (key) {
+				case XK_Return:
+					// Enter was pressed
+					break;
+				case XK_1:
+					//Key 1 was pressed
+					break;
+				case XK_Escape:
+					//Escape key was pressed
+					return 1;
+			}
 		}
 	}
+
 	return 0;
 }
 
@@ -267,36 +328,49 @@ void physics()
 
 void render()
 {
-	
+	glClearColor(24.0/255, 38.0/255, 37.0/255, 1.0);	// clear it to a bluish
+	glClear(GL_COLOR_BUFFER_BIT);	// clear screen
 
-	if (g.state == MAINMENU) {
-		glClearColor(24.0/255, 38.0/255, 37.0/255, 1.0);	// clear it to a bluish
-		glClear(GL_COLOR_BUFFER_BIT);	// clear screen
+	if (g.state == SPLASH) {
+		Box splash_img;
+		splash_img.set_color(61, 90, 115);
+		glColor3ubv(splash_img.color);
+		splash_img.set_dim(100.0f, 100.0f);
+		splash_img.set_pos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+
+
+		/*******************   SPLASH IMAGE PLACEHOLDER   *******************/
+		glPushMatrix();
+		glTranslatef(splash_img.pos[0], splash_img.pos[1], splash_img.pos[2]);
+		glBegin(GL_QUADS);
+			glVertex2f(-splash_img.w, -splash_img.h);
+			glVertex2f(-splash_img.w,  splash_img.h);
+			glVertex2f( splash_img.w,  splash_img.h);
+			glVertex2f( splash_img.w, -splash_img.h);
+		glEnd();
+		glPopMatrix();
+
+		Rect splash_msg;
+		splash_msg.bot = splash_img.pos[1];
+        splash_msg.left = splash_img.pos[0];
+        splash_msg.center = 1;
+
+        ggprint8b(&splash_msg, 0, 0x00ffffff, "Splash Img Placeholder");
+
+		/******************    END SPLASH IMAGE    ***************************/
+
+		Rect game_msg;
+		game_msg.bot = g.yres * (1/4.0f);
+        game_msg.left = g.xres / 2.0f;
+        game_msg.center = 1;
+
+        ggprint8b(&game_msg, 0, 0x00ffffff, "Press Enter to Start the Game");
+
+
+	} else if (g.state == MAINMENU) {
 		
-		// // make text boxes
-
-
-		// // make it so that the box is only visible if the screen is big enough
 		
-		// s_menu_bg.set_color(2, 115, 104);
-		// glColor3ubv(s_menu_bg.color);
-        
-		// glPushMatrix();
-		// glTranslatef(g.xres/2.0f, g.yres/2.0f, 0.0f);
-		// glBegin(GL_QUADS);
-		// 	glVertex2f(-s_menu_bg.w, -s_menu_bg.w);
-		// 	glVertex2f(-s_menu_bg.w,  s_menu_bg.w);
-		// 	glVertex2f( s_menu_bg.w,  s_menu_bg.w);
-		// 	glVertex2f( s_menu_bg.w, -s_menu_bg.w);
-		// glEnd();
-		// glPopMatrix();
 
-		// Rect r;
-		// r.bot = g.yres/2.0f;
-		// r.left = g.xres/2.0f;
-		// r.center = 1;
-
-		// ggprint8b(&r, 16, 0x00011F26, "c0sm0t0asT");
 
 		mm.draw();
 

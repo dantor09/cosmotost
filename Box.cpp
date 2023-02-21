@@ -42,6 +42,16 @@ void Box::set_dim(float _w, float _h)
     h = _h;
 }
 
+unsigned char * Box::get_color()
+{
+    return color;
+}
+
+void Box::set_text(std::string t)
+{
+    text = t;
+}
+
 std::string Box::get_info()
 {
     std::ostringstream temp;

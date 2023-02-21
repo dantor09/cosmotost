@@ -3,7 +3,7 @@
 #include "Menu.h"
 
 
-enum Gamestate { MAINMENU, GAME, PAUSE, GAMEOVER };
+enum Gamestate { SPLASH, MAINMENU, GAME, PAUSE, GAMEOVER };
 
 
 class Global {
@@ -28,5 +28,10 @@ Global();
 inline Global g;
 inline Box s_menu_bg;
 
-inline std::string mm_text[] = {"Start 1P Game", "Start 2P Game", "Settings"};
-inline Menu mm(3, 120, 120, g.xres/2.0f, g.yres/2.0f, mm_text);
+inline std::string mm_text[] = {"Start Game", 
+                                "High Scores", 
+                                "Settings", 
+                                "Quit",
+                                "Here",
+                                "More"};
+inline Menu mm(6, 120, 120, g.xres/2.0f, g.yres/2.0f, mm_text);
