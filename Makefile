@@ -23,6 +23,10 @@ Global.o: Global.cpp Global.h
 mkausch.o: mkausch.cpp mkausch.h
 	$(COMP) -c mkausch.cpp
 
+# spawning complete, collisions need to be done
+Aparriott.o: Aparriott.cpp Aparriott.h
+	$(COMP) -c Aparriott.cpp
+
 clean:
 	rm -f cosmotost *.o
 
