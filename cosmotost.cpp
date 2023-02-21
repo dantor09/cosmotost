@@ -276,7 +276,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					return 1;
 			}
 		}
-	} else if (e->type == KeyPress) { 
+	/*} else if (e->type == KeyPress) { 
 			switch (key) {
 				case XK_e:
 					// Enter was pressed
@@ -287,7 +287,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Escape key was pressed
 					return 1;
 			}
-		}
+		}*/
 	} else {
 		if (e->type == KeyPress) {
 			switch (key) {

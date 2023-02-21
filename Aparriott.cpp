@@ -4,7 +4,7 @@
  * Project Group 1
  * Entity files
  */
-
+#pragma once
 #include <iostream>
 #include <stdio.h>
 #include <unistd.h>
@@ -17,6 +17,8 @@
 #include <GL/glx.h>
 
 #include "cosmotost.cpp"
+#include "Global.cpp"
+
 
 using namespace std;
 
