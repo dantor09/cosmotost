@@ -1,3 +1,16 @@
+/********************************************************************
+*
+*		Program: mkausch.cpp
+*		Authors: Michael Kausch (Group 1 - DAHM)
+*		Date Code Originated: 2/17/23
+*
+*       Classes: Manu
+*       Uses:
+*           Creates a menu object based on num text params, size and position
+**********************************************************************/
+
+//                 		INCLUDES
+
 #include <iostream>
 #include <string>
 #include "mkausch.h"
