@@ -7,7 +7,7 @@ COMP = g++ -std=c++17
 
 all: cosmotost
 
-cosmotost: cosmotost.o Box.o Global.o mkausch.o
+cosmotost: cosmotost.o Box.o Global.o mkausch.o aparriott.o
 	$(COMP) -o cosmotost $(OBJECTS) $(FLAGS)
 
 cosmotost.o: cosmotost.cpp

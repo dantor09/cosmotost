@@ -5,7 +5,7 @@
  * Entity.cpp
  */
 
-//#include "Global.cpp"
+#include "Global.h"
 #include "aparriott.h"
 
 using namespace std;
@@ -17,19 +17,19 @@ int randnum(int min, int max) {
 
 void makeEntity(float posX, float posY, float initVelX, float initVelY, 
                 float curveX, float curveY) {
-	if (g.numEnt < MAX_ENTITIES) {
-		entity[g.numEnt].dim[0] = 8;
-		entity[g.numEnt].dim[1] = 8;
-		entity[g.numEnt].pos[0] = posX;
-		entity[g.numEnt].pos[1] = posY;
-		entity[g.numEnt].vel[0] = initVelX;
-		entity[g.numEnt].vel[1] = initVelY;
-		entity[g.numEnt].color[0] = randnum(80, 120);
-		entity[g.numEnt].color[1] = randnum(100, 180);
-		entity[g.numEnt].color[2] = randnum(200, 255);
-        entity[g.numEnt].curve[0] = curveX;
-        entity[g.numEnt].curve[1] = curveY;
-		g.numEnt++;
+	if (e.numEnt < MAX_ENTITIES) {
+		entity[e.numEnt].dim[0] = 8;
+		entity[e.numEnt].dim[1] = 8;
+		entity[e.numEnt].pos[0] = posX;
+		entity[e.numEnt].pos[1] = posY;
+		entity[e.numEnt].vel[0] = initVelX;
+		entity[e.numEnt].vel[1] = initVelY;
+		entity[e.numEnt].color[0] = randnum(80, 120);
+		entity[e.numEnt].color[1] = randnum(100, 180);
+		entity[e.numEnt].color[2] = randnum(200, 255);
+        entity[e.numEnt].curve[0] = curveX;
+        entity[e.numEnt].curve[1] = curveY;
+		e.numEnt++;
 	}	
 }
 
@@ -72,7 +72,7 @@ void entityPhysics() {
     }
     e.spawnSpeed--;
 
-	for (int i = 0; i < g.numEnt; i++) {
+	for (int i = 0; i < e.numEnt; i++) {
         entity[i].pos[0] += entity[i].vel[0]/2;
 		entity[i].pos[1] += entity[i].vel[1]/2;
 
@@ -83,7 +83,7 @@ void entityPhysics() {
         if (entity[i].pos[1] < -4 || 
                 entity[i].pos[1] > g.yres + 4 ||
                 entity[i].pos[0] < -4) {	
-            entity[i] = entity[--g.numEnt];
+            entity[i] = entity[--e.numEnt];
         }
 
         // BOUNCE
@@ -97,7 +97,7 @@ void entityPhysics() {
 
 void entityRender() {
 	//Draw entity.
-	for (int i = 0; i < g.numEnt; i++) {
+	for (int i = 0; i < e.numEnt; i++) {
 		glPushMatrix();
 		glColor3ubv(entity[i].color);
 		glTranslatef(entity[i].pos[0], entity[i].pos[1], 0.0f);
