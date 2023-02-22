@@ -2,94 +2,34 @@
  * 23.02.17
  * 3350
  * Project Group 1
- * Entity files
+ * Entity.cpp
  */
-#pragma once
-#include <iostream>
-#include <stdio.h>
-#include <unistd.h>
-#include <cstdlib>
-#include <ctime>
-#include <cstring>
-#include <cmath>
-#include <X11/Xlib.h>
-#include <X11/keysym.h>
-#include <GL/glx.h>
 
-#include "cosmotost.cpp"
-#include "Global.cpp"
-
+#include "Global.h"
+#include "aparriott.h"
 
 using namespace std;
 
-// ============
-// = ENTITY S =
-const int MAX_ENTITIES = 128;
-
-class Entity {
-	public:
-	float dim[2];
-	float vel[2];
-	float pos[2];
-    float curve[2];
-	unsigned char color[3];
-	/*void set_color(unsigned char col[3]) {
-		memcpy(color,  col, sizeof(unsigned char) * 3);
-	}*/
-
-	Entity() {
-		dim[0] = 8;
-		dim[1] = 8;
-		pos[0] = g.xres / 2;
-		pos[1] = g.yres / 2;
-		vel[0] = -1;
-		vel[1] = -1;
-        curve[0] = 0;
-        curve[1] = 0;
-	}
-
-	Entity(float wid, float hgt, float posX, float posY, float v0, float v1, 
-            float curveX, float curveY) {
-		dim[0] = wid;
-		dim[1] = hgt;
-		pos[0] = posX;
-		pos[1] = posY;
-		vel[0] = v0;
-		vel[1] = v1;
-        curve[0] = curveX;
-        curve[1] = curveY;
-	}
-} entity[MAX_ENTITIES];
-
-class EntitySpawn {
-    public:
-    int enterloc, chainLen, spawnSpeed, numEnt;
-    float spawnX, spawnY;
-    float spawnVelX, spawnVelY;
-    float curveRandX, curveRandY;
-    EntitySpawn() {
-        chainLen = 0;
-        spawnSpeed = 0;
-        curveRandX = 0;
-        curveRandY = 0;
-    }
-} e;
+#define rnd() ((float)rand() / (float)RAND_MAX)
+int randnum(int min, int max) {
+    return min + rand() % ((max + 1) - min);
+}
 
 void makeEntity(float posX, float posY, float initVelX, float initVelY, 
                 float curveX, float curveY) {
-	if (g.numEnt < MAX_ENTITIES) {
-		entity[g.numEnt].dim[0] = 8;
-		entity[g.numEnt].dim[1] = 8;
-		entity[g.numEnt].pos[0] = posX;
-		entity[g.numEnt].pos[1] = posY;
-		entity[g.numEnt].vel[0] = initVelX;
-		entity[g.numEnt].vel[1] = initVelY;
-		entity[g.numEnt].color[0] = randnum(80, 120);
-		entity[g.numEnt].color[1] = randnum(100, 180);
-		entity[g.numEnt].color[2] = randnum(200, 255);
-        entity[g.numEnt].curve[0] = curveX;
-        entity[g.numEnt].curve[1] = curveY;
-		g.numEnt++;
+	if (e.numEnt < MAX_ENTITIES) {
+		entity[e.numEnt].dim[0] = 8;
+		entity[e.numEnt].dim[1] = 8;
+		entity[e.numEnt].pos[0] = posX;
+		entity[e.numEnt].pos[1] = posY;
+		entity[e.numEnt].vel[0] = initVelX;
+		entity[e.numEnt].vel[1] = initVelY;
+		entity[e.numEnt].color[0] = randnum(80, 120);
+		entity[e.numEnt].color[1] = randnum(100, 180);
+		entity[e.numEnt].color[2] = randnum(200, 255);
+        entity[e.numEnt].curve[0] = curveX;
+        entity[e.numEnt].curve[1] = curveY;
+		e.numEnt++;
 	}	
 }
 
@@ -132,7 +72,7 @@ void entityPhysics() {
     }
     e.spawnSpeed--;
 
-	for (int i = 0; i < g.numEnt; i++) {
+	for (int i = 0; i < e.numEnt; i++) {
         entity[i].pos[0] += entity[i].vel[0]/2;
 		entity[i].pos[1] += entity[i].vel[1]/2;
 
@@ -143,7 +83,7 @@ void entityPhysics() {
         if (entity[i].pos[1] < -4 || 
                 entity[i].pos[1] > g.yres + 4 ||
                 entity[i].pos[0] < -4) {	
-            entity[i] = entity[--g.numEnt];
+            entity[i] = entity[--e.numEnt];
         }
 
         // BOUNCE
@@ -157,7 +97,7 @@ void entityPhysics() {
 
 void entityRender() {
 	//Draw entity.
-	for (int i = 0; i < g.numEnt; i++) {
+	for (int i = 0; i < e.numEnt; i++) {
 		glPushMatrix();
 		glColor3ubv(entity[i].color);
 		glTranslatef(entity[i].pos[0], entity[i].pos[1], 0.0f);

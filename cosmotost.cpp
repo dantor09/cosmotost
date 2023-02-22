@@ -176,10 +176,6 @@ void X11_wrapper::check_resize(XEvent *e)
 	}
 }
 //-----------------------------------------------------------------------------
-#define rnd() ((float)rand() / (float)RAND_MAX)
-int randnum(int min, int max) {
-    return min + rand() % ((max + 1) - min);
-}
 
 int X11_wrapper::check_mouse(XEvent *e)
 {
