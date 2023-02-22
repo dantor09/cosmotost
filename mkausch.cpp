@@ -179,6 +179,19 @@ Box* Menu::check_t_box(int x, int y)
     return box_ptr;
 }
 
+void Menu::set_highlight(Box * b)
+{
+    b->set_color(33,136,171);
+}
+
+
+void Menu::set_orig_color()
+{
+    for (size_t i = 0; i < n_texts; i++) {
+        t_boxs[i].set_color(61,90,115);
+    }
+}
+
 
 
 void Menu::set_bcolor(int r, int g, int b) 

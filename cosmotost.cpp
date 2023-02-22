@@ -48,7 +48,7 @@ public:
 	void swapBuffers();
 	void reshape_window(int width, int height);
 	void check_resize(XEvent *e);
-	void check_mouse(XEvent *e);
+	int check_mouse(XEvent *e);
 	int check_keys(XEvent *e);
 } x11;
 
@@ -64,14 +64,17 @@ int main()
 {
 	init_opengl();
 	//Main loop
-	int done = 0;
-	while (!done) {
+	int k_done = 0, m_done = 0;
+	while (!k_done && !m_done) {
 		//Process external events.
 		while (x11.getXPending()) {
 			XEvent e = x11.getXNextEvent();
 			x11.check_resize(&e);
-			x11.check_mouse(&e);
-			done = x11.check_keys(&e);
+			m_done = x11.check_mouse(&e);
+			k_done = x11.check_keys(&e);
+			if (m_done == 1 || k_done == 1) {
+				break;
+			}
 		}
 		physics();
 		render();
@@ -116,8 +119,7 @@ X11_wrapper::X11_wrapper()
 	glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
 	glXMakeCurrent(dpy, win, glc);
 
-	// set initial game state
-	g.state = SPLASH;
+	
 }
 
 void X11_wrapper::set_title()
@@ -179,7 +181,7 @@ int randnum(int min, int max) {
     return min + rand() % ((max + 1) - min);
 }
 
-void X11_wrapper::check_mouse(XEvent *e)
+int X11_wrapper::check_mouse(XEvent *e)
 {
 	static int savex = 0;
 	static int savey = 0;
@@ -188,32 +190,65 @@ void X11_wrapper::check_mouse(XEvent *e)
 
 	static unsigned char * prev_color;
 
-	//Weed out non-mouse events
+	
 
+	// do nothing with mouse at splash screen
 	if (g.state == SPLASH) {
-		// do nothing with mouse at splash screen
-	} else {
+		
+
+
+	} else if (g.state == MAINMENU) {
+		//Weed out non-mouse events
 		if (e->type != ButtonRelease &&
 			e->type != ButtonPress &&
 			e->type != MotionNotify) {
 			//This is not a mouse event that we care about.
-			return;
+			return 0;
 		}
-		//
+		// leave for reference
 		if (e->type == ButtonRelease) {
-			return;
+			return 0;
 		}
 		if (e->type == ButtonPress) {
 			if (e->xbutton.button==1) {
 				//Left button was pressed.
 				//int y = g.yres - e->xbutton.y;
-				return;
+				if (savex != e->xbutton.x || savey != e->xbutton.y) {
+					savex = e->xbutton.x;
+					savey = e->xbutton.y;
+				}
+
+				// check and see if the user clicked on the Menu
+				selection = mm.check_t_box(savex, g.yres - savey);
+				if (selection && (selection->text == "Start Game")) {
+					mm.set_orig_color();
+					g.state = GAME;
+					selection = nullptr;
+					prev_selection = nullptr;
+					return 0;
+				} else if (selection && (selection->text == "Settings")) {
+					mm.set_orig_color();
+					g.substate = SETTINGS;
+					selection = nullptr;
+					prev_selection = nullptr;
+					return 0;
+				} else if (selection && (selection->text == "Quit")) {
+					mm.set_orig_color();
+					selection = nullptr;
+					prev_selection = nullptr;
+
+					return 1;
+				}
+
+				return 0;
 			}
+			// leave for reference
 			if (e->xbutton.button==3) {
 				//Right button was pressed.
-				return;
+				return 0;
 			}
 		}
+		// look and see 
 		if (e->type == MotionNotify) {
 			//The mouse moved!
 			if (savex != e->xbutton.x || savey != e->xbutton.y) {
@@ -227,33 +262,105 @@ void X11_wrapper::check_mouse(XEvent *e)
 
 				if (selection) {
 					// cout << "hovering over " << selection->text << endl;
-					prev_color = selection->get_color(); // save color of current
-					selection->set_color(33,136,171); // set hover color
-					cerr << "setting color to 33, 136, 171" << endl;
-					prev_selection = selection; // remember selection
-					selection = nullptr; // reset selection ptr
-					
+					if (selection != prev_selection) {
+
+						mm.set_highlight(selection);
+						prev_selection = selection; // remember selection
+						selection = nullptr; // reset selection ptr
+					}
 				} else {
 
-					// was previously on something and now it's not
-					if (prev_selection) {
-						// set back to the original color
-						// prev_selection->set_color(prev_color[0], 
-						// 					prev_color[1], 
-						// 					prev_color[2]);
-						prev_selection->set_color(61,90,115);
-
-						cerr << "setting color back to " << prev_color[0] << ","
-								<< prev_color[0] << "," 
-								<< prev_color[0] << endl;
-						
-						// point it to nothing
-						prev_selection = nullptr;
-					}
+					mm.set_orig_color();
+					prev_selection = nullptr;
 				}
 			}
 		}
+	} else if (g.state == PAUSE) {
+		if (e->type != ButtonRelease &&
+			e->type != ButtonPress &&
+			e->type != MotionNotify) {
+			//This is not a mouse event that we care about.
+			return 0;
+		}
+		// leave for reference - maybe do the action on the button release
+		//          -- and make it blink on the button press?
+		if (e->type == ButtonRelease) {
+			return 0;
+		} 
+		if (e->type == ButtonPress) {
+			if (e->xbutton.button==1) {
+				//Left button was pressed.
+				//int y = g.yres - e->xbutton.y;
+				if (savex != e->xbutton.x || savey != e->xbutton.y) {
+					savex = e->xbutton.x;
+					savey = e->xbutton.y;
+				}
+
+				selection = pause_menu.check_t_box(savex, g.yres - savey);
+				if (selection && (selection->text == "Main Menu")) {
+					pause_menu.set_orig_color();
+					g.state = MAINMENU;
+					selection = nullptr;
+					prev_selection = nullptr;
+
+				} else if (selection && (selection->text == "Start Over")) {
+					pause_menu.set_orig_color();
+					g.state = MAINMENU;
+					g.state = GAME;
+					cerr << "g.state was changed back to GAME (RESET SEQUENCE)" 
+							<< endl;
+					selection = nullptr;
+					prev_selection = nullptr;
+
+				} else if (selection && (selection->text == "Back to Game")) {
+					pause_menu.set_orig_color();
+					g.state = GAME;
+					cerr << "g.state was changed back to GAME" << endl;
+					selection = nullptr;
+					prev_selection = nullptr;
+				} else if (selection && (selection->text == "Quit Game")) {
+					pause_menu.set_orig_color();
+					cerr << "g.state was changed to should be quitting..." << endl;
+					selection = nullptr;
+					prev_selection = nullptr;
+					return 1;
+				}
+
+				return 0;
+			}
+			if (e->xbutton.button==3) {
+				//Right button was pressed.
+				return 0;
+			}
+		}
+		if (e->type == MotionNotify) {
+			//The mouse moved!
+			if (savex != e->xbutton.x || savey != e->xbutton.y) {
+				savex = e->xbutton.x;
+				savey = e->xbutton.y;
+				//Code placed here will execute whenever the mouse moves.
+
+				// need to send in flipped y coord because window and 
+				// mouse coords have different origins
+				selection = pause_menu.check_t_box(savex, g.yres - savey);
+
+				if (selection) {
+					if (selection != prev_selection) {
+						pause_menu.set_highlight(selection);
+						prev_selection = selection; // remember selection
+						selection = nullptr; // reset selection ptr
+					}
+				} else {
+					// was previously on something and now it's not
+					pause_menu.set_orig_color();
+					prev_selection = nullptr;
+				
+				}
+			}
+		}
+		
 	}
+	return 0;
 	
 }
 
@@ -264,42 +371,93 @@ int X11_wrapper::check_keys(XEvent *e)
 	int key = XLookupKeysym(&e->xkey, 0);
 
 	if (g.state == SPLASH) {
+
+		// only functional keys are escape to quickly quit game and enter
+		// to advance to main menu
 		if (e->type == KeyPress) { 
 			switch (key) {
 				case XK_Return:
 					// Enter was pressed
 					g.state = MAINMENU;
-					cout << "g.state was changed to " << g.state << endl;
-					break;
+					cerr << "g.state was changed to MAINMENU" << endl;
+					return 0;
 				case XK_Escape:
 					//Escape key was pressed
 					return 1;
 			}
 		}
-	/*} else if (e->type == KeyPress) { 
+		// Game State
+		// only functional keys are:
+		//     	e: enter Ailand's Entity State
+		// Escape: Pauses the game
+	} else if ((g.state == MAINMENU) && (g.substate == SETTINGS)) {
+		if (e->type == KeyPress) { 
 			switch (key) {
-				case XK_e:
-					// Enter was pressed
-					g.state = ENTITY;
-					cout << "g.state was changed to " << g.state << endl;
-					break;
+				case XK_Escape:	// go back to main menu
+					//Escape key was pressed
+					//Enter Pause State
+					g.state = MAINMENU;
+					g.substate = NONE;
+					cerr << "g.state was changed to MAINMENU" << endl;
+					cerr << "g.substate was changed to NONE" << endl;
+					cerr << "Back to the main menu" << endl;
+					return 0;
+			}
+		}
+		// Pause Menu State:
+		// Only valid key entries are:
+		// 		Escape: Leave Pause Menu
+		// *** Should be waiting for mouse input on the menu ***
+	} else if (g.state == GAME) {
+		if (e->type == KeyPress) { 
+			switch (key) {
+				case XK_e: // e was pressed - toggle Ailand's Entity State
+					if (g.substate == NONE) {
+						g.substate = ENTITY;
+						cerr << "g.substate was changed to ENTITY\n";
+					} else if (g.substate == ENTITY) {
+						g.substate = NONE;
+						cerr << "g.substate was changed back to NONE\n";
+					}
+					return 0;
+				case XK_Escape:	// pause the game
+					//Escape key was pressed
+					//Enter Pause State
+					g.state = PAUSE;
+					cerr << "g.state was changed to PAUSE" << endl;
+					return 0;
+			}
+		}
+		// Pause Menu State:
+		// Only valid key entries are:
+		// 		Escape: Leave Pause Menu
+		// *** Should be waiting for mouse input on the menu ***
+	} else if (g.state == PAUSE) {
+		if (e->type == KeyPress) { 
+			switch (key) {
 				case XK_Escape:
 					//Escape key was pressed
-					return 1;
+					//Enter Pause State
+					g.state = GAME;
+					cerr << "g.state was changed back to GAME" << endl;
+					return 0;
 			}
-		}*/
-	} else {
+		}
+		return 0;
+
+		// Game Over State:
+		// Only valid key entries are:
+		// 		Escape: Go back to the main menu
+		//		Game Over text with credits rolling?
+	} else if (g.state == GAMEOVER) {
 		if (e->type == KeyPress) {
 			switch (key) {
-				case XK_Return:
-					// Enter was pressed
-					break;
-				case XK_1:
-					//Key 1 was pressed
-					break;
 				case XK_Escape:
-					//Escape key was pressed
-					return 1;
+					// Escape key was pressed
+					// Go back to the Main Menu
+					g.state = MAINMENU;
+					cerr << "g.state was changed to MAINMENU" << endl;
+					return 0;
 			}
 		}
 	}
@@ -330,6 +488,10 @@ void init_opengl(void)
     
 	glEnable(GL_TEXTURE_2D);
 	initialize_fonts();
+
+	// set initial game state
+	g.state = SPLASH;
+	g.substate = NONE;
 
 }
 
@@ -367,7 +529,7 @@ void render()
         splash_msg.left = splash_img.pos[0];
         splash_msg.center = 1;
 
-        ggprint8b(&splash_msg, 0, 0x00ffffff, "Splash Img Placeholder");
+        ggprint8b(&splash_msg, 0, 0x00ffff00, "Splash Img Placeholder");
 
 		/******************    END SPLASH IMAGE    ***************************/
 
@@ -380,10 +542,74 @@ void render()
 
 
 	} else if (g.state == MAINMENU) {
-		mm.draw();
+
+		// draw main menu
+		if (g.substate == NONE)
+		{
+			mm.draw();
+		} else if (g.substate == SETTINGS) {
+			Box settings_b;
+			settings_b.set_color(61, 90, 115);
+			glColor3ubv(settings_b.color);
+			settings_b.set_dim(100.0f, 100.0f);
+			settings_b.set_pos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+
+			glPushMatrix();
+			glTranslatef(settings_b.pos[0], settings_b.pos[1], settings_b.pos[2]);
+			glBegin(GL_QUADS);
+				glVertex2f(-settings_b.w, -settings_b.h);
+				glVertex2f(-settings_b.w,  settings_b.h);
+				glVertex2f( settings_b.w,  settings_b.h);
+				glVertex2f( settings_b.w, -settings_b.h);
+			glEnd();
+			glPopMatrix();
+
+			Rect settings_msg, esc_msg;
+			settings_msg.bot = settings_b.pos[1];
+			settings_msg.left = settings_b.pos[0];
+			settings_msg.center = 1;
+
+			esc_msg.bot = g.yres - 20;
+			esc_msg.left = 20;
+			esc_msg.center = 0;
+
+			ggprint8b(&settings_msg, 0, 0x00ffff00, "Splash Img Placeholder");
+			ggprint8b(&esc_msg, 0, 0x00ffff00, "Press Esc to go back");
+
+		}
+
 	} else if (g.state == GAME) {
+
+		// State Message
+		Rect game_msg, pause_msg;
+		game_msg.bot = (g.yres - 20);
+        game_msg.left = 20;
+        game_msg.center = 0;
+
+		pause_msg.bot = (g.yres - 30);
+        pause_msg.left = 20;
+        pause_msg.center = 0;
+
+        ggprint8b(&game_msg, 0, 0x00ffff00, "In Game State");
+		ggprint8b(&pause_msg, 0, 0x00ffff00, "Press Escape to Pause");
+
+
+		// draw score display
+
 	} else if (g.state == PAUSE) {
+
+		// State Message
+		Rect game_msg;
+		game_msg.bot = (g.yres - 20);
+        game_msg.left = 20;
+        game_msg.center = 0;
+
+        ggprint8b(&game_msg, 0, 0x00ffff00, "Paused");
+
+		pause_menu.draw();
+
 	} else if (g.state == GAMEOVER) {
+
 	}
 
 }
