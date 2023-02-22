@@ -1,5 +1,5 @@
 # add object files here and make a rule down below
-OBJECTS = cosmotost.o Box.o Global.o libggfonts.a mkausch.o
+OBJECTS = cosmotost.o Box.o Global.o libggfonts.a mkausch.o aparriott.o
 
 FLAGS =  -Wall -lX11 -lGL -lGLU -lm
 COMP = g++ -std=c++17 
@@ -24,8 +24,8 @@ mkausch.o: mkausch.cpp mkausch.h
 	$(COMP) -c mkausch.cpp
 
 # spawning complete, collisions need to be done
-Aparriott.o: Aparriott.cpp Aparriott.h
-	$(COMP) -c Aparriott.cpp
+aparriott.o: aparriott.cpp aparriott.h
+	$(COMP) -c aparriott.cpp
 
 clean:
 	rm -f cosmotost *.o
