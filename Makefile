@@ -7,7 +7,7 @@ COMP = g++ -std=c++17
 
 all: cosmotost
 
-cosmotost: cosmotost.o Box.o Global.o mkausch.o aparriott.o
+cosmotost: cosmotost.o Box.o Global.o mkausch.o aparriott.o dtorres.o
 	$(COMP) -o cosmotost $(OBJECTS) $(FLAGS)
 
 cosmotost.o: cosmotost.cpp
@@ -26,6 +26,10 @@ mkausch.o: mkausch.cpp mkausch.h
 # spawning complete, collisions need to be done
 aparriott.o: aparriott.cpp aparriott.h
 	$(COMP) -c aparriott.cpp
+
+# Empty files but development on bottom screen info soon
+dtorres.o: dtorres.cpp dtorres.h
+	$(COMP) -c dtorres.cpp
 
 clean:
 	rm -f cosmotost *.o
