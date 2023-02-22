@@ -4,6 +4,7 @@
 
 
 enum Gamestate { SPLASH, MAINMENU, GAME, PAUSE, GAMEOVER };
+enum Substate { NONE, ENTITY, SETTINGS };
 
 
 class Global {
@@ -12,6 +13,7 @@ public:
 // vars
 int xres, yres;
 Gamestate state;
+Substate substate;
 
 Global();
 
@@ -31,7 +33,11 @@ inline Box s_menu_bg;
 inline std::string mm_text[] = {"Start Game", 
                                 "High Scores", 
                                 "Settings", 
-                                "Quit",
-                                "Here",
-                                "More"};
-inline Menu mm(6, 120, 120, g.xres/2.0f, g.yres/2.0f, mm_text);
+                                "Quit"};
+inline Menu mm(4, 120, 120, g.xres/2.0f, g.yres/2.0f, mm_text);
+
+inline std::string p_text[] = {"Back to Game", 
+                                "Start Over", 
+                                "Main Menu",
+                                "Quit Game"};
+inline Menu pause_menu(4, 120, 120, g.xres/2.0f, g.yres/2.0f, p_text);

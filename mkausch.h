@@ -37,6 +37,8 @@ public:
     void set_bcolor(int r, int g, int b);   // sets boarder color
     void set_color(int r, int g, int b);   // sets mainbox color
     void set_pos(float x, float y, float z);
+    void set_highlight(Box * b);
+    void set_orig_color();
 
     // getters
     // unsigned char * get_tcolor();
