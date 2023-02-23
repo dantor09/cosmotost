@@ -577,7 +577,7 @@ void render()
 	} else if (g.state == GAME) {
 
 		// State Message
-		Rect game_msg, pause_msg;
+		Rect game_msg, pause_msg, e_state;
 		game_msg.bot = (g.yres - 20);
         game_msg.left = 20;
         game_msg.center = 0;
@@ -591,6 +591,13 @@ void render()
 
 
 		// draw score display
+		if (g.substate == ENTITY) {
+			e_state.bot = (g.yres - 40);
+			e_state.left = 20;
+			e_state.center = 0;
+
+			ggprint8b(&e_state, 0, 0x00ffff00, "In AILAND FEATURE MODE");
+		}
 
 	} else if (g.state == PAUSE) {
 
