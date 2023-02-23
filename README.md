@@ -8,6 +8,8 @@
     -- alternatively we can pass in a param on the command line 
 - HUD / scores at the bottom
 - Textures
+- Implement Time functionality 
+    - ctime or chrono library
 - Settings / select player
 - Audio
 - High scores / high score screen / associated php
