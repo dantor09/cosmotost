@@ -28,7 +28,7 @@ Global();
 
 
 inline Global g;
-inline Box s_menu_bg;
+// inline Box s_menu_bg;
 
 inline std::string mm_text[] = {"Start Game", 
                                 "High Scores", 
