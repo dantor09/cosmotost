@@ -27,6 +27,7 @@
 #include "Box.h"	// base box class
 #include "Global.h"	// global vars
 #include "mkausch.h"	// menu
+#include "aparriott.h"	// entity spawning
 
 using namespace std;
 
@@ -316,7 +317,8 @@ int X11_wrapper::check_mouse(XEvent *e)
 					prev_selection = nullptr;
 				} else if (selection && (selection->text == "Quit Game")) {
 					pause_menu.set_orig_color();
-					cerr << "g.state was changed to should be quitting..." << endl;
+					cerr << "g.state was changed to should be quitting..." << 
+							endl;
 					selection = nullptr;
 					prev_selection = nullptr;
 					return 1;
@@ -493,7 +495,64 @@ void init_opengl(void)
 
 void physics()
 {
+	if (g.state == GAME) {
+		// ENTITY PHYSICS
+		if (g.substate == ENTITY) {
+			// Spawnspeed determines how many ticks until spawning another 
+			// entity
+			if (e.spawnSpeed == 0) {
+				e.spawnSpeed = 6;
+				if (e.chainLen == 0) {
+					e.chainLen = e.randnum(4, 12);
+					e.curveRandX = e.randnum(-4, 0);
+					e.curveRandY = e.randnum(-4, 4);
+					e.enterloc = e.randnum(0, 3);
+					if (e.enterloc == 0) {
+						// makeEntity SPAWN FROM TOP, MOVES LEFT DOWNWARD
+						e.spawnX = e.randnum(g.xres / 2, g.xres);
+						e.spawnY = g.yres - 5;
+						e.spawnVelX = e.randnum(-8, -4);
+						e.spawnVelY = e.randnum(-8, 0);
+					} else if (e.enterloc <= 2) {
+						// makeEntity SPAWN FROM RIGHT, MOVES LEFT, RANDUM UP 
+						// AND DOWN
+						e.spawnX = g.xres;
+						e.spawnY = e.randnum(0, g.yres);
+						e.spawnVelX = e.randnum(-8, -4);
+						e.spawnVelY = e.randnum(-8, 8);
+					} else if (e.enterloc == 3) {
+						// makeEntity SPAWN FROM BOTTOM, MOVES LEFT AND UP
+						e.spawnX = e.randnum(g.xres / 2, g.xres);
+						e.spawnY = 5;
+						e.spawnVelX = e.randnum(-8, -4);
+						e.spawnVelY = e.randnum(0, 8);
+					}
+				}
+				e.makeEntity(e.spawnX, e.spawnY, e.spawnVelX, e.spawnVelY, 
+							e.curveRandX, e.curveRandY);
+				e.chainLen--;
+			}
+			e.spawnSpeed--;
 
+			for (int i = 0; i < e.numEnt; i++) {
+				entity[i].pos[0] += entity[i].vel[0]/2;
+				entity[i].pos[1] += entity[i].vel[1]/2;
+				entity[i].vel[0] += entity[i].curve[0] / 32;
+				entity[i].vel[1] += entity[i].curve[1] / 32;
+				// DESPAWN
+				if (entity[i].pos[1] < -4 || 
+						entity[i].pos[1] > g.yres + 4 ||
+						entity[i].pos[0] < -4) {	
+					entity[i] = entity[--e.numEnt];
+				}
+				// BOUNCE
+				if (entity[i].pos[1] <= 4 ||
+						entity[i].pos[1] >= g.yres - 4) {			
+					entity[i].vel[1] = -entity[i].vel[1];
+				}
+			}
+		}
+	}
 }
 
 void render()
@@ -574,8 +633,7 @@ void render()
 
 		}
 
-	} else if (g.state == GAME) {
-
+	} else if (g.state == GAME || g.state == PAUSE ) {
 		// State Message
 		Rect game_msg, pause_msg;
 		game_msg.bot = (g.yres - 20);
@@ -589,10 +647,31 @@ void render()
         ggprint8b(&game_msg, 0, 0x00ffff00, "In Game State");
 		ggprint8b(&pause_msg, 0, 0x00ffff00, "Press Escape to Pause");
 
+		// ENTITY RENDER
+		if (g.substate == ENTITY || g.state == PAUSE) {
+			game_msg.left = 120;
+			ggprint8b(&game_msg, 0, 0x00ffff00, "ENTITY");
+			for (int i = 0; i < e.numEnt; i++) {
+				glPushMatrix();
+				glColor3ubv(entity[i].color);
+				glTranslatef(entity[i].pos[0], entity[i].pos[1], 0.0f);
+				glBegin(GL_QUADS);
+					glVertex2f(-entity[i].dim[0], -entity[i].dim[1]);
+					glVertex2f(-entity[i].dim[0],  entity[i].dim[1]);
+					glVertex2f( entity[i].dim[0],  entity[i].dim[1]);
+					glVertex2f( entity[i].dim[0], -entity[i].dim[1]);
+				glEnd();
+				glPopMatrix();
+			}
+		}
 
-		// draw score display
+	} else if (g.state == GAMEOVER) {
 
-	} else if (g.state == PAUSE) {
+	}
+
+	// (A) - REMOVED PAUSE FROM IF ELSE STATEMENTS TO ALLOW GAME TO RENDER
+	// ENTITES. SEE ELSEIF GAME TO SEE WHAT I MEAN
+	if (g.state == PAUSE) {
 
 		// State Message
 		Rect game_msg;
@@ -604,9 +683,8 @@ void render()
 
 		pause_menu.draw();
 
-	} else if (g.state == GAMEOVER) {
+	} 
 
-	}
 
 }
 
