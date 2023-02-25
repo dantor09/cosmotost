@@ -15,9 +15,14 @@ public:
 int xres, yres;
 Gamestate state;
 Substate substate;
-
+int n_Bullet;
+// how may bread(enamy) we have
+int n_Bread;
+int BreadCD=30;
+int BulletCD=5;
+char keys[65536];
 Global();
-
+~Global();
 };
 
 
