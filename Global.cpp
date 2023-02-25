@@ -2,6 +2,6 @@
 
 Global::Global()
 {
-	xres = 640;
-	yres = 480;
+	xres = 1280;
+	yres = 720;
 }
