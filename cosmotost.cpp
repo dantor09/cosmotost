@@ -368,14 +368,12 @@ int X11_wrapper::check_keys(XEvent *e)
 		g.keys[key1] = 0;
 		// if (key == XK_Shift_L || key == XK_Shift_R)
 		// 	shift = 0;
-		return 0;
 	}
 	if (e->type == KeyPress) {
 		//std::cout << "press" << std::endl;
 		g.keys[key1]=1;
 		// if (key == XK_Shift_L || key == XK_Shift_R) {
 		// 	shift = 1;
-			return 0;
 	}
 
 	if (g.state == SPLASH) {
