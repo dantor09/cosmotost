@@ -105,7 +105,7 @@ X11_wrapper::X11_wrapper()
 	if (vi == NULL) {
 		cout << "\n\tno appropriate visual found\n" << endl;
 		exit(EXIT_FAILURE);
-	} 
+	}
 	Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
 	XSetWindowAttributes swa;
 	swa.colormap = cmap;
@@ -120,7 +120,7 @@ X11_wrapper::X11_wrapper()
 	glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
 	glXMakeCurrent(dpy, win, glc);
 
-	
+
 }
 
 void X11_wrapper::set_title()
@@ -189,7 +189,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 	// do nothing with mouse at splash screen
 	if (g.state == SPLASH) {
-		
+
 	} else if (g.state == MAINMENU) {
 		//Weed out non-mouse events
 		if (e->type != ButtonRelease &&
@@ -241,7 +241,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 				return 0;
 			}
 		}
-		// look and see 
+		// look and see
 		if (e->type == MotionNotify) {
 			//The mouse moved!
 			if (savex != e->xbutton.x || savey != e->xbutton.y) {
@@ -249,7 +249,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 				savey = e->xbutton.y;
 				//Code placed here will execute whenever the mouse moves.
 
-				// need to send in flipped y coord because window and 
+				// need to send in flipped y coord because window and
 				// mouse coords have different origins
 				selection = mm.check_t_box(savex, g.yres - savey);
 
@@ -279,7 +279,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 		//          -- and make it blink on the button press?
 		if (e->type == ButtonRelease) {
 			return 0;
-		} 
+		}
 		if (e->type == ButtonPress) {
 			if (e->xbutton.button==1) {
 				//Left button was pressed.
@@ -300,7 +300,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					pause_menu.set_orig_color();
 					g.state = MAINMENU;
 					g.state = GAME;
-					cerr << "g.state was changed back to GAME (RESET SEQUENCE)" 
+					cerr << "g.state was changed back to GAME (RESET SEQUENCE)"
 							<< endl;
 					selection = nullptr;
 					prev_selection = nullptr;
@@ -313,7 +313,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					prev_selection = nullptr;
 				} else if (selection && (selection->text == "Quit Game")) {
 					pause_menu.set_orig_color();
-					cerr << "g.state was changed to should be quitting..." << 
+					cerr << "g.state was changed to should be quitting..." <<
 							endl;
 					selection = nullptr;
 					prev_selection = nullptr;
@@ -334,7 +334,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 				savey = e->xbutton.y;
 				//Code placed here will execute whenever the mouse moves.
 
-				// need to send in flipped y coord because window and 
+				// need to send in flipped y coord because window and
 				// mouse coords have different origins
 				selection = pause_menu.check_t_box(savex, g.yres - savey);
 
@@ -348,14 +348,14 @@ int X11_wrapper::check_mouse(XEvent *e)
 					// was previously on something and now it's not
 					pause_menu.set_orig_color();
 					prev_selection = nullptr;
-				
+
 				}
 			}
 		}
-		
+
 	}
 	return 0;
-	
+
 }
 
 int X11_wrapper::check_keys(XEvent *e)
@@ -368,7 +368,7 @@ int X11_wrapper::check_keys(XEvent *e)
 
 		// only functional keys are escape to quickly quit game and enter
 		// to advance to main menu
-		if (e->type == KeyPress) { 
+		if (e->type == KeyPress) {
 			switch (key) {
 				case XK_Return:
 					// Enter was pressed
@@ -385,7 +385,7 @@ int X11_wrapper::check_keys(XEvent *e)
 		//     	e: enter Ailand's Entity State
 		// Escape: Pauses the game
 	} else if ((g.state == MAINMENU) && (g.substate == SETTINGS)) {
-		if (e->type == KeyPress) { 
+		if (e->type == KeyPress) {
 			switch (key) {
 				case XK_Escape:	// go back to main menu
 					//Escape key was pressed
@@ -403,7 +403,7 @@ int X11_wrapper::check_keys(XEvent *e)
 		// 		Escape: Leave Pause Menu
 		// *** Should be waiting for mouse input on the menu ***
 	} else if (g.state == GAME) {
-		if (e->type == KeyPress) { 
+		if (e->type == KeyPress) {
 			switch (key) {
 				case XK_e: // e was pressed - toggle Ailand's Entity State
 					if (g.substate == NONE) {
@@ -427,7 +427,7 @@ int X11_wrapper::check_keys(XEvent *e)
 		// 		Escape: Leave Pause Menu
 		// *** Should be waiting for mouse input on the menu ***
 	} else if (g.state == PAUSE) {
-		if (e->type == KeyPress) { 
+		if (e->type == KeyPress) {
 			switch (key) {
 				case XK_Escape:
 					//Escape key was pressed
@@ -477,9 +477,9 @@ void init_opengl(void)
 	glOrtho(0, g.xres, 0, g.yres, -1, 1);
 	//Set the screen background color
     // makes it almost black
-	
+
     // initialize fonts
-    
+
 	glEnable(GL_TEXTURE_2D);
 	initialize_fonts();
 
@@ -494,7 +494,7 @@ void physics()
 	if (g.state == GAME) {
 		// ENTITY PHYSICS
 		if (g.substate == ENTITY) {
-			// Spawnspeed determines how many ticks until spawning another 
+			// Spawnspeed determines how many ticks until spawning another
 			// entity
 			if (e.spawnSpeed == 0) {
 				e.spawnSpeed = 6;
@@ -510,7 +510,7 @@ void physics()
 						e.spawnVelX = e.randnum(-8, -4);
 						e.spawnVelY = e.randnum(-8, 0);
 					} else if (e.enterloc <= 2) {
-						// makeEntity SPAWN FROM RIGHT, MOVES LEFT, RANDUM UP 
+						// makeEntity SPAWN FROM RIGHT, MOVES LEFT, RANDUM UP
 						// AND DOWN
 						e.spawnX = g.xres;
 						e.spawnY = e.randnum(0, g.yres);
@@ -524,7 +524,7 @@ void physics()
 						e.spawnVelY = e.randnum(0, 8);
 					}
 				}
-				e.makeEntity(e.spawnX, e.spawnY, e.spawnVelX, e.spawnVelY, 
+				e.makeEntity(e.spawnX, e.spawnY, e.spawnVelX, e.spawnVelY,
 							e.curveRandX, e.curveRandY);
 				e.chainLen--;
 			}
@@ -536,18 +536,58 @@ void physics()
 				entity[i].vel[0] += entity[i].curve[0] / 32;
 				entity[i].vel[1] += entity[i].curve[1] / 32;
 				// DESPAWN
-				if (entity[i].pos[1] < -4 || 
+				if (entity[i].pos[1] < -4 ||
 						entity[i].pos[1] > g.yres + 4 ||
-						entity[i].pos[0] < -4) {	
+						entity[i].pos[0] < -4) {
 					entity[i] = entity[--e.numEnt];
 				}
 				// BOUNCE
 				if (entity[i].pos[1] <= 4 ||
-						entity[i].pos[1] >= g.yres - 4) {			
+						entity[i].pos[1] >= g.yres - 4) {
 					entity[i].vel[1] = -entity[i].vel[1];
 				}
 			}
 		}
+		else() {
+				// cout << tos.pos[0] << endl;
+				// move of toaster
+				tos.MoveToster();
+				// move of all bullet
+				for (int i=0; i < g.n_Bullet; i++) {
+					if (bul[i].ScreenOut()) bul[i] = bul[--g.n_Bullet];
+					bul[i].MoveBullet();
+				}
+				//move of all bread and check collison with bullet and Toaster
+				for (int i=0; i < g.n_Bread; i++) {
+					if (bread[i].ScreenOut()) bread[i] = bread[--g.n_Bread];
+					// ckeak if collison with toaster
+					if (bread[i].Collison(tos)) {
+							g.state == GAMEOVER;
+							break;
+					}
+					// ckeak if collison with bullet
+					for (int j=0; j < g.n_Bullet; j++) {
+							if (bread[i].Collison(bul[j])){
+									tos.score += bread[i].point;
+									bread[i] = bread[--g.n_Bread];
+									bul[j] = bul[--g.n_Bullet];
+							}
+					}
+					bread[i].MoveBread();
+				}
+				// time stuff/ change when timer finish
+				// for bullet
+				if (g.BulletCD > 0) g.BulletCD--;
+				else g.BulletCD=5;
+				// auto create bread
+				if (g.BreadCD > 0) g.BreadCD--;
+				else {
+					g.BreadCD=30;
+					float alp=(((float)rand()) / (float)RAND_MAX);
+					make_Bread(g.xres,alp*g.yres,0.0,1,1);
+				}
+		}
+
 	}
 }
 
@@ -631,7 +671,9 @@ void render()
 
 	} else if (g.state == GAME || g.state == PAUSE ) {
 		// State Message
-		Rect game_msg, pause_msg, e_state;
+		Rect game_msg, pause_msg, e_state, score;
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		game_msg.bot = (g.yres - 20);
         game_msg.left = 20;
         game_msg.center = 0;
@@ -640,9 +682,24 @@ void render()
         pause_msg.left = 20;
         pause_msg.center = 0;
 
+		score.bot = g.yres-20;
+				score.left = g.xres - 40;
+				score.center = 0;
+
+
         ggprint8b(&game_msg, 0, 0x00ffff00, "In Game State");
 		ggprint8b(&pause_msg, 0, 0x00ffff00, "Press Escape to Pause");
+		ggprint8b(&score, 100, 0x00DC143C, "Score");
 
+
+		// draw Toaster bullet and bread
+		tos.draw();
+		for (int i=0; i < g.n_Bullet; i++) {
+				bul[i].draw();
+		}
+		for (int i=0; i < g.n_Bread; i++) {
+			bread[i].draw();
+	  }
 		// ENTITY RENDER
 		if (g.substate == ENTITY || g.state == PAUSE) {
 			game_msg.left = 120;
@@ -679,13 +736,7 @@ void render()
 
 		pause_menu.draw();
 
-	} 
+	}
 
 
 }
-
-
-
-
-
-
