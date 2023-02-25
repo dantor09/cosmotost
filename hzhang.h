@@ -5,6 +5,7 @@
 // #include "Global.h"
 #include <GL/glx.h>
 #include <iostream>
+#include <cstring>
 #include <new>
 #include <sstream>
 #include "fonts.h"
