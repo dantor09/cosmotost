@@ -187,13 +187,9 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 	static unsigned char * prev_color;
 
-	
-
 	// do nothing with mouse at splash screen
 	if (g.state == SPLASH) {
 		
-
-
 	} else if (g.state == MAINMENU) {
 		//Weed out non-mouse events
 		if (e->type != ButtonRelease &&
@@ -665,19 +661,8 @@ void render()
 			}
 		}
 
-<<<<<<< HEAD
 	} else if (g.state == GAMEOVER) {
-=======
 		// draw score display
-		if (g.substate == ENTITY) {
-			e_state.bot = (g.yres - 40);
-			e_state.left = 20;
-			e_state.center = 0;
-
-			ggprint8b(&e_state, 0, 0x00ffff00, "In AILAND FEATURE MODE");
-		}
->>>>>>> b086d42497f31c11ff26ddf75c36a91df8f4666c
-
 	}
 
 	// (A) - REMOVED PAUSE FROM IF ELSE STATEMENTS TO ALLOW GAME TO RENDER
