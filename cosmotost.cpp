@@ -548,45 +548,45 @@ void physics()
 				}
 			}
 		}
-		else() {
-				// cout << tos.pos[0] << endl;
-				// move of toaster
-				tos.MoveToster();
-				// move of all bullet
-				for (int i=0; i < g.n_Bullet; i++) {
-					if (bul[i].ScreenOut()) bul[i] = bul[--g.n_Bullet];
-					bul[i].MoveBullet();
-				}
-				//move of all bread and check collison with bullet and Toaster
-				for (int i=0; i < g.n_Bread; i++) {
-					if (bread[i].ScreenOut()) bread[i] = bread[--g.n_Bread];
-					// ckeak if collison with toaster
-					if (bread[i].Collison(tos)) {
-							g.state == GAMEOVER;
-							break;
-					}
-					// ckeak if collison with bullet
-					for (int j=0; j < g.n_Bullet; j++) {
-							if (bread[i].Collison(bul[j])){
-									tos.score += bread[i].point;
-									bread[i] = bread[--g.n_Bread];
-									bul[j] = bul[--g.n_Bullet];
-							}
-					}
-					bread[i].MoveBread();
-				}
-				// time stuff/ change when timer finish
-				// for bullet
-				if (g.BulletCD > 0) g.BulletCD--;
-				else g.BulletCD=5;
-				// auto create bread
-				if (g.BreadCD > 0) g.BreadCD--;
-				else {
-					g.BreadCD=30;
-					float alp=(((float)rand()) / (float)RAND_MAX);
-					make_Bread(g.xres,alp*g.yres,0.0,1,1);
-				}
+
+		// cout << tos.pos[0] << endl;
+		// move of toaster
+		tos.MoveToster();
+		// move of all bullet
+		for (int i=0; i < g.n_Bullet; i++) {
+			if (bul[i].ScreenOut()) bul[i] = bul[--g.n_Bullet];
+			bul[i].MoveBullet();
 		}
+		//move of all bread and check collison with bullet and Toaster
+		for (int i=0; i < g.n_Bread; i++) {
+			if (bread[i].ScreenOut()) bread[i] = bread[--g.n_Bread];
+			// ckeak if collison with toaster
+			if (bread[i].Collison(tos)) {
+					g.state == GAMEOVER;
+					break;
+			}
+			// ckeak if collison with bullet
+			for (int j=0; j < g.n_Bullet; j++) {
+					if (bread[i].Collison(bul[j])){
+							tos.score += bread[i].point;
+							bread[i] = bread[--g.n_Bread];
+							bul[j] = bul[--g.n_Bullet];
+					}
+			}
+			bread[i].MoveBread();
+		}
+		// time stuff/ change when timer finish
+		// for bullet
+		if (g.BulletCD > 0) g.BulletCD--;
+		else g.BulletCD=5;
+		// auto create bread
+		if (g.BreadCD > 0) g.BreadCD--;
+		else {
+			g.BreadCD=30;
+			float alp=(((float)rand()) / (float)RAND_MAX);
+			make_Bread(g.xres,alp*g.yres,0.0,1,1);
+		}
+
 
 	}
 }
