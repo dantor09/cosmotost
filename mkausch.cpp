@@ -3,11 +3,13 @@
 *		Program: mkausch.cpp
 *		Authors: Michael Kausch (Group 1 - DAHM)
 *		Date Code Originated: 2/17/23
-*
-*       Classes: Manu
+***********************************************************************/
+
+/***************************************************************************
+*       Classes: Menu
 *       Uses:
 *           Creates a menu object based on num text params, size and position
-**********************************************************************/
+******************************************************************************/
 
 //                 		INCLUDES
 
@@ -19,7 +21,7 @@
 #define BSIZE 5
 #define PADDING 20
 
-// Constructors
+
 
 Menu::Menu(unsigned int _n_texts, 
             float w, float h, 
@@ -228,11 +230,6 @@ void Menu::set_pos(float x, float y, float z)
     pos[2] = z;
 }
 
-// unsigned char * Box::get_tcolor(Box & b)
-// {
-//     return b.color;
-// }
-
 std::string Menu::get_info()
 {
     std::ostringstream temp;
@@ -240,6 +237,50 @@ std::string Menu::get_info()
 
     return temp.str();
 }
+
+
+/***************************************************************************
+*       Class: Timer
+*       Uses:
+*           Creates a Timer object with duration based on input
+******************************************************************************/
+
+Timer::Timer(double s) : duration(s)
+{
+    // set starting time
+    start = std::chrono::system_clock::now();
+}
+
+// ~Timer();
+
+/****************************** Setters *************************************/
+
+// resets timer to current time
+void Timer::reset()
+{
+    start = std::chrono::system_clock::now();
+}
+
+/****************************** Getters *************************************/
+
+// returns time that has elapsed since the start of the timer 
+double Timer::getTime()
+{
+    std::chrono::duration<double> elapsed = std::chrono::system_clock::now() - start;
+    return elapsed.count();
+}
+
+// checks if the timer has elapsed
+// true if the timer has finished
+// false if the timer hasn't
+bool Timer::isDone()
+{
+    return (getTime() > duration);
+}
+
+
+
+
 
 /*
                 Color Scheme

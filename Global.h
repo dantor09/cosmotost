@@ -8,8 +8,10 @@ enum Gamestate { SPLASH, MAINMENU, GAME, PAUSE, GAMEOVER };
 enum Substate { NONE, ENTITY, SETTINGS };
 
 
+
 class Global {
 public:
+
 
 // vars
 int xres, yres;
@@ -21,10 +23,15 @@ int n_Bread;
 int BreadCD=30;
 int BulletCD=5;
 char keys[65536];
+
+
+
+
+
 Global();
 ~Global();
-};
 
+};
 
 
 

@@ -16,6 +16,7 @@
 #include <iostream>
 #include <new>
 #include <sstream>
+#include <chrono>
 
 #include "Box.h"
 #include "fonts.h"
@@ -65,5 +66,27 @@ public:
 
 } ;
 
+class Timer
+{
 
+private:
+
+// variables
+std::chrono::time_point<std::chrono::system_clock> start;
+double duration;
+
+public:
+
+
+Timer(double s);
+// ~Timer();
+
+// setters
+void reset();
+
+// getters
+double getTime();
+bool isDone();
+
+};
 

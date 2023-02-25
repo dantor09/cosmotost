@@ -4,6 +4,7 @@
 
 # Executables
 cosmotost
+a.out
 
 # Any logs or txt files
 *.txt
