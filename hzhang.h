@@ -71,7 +71,7 @@ class Toaster: public Item
       // draw toaster
       // void draw();
       void MoveToster();
-      string PrintScore();
+      // string PrintScore();
 
 } ;
 
