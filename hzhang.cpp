@@ -132,11 +132,11 @@ void Toaster::MoveToster()
 			}
   }
 }
-string Toaster::PrintScore() {
-    ostringstream temp;
-    temp << "Score : " << score << endl;
-  return temp.str();
-}
+// string Toaster::PrintScore() {
+//     ostringstream temp;
+//     temp << "Score : " << score << endl;
+//   return temp.str();
+// }
 
 Bullet::Bullet() {
     item_type = 41;
