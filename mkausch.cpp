@@ -245,13 +245,24 @@ std::string Menu::get_info()
 *           Creates a Timer object with duration based on input
 ******************************************************************************/
 
-Timer::Timer(double s) : duration(s)
-{
-    // set starting time
+Timer::Timer() : duration(-1), pause_duration(0.00), 
+                pause_timer(nullptr), paused(false)
+{    // set starting time
     start = std::chrono::system_clock::now();
 }
 
-// ~Timer();
+Timer::Timer(double s) : duration(s), pause_duration(0.00), 
+                pause_timer(nullptr), paused(false)
+{    // set starting time
+    start = std::chrono::system_clock::now();
+}
+
+// delete pause timer if it were active
+Timer::~Timer()
+{
+    if (pause_timer)
+        delete pause_timer;
+}
 
 /****************************** Setters *************************************/
 
@@ -266,8 +277,18 @@ void Timer::reset()
 // returns time that has elapsed since the start of the timer 
 double Timer::getTime()
 {
-    std::chrono::duration<double> elapsed = std::chrono::system_clock::now() - start;
-    return elapsed.count();
+    double net_time = 0;
+    std::chrono::duration<double> total_elapsed = std::chrono::system_clock::now() - start;
+
+    if (paused)
+    {
+        net_time = (total_elapsed.count() - pause_duration - pause_timer->getTime());
+    } else {
+        net_time = (total_elapsed.count()-pause_duration);
+    }
+
+    return net_time;
+
 }
 
 // checks if the timer has elapsed
@@ -275,9 +296,30 @@ double Timer::getTime()
 // false if the timer hasn't
 bool Timer::isDone()
 {
-    return (getTime() > duration);
+    if (duration == -1) {   // return false for count up timers
+        return false;
+    } else {    // return net time for countdown timers
+        return (getTime() > duration);  
+    }   
 }
 
+void Timer::pause()
+{
+    paused = true;
+    pause_timer = new Timer();
+}
+
+bool Timer::isPaused()
+{
+    return paused;
+}
+
+void Timer::unPause()
+{
+    paused = false;
+    pause_duration += pause_timer->getTime();
+    delete pause_timer;
+}
 
 
 

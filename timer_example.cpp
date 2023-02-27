@@ -2,7 +2,7 @@
 #include <chrono>
 #include <iomanip>
 
-
+using namespace std;
 /***************************************************************************
 *       Class: Timer
 *       Uses:
@@ -18,28 +18,50 @@ private:
 std::chrono::time_point<std::chrono::system_clock> start;
 double duration;
 
+bool paused;
+Timer * pause_timer;
+double pause_duration;
+
 public:
 
-
-Timer(double s);
-// ~Timer();
+Timer();    // used to create a timer that counts up or dc about it expiring
+            // note: the isDone() function is pretty useless and you should
+            //      be looking at getTime to see how long the timer has gone
+            //      for
+Timer(double s);    // used to create a timer that counts down and will tell
+                    // you if it expires
+~Timer();
 
 // setters
 void reset();
+void pause();
+void unPause();
 
 // getters
 double getTime();
 bool isDone();
+bool isPaused();
 
 };
 
-Timer::Timer(double s) : duration(s)
-{
-    // set starting time
+Timer::Timer() : duration(-1), pause_duration(0.00), 
+                pause_timer(nullptr), paused(false)
+{    // set starting time
     start = std::chrono::system_clock::now();
 }
 
-// ~Timer();
+Timer::Timer(double s) : duration(s), pause_duration(0.00), 
+                pause_timer(nullptr), paused(false)
+{    // set starting time
+    start = std::chrono::system_clock::now();
+}
+
+// delete pause timer if it were active
+Timer::~Timer()
+{
+    if (pause_timer)
+        delete pause_timer;
+}
 
 /****************************** Setters *************************************/
 
@@ -54,8 +76,18 @@ void Timer::reset()
 // returns time that has elapsed since the start of the timer 
 double Timer::getTime()
 {
-    std::chrono::duration<double> elapsed = std::chrono::system_clock::now() - start;
-    return elapsed.count();
+    double net_time = 0;
+    std::chrono::duration<double> total_elapsed = std::chrono::system_clock::now() - start;
+
+    if (paused)
+    {
+        net_time = (total_elapsed.count() - pause_duration - pause_timer->getTime());
+    } else {
+        net_time = (total_elapsed.count()-pause_duration);
+    }
+
+    return net_time;
+
 }
 
 // checks if the timer has elapsed
@@ -63,7 +95,29 @@ double Timer::getTime()
 // false if the timer hasn't
 bool Timer::isDone()
 {
-    return (getTime() > duration);
+    if (duration == -1) {   // return false for count up timers
+        return false;
+    } else {    // return net time for countdown timers
+        return (getTime() > duration);  
+    }   
+}
+
+void Timer::pause()
+{
+    paused = true;
+    pause_timer = new Timer();
+}
+
+bool Timer::isPaused()
+{
+    return paused;
+}
+
+void Timer::unPause()
+{
+    paused = false;
+    pause_duration += pause_timer->getTime();
+    delete pause_timer;
 }
 
 
@@ -79,20 +133,36 @@ while (!t1.isDone())    // check if timer has elapsed from start time
 }
 ****************************** Usage ***************************************/
 
+void pause_wrapper(Timer * t)
+{
+
+}
+
 int main()
 {
-    Timer * gameTime = new Timer(10);
+    Timer * gameTime = new Timer(20);
+    int num;
 
-    while (!gameTime->isDone()) {   // displays time every 10th of a second
-        if (static_cast<int>(gameTime->getTime()*1000000) % 100000 == 0)
-            std::cout << std::showpoint << std::setprecision(3) 
-            << gameTime->getTime() << " Timer up? " 
-            << std::boolalpha << gameTime->isDone() 
-            <<  std::endl;
+    while (!gameTime->isDone()) {  
+        
+        if (cin.get()) {
+            if (!gameTime->isPaused()) {
+                gameTime->pause();
+                cout << "Timer paused @ " << showpoint << setprecision(3) 
+                        << gameTime->getTime() << endl;
+                cout << "\tIs Timer done? " << boolalpha << gameTime->isDone() << endl;
+            } else if (gameTime->isPaused()) {
+                gameTime->unPause();
+                cout << "Timer unpaused @ " << showpoint << setprecision(3) 
+                        << gameTime->getTime() << endl;
+                cout << "\tIs Timer done? " << boolalpha << gameTime->isDone() << endl;
+            }
+
+        }
+
     }
 
-    if (static_cast<int>(gameTime->getTime()*1000000) % 100000 == 0)
-            std::cout << std::showpoint << std::setprecision(2) 
+    std::cout << std::showpoint << std::setprecision(2) 
             << gameTime->getTime() << " Timer up? " 
             << std::boolalpha << gameTime->isDone() 
             <<  std::endl;

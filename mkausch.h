@@ -75,18 +75,29 @@ private:
 std::chrono::time_point<std::chrono::system_clock> start;
 double duration;
 
+bool paused;
+Timer * pause_timer;
+double pause_duration;
+
 public:
 
-
-Timer(double s);
-// ~Timer();
+Timer();    // used to create a timer that counts up or dc about it expiring
+            // note: the isDone() function is pretty useless and you should
+            //      be looking at getTime to see how long the timer has gone
+            //      for
+Timer(double s);    // used to create a timer that counts down and will tell
+                    // you if it expires
+~Timer();
 
 // setters
 void reset();
+void pause();
+void unPause();
 
 // getters
 double getTime();
 bool isDone();
+bool isPaused();
 
 };
 
