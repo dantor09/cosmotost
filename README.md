@@ -3,20 +3,31 @@
 
 ### TODO:
 
-###Short Term
+### Short Term
 - Implement a logging system
     -- #define debug mode && cerr will work fine
     -- alternatively we can pass in a param on the command line 
-- Implement Time functionality 
-    - ctime or chrono library
 - Lives
 - Settings / select player
     - difficulty modes
     - character choice
     - music
-- Help menu - press F1 to expand help screen to all key options
+- reset game / all vars when reset button/ main menu hit from pause
+- collission on "entity" enemy
+- naming convention for enemies
+- Create / Draw Game clock using Timer class
 
-###Longer Term
+#### In Progress:
+
+
+#### Done:
+- Help menu - press F1 to expand help screen to all key options (mike)
+- Implement Time functionality (mike)
+    - chrono library
+
+    
+
+### Longer Term
 
 - HUD / scores at the bottom
 - Textures

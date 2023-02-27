@@ -5,7 +5,7 @@
 #include <cstring>
 
 enum Gamestate { SPLASH, MAINMENU, GAME, PAUSE, GAMEOVER };
-enum Substate { NONE, ENTITY, SETTINGS };
+enum Substate { NONE, ENTITY, SETTINGS, DTORRES, HUAIYU, MIKE };
 
 
 
@@ -23,6 +23,7 @@ int n_Bread;
 int BreadCD=30;
 int BulletCD=5;
 char keys[65536];
+bool show_help_menu;
 
 
 
@@ -47,13 +48,13 @@ inline std::string mm_text[] = {"Start Game",
                                 "High Scores",
                                 "Settings",
                                 "Quit"};
-inline Menu mm(4, 120, 120, g.xres/2.0f, g.yres/2.0f, mm_text);
+inline Menu mm(4, 225, 225, g.xres/2.0f, g.yres/2.0f, mm_text);
 
 inline std::string p_text[] = {"Back to Game",
                                 "Start Over",
                                 "Main Menu",
                                 "Quit Game"};
-inline Menu pause_menu(4, 120, 120, g.xres/2.0f, g.yres/2.0f, p_text);
+inline Menu pause_menu(4, 225, 225, g.xres/2.0f, g.yres/2.0f, p_text);
 
 
 // Huaiyu veribles================================

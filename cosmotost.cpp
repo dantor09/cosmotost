@@ -172,7 +172,7 @@ void X11_wrapper::check_resize(XEvent *e)
 		//Window size did change.
 
 		reshape_window(xce.width, xce.height);
-		// reshape_window(g.xres, g.yres);	// force game to be 600x800 - test
+		// reshape_window(g.xres, g.yres);	// force game to be same size - test
 
 	}
 }
@@ -394,7 +394,7 @@ int X11_wrapper::check_keys(XEvent *e)
 		}
 		// Game State
 		// only functional keys are:
-		//     	e: enter Ailand's Entity State
+		//     	p: enter Ailand's Entity State
 		// Escape: Pauses the game
 	} else if ((g.state == MAINMENU) && (g.substate == SETTINGS)) {
 		if (e->type == KeyPress) {
@@ -417,11 +417,38 @@ int X11_wrapper::check_keys(XEvent *e)
 	} else if (g.state == GAME) {
 		if (e->type == KeyPress) {
 			switch (key) {
-				case XK_e: // e was pressed - toggle Ailand's Entity State
+				case XK_p: // p was pressed - toggle Ailand's Entity State
 					if (g.substate == NONE) {
 						g.substate = ENTITY;
 						cerr << "g.substate was changed to ENTITY\n";
 					} else if (g.substate == ENTITY) {
+						g.substate = NONE;
+						cerr << "g.substate was changed back to NONE\n";
+					}
+					return 0;
+				case XK_t: // t was pressed - toggle Dan's Feature Mode
+					if (g.substate == NONE) {
+						g.substate = DTORRES;
+						cerr << "g.substate was changed to DTORRES\n";
+					} else if (g.substate == DTORRES) {
+						g.substate = NONE;
+						cerr << "g.substate was changed back to NONE\n";
+					}
+					return 0;
+				case XK_h: // h was pressed - toggle Huaiyu's Feature Mode
+					if (g.substate == NONE) {
+						g.substate = HUAIYU;
+						cerr << "g.substate was changed to HUAIYU\n";
+					} else if (g.substate == HUAIYU) {
+						g.substate = NONE;
+						cerr << "g.substate was changed back to NONE\n";
+					}
+					return 0;
+				case XK_k: // t was pressed - toggle Dan's Feature Mode
+					if (g.substate == NONE) {
+						g.substate = MIKE;
+						cerr << "g.substate was changed to MIKE\n";
+					} else if (g.substate == MIKE) {
 						g.substate = NONE;
 						cerr << "g.substate was changed back to NONE\n";
 					}
@@ -431,6 +458,10 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Enter Pause State
 					g.state = PAUSE;
 					cerr << "g.state was changed to PAUSE" << endl;
+					return 0;
+				case XK_F1:	// Toggle Help Menu
+					g.show_help_menu = (g.show_help_menu ? false : true);
+					cerr << "g.show_help_menu was toggled" << endl;
 					return 0;
 			}
 		}
@@ -608,6 +639,7 @@ void render()
 	glClearColor(24.0/255, 38.0/255, 37.0/255, 1.0);	// clear it to a bluish
 	glClear(GL_COLOR_BUFFER_BIT);	// clear screen
 
+
 	if (g.state == SPLASH) {
 		Box splash_img;
 		splash_img.set_color(61, 90, 115);
@@ -667,41 +699,19 @@ void render()
 			glEnd();
 			glPopMatrix();
 
-			Rect settings_msg, esc_msg;
+			Rect settings_msg;
 			settings_msg.bot = settings_b.pos[1];
 			settings_msg.left = settings_b.pos[0];
 			settings_msg.center = 1;
 
-			esc_msg.bot = g.yres - 20;
-			esc_msg.left = 20;
-			esc_msg.center = 0;
-
-			ggprint8b(&settings_msg, 0, 0x00ffff00, "Splash Img Placeholder");
-			ggprint8b(&esc_msg, 0, 0x00ffff00, "Press Esc to go back");
+			ggprint8b(&settings_msg, 0, 0x00ffff00, "Settings Img Placeholder");
+			
 
 		}
 
 	} else if (g.state == GAME || g.state == PAUSE ) {
 		// State Message
-		Rect game_msg, pause_msg, e_state, score;
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		game_msg.bot = (g.yres - 20);
-        game_msg.left = 20;
-        game_msg.center = 0;
-
-		pause_msg.bot = (g.yres - 30);
-        pause_msg.left = 20;
-        pause_msg.center = 0;
-
-		score.bot = g.yres-20;
-				score.left = g.xres - 40;
-				score.center = 0;
-
-
-        ggprint8b(&game_msg, 0, 0x00ffff00, "In Game State");
-		ggprint8b(&pause_msg, 0, 0x00ffff00, "Press Escape to Pause");
-		ggprint8b(&score, 100, 0x00DC143C, "Score");
+		
 
 
 		// draw Toaster bullet and bread
@@ -714,8 +724,7 @@ void render()
 	  }
 		// ENTITY RENDER
 		if (g.substate == ENTITY || g.state == PAUSE) {
-			game_msg.left = 120;
-			ggprint8b(&game_msg, 0, 0x00ffff00, "ENTITY");
+			
 			for (int i = 0; i < e.numEnt; i++) {
 				glPushMatrix();
 				glColor3ubv(entity[i].color);
@@ -730,25 +739,163 @@ void render()
 			}
 		}
 
+		if (g.state == PAUSE) {
+			pause_menu.draw();
+		}
+
 	} else if (g.state == GAMEOVER) {
 		// draw score display
 	}
 
 	// (A) - REMOVED PAUSE FROM IF ELSE STATEMENTS TO ALLOW GAME TO RENDER
-	// ENTITES. SEE ELSEIF GAME TO SEE WHAT I MEAN
-	if (g.state == PAUSE) {
+	// ENTITES. SEE ELSEIF GAME TO SEE WHAT I MEAN 
+	
+	// (M) you good, do what you think is best 2.26.23
+	
 
-		// State Message
-		Rect game_msg;
-		game_msg.bot = (g.yres - 20);
-        game_msg.left = 20;
-        game_msg.center = 0;
+	/*********************************************************************
+	 * 							Help Menu / Text						  *
+	 * 							  Contributors: 						  * 
+	 * 								M. Kausch							  *
+	 * 			   								 						  * 
+	 * 																	  * 
+	 *********************************************************************/
 
-        ggprint8b(&game_msg, 0, 0x00ffff00, "Paused");
+	if (g.show_help_menu == false) {
+		
+		if (g.state == GAME) {
+	
+			// ***********Locations of all the text rectangles***************
+			// 					Top Left side of the screen
+			Rect help_msg, score;
+			help_msg.bot = (g.yres - 20);
+			help_msg.left = 20;
+			help_msg.center = 0;
+			ggprint8b(&help_msg, 0, 0x00ffff00, "Press <F1> for help");
 
-		pause_menu.draw();
+			// 					Top Right side of the screen
+			score.bot = g.yres-20;
+			score.left = g.xres - 80;
+			score.center = 0;
+			ggprint8b(&score, 100, 0x00DC143C, "Score");
+		}
+
+
+
+	} else if (g.show_help_menu == true) {
+		const unsigned int KEY_MESSAGES = 10;
+		Rect gamestate_msg, key_msg[KEY_MESSAGES], score;
+		
+
+		// ***********Locations of all the text rectangles******************
+		// 					Top Left side of the screen					//
+		gamestate_msg.bot = (g.yres - 20);				// 1st (top)
+        gamestate_msg.left = 20;
+        gamestate_msg.center = 0;
+
+		// everything's based on where the gamestate message is to 
+		// easily line it all up
+		for (size_t i = 0; i < KEY_MESSAGES; i++) {
+			key_msg[i].bot = (gamestate_msg.bot - 40 - i*20);				
+			key_msg[i].left = gamestate_msg.left;
+			key_msg[i].center = gamestate_msg.center;
+		}
+		
+
+		// 					Top Right side of the screen				//
+		score.bot = g.yres-20;
+		score.left = g.xres - 80;
+		score.center = 0;
+
+
+
+		// 					Write Messages Based On State					//
+		switch (g.state)
+		{
+			case SPLASH:
+				ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+													"STATE - SPLASH SCREEN");
+				ggprint8b(&key_msg[0], 0, 0x00ffff00, 
+														"<ESC> - Exit Game");
+				ggprint8b(&key_msg[1], 0, 0x00ffff00, 
+												"<ENTER> - GO TO MAIN MENU");
+				break;
+			case MAINMENU:
+				if (g.substate == NONE) {
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+														"STATE - MAIN MENU");
+				} else if (g.substate == SETTINGS) {
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+															"STATE - SETTINGS");
+					ggprint8b(&key_msg[0], 0, 0x00ffff00, 
+												"<ESC> - Back to Main Menu");
+				}
+				break;
+			case GAME:
+				if (g.substate == NONE) {
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAME");
+
+					ggprint8b(&key_msg[6], 0, 0x00ffff00, 
+										"<p> - Go To AParriott Feature Mode");
+					ggprint8b(&key_msg[7], 0, 0x00ffff00, 
+										"<h> - Go To HZhang Feature Mode");
+					ggprint8b(&key_msg[8], 0, 0x00ffff00, 
+										"<k> - Go To MKausch Feature Mode");
+					ggprint8b(&key_msg[9], 0, 0x00ffff00, 
+										"<t> - Go To DTorres Feature Mode");
+				} else if (g.substate == ENTITY) {
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+									"STATE - ENTITY - APARRIOTT FEATURE MODE");
+					ggprint8b(&key_msg[6], 0, 0x00ffff00, 
+										"<p> - Go back to Game Mode");
+				} else if (g.substate == DTORRES) {
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+									"STATE - DTORRES - DTORRES FEATURE MODE");
+					ggprint8b(&key_msg[6], 0, 0x00ffff00, 
+										"<t> - Go back to Game Mode");
+				} else if (g.substate == HUAIYU) {
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+									"STATE - HUAIYU - HZHANG FEATURE MODE");
+					ggprint8b(&key_msg[6], 0, 0x00ffff00, 
+										"<h> - Go back to Game Mode");
+				} else if (g.substate == MIKE) {
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+									"STATE - MIKE - MKAUSCH FEATURE MODE");
+					ggprint8b(&key_msg[6], 0, 0x00ffff00, 
+										"<k> - Go back to Game Mode");
+				}
+
+				ggprint8b(&key_msg[0], 0, 0x00ffff00, 
+												"<ESC> - Pause Game");
+				ggprint8b(&key_msg[1], 0, 0x00ffff00, 
+												"<F1> - Minimize Help Menu");
+				ggprint8b(&key_msg[2], 0, 0x00ffff00, 
+												"<w> - Move Up");
+				ggprint8b(&key_msg[3], 0, 0x00ffff00, 
+												"<a> - Move Left");
+				ggprint8b(&key_msg[4], 0, 0x00ffff00, 
+												"<s> - Move Down");
+				ggprint8b(&key_msg[5], 0, 0x00ffff00, 
+												"<d> - Move Right");
+				
+
+				ggprint8b(&score, 100, 0x00DC143C, "Score");
+				break;
+			case PAUSE:
+				ggprint8b(&score, 100, 0x00DC143C, "Score");
+				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - PAUSE");
+				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Un-Pause Game");
+				break;
+			case GAMEOVER:
+				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAMEOVER");
+				break;
+		
+			default:	// error... shouldn't occur... but if it does *<|:^)
+				ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+												"STATE: FIX YOUR SHIT BRO");
+				break;
+		}
 
 	}
-
 
 }
