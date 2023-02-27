@@ -17,7 +17,7 @@ void Item::set_CD(int x) {
     CD = x;
 }
 void Item::set_damage(int x) {
-    HP = x;
+    damage = x;
 }
 
 void Item::set_vel(float x, float y, float z) {
@@ -40,6 +40,11 @@ bool Item::Collison(Item a) {
     bool x = (((pos[0]+w)-(a.pos[0]-a.w))*((pos[0]-w)-(a.pos[0]+a.w))) < 0;
   	bool y = (((pos[1]+h)-(a.pos[1]-a.h))*((pos[1]-h)-(a.pos[1]+a.h))) < 0;
   	return x&&y;
+}
+void Item::HPdamage(Item a) {
+    std::cout << "HP 1 :" << HP << "Damage :" << a.damage<< std::endl;
+    HP = HP - a.damage;
+    std::cout << "HP 2 :" << HP << std::endl;
 }
 
 bool Item::ScreenIn() {
@@ -153,6 +158,8 @@ void Bullet::set_Bullet(float x, float y, float z, bool tb, int type) {
             set_vel (10.0,0.0,0.0);
             set_dim (4.0,4.0);
             set_color(240,100,100);
+            set_damage(1);
+            set_HP(1);
             break;
 
         }
@@ -188,6 +195,8 @@ void Bread::set_Bread(float x, float y,float z, int Bread_t, int type) {
           set_dim(15.0,10.0);
           set_vel(-4.0, 0.0, 0.0);
           set_color(100,240,100);
+          set_damage(10);
+          set_HP(2);
           b_type = 1;
           point = 10;
           break;

@@ -611,8 +611,12 @@ void physics()
 			// ckeak if collison with bullet
 			for (int j=0; j < g.n_Bullet; j++) {
 					if (bread[i].Collison(bul[j])){
-							tos.score += bread[i].point;
-							bread[i] = bread[--g.n_Bread];
+							bread[i].HPdamage(bul[j]);
+							bul[j].HPdamage(bread[i]);
+							if(bread[i].HP_check()) {
+								tos.score += bread[i].point;
+								bread[i] = bread[--g.n_Bread];
+							}
 							bul[j] = bul[--g.n_Bullet];
 					}
 			}
@@ -705,13 +709,13 @@ void render()
 			settings_msg.center = 1;
 
 			ggprint8b(&settings_msg, 0, 0x00ffff00, "Settings Img Placeholder");
-			
+
 
 		}
 
 	} else if (g.state == GAME || g.state == PAUSE ) {
 		// State Message
-		
+
 
 
 		// draw Toaster bullet and bread
@@ -724,7 +728,7 @@ void render()
 	  }
 		// ENTITY RENDER
 		if (g.substate == ENTITY || g.state == PAUSE) {
-			
+
 			for (int i = 0; i < e.numEnt; i++) {
 				glPushMatrix();
 				glColor3ubv(entity[i].color);
@@ -748,23 +752,23 @@ void render()
 	}
 
 	// (A) - REMOVED PAUSE FROM IF ELSE STATEMENTS TO ALLOW GAME TO RENDER
-	// ENTITES. SEE ELSEIF GAME TO SEE WHAT I MEAN 
-	
+	// ENTITES. SEE ELSEIF GAME TO SEE WHAT I MEAN
+
 	// (M) you good, do what you think is best 2.26.23
-	
+
 
 	/*********************************************************************
 	 * 							Help Menu / Text						  *
-	 * 							  Contributors: 						  * 
+	 * 							  Contributors: 						  *
 	 * 								M. Kausch							  *
-	 * 			   								 						  * 
-	 * 																	  * 
+	 * 			   								 						  *
+	 * 																	  *
 	 *********************************************************************/
 
 	if (g.show_help_menu == false) {
-		
+
 		if (g.state == GAME) {
-	
+
 			// ***********Locations of all the text rectangles***************
 			// 					Top Left side of the screen
 			Rect help_msg, score;
@@ -777,7 +781,7 @@ void render()
 			score.bot = g.yres-20;
 			score.left = g.xres - 80;
 			score.center = 0;
-			ggprint8b(&score, 100, 0x00DC143C, "Score");
+			ggprint8b(&score, 100, 0x00DC143C, "Score : %i",tos.score);
 		}
 
 
@@ -785,7 +789,7 @@ void render()
 	} else if (g.show_help_menu == true) {
 		const unsigned int KEY_MESSAGES = 10;
 		Rect gamestate_msg, key_msg[KEY_MESSAGES], score;
-		
+
 
 		// ***********Locations of all the text rectangles******************
 		// 					Top Left side of the screen					//
@@ -793,14 +797,14 @@ void render()
         gamestate_msg.left = 20;
         gamestate_msg.center = 0;
 
-		// everything's based on where the gamestate message is to 
+		// everything's based on where the gamestate message is to
 		// easily line it all up
 		for (size_t i = 0; i < KEY_MESSAGES; i++) {
-			key_msg[i].bot = (gamestate_msg.bot - 40 - i*20);				
+			key_msg[i].bot = (gamestate_msg.bot - 40 - i*20);
 			key_msg[i].left = gamestate_msg.left;
 			key_msg[i].center = gamestate_msg.center;
 		}
-		
+
 
 		// 					Top Right side of the screen				//
 		score.bot = g.yres-20;
@@ -813,21 +817,21 @@ void render()
 		switch (g.state)
 		{
 			case SPLASH:
-				ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+				ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 													"STATE - SPLASH SCREEN");
-				ggprint8b(&key_msg[0], 0, 0x00ffff00, 
+				ggprint8b(&key_msg[0], 0, 0x00ffff00,
 														"<ESC> - Exit Game");
-				ggprint8b(&key_msg[1], 0, 0x00ffff00, 
+				ggprint8b(&key_msg[1], 0, 0x00ffff00,
 												"<ENTER> - GO TO MAIN MENU");
 				break;
 			case MAINMENU:
 				if (g.substate == NONE) {
-					ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 														"STATE - MAIN MENU");
 				} else if (g.substate == SETTINGS) {
-					ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 															"STATE - SETTINGS");
-					ggprint8b(&key_msg[0], 0, 0x00ffff00, 
+					ggprint8b(&key_msg[0], 0, 0x00ffff00,
 												"<ESC> - Back to Main Menu");
 				}
 				break;
@@ -835,49 +839,49 @@ void render()
 				if (g.substate == NONE) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAME");
 
-					ggprint8b(&key_msg[6], 0, 0x00ffff00, 
+					ggprint8b(&key_msg[6], 0, 0x00ffff00,
 										"<p> - Go To AParriott Feature Mode");
-					ggprint8b(&key_msg[7], 0, 0x00ffff00, 
+					ggprint8b(&key_msg[7], 0, 0x00ffff00,
 										"<h> - Go To HZhang Feature Mode");
-					ggprint8b(&key_msg[8], 0, 0x00ffff00, 
+					ggprint8b(&key_msg[8], 0, 0x00ffff00,
 										"<k> - Go To MKausch Feature Mode");
-					ggprint8b(&key_msg[9], 0, 0x00ffff00, 
+					ggprint8b(&key_msg[9], 0, 0x00ffff00,
 										"<t> - Go To DTorres Feature Mode");
 				} else if (g.substate == ENTITY) {
-					ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - ENTITY - APARRIOTT FEATURE MODE");
-					ggprint8b(&key_msg[6], 0, 0x00ffff00, 
+					ggprint8b(&key_msg[6], 0, 0x00ffff00,
 										"<p> - Go back to Game Mode");
 				} else if (g.substate == DTORRES) {
-					ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - DTORRES - DTORRES FEATURE MODE");
-					ggprint8b(&key_msg[6], 0, 0x00ffff00, 
+					ggprint8b(&key_msg[6], 0, 0x00ffff00,
 										"<t> - Go back to Game Mode");
 				} else if (g.substate == HUAIYU) {
-					ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - HUAIYU - HZHANG FEATURE MODE");
-					ggprint8b(&key_msg[6], 0, 0x00ffff00, 
+					ggprint8b(&key_msg[6], 0, 0x00ffff00,
 										"<h> - Go back to Game Mode");
 				} else if (g.substate == MIKE) {
-					ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - MIKE - MKAUSCH FEATURE MODE");
-					ggprint8b(&key_msg[6], 0, 0x00ffff00, 
+					ggprint8b(&key_msg[6], 0, 0x00ffff00,
 										"<k> - Go back to Game Mode");
 				}
 
-				ggprint8b(&key_msg[0], 0, 0x00ffff00, 
+				ggprint8b(&key_msg[0], 0, 0x00ffff00,
 												"<ESC> - Pause Game");
-				ggprint8b(&key_msg[1], 0, 0x00ffff00, 
+				ggprint8b(&key_msg[1], 0, 0x00ffff00,
 												"<F1> - Minimize Help Menu");
-				ggprint8b(&key_msg[2], 0, 0x00ffff00, 
+				ggprint8b(&key_msg[2], 0, 0x00ffff00,
 												"<w> - Move Up");
-				ggprint8b(&key_msg[3], 0, 0x00ffff00, 
+				ggprint8b(&key_msg[3], 0, 0x00ffff00,
 												"<a> - Move Left");
-				ggprint8b(&key_msg[4], 0, 0x00ffff00, 
+				ggprint8b(&key_msg[4], 0, 0x00ffff00,
 												"<s> - Move Down");
-				ggprint8b(&key_msg[5], 0, 0x00ffff00, 
+				ggprint8b(&key_msg[5], 0, 0x00ffff00,
 												"<d> - Move Right");
-				
+
 
 				ggprint8b(&score, 100, 0x00DC143C, "Score");
 				break;
@@ -889,9 +893,9 @@ void render()
 			case GAMEOVER:
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAMEOVER");
 				break;
-		
+
 			default:	// error... shouldn't occur... but if it does *<|:^)
-				ggprint8b(&gamestate_msg, 0, 0x00ffff00, 
+				ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 												"STATE: FIX YOUR SHIT BRO");
 				break;
 		}
