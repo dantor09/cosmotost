@@ -611,8 +611,12 @@ void physics()
 			// ckeak if collison with bullet
 			for (int j=0; j < g.n_Bullet; j++) {
 					if (bread[i].Collison(bul[j])){
-							tos.score += bread[i].point;
-							bread[i] = bread[--g.n_Bread];
+							bread[i].HPdamage(bul[j]);
+							bul[j].HPdamage(bread[i]);
+							if(bread[i].HP_check()) {
+								tos.score += bread[i].point;
+								bread[i] = bread[--g.n_Bread];
+							}
 							bul[j] = bul[--g.n_Bullet];
 					}
 			}

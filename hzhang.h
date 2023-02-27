@@ -45,6 +45,8 @@ class Item: public Box
     bool HP_check();
     // to check
     bool Collison(Item a);
+    //change HP after Collison
+    void HPdamage(Item a);
     // check if item reach the in the screen
     bool ScreenIn();
     //check if item out of screen
