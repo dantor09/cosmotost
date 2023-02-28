@@ -167,7 +167,7 @@ Toaster::Toaster()
     // To set item_type 0
     // the origen bullet type will be 1
     score = 0;
-    b_type = 4;
+    b_type = 1;
     item_type = 0;
     set_pos(g.xres/4, g.yres/2, 0.0);
     set_color(188, 226, 232);
@@ -310,17 +310,29 @@ Bread::~Bread() {}
 
 void Bread::set_Bread(float x, float y,float z, int Bread_t, int type) {
     set_pos (x,y,z);
+		float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
     switch (Bread_t) {
       case 1:
           set_dim(15.0,10.0);
           set_vel(-4.0, 0.0, 0.0);
-          float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
           set_acc (0.0,-ya,0.0);
           set_color(100,240,100);
           set_damage(10);
           set_HP(2);
+					item_type = 11;
           b_type = 1;
           point = 10;
+          break;
+			case 2:
+          set_dim(15.0,10.0);
+          set_vel(-4.0, 0.0, 0.0);
+          set_acc (0.0,-ya,0.0);
+          set_color(156,25,226);
+          set_damage(0);
+          set_HP(0);
+          b_type = 1;
+					item_type = 12;
+          point = 0;
           break;
     }
 }
