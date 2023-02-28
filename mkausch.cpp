@@ -260,8 +260,10 @@ Timer::Timer(double s) : duration(s), pause_duration(0.00),
 // delete pause timer if it were active
 Timer::~Timer()
 {
-    if (pause_timer)
+    if (pause_timer){
         delete pause_timer;
+        pause_timer = nullptr;
+    }
 }
 
 /****************************** Setters *************************************/
@@ -319,6 +321,7 @@ void Timer::unPause()
     paused = false;
     pause_duration += pause_timer->getTime();
     delete pause_timer;
+    pause_timer = nullptr;
 }
 
 

@@ -118,6 +118,7 @@ void Timer::unPause()
     paused = false;
     pause_duration += pause_timer->getTime();
     delete pause_timer;
+    pause_timer = nullptr;
 }
 
 
