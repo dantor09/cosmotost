@@ -10,6 +10,15 @@
 #include <sstream>
 #include "fonts.h"
 
+//make a bullet need the pos of where this bullet creat
+//bool(tb) is means this bullet from toster or not
+//type is id of Bullet_type
+void make_Bullet(float x, float y,float z, bool tb, int type);
+//make a bread need the pos of where this bread creat
+//int Bread_t is the type of bread
+//type is id of Bullet_type this bread carrying
+void make_Bread(float x, float y,float z, int Bread_t, int type);
+
 // item class is the parent class for all the object might have HP in game
 // include toaster, bullets and breads
 class Item: public Box
@@ -23,6 +32,8 @@ class Item: public Box
     // velocity
     float vel[3];
 
+    //acceleration
+    float acc[3];
     // all item should have hp
     // when two object touch, use HP - damage
     // by check HP we can tell if we need delete that object
@@ -41,6 +52,8 @@ class Item: public Box
     void set_CD(int x);
     void set_damage(int x);
     void set_vel(float x, float y, float z);
+    void set_acc(float x, float y, float z);
+
     // to check toaster HP, if <=0 then dead
     bool HP_check();
     // to check

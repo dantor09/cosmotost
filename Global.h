@@ -63,12 +63,4 @@ const int MAX_bread = 10;
 inline Toaster tos;
 inline Bullet bul[MAX_bullet];
 inline Bread bread[MAX_bread];
-//make a bullet need the pos of where this bullet creat
-//bool(tb) is means this bullet from toster or not
-//type is id of Bullet_type
-void make_Bullet(float x, float y,float z, bool tb, int type);
-//make a bread need the pos of where this bread creat
-//int Bread_t is the type of bread
-//type is id of Bullet_type this bread carrying
-void make_Bread(float x, float y,float z, int Bread_t, int type);
 // Huaiyu veribles================================
