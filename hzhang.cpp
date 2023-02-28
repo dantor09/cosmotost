@@ -2,9 +2,83 @@
 //Feb 24
 #include <iostream>
 #include <string>
+#include <cmath>
 #include "hzhang.h"
 #include "Global.h"
 
+
+void make_Bullet(float x, float y,float z, bool tb, int type) {
+		switch(type){
+			case 1:
+				if (g.n_Bullet < MAX_bullet){
+						bul[g.n_Bullet].set_Bullet(x, y, z, tb, 1);
+						++g.n_Bullet;
+						// cout<<"make bullet"<<endl;
+					}
+				break;
+			case 2:
+				if (g.n_Bullet < MAX_bullet){
+						bul[g.n_Bullet].set_Bullet(x, y+5, z, tb, 1);
+						++g.n_Bullet;
+						// cout<<"make bullet"<<endl;
+					}
+				if (g.n_Bullet < MAX_bullet){
+						bul[g.n_Bullet].set_Bullet(x, y-5, z, tb, 1);
+						++g.n_Bullet;
+						// cout<<"make bullet"<<endl;
+					}
+				break;
+			case 3:
+				if (g.n_Bullet < MAX_bullet){
+						bul[g.n_Bullet].set_Bullet(x, y, z, tb, 1);
+						++g.n_Bullet;
+						// cout<<"make bullet"<<endl;
+				}
+				if (g.n_Bullet < MAX_bullet){
+						bul[g.n_Bullet].set_Bullet(x, y+5, z, tb, 2);
+						++g.n_Bullet;
+						// cout<<"make bullet"<<endl;
+				}
+				if (g.n_Bullet < MAX_bullet){
+						bul[g.n_Bullet].set_Bullet(x, y-5, z, tb, 3);
+						++g.n_Bullet;
+						// cout<<"make bullet"<<endl;
+				}
+				break;
+			case 4:
+				if (g.n_Bullet < MAX_bullet){
+						bul[g.n_Bullet].set_Bullet(x, y-5, z, tb, 1);
+						++g.n_Bullet;
+						// cout<<"make bullet"<<endl;
+				}
+				if (g.n_Bullet < MAX_bullet){
+						bul[g.n_Bullet].set_Bullet(x, y+5, z, tb, 1);
+						++g.n_Bullet;
+						// cout<<"make bullet"<<endl;
+				}
+				if (g.n_Bullet < MAX_bullet){
+						bul[g.n_Bullet].set_Bullet(x, y+8, z, tb, 2);
+						++g.n_Bullet;
+						// cout<<"make bullet"<<endl;
+				}
+				if (g.n_Bullet < MAX_bullet){
+						bul[g.n_Bullet].set_Bullet(x, y-8, z, tb, 3);
+						++g.n_Bullet;
+						// cout<<"make bullet"<<endl;
+				}
+		}
+
+}
+void make_Bread(float x, float y,float z, int Bread_t, int type) {
+  if (g.n_Bread < MAX_bread){
+      bread[g.n_Bread].set_Bread(x, y, z, Bread_t, type);
+      ++g.n_Bread;
+      // cout<<"make Bread!!!"<<endl;
+    }
+}
+
+
+//==================================================================================
 Item::Item(){
 }
 Item::~Item(){
@@ -17,7 +91,7 @@ void Item::set_CD(int x) {
     CD = x;
 }
 void Item::set_damage(int x) {
-    HP = x;
+    damage = x;
 }
 
 void Item::set_vel(float x, float y, float z) {
@@ -27,6 +101,12 @@ void Item::set_vel(float x, float y, float z) {
     vel[2] = z;
 }
 
+void Item::set_acc(float x, float y, float z) {
+    //set the acceleration of item
+    acc[0] = x;
+    acc[1] = y;
+    acc[2] = z;
+}
 // to check toaster HP, if <=0 then dead
 bool Item::HP_check() {
     // if no HP return true
@@ -40,6 +120,11 @@ bool Item::Collison(Item a) {
     bool x = (((pos[0]+w)-(a.pos[0]-a.w))*((pos[0]-w)-(a.pos[0]+a.w))) < 0;
   	bool y = (((pos[1]+h)-(a.pos[1]-a.h))*((pos[1]-h)-(a.pos[1]+a.h))) < 0;
   	return x&&y;
+}
+void Item::HPdamage(Item a) {
+    std::cout << "HP 1 :" << HP << "Damage :" << a.damage<< std::endl;
+    HP = HP - a.damage;
+    std::cout << "HP 2 :" << HP << std::endl;
 }
 
 bool Item::ScreenIn() {
@@ -82,7 +167,7 @@ Toaster::Toaster()
     // To set item_type 0
     // the origen bullet type will be 1
     score = 0;
-    b_type = 1;
+    b_type = 4;
     item_type = 0;
     set_pos(g.xres/4, g.yres/2, 0.0);
     set_color(188, 226, 232);
@@ -153,6 +238,26 @@ void Bullet::set_Bullet(float x, float y, float z, bool tb, int type) {
             set_vel (10.0,0.0,0.0);
             set_dim (4.0,4.0);
             set_color(240,100,100);
+            set_damage(1);
+            set_HP(1);
+            break;
+          case 2:
+            // bullet type 2
+            // up 10degree
+            set_vel (10.0,1.76,0.0);
+            set_dim (4.0,4.0);
+            set_color(240,100,100);
+            set_damage(1);
+            set_HP(1);
+            break;
+          case 3:
+            // bullet type 3
+            // down 10degree
+            set_vel (10.0,-1.76,0.0);
+            set_dim (4.0,4.0);
+            set_color(240,100,100);
+            set_damage(1);
+            set_HP(1);
             break;
 
         }
@@ -162,10 +267,29 @@ void Bullet::set_Bullet(float x, float y, float z, bool tb, int type) {
         switch (type) {
           case 1:
             // bullet type 1
+            // straight line
             set_vel (-6.0,0.0,0.0);
             set_dim (4.0,4.0);
             break;
-
+          case 2:
+            // bullet type 2
+            // up 10degree
+            set_vel (-6.0,1.05,0.0);
+            set_dim (4.0,4.0);
+            break;
+          case 3:
+            // bullet type 3
+            // down 10degree
+            set_vel (-6.0,-1.05,0.0);
+            set_dim (4.0,4.0);
+            break;
+          case 4:
+            // bullet type 4
+            // track the origen point of Toaster
+            set_dim (4.0,4.0);
+            set_vel (-6.0,0.0,0.0);
+            float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
+            set_acc (0.0,ya,0.0);
         }
     }
 }
@@ -174,6 +298,9 @@ void Bullet::MoveBullet() {
     pos[0] += vel[0];
     pos[1] += vel[1];
     pos[2] += vel[2];
+    vel[0] += acc[0];
+    vel[1] += acc[1];
+    vel[2] += acc[2];
 }
 
 Bread::Bread() {
@@ -187,7 +314,11 @@ void Bread::set_Bread(float x, float y,float z, int Bread_t, int type) {
       case 1:
           set_dim(15.0,10.0);
           set_vel(-4.0, 0.0, 0.0);
+          float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
+          set_acc (0.0,-ya,0.0);
           set_color(100,240,100);
+          set_damage(10);
+          set_HP(2);
           b_type = 1;
           point = 10;
           break;
@@ -198,4 +329,7 @@ void Bread::MoveBread() {
     pos[0] += vel[0];
     pos[1] += vel[1];
     pos[2] += vel[2];
+    vel[0] += acc[0];
+    vel[1] += acc[1];
+    vel[2] += acc[2];
 }
