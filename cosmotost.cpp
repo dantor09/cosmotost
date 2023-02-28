@@ -574,14 +574,22 @@ void physics()
 			if (bread[i].ScreenOut()) bread[i] = bread[--g.n_Bread];
 			// ckeak if collison with toaster
 			if (bread[i].Collison(tos)) {
-					g.state == GAMEOVER;
+					if (bread[i].item_type == 11)	g.state == GAMEOVER;
+					if (bread[i].item_type == 12)	{
+						if (tos.b_type < 4) tos.b_type++;
+						bread[i] = bread[--g.n_Bread];
+					}
 					break;
 			}
 			// ckeak if collison with bullet
 			for (int j=0; j < g.n_Bullet; j++) {
-					if (bread[i].Collison(bul[j])){
-							tos.score += bread[i].point;
-							bread[i] = bread[--g.n_Bread];
+					if (bread[i].Collison(bul[j])&& bread[i].item_type == 11) {
+							bread[i].HPdamage(bul[j]);
+							bul[j].HPdamage(bread[i]);
+							if(bread[i].HP_check()) {
+								tos.score += bread[i].point;
+								bread[i] = bread[--g.n_Bread];
+							}
 							bul[j] = bul[--g.n_Bullet];
 					}
 			}
@@ -596,7 +604,9 @@ void physics()
 		else {
 			g.BreadCD=30;
 			float alp=(((float)rand()) / (float)RAND_MAX);
-			make_Bread(g.xres,alp*g.yres,0.0,1,1);
+			int breadrand = (int)rand()%100;
+			if(!breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,1,1);
+			if(breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,2,1);
 		}
 
 
