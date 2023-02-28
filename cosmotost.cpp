@@ -463,6 +463,10 @@ int X11_wrapper::check_keys(XEvent *e)
 					g.show_help_menu = (g.show_help_menu ? false : true);
 					cerr << "g.show_help_menu was toggled" << endl;
 					return 0;
+				case XK_F2:	// Toggle Help Menu
+					g.state = GAMEOVER;
+					cerr << "g.state was changed to GAMEOVER" << endl;
+					return 0;
 			}
 		}
 		// Pause Menu State:
@@ -749,6 +753,40 @@ void render()
 
 	} else if (g.state == GAMEOVER) {
 		// draw score display
+		Box end_img;
+		end_img.set_color(61, 90, 115);
+		glColor3ubv(end_img.color);
+		end_img.set_dim(100.0f, 100.0f);
+		end_img.set_pos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+
+
+		/*******************   SPLASH IMAGE PLACEHOLDER   *******************/
+		glPushMatrix();
+		glTranslatef(end_img.pos[0], end_img.pos[1], end_img.pos[2]);
+		glBegin(GL_QUADS);
+			glVertex2f(-end_img.w, -end_img.h);
+			glVertex2f(-end_img.w,  end_img.h);
+			glVertex2f( end_img.w,  end_img.h);
+			glVertex2f( end_img.w, -end_img.h);
+		glEnd();
+		glPopMatrix();
+
+		Rect end_msg;
+		end_msg.bot = end_img.pos[1];
+        end_msg.left = end_img.pos[0];
+        end_msg.center = 1;
+
+        ggprint8b(&end_msg, 0, 0x00ffff00, "End Game Image Placeholder");
+
+		/******************    END SPLASH IMAGE    ***************************/
+
+		Rect game_msg;
+		game_msg.bot = g.yres * (1/4.0f);
+        game_msg.left = g.xres / 2.0f;
+        game_msg.center = 1;
+
+        ggprint16(&game_msg, 0, 0x00ffffff, "GAME OVER");
+		
 	}
 
 	// (A) - REMOVED PAUSE FROM IF ELSE STATEMENTS TO ALLOW GAME TO RENDER
@@ -891,7 +929,9 @@ void render()
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Un-Pause Game");
 				break;
 			case GAMEOVER:
+				ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAMEOVER");
+				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Back to Main Menu");
 				break;
 
 			default:	// error... shouldn't occur... but if it does *<|:^)
