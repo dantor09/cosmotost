@@ -628,7 +628,6 @@ void physics()
 							bul[j] = bul[--g.n_Bullet];
 					}
 			}
-			EntityMOve(bread[i]);
 			bread[i].MoveBread();
 		}
 		// time stuff/ change when timer finish
