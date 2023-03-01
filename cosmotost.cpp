@@ -628,6 +628,7 @@ void physics()
 							bul[j] = bul[--g.n_Bullet];
 					}
 			}
+			EntityMOve(bread[i]);
 			bread[i].MoveBread();
 		}
 		// time stuff/ change when timer finish
@@ -639,7 +640,7 @@ void physics()
 		else {
 			g.BreadCD=30;
 			float alp=(((float)rand()) / (float)RAND_MAX);
-			int breadrand = (int)rand()%100;
+			int breadrand = (int)rand()%g.levelchance;
 			if(!breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,1,1);
 			if(breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,2,1);
 		}
