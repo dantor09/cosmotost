@@ -122,9 +122,9 @@ bool Item::Collison(Item a) {
   	return x&&y;
 }
 void Item::HPdamage(Item a) {
-    std::cout << "HP 1 :" << HP << "Damage :" << a.damage<< std::endl;
+    // std::cout << "HP 1 :" << HP << "Damage :" << a.damage<< std::endl;
     HP = HP - a.damage;
-    std::cout << "HP 2 :" << HP << std::endl;
+    // std::cout << "HP 2 :" << HP << std::endl;
 }
 
 bool Item::ScreenIn() {
@@ -172,6 +172,7 @@ Toaster::Toaster()
     set_pos(g.xres/4, g.yres/2, 0.0);
     set_color(188, 226, 232);
     set_dim(20,15);
+		set_HP(20);
 
 }
 
@@ -187,19 +188,19 @@ void Toaster::MoveToster()
       // if the toaster still in the screen then move
       if (g.keys[XK_w]){
     			pos[1] += 4;
-    			std::cout << "move w"<<pos[1]<<std::endl;
+    			// std::cout << "move w"<<pos[1]<<std::endl;
     	}
     	if (g.keys[XK_s]){
     			pos[1] -= 4;
-    			std::cout << "move s"<<pos[1]<<std::endl;
+    			// std::cout << "move s"<<pos[1]<<std::endl;
     	}
     	if (g.keys[XK_a]){
     			pos[0] -= 4;
-    			std::cout << "move a"<<pos[0]<<std::endl;
+    			// std::cout << "move a"<<pos[0]<<std::endl;
     	}
     	if (g.keys[XK_d]){
     			pos[0] += 4;
-    			std::cout << "move d"<<pos[0]<<std::endl;
+    			// std::cout << "move d"<<pos[0]<<std::endl;
     	}
   }
   else {
@@ -213,7 +214,7 @@ void Toaster::MoveToster()
       //shoot bullet if not in CD
 			if (g.BulletCD==5) {
 					make_Bullet(pos[0]+w,pos[1],pos[2],1,b_type);
-					std::cout << "shoot"<<std::endl;
+					// std::cout << "shoot"<<std::endl;
 			}
   }
 }
@@ -345,3 +346,10 @@ void Bread::MoveBread() {
     vel[1] += acc[1];
     vel[2] += acc[2];
 }
+
+
+
+
+
+
+//=========================================================================
