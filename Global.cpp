@@ -17,9 +17,9 @@ Global::~Global()
 	// }
 }
 
-Global::Reset()
+Global::GameReset()
 {
 		n_Bullet = 0;
 		n_Bread = 0;
-		tos.Reset();
+		tos.posReset();
 }

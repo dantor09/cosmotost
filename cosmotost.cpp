@@ -308,7 +308,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 				} else if (selection && (selection->text == "Start Over")) {
 					pause_menu.set_orig_color();
 					g.state = MAINMENU;
-					g.Reset();
+					g.GameReset();
 					g.state = GAME;
 					cerr << "g.state was changed back to GAME (RESET SEQUENCE)"
 							<< endl;
@@ -414,7 +414,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					// Enter was pressed
 					g.state = MAINMENU;
 					cerr << "g.state was changed to MAINMENU" << endl;
-					g.Reset();
+					g.GameReset();
 					return 0;
 				case XK_Escape:
 					//Escape key was pressed
@@ -528,7 +528,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					// Escape key was pressed
 					// Go back to the Main Menu
 					g.state = MAINMENU;
-					g.Reset();
+					g.GameReset();
 					cerr << "g.state was changed to MAINMENU" << endl;
 					return 0;
 			}
@@ -896,7 +896,7 @@ void render()
 		g_time.bot = score.bot-20;
 		g_time.left = score.left;
 		g_time.center = 0;
-		
+
 
 
 
@@ -972,7 +972,7 @@ void render()
 
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
-				ggprint8b(&g_time, 0, 0x00DC143C, 
+				ggprint8b(&g_time, 0, 0x00DC143C,
 											"Time : %i",(int)g.gameTimer.getTime());
 				// cerr << "Gametime: " << (int)g.gameTimer.getTime() << endl;
 				// cerr << "(int)Gametime: " << g.gameTimer << endl;
@@ -983,13 +983,13 @@ void render()
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - PAUSE");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Un-Pause Game");
-				ggprint8b(&g_time, 0, 0x00DC143C, 
+				ggprint8b(&g_time, 0, 0x00DC143C,
 											"Time : %i",(int)g.gameTimer.getTime());
 				break;
 			case GAMEOVER:
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
-				ggprint8b(&g_time, 0, 0x00DC143C, 
+				ggprint8b(&g_time, 0, 0x00DC143C,
 											"Time : %i",(int)g.gameTimer.getTime());
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAMEOVER");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Back to Main Menu");
