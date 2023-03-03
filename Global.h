@@ -25,7 +25,8 @@ int BulletCD=5;
 char keys[65536];
 bool show_help_menu;
 int levelchance;
-Timer * gameTimer;
+// Timer gameTimer;
+
 
 
 

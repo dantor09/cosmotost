@@ -274,6 +274,10 @@ Timer::~Timer()
 // resets timer to current time
 void Timer::reset()
 {
+    if (isPaused()) {
+        unPause();
+    }
+    pause_duration = 0;
     start = std::chrono::system_clock::now();
 }
 
@@ -321,10 +325,13 @@ bool Timer::isPaused()
 
 void Timer::unPause()
 {
-    paused = false;
-    pause_duration += pause_timer->getTime();
-    delete pause_timer;
-    pause_timer = nullptr;
+    if (paused) {
+        paused = false;
+        pause_duration += pause_timer->getTime();
+        delete pause_timer;
+        pause_timer = nullptr;
+    }
+    
 }
 
 

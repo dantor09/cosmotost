@@ -11,8 +11,8 @@ Global::Global()
 
 Global::~Global()
 {
-	if (gameTimer != nullptr) {
-		delete gameTimer;
-		gameTimer = nullptr;
-	}
+	// if (gameTimer != nullptr) {
+	// 	delete gameTimer;
+	// 	gameTimer = nullptr;
+	// }
 }

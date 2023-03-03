@@ -219,7 +219,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					// if (g.gameTimer) {
 					// 	delete g.gameTimer;
 					// }
-					g.gameTimer = new Timer();	// start the game timer 
+					// g.gameTimer.reset();	// start the game timer 
 					selection = nullptr;
 					prev_selection = nullptr;
 					return 0;
@@ -297,10 +297,11 @@ int X11_wrapper::check_mouse(XEvent *e)
 				if (selection && (selection->text == "Main Menu")) {
 					pause_menu.set_orig_color();
 					g.state = MAINMENU;
-					if (g.gameTimer) {
-						cerr << "killing game clock\n";
-						delete g.gameTimer;	// kill game clock
-					}
+					// if (g.gameTimer) {
+					// 	cerr << "killing game clock\n";
+					// 	delete g.gameTimer;	// kill game clock
+					// }
+					// g.gameTimer.pause();
 					selection = nullptr;
 					prev_selection = nullptr;
 
@@ -310,21 +311,22 @@ int X11_wrapper::check_mouse(XEvent *e)
 					g.state = GAME;
 					cerr << "g.state was changed back to GAME (RESET SEQUENCE)"
 							<< endl;
-					if (g.gameTimer) {
-						cerr << "killing game clock\n";
-						delete g.gameTimer;	// kill game clock
-					}
-					
-					g.gameTimer = new Timer();
+					// if (g.gameTimer) {
+					// 	cerr << "killing game clock\n";
+					// 	delete g.gameTimer;	// kill game clock
+					// }
+					// g.gameTimer.reset();
+					// g.gameTimer.unPause();
+					// g.gameTimer = new Timer();
 					selection = nullptr;
 					prev_selection = nullptr;
 
 				} else if (selection && (selection->text == "Back to Game")) {
 					pause_menu.set_orig_color();
 					g.state = GAME;
-					if (g.gameTimer->isPaused()) {
-						g.gameTimer->unPause();	// unpause the game
-					}
+					// if (g.gameTimer.isPaused()) {
+					// 	g.gameTimer.unPause();	// unpause the game
+					// }
 					cerr << "g.state was changed back to GAME" << endl;
 					selection = nullptr;
 					prev_selection = nullptr;
@@ -332,10 +334,14 @@ int X11_wrapper::check_mouse(XEvent *e)
 					pause_menu.set_orig_color();
 					cerr << "g.state was changed to should be quitting..." <<
 							endl;
-					if (g.gameTimer) {
-						cerr << "killing game clock\n";
-						delete g.gameTimer;	// kill game clock
-					}
+
+					// if (g.gameTimer) {
+					// 	cerr << "killing game clock\n";
+					// 	delete g.gameTimer;	// kill game clock
+					// }
+
+					cerr << "killing game clock\n";
+					// g.gameTimer.pause();
 					selection = nullptr;
 					prev_selection = nullptr;
 					return 1;
@@ -478,14 +484,14 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Escape key was pressed
 					//Enter Pause State
 					g.state = PAUSE;
-					g.gameTimer->pause();
+					// g.gameTimer.pause();
 					cerr << "g.state was changed to PAUSE" << endl;
 					return 0;
 				case XK_F1:	// Toggle Help Menu
 					g.show_help_menu = (g.show_help_menu ? false : true);
 					cerr << "g.show_help_menu was toggled" << endl;
 					return 0;
-				case XK_F2:	// Toggle Help Menu
+				case XK_F2:	// Toggle Game Over
 					g.state = GAMEOVER;
 					cerr << "g.state was changed to GAMEOVER" << endl;
 					return 0;
@@ -502,7 +508,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Escape key was pressed
 					//Return to Game State
 					g.state = GAME;
-					g.gameTimer->unPause();
+					// g.gameTimer.unPause();
 					cerr << "g.state was changed back to GAME" << endl;
 					return 0;
 			}
@@ -838,7 +844,7 @@ void render()
 
 			// ***********Locations of all the text rectangles***************
 			// 					Top Left side of the screen
-			Rect help_msg, score, g_time;
+			Rect help_msg, score;// g_time;
 			help_msg.bot = (g.yres - 20);
 			help_msg.left = 20;
 			help_msg.center = 0;
@@ -851,17 +857,17 @@ void render()
 			ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 
 
-			g_time.bot = score.bot-20;
-			g_time.left = score.left;
-			g_time.center = 0;
-			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %i",(int)g.gameTimer->getTime());
+			// g_time.bot = score.bot-20;
+			// g_time.left = score.left;
+			// g_time.center = 0;
+			// ggprint8b(&g_time, 0, 0x00DC143C, "Time : %i",(int)g.gameTimer.getTime());
 		}
 
 
 
 	} else if (g.show_help_menu == true) {
 		const unsigned int KEY_MESSAGES = 10;
-		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time;
+		Rect gamestate_msg, key_msg[KEY_MESSAGES], score; /*, g_time;*/
 
 
 		// ***********Locations of all the text rectangles******************
@@ -884,9 +890,9 @@ void render()
 		score.left = g.xres - 80;
 		score.center = 0;
 
-		g_time.bot = score.bot-20;
-		g_time.left = score.left;
-		g_time.center = 0;
+		// g_time.bot = score.bot-20;
+		// g_time.left = score.left;
+		// g_time.center = 0;
 		
 
 
@@ -963,10 +969,10 @@ void render()
 
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
-				ggprint8b(&g_time, 0, 0x00DC143C, 
-											"Time : %i",(int)g.gameTimer->getTime());
-				cerr << "Gametime: " << g.gameTimer->getTime() << endl;
-				cerr << "(int)Gametime: " << (int)g.gameTimer->getTime() << endl;
+				// ggprint8b(&g_time, 0, 0x00DC143C, 
+				// 							"Time : %i",(int)g.gameTimer.getTime());
+				// cerr << "Gametime: " << (int)g.gameTimer.getTime() << endl;
+				// cerr << "(int)Gametime: " << g.gameTimer << endl;
 
 				break;
 			case PAUSE:
@@ -974,14 +980,14 @@ void render()
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - PAUSE");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Un-Pause Game");
-				ggprint8b(&g_time, 0, 0x00DC143C, 
-											"Time : %i",g.gameTimer->getTime());
+				// ggprint8b(&g_time, 0, 0x00DC143C, 
+				// 							"Time : %i",(int)g.gameTimer.getTime());
 				break;
 			case GAMEOVER:
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
-				ggprint8b(&g_time, 0, 0x00DC143C, 
-											"Time : %i",g.gameTimer->getTime());
+				// ggprint8b(&g_time, 0, 0x00DC143C, 
+				// 							"Time : %i",(int)g.gameTimer.getTime());
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAMEOVER");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Back to Main Menu");
 				break;
