@@ -5,6 +5,8 @@
 #include <cmath>
 #include "hzhang.h"
 #include "Global.h"
+#include <fstream>
+using namespace std;
 
 
 void make_Bullet(float x, float y,float z, bool tb, int type) {
@@ -172,6 +174,7 @@ Toaster::Toaster()
     set_pos(g.xres/4, g.yres/2, 0.0);
     set_color(188, 226, 232);
     set_dim(20,15);
+		set_HP(20);
 
 }
 
@@ -179,7 +182,11 @@ Toaster::~Toaster()
 {
 }
 
-
+void Toaster::posReset()
+{
+		set_pos(g.xres/4, g.yres/2, 0.0);
+		score = 0;
+}
 void Toaster::MoveToster()
 {
   // how toaster move by keys and shoot bullet
@@ -345,3 +352,56 @@ void Bread::MoveBread() {
     vel[1] += acc[1];
     vel[2] += acc[2];
 }
+//=========================================================================
+
+
+Gamerecord::Gamerecord()
+{
+		n = 0;
+		ifstream fin("Highscore.txt");
+		if (fin.fail()) {
+				ofstream outfile("Highscore.txt");
+				outfile.close();
+				delt = true;
+		} else {
+				getline(fin,reName);
+				if(!fin.eof()) {
+						fin.getline(gamer,10);
+						if(atoi(gamer) > highscore)
+								highscore = atoi(gamer);
+						delt = false;
+				}
+				delt = true;
+		}
+		for(int i = 0; i <10; i++)
+				gamer[i]='_';
+}
+void Gamerecord::GetR()
+{
+	ifstream fin("Highscore.txt");
+	if (fin.fail()) {
+		getline(fin,reName);
+		fin.getline(gamer,10);
+		if(atoi(gamer) > highscore)
+				highscore = atoi(gamer);
+	}
+
+}
+void Gamerecord::ChangeR(int s)
+{
+		if (record.delt) {
+				record.str = record.gamer;
+				ofstream outfile("Highscore.txt");
+				outfile << record.str << endl;
+				outfile << s << endl;
+				outfile.close();
+		} else {
+				ofstream outfile;
+				outfile.open("Highscore.txt", ios::out | ios::trunc);
+				outfile << record.str << endl;
+				outfile << s << endl;
+				outfile.close();
+		}
+		g.state = MAINMENU;
+}
+Gamerecord::~Gamerecord(){}

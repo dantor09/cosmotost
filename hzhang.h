@@ -5,10 +5,13 @@
 // #include "Global.h"
 #include <GL/glx.h>
 #include <iostream>
+#include <fstream>
 #include <cstring>
 #include <new>
 #include <sstream>
 #include "fonts.h"
+#include <string>
+using namespace std;
 
 //make a bullet need the pos of where this bullet creat
 //bool(tb) is means this bullet from toster or not
@@ -78,7 +81,7 @@ class Toaster: public Item
 
       Toaster();
       ~Toaster();
-
+      void posReset();
       // getters
       // unsigned char * get_tcolor();
 
@@ -120,4 +123,25 @@ class Bread: public Item
     // different bullet may have different damage hp or velocitys
     void set_Bread(float x, float y,float z, int Bread_t, int type);
     void MoveBread();
+};
+//=======================================================================
+class Gamerecord
+{
+public:
+		int n = 0;
+		char gamer[10];
+  // type in name
+    string str;
+  //the highest score in file
+    int highscore = 0;
+  //the name in the file
+    string reName;
+	// true mean no record in it
+	// false means file exist
+		bool delt;
+		Gamerecord();
+    ~Gamerecord();
+    void ChangeR(int);
+    void GetR();
+
 };
