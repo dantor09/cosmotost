@@ -219,7 +219,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					// if (g.gameTimer) {
 					// 	delete g.gameTimer;
 					// }
-					// g.gameTimer.reset();	// start the game timer 
+					// g.gameTimer.reset();	// start the game timer
 					selection = nullptr;
 					prev_selection = nullptr;
 					return 0;
@@ -638,7 +638,7 @@ void physics()
 			if (bread[i].ScreenOut()) bread[i] = bread[--g.n_Bread];
 			// ckeak if collison with toaster
 			if (bread[i].Collison(tos)) {
-					if (bread[i].item_type == 11)	g.state == GAMEOVER;
+					if (bread[i].item_type == 11)	g.state = GAMEOVER;
 					if (bread[i].item_type == 12)	{
 						if (tos.b_type < 4) tos.b_type++;
 						bread[i] = bread[--g.n_Bread];
@@ -893,7 +893,7 @@ void render()
 		// g_time.bot = score.bot-20;
 		// g_time.left = score.left;
 		// g_time.center = 0;
-		
+
 
 
 
@@ -969,7 +969,7 @@ void render()
 
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
-				// ggprint8b(&g_time, 0, 0x00DC143C, 
+				// ggprint8b(&g_time, 0, 0x00DC143C,
 				// 							"Time : %i",(int)g.gameTimer.getTime());
 				// cerr << "Gametime: " << (int)g.gameTimer.getTime() << endl;
 				// cerr << "(int)Gametime: " << g.gameTimer << endl;
@@ -980,13 +980,13 @@ void render()
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - PAUSE");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Un-Pause Game");
-				// ggprint8b(&g_time, 0, 0x00DC143C, 
+				// ggprint8b(&g_time, 0, 0x00DC143C,
 				// 							"Time : %i",(int)g.gameTimer.getTime());
 				break;
 			case GAMEOVER:
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
-				// ggprint8b(&g_time, 0, 0x00DC143C, 
+				// ggprint8b(&g_time, 0, 0x00DC143C,
 				// 							"Time : %i",(int)g.gameTimer.getTime());
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAMEOVER");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Back to Main Menu");
