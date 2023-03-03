@@ -308,6 +308,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 				} else if (selection && (selection->text == "Start Over")) {
 					pause_menu.set_orig_color();
 					g.state = MAINMENU;
+					g.Reset();
 					g.state = GAME;
 					cerr << "g.state was changed back to GAME (RESET SEQUENCE)"
 							<< endl;
@@ -413,6 +414,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					// Enter was pressed
 					g.state = MAINMENU;
 					cerr << "g.state was changed to MAINMENU" << endl;
+					g.Reset();
 					return 0;
 				case XK_Escape:
 					//Escape key was pressed
@@ -526,6 +528,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					// Escape key was pressed
 					// Go back to the Main Menu
 					g.state = MAINMENU;
+					g.Reset();
 					cerr << "g.state was changed to MAINMENU" << endl;
 					return 0;
 			}

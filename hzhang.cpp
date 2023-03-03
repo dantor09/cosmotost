@@ -179,7 +179,10 @@ Toaster::~Toaster()
 {
 }
 
-
+Toaster::Reset()
+{
+		set_pos(g.xres/4, g.yres/2, 0.0);
+}
 void Toaster::MoveToster()
 {
   // how toaster move by keys and shoot bullet

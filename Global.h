@@ -33,6 +33,7 @@ int levelchance;
 
 Global();
 ~Global();
+Reset();
 
 };
 
