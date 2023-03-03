@@ -638,7 +638,7 @@ void physics()
 			if (bread[i].ScreenOut()) bread[i] = bread[--g.n_Bread];
 			// ckeak if collison with toaster
 			if (bread[i].Collison(tos)) {
-					if (bread[i].item_type == 11)	g.state == GAMEOVER;
+					if (bread[i].item_type == 11)	g.state = GAMEOVER;
 					if (bread[i].item_type == 12)	{
 						if (tos.b_type < 4) tos.b_type++;
 						bread[i] = bread[--g.n_Bread];
