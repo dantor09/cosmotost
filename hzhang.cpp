@@ -180,7 +180,7 @@ Toaster::~Toaster()
 {
 }
 
-Toaster::posReset()
+void Toaster::posReset()
 {
 		set_pos(g.xres/4, g.yres/2, 0.0);
 }

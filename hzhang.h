@@ -78,7 +78,7 @@ class Toaster: public Item
 
       Toaster();
       ~Toaster();
-      posReset();
+      void posReset();
       // getters
       // unsigned char * get_tcolor();
 
