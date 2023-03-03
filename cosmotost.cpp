@@ -970,26 +970,18 @@ void render()
 
 				break;
 			case PAUSE:
-<<<<<<< HEAD
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
-=======
-				ggprint8b(&score, 100, 0x00DC143C, "Score : %i",tos.score);
->>>>>>> 096dfb9ab2c213350b5aed1715e8ef081c3225e0
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - PAUSE");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Un-Pause Game");
 				ggprint8b(&g_time, 0, 0x00DC143C, 
 											"Time : %i",g.gameTimer->getTime());
 				break;
 			case GAMEOVER:
-<<<<<<< HEAD
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&g_time, 0, 0x00DC143C, 
 											"Time : %i",g.gameTimer->getTime());
-=======
-				ggprint8b(&score, 100, 0x00DC143C, "Score : %i",tos.score);
->>>>>>> 096dfb9ab2c213350b5aed1715e8ef081c3225e0
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAMEOVER");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Back to Main Menu");
 				break;
