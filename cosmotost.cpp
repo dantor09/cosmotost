@@ -930,12 +930,12 @@ void render()
 				ggprint8b(&score, 100, 0x00DC143C, "Score");
 				break;
 			case PAUSE:
-				ggprint8b(&score, 100, 0x00DC143C, "Score");
+				ggprint8b(&score, 100, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - PAUSE");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Un-Pause Game");
 				break;
 			case GAMEOVER:
-				ggprint8b(&score, 100, 0x00DC143C, "Score");
+				ggprint8b(&score, 100, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAMEOVER");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Back to Main Menu");
 				break;
