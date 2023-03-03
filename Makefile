@@ -13,14 +13,14 @@ cosmotost: cosmotost.o Box.o Global.o mkausch.o aparriott.o dtorres.o hzhang.o
 cosmotost.o: cosmotost.cpp
 	$(COMP) -c cosmotost.cpp
 
-Box.o: Box.cpp Box.h
+Box.o: Box.cpp Box.h Global.h Global.cpp
 	$(COMP) -c Box.cpp
 
-Global.o: Global.cpp Global.h
+Global.o: Global.cpp Global.h mkausch.h hzhang.h
 	$(COMP) -c Global.cpp
 
 # still in development
-mkausch.o: mkausch.cpp mkausch.h
+mkausch.o: mkausch.cpp mkausch.h Box.h Global.h
 	$(COMP) -c mkausch.cpp
 
 hzhang.o: hzhang.cpp hzhang.h
@@ -28,7 +28,7 @@ hzhang.o: hzhang.cpp hzhang.h
 
 
 # spawning complete, collisions need to be done
-aparriott.o: aparriott.cpp aparriott.h
+aparriott.o: aparriott.cpp aparriott.h Global.h
 	$(COMP) -c aparriott.cpp
 
 # Empty files but development on bottom screen info soon
