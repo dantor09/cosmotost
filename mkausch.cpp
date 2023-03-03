@@ -17,6 +17,7 @@
 #include <string>
 #include "mkausch.h"
 #include "Global.h"
+using namespace std;
 
 #define BSIZE 5
 #define PADDING 20
@@ -260,7 +261,9 @@ Timer::Timer(double s) : duration(s), pause_duration(0.00),
 // delete pause timer if it were active
 Timer::~Timer()
 {
+    cerr << "in Timer destructor\n";
     if (pause_timer){
+        cerr << "deleting pause timer\n";
         delete pause_timer;
         pause_timer = nullptr;
     }

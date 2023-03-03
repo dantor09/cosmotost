@@ -59,8 +59,11 @@ Timer::Timer(double s) : duration(s), pause_duration(0.00),
 // delete pause timer if it were active
 Timer::~Timer()
 {
-    if (pause_timer)
+    cerr << "in timer destructor";
+    if (pause_timer) {
+        cerr << "deleting pause timer\n";
         delete pause_timer;
+    }
 }
 
 /****************************** Setters *************************************/
@@ -104,7 +107,8 @@ bool Timer::isDone()
 
 void Timer::pause()
 {
-    paused = true;
+    paused 
+    = true;
     pause_timer = new Timer();
 }
 

@@ -15,17 +15,20 @@
 - reset game / all vars when reset button/ main menu hit from pause
 - collission on "entity" enemy
 - naming convention for enemies
-- Create / Draw Game clock using Timer class
+- health bar menu
+
 
 #### In Progress:
+- stabby forky enemy
 
 
 #### Done:
+- game clock that counts up so you can feel bad about yourself for how much
+    time that you've wasted (mike)
+- Game Over Screen
 - Help menu - press F1 to expand help screen to all key options (mike)
 - Implement Time functionality (mike)
     - chrono library
-
-    
 
 ### Longer Term
 

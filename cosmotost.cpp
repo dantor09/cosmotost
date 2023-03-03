@@ -216,6 +216,10 @@ int X11_wrapper::check_mouse(XEvent *e)
 				if (selection && (selection->text == "Start Game")) {
 					mm.set_orig_color();
 					g.state = GAME;
+					// if (g.gameTimer) {
+					// 	delete g.gameTimer;
+					// }
+					g.gameTimer = new Timer();	// start the game timer 
 					selection = nullptr;
 					prev_selection = nullptr;
 					return 0;
@@ -293,6 +297,10 @@ int X11_wrapper::check_mouse(XEvent *e)
 				if (selection && (selection->text == "Main Menu")) {
 					pause_menu.set_orig_color();
 					g.state = MAINMENU;
+					if (g.gameTimer) {
+						cerr << "killing game clock\n";
+						delete g.gameTimer;	// kill game clock
+					}
 					selection = nullptr;
 					prev_selection = nullptr;
 
@@ -302,12 +310,21 @@ int X11_wrapper::check_mouse(XEvent *e)
 					g.state = GAME;
 					cerr << "g.state was changed back to GAME (RESET SEQUENCE)"
 							<< endl;
+					if (g.gameTimer) {
+						cerr << "killing game clock\n";
+						delete g.gameTimer;	// kill game clock
+					}
+					
+					g.gameTimer = new Timer();
 					selection = nullptr;
 					prev_selection = nullptr;
 
 				} else if (selection && (selection->text == "Back to Game")) {
 					pause_menu.set_orig_color();
 					g.state = GAME;
+					if (g.gameTimer->isPaused()) {
+						g.gameTimer->unPause();	// unpause the game
+					}
 					cerr << "g.state was changed back to GAME" << endl;
 					selection = nullptr;
 					prev_selection = nullptr;
@@ -315,6 +332,10 @@ int X11_wrapper::check_mouse(XEvent *e)
 					pause_menu.set_orig_color();
 					cerr << "g.state was changed to should be quitting..." <<
 							endl;
+					if (g.gameTimer) {
+						cerr << "killing game clock\n";
+						delete g.gameTimer;	// kill game clock
+					}
 					selection = nullptr;
 					prev_selection = nullptr;
 					return 1;
@@ -457,6 +478,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Escape key was pressed
 					//Enter Pause State
 					g.state = PAUSE;
+					g.gameTimer->pause();
 					cerr << "g.state was changed to PAUSE" << endl;
 					return 0;
 				case XK_F1:	// Toggle Help Menu
@@ -478,8 +500,9 @@ int X11_wrapper::check_keys(XEvent *e)
 			switch (key) {
 				case XK_Escape:
 					//Escape key was pressed
-					//Enter Pause State
+					//Return to Game State
 					g.state = GAME;
+					g.gameTimer->unPause();
 					cerr << "g.state was changed back to GAME" << endl;
 					return 0;
 			}
@@ -815,7 +838,7 @@ void render()
 
 			// ***********Locations of all the text rectangles***************
 			// 					Top Left side of the screen
-			Rect help_msg, score;
+			Rect help_msg, score, g_time;
 			help_msg.bot = (g.yres - 20);
 			help_msg.left = 20;
 			help_msg.center = 0;
@@ -825,14 +848,20 @@ void render()
 			score.bot = g.yres-20;
 			score.left = g.xres - 80;
 			score.center = 0;
-			ggprint8b(&score, 100, 0x00DC143C, "Score : %i",tos.score);
+			ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
+
+
+			g_time.bot = score.bot-20;
+			g_time.left = score.left;
+			g_time.center = 0;
+			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %i",(int)g.gameTimer->getTime());
 		}
 
 
 
 	} else if (g.show_help_menu == true) {
 		const unsigned int KEY_MESSAGES = 10;
-		Rect gamestate_msg, key_msg[KEY_MESSAGES], score;
+		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time;
 
 
 		// ***********Locations of all the text rectangles******************
@@ -854,6 +883,11 @@ void render()
 		score.bot = g.yres-20;
 		score.left = g.xres - 80;
 		score.center = 0;
+
+		g_time.bot = score.bot-20;
+		g_time.left = score.left;
+		g_time.center = 0;
+		
 
 
 
@@ -927,15 +961,27 @@ void render()
 												"<d> - Move Right");
 
 
-				ggprint8b(&score, 100, 0x00DC143C, "Score");
+				// ggprint8b(&score, 100, 0x00DC143C, "Score");
+				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
+				ggprint8b(&g_time, 0, 0x00DC143C, 
+											"Time : %i",(int)g.gameTimer->getTime());
+				cerr << "Gametime: " << g.gameTimer->getTime() << endl;
+				cerr << "(int)Gametime: " << (int)g.gameTimer->getTime() << endl;
+
 				break;
 			case PAUSE:
-				ggprint8b(&score, 100, 0x00DC143C, "Score");
+				// ggprint8b(&score, 100, 0x00DC143C, "Score");
+				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - PAUSE");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Un-Pause Game");
+				ggprint8b(&g_time, 0, 0x00DC143C, 
+											"Time : %i",g.gameTimer->getTime());
 				break;
 			case GAMEOVER:
-				ggprint8b(&score, 100, 0x00DC143C, "Score");
+				// ggprint8b(&score, 100, 0x00DC143C, "Score");
+				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
+				ggprint8b(&g_time, 0, 0x00DC143C, 
+											"Time : %i",g.gameTimer->getTime());
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAMEOVER");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Back to Main Menu");
 				break;

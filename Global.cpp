@@ -9,4 +9,10 @@ Global::Global()
 }
 
 
-Global::~Global(){}
+Global::~Global()
+{
+	if (gameTimer != nullptr) {
+		delete gameTimer;
+		gameTimer = nullptr;
+	}
+}
