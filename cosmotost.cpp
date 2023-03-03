@@ -28,6 +28,7 @@
 #include "Global.h"	// global vars
 #include "mkausch.h"	// menu
 #include "aparriott.h"	// entity spawning
+#include "hzhang.h"	// record
 
 using namespace std;
 
@@ -219,7 +220,13 @@ int X11_wrapper::check_mouse(XEvent *e)
 					// if (g.gameTimer) {
 					// 	delete g.gameTimer;
 					// }
-					g.gameTimer.reset();	// start the game timer 
+					g.gameTimer.reset();	// start the game timer
+					selection = nullptr;
+					prev_selection = nullptr;
+					return 0;
+				} else if (selection && (selection->text == "High Scores")) {
+					mm.set_orig_color();
+					g.substate = HIGH_SCORES;
 					selection = nullptr;
 					prev_selection = nullptr;
 					return 0;
@@ -425,7 +432,7 @@ int X11_wrapper::check_keys(XEvent *e)
 		// only functional keys are:
 		//     	p: enter Ailand's Entity State
 		// Escape: Pauses the game
-	} else if ((g.state == MAINMENU) && (g.substate == SETTINGS)) {
+	} else if ((g.state == MAINMENU) && ((g.substate == SETTINGS) || (g.substate == HIGH_SCORES))) {
 		if (e->type == KeyPress) {
 			switch (key) {
 				case XK_Escape:	// go back to main menu
@@ -522,6 +529,30 @@ int X11_wrapper::check_keys(XEvent *e)
 		// 		Escape: Go back to the main menu
 		//		Game Over text with credits rolling?
 	} else if (g.state == GAMEOVER) {
+		if (tos.score > record.highscore)
+		{
+				int key = XLookupKeysym(&e->xkey, 0);
+				if (e->type == KeyPress) {
+						// cout << key << endl;
+						if(key >=97 && key <= 122) {
+								record.gamer[record.n]= (char)key;
+								record.str = record.gamer;
+								cout << (char)key << endl;
+								cout << record.str << endl;
+								if (record.n < 9)
+									record.n++;
+						}
+						if(key == XK_BackSpace) {
+								cout << "de" <<endl;
+								record.gamer[record.n] = '_';
+								if(record.n > 0)
+										record.n--;
+						}
+						if(key == XK_Return) {
+							record.ChangeR(tos.score);
+						}
+			}
+		}
 		if (e->type == KeyPress) {
 			switch (key) {
 				case XK_Escape:
@@ -819,11 +850,27 @@ void render()
 		/******************    END SPLASH IMAGE    ***************************/
 
 		Rect game_msg;
-		game_msg.bot = g.yres * (1/4.0f);
-        game_msg.left = g.xres / 2.0f;
-        game_msg.center = 1;
+		Rect typename_m, hscore_msg;
 
-        ggprint16(&game_msg, 0, 0x00ffffff, "GAME OVER");
+		typename_m.bot = g.yres * (1/10.0f);
+				typename_m.left = g.xres / 2.0f;
+				typename_m.center = 1;
+		hscore_msg.bot = g.yres * (3/10.0f);
+        hscore_msg.left = g.xres / 2.0f;
+        hscore_msg.center = 1;
+		if(tos.score > record.highscore) {
+				game_msg.bot = g.yres * (2/5.0f);
+		        game_msg.left = g.xres / 2.0f;
+		        game_msg.center = 1;
+				ggprint16(&typename_m, 0, 0x00ffffff, "%s", record.gamer);
+				ggprint16(&hscore_msg, 0, 0x00DC143C, "New Record: %i", tos.score);
+		} else {
+				game_msg.bot = g.yres * (1/4.0f);
+						game_msg.left = g.xres / 2.0f;
+						game_msg.center = 1;
+
+		}
+		ggprint16(&game_msg, 0, 0x00ffffff, "GAME OVER");
 
 	}
 
@@ -872,7 +919,6 @@ void render()
 		const unsigned int KEY_MESSAGES = 10;
 		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time;
 
-
 		// ***********Locations of all the text rectangles******************
 		// 					Top Left side of the screen					//
 		gamestate_msg.bot = (g.yres - 20);				// 1st (top)
@@ -897,7 +943,14 @@ void render()
 		g_time.left = score.left;
 		g_time.center = 0;
 
-
+// 				Record Middle of the screen				//
+		Rect typename_m, hscore_msg;
+		typename_m.bot = g.yres * (3/5.0f);
+				typename_m.left = g.xres / 2.0f;
+				typename_m.center = 1;
+		hscore_msg.bot = g.yres * (2/5.0f);
+        hscore_msg.left = g.xres / 2.0f;
+        hscore_msg.center = 1;
 
 
 		// 					Write Messages Based On State					//
@@ -920,6 +973,20 @@ void render()
 															"STATE - SETTINGS");
 					ggprint8b(&key_msg[0], 0, 0x00ffff00,
 												"<ESC> - Back to Main Menu");
+				} else if (g.substate == HIGH_SCORES) {
+					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
+															"STATE - High Scores");
+					ggprint8b(&key_msg[0], 0, 0x00ffff00,
+												"<ESC> - Back to Main Menu");
+					if(record.highscore == 0) {
+							ggprint16(&hscore_msg, 0, 0x00DC143C,
+								 						"No Record Yet!!");
+					} else {
+							ggprint16(&hscore_msg, 0, 0x00DC143C,
+								 						"Score : %i",tos.score);
+							ggprint16(&typename_m, 0, 0x00DC143C,
+								 						"%s",record.reName);
+					}
 				}
 				break;
 			case GAME:

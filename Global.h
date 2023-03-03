@@ -5,7 +5,7 @@
 #include <cstring>
 
 enum Gamestate { SPLASH, MAINMENU, GAME, PAUSE, GAMEOVER };
-enum Substate { NONE, ENTITY, SETTINGS, DTORRES, HUAIYU, MIKE };
+enum Substate { NONE, ENTITY, HIGH_SCORES, SETTINGS, DTORRES, HUAIYU, MIKE };
 
 
 
@@ -63,6 +63,7 @@ inline Menu pause_menu(4, 225, 225, g.xres/2.0f, g.yres/2.0f, p_text);
 // Huaiyu veribles================================
 const int MAX_bullet = 10000;
 const int MAX_bread = 10;
+inline Gamerecord record;
 inline Toaster tos;
 inline Bullet bul[MAX_bullet];
 inline Bread bread[MAX_bread];
