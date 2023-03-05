@@ -12,7 +12,6 @@
     - difficulty modes
     - character choice
     - music
-- reset game / all vars when reset button/ main menu hit from pause
 - collission on "entity" enemy
 - naming convention for enemies
 - health bar menu
@@ -23,26 +22,24 @@
 
 
 #### Done:
+- reset game / all vars when reset button/ main menu hit from pause (Huaiyu)
 - game clock that counts up so you can feel bad about yourself for how much
     time that you've wasted (mike)
 - Game Over Screen
 - Help menu - press F1 to expand help screen to all key options (mike)
 - Implement Time functionality (mike)
     - chrono library
+- Audio (mike)
+    - different executables for audio / silent version (Mike)
+- High scores / high score screen (Huaiyu)
+- input player's name/handle (Huaiyu)
 
 ### Longer Term
 
 - HUD / scores at the bottom
 - Textures
-- Audio
-
-- High scores / high score screen / associated php
-    -- Any thoughts on how we plan on getting the player's name/handle?
 - ARTWORK...
-
-
-
-
+- High score php
 
 - Make screen size / menu bigger
 - lock screen size so it cant be altered?
