@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <string>
+#include </usr/include/AL/alut.h>
 #include "mkausch.h"
 #include "Global.h"
 using namespace std;
@@ -334,6 +335,157 @@ void Timer::unPause()
     
 }
 
+#ifdef USE_OPENAL_SOUND
+Sound::Sound()
+{
+    
+    //Buffer holds the sound information.
+    init_openal();
+    current_track = 1;  // starting track number at splash screen
+    is_music_paused = false;
+    // alBuffers[0] = alutCreateBufferFromFile("./openalTest/bullet_fire.wav");
+    // alBuffers[1] = alutCreateBufferFromFile("./Songs/Edzes-64TheMagicNumber16kHz.wav");
+    // alBuffers[2] = alutCreateBufferFromFile("./Songs/Estrayk-TheHerSong1016kHz.wav");
+    // alBuffers[3] = alutCreateBufferFromFile("./Songs/Mattashi-TheFinalBattle16kHz.wav");
+    // alBuffers[4] = alutCreateBufferFromFile("./Songs/Quazar-FunkyStars16kHz.wav");
+    // alBuffers[5] = alutCreateBufferFromFile("./Songs/XRay-Zizibum-16kHz.wav");
+    // alBuffers[6] = alutCreateBufferFromFile("./Songs/Zalza-8bitTheClock16kHz.wav");
+    // alBuffers[7] = alutCreateBufferFromFile("./Songs/AdhesiveWombat-8bitAdventure_16kHz.wav");
+
+    alBuffers[0] = alutCreateBufferFromFile(sound_names[0].c_str());
+    alBuffers[1] = alutCreateBufferFromFile(build_song_path(sound_names[1]).c_str());
+    alBuffers[2] = alutCreateBufferFromFile(build_song_path(sound_names[2]).c_str());
+    alBuffers[3] = alutCreateBufferFromFile(build_song_path(sound_names[3]).c_str());
+    alBuffers[4] = alutCreateBufferFromFile(build_song_path(sound_names[4]).c_str());
+    alBuffers[5] = alutCreateBufferFromFile(build_song_path(sound_names[5]).c_str());
+    alBuffers[6] = alutCreateBufferFromFile(build_song_path(sound_names[6]).c_str());
+    alBuffers[7] = alutCreateBufferFromFile(build_song_path(sound_names[7]).c_str());
+
+    alGenSources(NUM_SOUNDS, alSources);
+    //Generate a source, and store it in a buffer.
+
+    // make all songs to loop
+    for (int i = 1; i < NUM_SOUNDS; i++) {
+        alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
+        alSourcef(alSources[i], AL_GAIN, 0.5f);
+        alSourcef(alSources[i], AL_PITCH, 1.0f);
+        alSourcei(alSources[i], AL_LOOPING, AL_TRUE);
+    }
+
+    // set sfx to not loop
+    alSourcei(alSources[0], AL_BUFFER, alBuffers[0]);
+    alSourcef(alSources[0], AL_GAIN, 1.0f);
+    alSourcef(alSources[0], AL_PITCH, 1.0f);
+    alSourcei(alSources[0], AL_LOOPING, AL_FALSE);
+    
+    if (alGetError() != AL_NO_ERROR) {
+        throw "ERROR: setting source\n";
+    }
+}
+
+Sound::~Sound()
+{
+    for (int i = 0; i < NUM_SOUNDS; i++) {
+        // delete sources
+        alDeleteSources(i+1, (alSources+i));
+        // delete buffers
+        alDeleteBuffers(i+1, (alBuffers+i));
+    }
+
+    close_openal();
+
+}
+
+void Sound::init_openal() 
+{
+	alutInit(0, NULL);
+	if (alGetError() != AL_NO_ERROR) {
+		throw "ERROR: alutInit()\n";
+		// printf("ERROR: alutInit()\n");
+		// return 0;
+	}
+
+	//Clear error state.
+	alGetError();
+
+	//Setup the listener.
+	//Forward and up vectors are used.
+	float vec[6] = {0.0f,0.0f,1.0f, 0.0f,1.0f,0.0f};
+	alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
+	alListenerfv(AL_ORIENTATION, vec);
+	alListenerf(AL_GAIN, 1.0f);
+}
+
+void Sound::close_openal()
+{
+	//Close out OpenAL itself.
+	//Get active context.
+	ALCcontext *Context = alcGetCurrentContext();
+	//Get device for active context.
+	ALCdevice *Device = alcGetContextsDevice(Context);
+	//Disable context.
+	alcMakeContextCurrent(NULL);
+	//Release context(s).
+	alcDestroyContext(Context);
+	//Close device.
+	alcCloseDevice(Device);
+}
+
+string Sound::build_song_path(string s)
+{
+    // format of the song
+    // ./Songs/Edzes-64TheMagicNumber16kHz.wav"
+    
+    ostringstream path;
+    string song_dir = "Songs";
+
+    path << "./" << song_dir << "/" << s;
+
+    return path.str();
+
+}
+
+void Sound::cycle_songs()
+{
+    int first_track = 1;    // first track in list of tracks,this will make 
+                            //  it easier if they're grouped if more sfx are added
+    // int starting_track = 1; // starting track when game opens at splash menu
+    static int track = current_track;   // id of starting track number when game opens
+	static int prev_track = -1; // prevents stopping a song that's not playing when game opens
+
+
+    if (prev_track != -1)
+        alSourceStop(alSources[prev_track]);
+
+    alSourcePlay(alSources[track]);
+    current_track = track;
+    
+    prev_track = track;
+
+    track = (track == NUM_SOUNDS-1) ? first_track : track+1;
+}
+
+string Sound::get_song_name()
+{
+    return sound_names[current_track];
+}
+
+void Sound::pause()
+{
+    if (!is_music_paused) {
+        is_music_paused = true;
+        alSourcePause(alSources[current_track]);
+    }
+}
+void Sound::unpause()
+{
+    if (is_music_paused) {
+        is_music_paused = false;
+        alSourcePlay(alSources[current_track]);
+    }
+}
+
+#endif
 
 
 

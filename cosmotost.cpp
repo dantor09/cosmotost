@@ -32,9 +32,6 @@
 
 using namespace std;
 
-// Global g;
-// Box b1;
-// extern Box b1;
 
 class X11_wrapper {
 private:
@@ -338,6 +335,16 @@ int X11_wrapper::check_mouse(XEvent *e)
 					cerr << "g.state was changed back to GAME" << endl;
 					selection = nullptr;
 					prev_selection = nullptr;
+
+#ifdef USE_OPENAL_SOUND
+				
+					sounds.unpause();
+					cerr << "unpausing song " << sounds.get_song_name() << endl;
+					return 0;
+#endif
+
+
+
 				} else if (selection && (selection->text == "Quit Game")) {
 					pause_menu.set_orig_color();
 					cerr << "g.state was changed to should be quitting..." <<
@@ -444,6 +451,16 @@ int X11_wrapper::check_keys(XEvent *e)
 					cerr << "g.substate was changed to NONE" << endl;
 					cerr << "Back to the main menu" << endl;
 					return 0;
+
+#ifdef USE_OPENAL_SOUND
+				case XK_u:	// go back to main menu
+					//Escape key was pressed
+					//Enter Pause State
+					sounds.cycle_songs();
+					cerr << "cycling song to " << sounds.get_song_name() << endl;
+					return 0;
+#endif
+
 			}
 		}
 		// Pause Menu State:
@@ -489,12 +506,20 @@ int X11_wrapper::check_keys(XEvent *e)
 						cerr << "g.substate was changed back to NONE\n";
 					}
 					return 0;
+
 				case XK_Escape:	// pause the game
 					//Escape key was pressed
 					//Enter Pause State
 					g.state = PAUSE;
 					// g.gameTimer.pause();
 					cerr << "g.state was changed to PAUSE" << endl;
+
+#ifdef USE_OPENAL_SOUND
+				
+					sounds.pause();
+					cerr << "pausing song " << sounds.get_song_name() << endl;
+#endif
+
 					return 0;
 				case XK_F1:	// Toggle Help Menu
 					g.show_help_menu = (g.show_help_menu ? false : true);
@@ -504,6 +529,17 @@ int X11_wrapper::check_keys(XEvent *e)
 					g.state = GAMEOVER;
 					cerr << "g.state was changed to GAMEOVER" << endl;
 					return 0;
+
+#ifdef USE_OPENAL_SOUND
+				case XK_u:	// go back to main menu
+					//Escape key was pressed
+					//Enter Pause State
+					sounds.cycle_songs();
+					cerr << "cycling song to " << sounds.get_song_name() << endl;
+					return 0;
+#endif
+
+
 			}
 		}
 		// Pause Menu State:
@@ -519,6 +555,12 @@ int X11_wrapper::check_keys(XEvent *e)
 					g.state = GAME;
 					// g.gameTimer.unPause();
 					cerr << "g.state was changed back to GAME" << endl;
+
+#ifdef USE_OPENAL_SOUND
+					sounds.unpause();
+					cerr << "unpausing song " << sounds.get_song_name() << endl;
+#endif
+
 					return 0;
 			}
 		}
@@ -596,6 +638,10 @@ void init_opengl(void)
 	// set initial game state
 	g.state = SPLASH;
 	g.substate = NONE;
+
+#ifdef USE_OPENAL_SOUND	
+	sounds.cycle_songs();	// cycle will start the start song on first play
+#endif
 
 }
 
@@ -890,34 +936,51 @@ void render()
 
 	if (g.show_help_menu == false) {
 
-		if (g.state == GAME) {
+		Rect help_msg, score, g_time;
 
-			// ***********Locations of all the text rectangles***************
-			// 					Top Left side of the screen
-			Rect help_msg, score, g_time;
-			help_msg.bot = (g.yres - 20);
-			help_msg.left = 20;
-			help_msg.center = 0;
+#ifdef USE_OPENAL_SOUND
+		Rect s_name;
+		s_name.bot = 20;
+		s_name.left = g.xres - 300;
+		s_name.center = 0;
+			
+#endif
+
+
+		// ***********Locations of all the text rectangles***************
+		// 					Top Left side of the screen
+		help_msg.bot = (g.yres - 20);
+		help_msg.left = 20;
+		help_msg.center = 0;
+		// 					Top Right side of the screen
+		score.bot = g.yres-20;
+		score.left = g.xres - 80;
+		score.center = 0;
+		// 					Bottom right of the screen
+		g_time.bot = score.bot-20;
+		g_time.left = score.left;
+		g_time.center = 0;
+
+
+		if (g.state == GAME || g.state == PAUSE) {
+
 			ggprint8b(&help_msg, 0, 0x00ffff00, "Press <F1> for help");
-
-			// 					Top Right side of the screen
-			score.bot = g.yres-20;
-			score.left = g.xres - 80;
-			score.center = 0;
 			ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
-
-
-			g_time.bot = score.bot-20;
-			g_time.left = score.left;
-			g_time.center = 0;
 			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %i",(int)g.gameTimer.getTime());
+
+#ifdef USE_OPENAL_SOUND
+
+			if (g.state == GAME)
+				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+			else 
+				ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
+#endif
+
 		}
 
-
-
 	} else if (g.show_help_menu == true) {
-		const unsigned int KEY_MESSAGES = 10;
-		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time;
+		const unsigned int KEY_MESSAGES = 11;
+		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time, s_name;
 
 		// ***********Locations of all the text rectangles******************
 		// 					Top Left side of the screen					//
@@ -943,6 +1006,14 @@ void render()
 		g_time.left = score.left;
 		g_time.center = 0;
 
+		// bottom right of the screen
+#ifdef USE_OPENAL_SOUND
+			s_name.bot = 20;
+			s_name.left = g.xres - 300;
+			s_name.center = 0;
+			
+#endif
+
 // 				Record Middle of the screen				//
 		Rect typename_m, hscore_msg;
 		typename_m.bot = g.yres * (3/5.0f);
@@ -963,11 +1034,17 @@ void render()
 														"<ESC> - Exit Game");
 				ggprint8b(&key_msg[1], 0, 0x00ffff00,
 												"<ENTER> - GO TO MAIN MENU");
+#ifdef USE_OPENAL_SOUND
+				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+#endif
 				break;
 			case MAINMENU:
 				if (g.substate == NONE) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 														"STATE - MAIN MENU");
+#ifdef USE_OPENAL_SOUND
+					ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+#endif
 				} else if (g.substate == SETTINGS) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 															"STATE - SETTINGS");
@@ -988,6 +1065,7 @@ void render()
 								 						"%s",record.reName);
 					}
 				}
+				
 				break;
 			case GAME:
 				if (g.substate == NONE) {
@@ -1001,6 +1079,9 @@ void render()
 										"<k> - Go To MKausch Feature Mode");
 					ggprint8b(&key_msg[9], 0, 0x00ffff00,
 										"<t> - Go To DTorres Feature Mode");
+					ggprint8b(&key_msg[10], 0, 0x00ffff00,
+										"<u> - Cycle Music");
+										
 				} else if (g.substate == ENTITY) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - ENTITY - APARRIOTT FEATURE MODE");
@@ -1035,15 +1116,16 @@ void render()
 												"<s> - Move Down");
 				ggprint8b(&key_msg[5], 0, 0x00ffff00,
 												"<d> - Move Right");
+												
 
 
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&g_time, 0, 0x00DC143C,
 											"Time : %i",(int)g.gameTimer.getTime());
-				// cerr << "Gametime: " << (int)g.gameTimer.getTime() << endl;
-				// cerr << "(int)Gametime: " << g.gameTimer << endl;
-
+#ifdef USE_OPENAL_SOUND
+				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+#endif
 				break;
 			case PAUSE:
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
@@ -1052,6 +1134,9 @@ void render()
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Un-Pause Game");
 				ggprint8b(&g_time, 0, 0x00DC143C,
 											"Time : %i",(int)g.gameTimer.getTime());
+#ifdef USE_OPENAL_SOUND
+				ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
+#endif
 				break;
 			case GAMEOVER:
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");

@@ -4,6 +4,7 @@
 #include "hzhang.h"
 #include <cstring>
 
+
 enum Gamestate { SPLASH, MAINMENU, GAME, PAUSE, GAMEOVER };
 enum Substate { NONE, ENTITY, HIGH_SCORES, SETTINGS, DTORRES, HUAIYU, MIKE };
 
@@ -45,7 +46,6 @@ void GameReset();
 
 
 inline Global g;
-// inline Box s_menu_bg;
 
 inline std::string mm_text[] = {"Start Game",
                                 "High Scores",
@@ -60,6 +60,11 @@ inline std::string p_text[] = {"Back to Game",
 inline Menu pause_menu(4, 225, 225, g.xres/2.0f, g.yres/2.0f, p_text);
 
 
+#ifdef USE_OPENAL_SOUND
+inline Sound sounds;
+
+#endif
+
 // Huaiyu veribles================================
 const int MAX_bullet = 10000;
 const int MAX_bread = 10;
@@ -67,4 +72,6 @@ inline Gamerecord record;
 inline Toaster tos;
 inline Bullet bul[MAX_bullet];
 inline Bread bread[MAX_bread];
+
+
 // Huaiyu veribles================================

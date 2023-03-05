@@ -3,6 +3,7 @@
 *.o
 
 # Executables
+s_cosmotost
 cosmotost
 a.out
 

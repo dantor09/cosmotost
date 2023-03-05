@@ -21,6 +21,17 @@
 #include "Box.h"
 #include "fonts.h"
 
+using namespace std;
+
+inline const int NUM_SOUNDS = 8;
+
+#ifdef USE_OPENAL_SOUND
+#include </usr/include/AL/alut.h>
+#endif //USE_OPENAL_SOUND
+
+// const int U_TO_S = 1000000;
+// const int SONG_LENGTH = U_TO_S * ((4 * 60) + 30);
+
 
 class Menu
 {
@@ -101,3 +112,40 @@ bool isPaused();
 
 };
 
+#ifdef USE_OPENAL_SOUND
+class Sound
+{
+private:
+   
+    int current_track;
+    ALuint alBuffers[NUM_SOUNDS];
+	ALuint alSources[NUM_SOUNDS];
+    void init_openal();
+    void close_openal();
+    string build_song_path(string s);
+    bool is_music_paused;
+    
+    string sound_names[NUM_SOUNDS] = {
+                    "./openalTest/bullet_fire.wav",
+                    "Edzes-64TheMagicNumber16kHz.wav",
+                    "Estrayk-TheHerSong1016kHz.wav",
+                    "Mattashi-TheFinalBattle16kHz.wav",
+                    "Quazar-FunkyStars16kHz.wav",
+                    "XRay-Zizibum-16kHz.wav",
+                    "Zalza-8bitTheClock16kHz.wav",
+                    "AdhesiveWombat-8bitAdventure_16kHz.wav"};
+
+public:
+	// Source refers to the sound.
+    
+    void cycle_songs();
+    void pause();
+    void unpause();
+    string get_song_name();
+
+	Sound();
+	~Sound();
+
+};
+
+#endif
