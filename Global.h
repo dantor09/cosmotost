@@ -73,5 +73,4 @@ inline Toaster tos;
 inline Bullet bul[MAX_bullet];
 inline Bread bread[MAX_bread];
 
-
 // Huaiyu veribles================================

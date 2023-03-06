@@ -23,7 +23,7 @@
 
 using namespace std;
 
-inline const int NUM_SOUNDS = 8;
+inline const int NUM_SOUNDS = 2;
 
 #ifdef USE_OPENAL_SOUND
 #include </usr/include/AL/alut.h>
@@ -49,7 +49,7 @@ public:
     Rect *texts;
     // Rect texts[4];
     Box *t_boxs;
-    // std::string *words;
+    std::string *words;
 
     // constructors
     Menu(unsigned int n_texts, 
@@ -124,24 +124,27 @@ private:
     void close_openal();
     string build_song_path(string s);
     bool is_music_paused;
+    bool user_pause;
     
     string sound_names[NUM_SOUNDS] = {
-                    "./openalTest/bullet_fire.wav",
-                    "Edzes-64TheMagicNumber16kHz.wav",
-                    "Estrayk-TheHerSong1016kHz.wav",
-                    "Mattashi-TheFinalBattle16kHz.wav",
-                    "Quazar-FunkyStars16kHz.wav",
-                    "XRay-Zizibum-16kHz.wav",
-                    "Zalza-8bitTheClock16kHz.wav",
-                    "AdhesiveWombat-8bitAdventure_16kHz.wav"};
+                    "bullet_fire.wav",
+                    // "Edzes-64TheMagicNumber16kHz.wav",
+                    // "Estrayk-TheHerSong1016kHz.wav",
+                    "VolkorX-Enclave8kHz.wav" };
+                    // "Quazar-FunkyStars16kHz.wav",
+                    // "XRay-Zizibum-16kHz.wav",
+                    // "Zalza-8bitTheClock16kHz.wav",
+                    // "AdhesiveWombat-8bitAdventure_16kHz.wav"};
 
 public:
 	// Source refers to the sound.
     
     void cycle_songs();
+    void toggle_user_pause();
     void pause();
     void unpause();
-    string get_song_name();
+    bool get_pause();
+    string & get_song_name();
 
 	Sound();
 	~Sound();

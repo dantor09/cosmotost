@@ -39,10 +39,11 @@ Menu::Menu(unsigned int _n_texts,
     boarder.set_pos(pos[0], pos[1], pos[2]);
     boarder.set_color(69, 85, 89);
     
+    
     try {
         t_boxs = new Box[n_texts];
         texts = new Rect[n_texts];
-        // words = new std::string[n_texts];
+        words = new std::string[n_texts];
         
 
         float spacing = (2*h)/(n_texts+1);
@@ -54,11 +55,12 @@ Menu::Menu(unsigned int _n_texts,
             t_boxs[i].pos[0] = mainbox.pos[0];
             t_boxs[i].pos[1] = (pos[1]+mainbox.h)-((i+1)*spacing);
             t_boxs[i].set_color(61, 90, 115);
+            t_boxs[i].id=i; // set box id for words array check
             std::cout << "t_box[" << i << "].pos[1]: " 
                         << t_boxs[i].pos[1] << std::endl;
             
-            // words[i] = _words[i];
-            t_boxs[i].set_text(_words[i]);
+            words[i] = _words[i];
+            // t_boxs[i].set_text(_words[i]);
 
             // Leaving this here for the next poor soul that
             // comes accross this issue:
@@ -94,8 +96,8 @@ Menu::~Menu()
     if (t_boxs)
         delete [] t_boxs;
 
-    // if (words)
-    //     delete [] words;
+    if (words)
+        delete [] words;
         
 }
 
@@ -166,7 +168,7 @@ void Menu::draw()
 
         // r[i].center = 1;
 
-        ggprint8b(texts+i, 16, 0x00ffffff, t_boxs[i].text.c_str());
+        ggprint8b(texts+i, 16, 0x00ffffff, words[i].c_str());
     }
         
 }
@@ -343,23 +345,24 @@ Sound::Sound()
     init_openal();
     current_track = 1;  // starting track number at splash screen
     is_music_paused = false;
-    // alBuffers[0] = alutCreateBufferFromFile("./openalTest/bullet_fire.wav");
+    user_pause = false;
+    alBuffers[0] = alutCreateBufferFromFile("./Songs/bullet_fire.wav");
     // alBuffers[1] = alutCreateBufferFromFile("./Songs/Edzes-64TheMagicNumber16kHz.wav");
     // alBuffers[2] = alutCreateBufferFromFile("./Songs/Estrayk-TheHerSong1016kHz.wav");
-    // alBuffers[3] = alutCreateBufferFromFile("./Songs/Mattashi-TheFinalBattle16kHz.wav");
+    alBuffers[1] = alutCreateBufferFromFile("./Songs/VolkorX-Enclave8kHz.wav.wav");
     // alBuffers[4] = alutCreateBufferFromFile("./Songs/Quazar-FunkyStars16kHz.wav");
     // alBuffers[5] = alutCreateBufferFromFile("./Songs/XRay-Zizibum-16kHz.wav");
     // alBuffers[6] = alutCreateBufferFromFile("./Songs/Zalza-8bitTheClock16kHz.wav");
     // alBuffers[7] = alutCreateBufferFromFile("./Songs/AdhesiveWombat-8bitAdventure_16kHz.wav");
 
-    alBuffers[0] = alutCreateBufferFromFile(sound_names[0].c_str());
+    alBuffers[0] = alutCreateBufferFromFile(build_song_path(sound_names[0]).c_str());
     alBuffers[1] = alutCreateBufferFromFile(build_song_path(sound_names[1]).c_str());
-    alBuffers[2] = alutCreateBufferFromFile(build_song_path(sound_names[2]).c_str());
-    alBuffers[3] = alutCreateBufferFromFile(build_song_path(sound_names[3]).c_str());
-    alBuffers[4] = alutCreateBufferFromFile(build_song_path(sound_names[4]).c_str());
-    alBuffers[5] = alutCreateBufferFromFile(build_song_path(sound_names[5]).c_str());
-    alBuffers[6] = alutCreateBufferFromFile(build_song_path(sound_names[6]).c_str());
-    alBuffers[7] = alutCreateBufferFromFile(build_song_path(sound_names[7]).c_str());
+    // alBuffers[2] = alutCreateBufferFromFile(build_song_path(sound_names[2]).c_str());
+    // alBuffers[3] = alutCreateBufferFromFile(build_song_path(sound_names[3]).c_str());
+    // alBuffers[4] = alutCreateBufferFromFile(build_song_path(sound_names[4]).c_str());
+    // alBuffers[5] = alutCreateBufferFromFile(build_song_path(sound_names[5]).c_str());
+    // alBuffers[6] = alutCreateBufferFromFile(build_song_path(sound_names[6]).c_str());
+    // alBuffers[7] = alutCreateBufferFromFile(build_song_path(sound_names[7]).c_str());
 
     alGenSources(NUM_SOUNDS, alSources);
     //Generate a source, and store it in a buffer.
@@ -465,7 +468,7 @@ void Sound::cycle_songs()
     track = (track == NUM_SOUNDS-1) ? first_track : track+1;
 }
 
-string Sound::get_song_name()
+string & Sound::get_song_name()
 {
     return sound_names[current_track];
 }
@@ -479,10 +482,26 @@ void Sound::pause()
 }
 void Sound::unpause()
 {
-    if (is_music_paused) {
-        is_music_paused = false;
-        alSourcePlay(alSources[current_track]);
+    if (!user_pause) {
+        if (is_music_paused) {
+            is_music_paused = false;
+            alSourcePlay(alSources[current_track]);
+        }
     }
+}
+
+void Sound::toggle_user_pause()
+{
+    user_pause = (user_pause == true) ? false : true;
+    if (user_pause)
+        pause();
+    else
+        unpause();
+}
+
+bool Sound::get_pause()
+{
+    return is_music_paused;
 }
 
 #endif
