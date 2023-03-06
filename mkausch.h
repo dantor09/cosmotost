@@ -149,3 +149,17 @@ public:
 };
 
 #endif
+
+class HealthBar
+{
+private:
+    Box total;     // a box that is proportionate to the overall hp of the Item pointed to by itm
+    Box hp;     // a box that is proportionate to the size of the current hp of itm
+    Rect text;
+    const Item * itm;   // item that this healthbar is attached to
+    void hp_resize();   // resizes hp box based on passed on item's health
+
+public:
+    HealthBar(const Item & _itm_);
+    void draw();
+};

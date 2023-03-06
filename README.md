@@ -14,7 +14,7 @@
     - music
 - collission on "entity" enemy
 - naming convention for enemies
-- health bar menu
+- health bar 
 
 
 #### In Progress:

@@ -489,6 +489,41 @@ void Sound::unpause()
 
 
 
+    /*
+private:
+    Box total;     // a box that is proportionate to the overall hp of the Item pointed to by itm
+    Box hp;     // a box that is proportionate to the size of the current hp of itm
+    const Item * itm;   // item that this healthbar is attached to
+    void hp_resize();   // resizes hp box based on passed on item's health
+*/
+
+
+HealthBar::HealthBar(const Item & _itm_)
+{
+    total.set_dim(150,40);
+    total.set_pos(g.xres/2.0f,40.0f,0);
+    total.set_color(255,0,0);   // set it to red
+
+    hp.set_dim(total.w,total.h);
+    hp.set_pos(total.pos[0],total.pos[1],total.pos[2]);
+    hp.set_color(0,255,0);
+
+    text.bot = total.pos[1] + 
+
+
+}
+
+void HealthBar::draw()
+{
+    // draw total box
+    // then draw hp box
+    // then draw letters
+
+
+}
+
+
+
 /*
                 Color Scheme
 
