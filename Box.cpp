@@ -14,6 +14,7 @@ Box::Box()
     h = 20.0f;
     pos[0] = g.xres/2.0f;
     pos[1] = g.yres/2.0f;
+    id = -1;    // no id given initially
 
 }
 
@@ -47,10 +48,10 @@ unsigned char * Box::get_color()
     return color;
 }
 
-void Box::set_text(std::string t)
-{
-    text = t;
-}
+// void Box::set_text(std::string t)
+// {
+//     text = t;
+// }
 
 std::string Box::get_info()
 {

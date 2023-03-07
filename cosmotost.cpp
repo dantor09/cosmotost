@@ -211,7 +211,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 				// check and see if the user clicked on the Menu
 				selection = mm.check_t_box(savex, g.yres - savey);
-				if (selection && (selection->text == "Start Game")) {
+				if (selection && (mm.words[selection->id] == "Start Game")) {
 					mm.set_orig_color();
 					g.state = GAME;
 					// if (g.gameTimer) {
@@ -221,19 +221,19 @@ int X11_wrapper::check_mouse(XEvent *e)
 					selection = nullptr;
 					prev_selection = nullptr;
 					return 0;
-				} else if (selection && (selection->text == "High Scores")) {
+				} else if (selection && (mm.words[selection->id] == "High Scores")) {
 					mm.set_orig_color();
 					g.substate = HIGH_SCORES;
 					selection = nullptr;
 					prev_selection = nullptr;
 					return 0;
-				} else if (selection && (selection->text == "Settings")) {
+				} else if (selection && (mm.words[selection->id] == "Settings")) {
 					mm.set_orig_color();
 					g.substate = SETTINGS;
 					selection = nullptr;
 					prev_selection = nullptr;
 					return 0;
-				} else if (selection && (selection->text == "Quit")) {
+				} else if (selection && (mm.words[selection->id] == "Quit")) {
 					mm.set_orig_color();
 					selection = nullptr;
 					prev_selection = nullptr;
@@ -298,7 +298,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 				}
 
 				selection = pause_menu.check_t_box(savex, g.yres - savey);
-				if (selection && (selection->text == "Main Menu")) {
+				if (selection && (pause_menu.words[selection->id] == "Main Menu")) {
 					pause_menu.set_orig_color();
 					g.state = MAINMENU;
 					// if (g.gameTimer) {
@@ -309,7 +309,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					selection = nullptr;
 					prev_selection = nullptr;
 
-				} else if (selection && (selection->text == "Start Over")) {
+				} else if (selection && (pause_menu.words[selection->id] == "Start Over")) {
 					pause_menu.set_orig_color();
 					g.state = MAINMENU;
 					g.GameReset();
@@ -326,7 +326,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					selection = nullptr;
 					prev_selection = nullptr;
 
-				} else if (selection && (selection->text == "Back to Game")) {
+				} else if (selection && (pause_menu.words[selection->id] == "Back to Game")) {
 					pause_menu.set_orig_color();
 					g.state = GAME;
 					if (g.gameTimer.isPaused()) {
@@ -341,11 +341,10 @@ int X11_wrapper::check_mouse(XEvent *e)
 					sounds.unpause();
 					cerr << "unpausing song " << sounds.get_song_name() << endl;
 					return 0;
+					
 #endif
 
-
-
-				} else if (selection && (selection->text == "Quit Game")) {
+				} else if (selection && (pause_menu.words[selection->id] == "Quit Game")) {
 					pause_menu.set_orig_color();
 					cerr << "g.state was changed to should be quitting..." <<
 							endl;
@@ -456,7 +455,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				case XK_u:	// go back to main menu
 					//Escape key was pressed
 					//Enter Pause State
-					sounds.cycle_songs();
+					sounds.pause();
 					cerr << "cycling song to " << sounds.get_song_name() << endl;
 					return 0;
 #endif
@@ -511,7 +510,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Escape key was pressed
 					//Enter Pause State
 					g.state = PAUSE;
-					// g.gameTimer.pause();
+					g.gameTimer.pause();
 					cerr << "g.state was changed to PAUSE" << endl;
 
 #ifdef USE_OPENAL_SOUND
@@ -534,7 +533,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				case XK_u:	// go back to main menu
 					//Escape key was pressed
 					//Enter Pause State
-					sounds.cycle_songs();
+					sounds.toggle_user_pause();
 					cerr << "cycling song to " << sounds.get_song_name() << endl;
 					return 0;
 #endif
@@ -553,7 +552,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Escape key was pressed
 					//Return to Game State
 					g.state = GAME;
-					// g.gameTimer.unPause();
+					g.gameTimer.unPause();
 					cerr << "g.state was changed back to GAME" << endl;
 
 #ifdef USE_OPENAL_SOUND
@@ -710,6 +709,7 @@ void physics()
 		tos.MoveToster();
 		// move of all bullet
 		for (int i=0; i < g.n_Bullet; i++) {
+			// testing to see if this fixes crash
 			if (bul[i].ScreenOut()) bul[i] = bul[--g.n_Bullet];
 			bul[i].MoveBullet();
 		}
@@ -721,7 +721,7 @@ void physics()
 					if (bread[i].item_type == 11)	g.state = GAMEOVER;
 					if (bread[i].item_type == 12)	{
 						if (tos.b_type < 4) tos.b_type++;
-						bread[i] = bread[--g.n_Bread];
+							bread[i] = bread[--g.n_Bread];
 					}
 					break;
 			}
@@ -936,7 +936,7 @@ void render()
 
 	if (g.show_help_menu == false) {
 
-		Rect help_msg, score, g_time;
+		Rect help_msg, score, g_time, bullets;
 
 #ifdef USE_OPENAL_SOUND
 		Rect s_name;
@@ -961,12 +961,17 @@ void render()
 		g_time.left = score.left;
 		g_time.center = 0;
 
+		bullets.bot = g_time.bot-20;
+		bullets.left = g_time.left-80;
+		bullets.center = 0;
+
 
 		if (g.state == GAME || g.state == PAUSE) {
 
 			ggprint8b(&help_msg, 0, 0x00ffff00, "Press <F1> for help");
 			ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %i",(int)g.gameTimer.getTime());
+			ggprint8b(&bullets, 0, 0x00DC143C, "Active bullets : %i",g.n_Bullet);
 
 #ifdef USE_OPENAL_SOUND
 
@@ -1124,7 +1129,11 @@ void render()
 				ggprint8b(&g_time, 0, 0x00DC143C,
 											"Time : %i",(int)g.gameTimer.getTime());
 #ifdef USE_OPENAL_SOUND
-				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+				if (!sounds.get_pause()) {
+					ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+				} else {
+					ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
+				}
 #endif
 				break;
 			case PAUSE:
