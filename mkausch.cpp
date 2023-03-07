@@ -511,37 +511,63 @@ bool Sound::get_pause()
     /*
 private:
     Box total;     // a box that is proportionate to the overall hp of the Item pointed to by itm
-    Box hp;     // a box that is proportionate to the size of the current hp of itm
+    Box health;     // a box that is proportionate to the size of the current health of itm
     const Item * itm;   // item that this healthbar is attached to
-    void hp_resize();   // resizes hp box based on passed on item's health
+    void hp_resize();   // resizes health box based on passed on item's health
 */
 
 
 HealthBar::HealthBar(const Item & _itm_)
 {
-    total.set_dim(150,40);
+    // maybe put max_health of each enemy type in case were going to 
+    // use this healthbar for the boss as well
+    total.set_dim(75,10);
     total.set_pos(g.xres/2.0f,40.0f,0);
     total.set_color(255,0,0);   // set it to red
 
-    hp.set_dim(total.w,total.h);
-    hp.set_pos(total.pos[0],total.pos[1],total.pos[2]);
-    hp.set_color(0,255,0);
+    health.set_dim(total.w,total.h);
+    health.set_pos(total.pos[0],total.pos[1],total.pos[2]);
+    health.set_color(0,255,0);
 
-    text.bot = total.pos[1] + 
+    text.bot = total.pos[1]-5;
+    text.left = total.pos[0];
+    text.center = 1;
 
-
+    itm = &_itm_;
+    
 }
 
 void HealthBar::draw()
 {
-    // draw total box
-    // then draw hp box
-    // then draw letters
+    
+    glColor3ubv(total.color);
+    
+    glPushMatrix();
+    glTranslatef(total.pos[0], total.pos[1], total.pos[2]);
+    glBegin(GL_QUADS);
+        glVertex2f(-total.w, -total.h);
+        glVertex2f(-total.w,  total.h);
+        glVertex2f( total.w,  total.h);
+        glVertex2f( total.w, -total.h);
+    glEnd();
+    glPopMatrix();
 
+    // draw mainbox
+    // hp_resize();
+    glColor3ubv(health.color);
+    
+    glPushMatrix();
+    glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
+    glBegin(GL_QUADS);
+        glVertex2f(0, -health.h);
+        glVertex2f(0,  health.h);
+        glVertex2f( (itm->HP/MAX_HEALTH)*2*health.w,  health.h);
+        glVertex2f( (itm->HP/MAX_HEALTH)*2*health.w, -health.h);
+    glEnd();
+    glPopMatrix();
 
+    ggprint8b(&text, 0, 0x00DC143C, "%i/%i", itm->HP, MAX_HEALTH);
 }
-
-
 
 /*
                 Color Scheme

@@ -14,7 +14,6 @@
     - music
 - collission on "entity" enemy
 - naming convention for enemies
-- health bar 
 
 
 #### In Progress:
@@ -22,6 +21,7 @@
 
 
 #### Done:
+- health bar (mike)
 - reset game / all vars when reset button/ main menu hit from pause (Huaiyu)
 - game clock that counts up so you can feel bad about yourself for how much
     time that you've wasted (mike)
@@ -33,15 +33,16 @@
     - different executables for audio / silent version (Mike)
 - High scores / high score screen (Huaiyu)
 - input player's name/handle (Huaiyu)
+- scores (Huaiyu)
+- Make screen size / menu bigger (mike)
 
 ### Longer Term
 
-- HUD / scores at the bottom
+- HUD
 - Textures
 - ARTWORK...
 - High score php
 
-- Make screen size / menu bigger
 - lock screen size so it cant be altered?
 
 

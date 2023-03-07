@@ -18,8 +18,10 @@
 #include <sstream>
 #include <chrono>
 
+
 #include "Box.h"
 #include "fonts.h"
+#include "hzhang.h"
 
 using namespace std;
 
@@ -157,10 +159,10 @@ class HealthBar
 {
 private:
     Box total;     // a box that is proportionate to the overall hp of the Item pointed to by itm
-    Box hp;     // a box that is proportionate to the size of the current hp of itm
+    Box health;     // a box that is proportionate to the size of the current hp of itm
     Rect text;
     const Item * itm;   // item that this healthbar is attached to
-    void hp_resize();   // resizes hp box based on passed on item's health
+    // void hp_resize();   // resizes hp box based on passed on item's health
 
 public:
     HealthBar(const Item & _itm_);

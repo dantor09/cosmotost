@@ -174,7 +174,7 @@ Toaster::Toaster()
     set_pos(g.xres/4, g.yres/2, 0.0);
     set_color(188, 226, 232);
     set_dim(20,15);
-		set_HP(20);
+		set_HP(MAX_HEALTH);
 
 }
 

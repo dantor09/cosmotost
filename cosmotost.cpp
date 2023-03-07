@@ -839,6 +839,7 @@ void render()
 
 		// draw Toaster bullet and bread
 		tos.draw();
+		tos_health.draw();
 		for (int i=0; i < g.n_Bullet; i++) {
 				bul[i].draw();
 		}

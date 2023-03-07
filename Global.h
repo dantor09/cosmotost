@@ -68,8 +68,10 @@ inline Sound sounds;
 // Huaiyu veribles================================
 const int MAX_bullet = 10000;
 const int MAX_bread = 10;
+const int MAX_HEALTH = 20;
 inline Gamerecord record;
 inline Toaster tos;
+inline HealthBar tos_health(tos);   // added his health bar *<|8^)
 inline Bullet bul[MAX_bullet];
 inline Bread bread[MAX_bread];
 
