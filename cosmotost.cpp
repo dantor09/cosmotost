@@ -337,11 +337,11 @@ int X11_wrapper::check_mouse(XEvent *e)
 					prev_selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
-				
+
 					sounds.unpause();
 					cerr << "unpausing song " << sounds.get_song_name() << endl;
 					return 0;
-					
+
 #endif
 
 				} else if (selection && (pause_menu.words[selection->id] == "Quit Game")) {
@@ -514,7 +514,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					cerr << "g.state was changed to PAUSE" << endl;
 
 #ifdef USE_OPENAL_SOUND
-				
+
 					sounds.pause();
 					cerr << "pausing song " << sounds.get_song_name() << endl;
 #endif
@@ -638,7 +638,7 @@ void init_opengl(void)
 	g.state = SPLASH;
 	g.substate = NONE;
 
-#ifdef USE_OPENAL_SOUND	
+#ifdef USE_OPENAL_SOUND
 	sounds.cycle_songs();	// cycle will start the start song on first play
 #endif
 
@@ -715,29 +715,35 @@ void physics()
 		}
 		//move of all bread and check collison with bullet and Toaster
 		for (int i=0; i < g.n_Bread; i++) {
-			if (bread[i].ScreenOut()) bread[i] = bread[--g.n_Bread];
-			// ckeak if collison with toaster
-			if (bread[i].Collison(tos)) {
-					if (bread[i].item_type == 11)	g.state = GAMEOVER;
-					if (bread[i].item_type == 12)	{
-						if (tos.b_type < 4) tos.b_type++;
-							bread[i] = bread[--g.n_Bread];
-					}
-					break;
-			}
-			// ckeak if collison with bullet
-			for (int j=0; j < g.n_Bullet; j++) {
-					if (bread[i].Collison(bul[j])&& bread[i].item_type == 11) {
-							bread[i].HPdamage(bul[j]);
-							bul[j].HPdamage(bread[i]);
-							if(bread[i].HP_check()) {
-								tos.score += bread[i].point;
+				if (bread[i].ScreenOut()) bread[i] = bread[--g.n_Bread];
+				// ckeak if collison with toaster
+				if (bread[i].Collison(tos)) {
+						if (bread[i].item_type == 11)	{
+								bread[i].HPdamage(tos);
+								tos.HPdamage(bread[i]);
+								if(bread[i].HP_check())
+										bread[i] = bread[--g.n_Bread];
+								if(tos.HP_check())
+										g.state = GAMEOVER;
+						if (bread[i].item_type == 12)	{
+							if (tos.b_type < 4) tos.b_type++;
 								bread[i] = bread[--g.n_Bread];
-							}
-							bul[j] = bul[--g.n_Bullet];
-					}
-			}
-			bread[i].MoveBread();
+						}
+						break;
+				}
+				// ckeak if collison with bullet
+				for (int j=0; j < g.n_Bullet; j++) {
+						if (bread[i].Collison(bul[j])&& bread[i].item_type == 11) {
+								bread[i].HPdamage(bul[j]);
+								bul[j].HPdamage(bread[i]);
+								if(bread[i].HP_check()) {
+									tos.score += bread[i].point;
+									bread[i] = bread[--g.n_Bread];
+								}
+								bul[j] = bul[--g.n_Bullet];
+						}
+				}
+				bread[i].MoveBread();
 		}
 		// time stuff/ change when timer finish
 		// for bullet
@@ -944,7 +950,7 @@ void render()
 		s_name.bot = 20;
 		s_name.left = g.xres - 300;
 		s_name.center = 0;
-			
+
 #endif
 
 
@@ -978,7 +984,7 @@ void render()
 
 			if (g.state == GAME)
 				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
-			else 
+			else
 				ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
 #endif
 
@@ -1017,7 +1023,7 @@ void render()
 			s_name.bot = 20;
 			s_name.left = g.xres - 300;
 			s_name.center = 0;
-			
+
 #endif
 
 // 				Record Middle of the screen				//
@@ -1071,7 +1077,7 @@ void render()
 								 						"%s",record.reName);
 					}
 				}
-				
+
 				break;
 			case GAME:
 				if (g.substate == NONE) {
@@ -1087,7 +1093,7 @@ void render()
 										"<t> - Go To DTorres Feature Mode");
 					ggprint8b(&key_msg[10], 0, 0x00ffff00,
 										"<u> - Cycle Music");
-										
+
 				} else if (g.substate == ENTITY) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - ENTITY - APARRIOTT FEATURE MODE");
@@ -1122,7 +1128,7 @@ void render()
 												"<s> - Move Down");
 				ggprint8b(&key_msg[5], 0, 0x00ffff00,
 												"<d> - Move Right");
-												
+
 
 
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
