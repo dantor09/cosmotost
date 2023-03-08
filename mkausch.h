@@ -17,6 +17,8 @@
 #include <new>
 #include <sstream>
 #include <chrono>
+#include <time.h>
+#include <cstdlib>
 
 
 #include "Box.h"
@@ -168,3 +170,28 @@ public:
     HealthBar(const Item & _itm_);
     void draw();
 };
+
+
+class BlockyForky : public Item
+{
+    private:
+    void set_rand_color();
+    void set_rand_position();
+
+    public:
+
+    BlockyForky();
+    ~BlockyForky();
+    int point;
+    void reset(); // tests to see if the player killed poor forky
+    void draw();    // overload function to include redraw
+    void move();
+
+    // inherited void Item::draw() 
+    // inherited bool Item::ScreenOut()
+    // inherited bool Item::HP_check()
+    // inherited bool Item::Collison()
+
+
+};
+

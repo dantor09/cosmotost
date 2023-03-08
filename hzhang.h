@@ -15,6 +15,7 @@
 using namespace std;
 
 class Entity; // forward declaration
+class BlockyForky;  // forward declaration
 
 //make a bullet need the pos of where this bullet creat
 //bool(tb) is means this bullet from toster or not
@@ -66,7 +67,8 @@ class Item: public Box
     bool Collison(Item a);
     //change HP after Collison
     void HPdamage(Item a);
-    void HPdamage(Entity & e);  // defined in mkausch.cpp for entity collission
+    void HPdamage(Entity & e);  // defined in mkausch.cpp for entity collision
+    void HPdamage(BlockyForky & b); // defined in mkausch.cpp for BF collision
     // check if item reach the in the screen
     bool ScreenIn();
     //check if item out of screen

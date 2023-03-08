@@ -151,7 +151,7 @@ bool Item::ScreenOut() {
 void Item::draw()
 {
     // draw item
-
+    
     glPushMatrix();
   	glColor3ub(color[0], color[1], color[2]);
   	glTranslatef(pos[0], pos[1], pos[2]);

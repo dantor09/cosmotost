@@ -704,7 +704,7 @@ void physics()
 							}
 							bul[j] = bul[--g.n_Bullet];
 					}
-			}
+				}
 
 				// DESPAWN
 				if (entity[i].pos[1] < -4 ||
@@ -717,6 +717,41 @@ void physics()
 						entity[i].pos[1] >= g.yres - 4) {
 					entity[i].vel[1] = -entity[i].vel[1];
 				}
+			}
+		}
+
+		if (g.substate == MIKE) {
+			blocky.move();
+
+			// check toaster collision with blockyforky 
+			if (blocky.Collison(tos)) {
+				blocky.HPdamage(tos);
+				tos.HPdamage(blocky);
+
+				if (blocky.HP_check()) {
+					blocky.reset();
+				}
+				if (tos.HP_check()) {
+					g.state = GAMEOVER;
+				}
+			}
+
+			// check blocky's collision with bullets
+			for (int j=0; j < g.n_Bullet; j++) {
+				if (blocky.Collison(bul[j])) {
+						blocky.HPdamage(bul[j]);
+						bul[j].HPdamage(blocky);
+						if(blocky.HP_check()) {
+							tos.score += blocky.point;
+							blocky.reset();
+						}
+						bul[j] = bul[--g.n_Bullet];
+				}
+			}
+
+			// reset blocky if he's out of screen
+			if (blocky.ScreenOut()) {
+				blocky.reset();
 			}
 		}
 
@@ -889,6 +924,10 @@ void render()
 				glEnd();
 				glPopMatrix();
 			}
+		}
+
+		if (g.substate == MIKE || g.state == PAUSE) {
+			blocky.draw();
 		}
 
 		if (g.state == PAUSE) {

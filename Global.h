@@ -60,6 +60,8 @@ inline std::string p_text[] = {"Back to Game",
                                 "Quit Game"};
 inline Menu pause_menu(4, 225, 225, g.xres/2.0f, g.yres/2.0f, p_text);
 
+inline BlockyForky blocky;
+
 
 #ifdef USE_OPENAL_SOUND
 inline Sound sounds;
