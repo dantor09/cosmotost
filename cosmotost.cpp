@@ -710,56 +710,55 @@ void physics()
 		// move of all bullet
 		for (int i=0; i < g.n_Bullet; i++) {
 			// testing to see if this fixes crash
-			if (bul[i].ScreenOut()) bul[i] = bul[--g.n_Bullet];
-			bul[i].MoveBullet();
-		}
-		//move of all bread and check collison with bullet and Toaster
-		for (int i=0; i < g.n_Bread; i++) {
-				if (bread[i].ScreenOut()) bread[i] = bread[--g.n_Bread];
-				// ckeak if collison with toaster
-				if (bread[i].Collison(tos)) {
-						if (bread[i].item_type == 11)	{
-								bread[i].HPdamage(tos);
-								tos.HPdamage(bread[i]);
-								if(bread[i].HP_check())
-										bread[i] = bread[--g.n_Bread];
-								if(tos.HP_check())
-										g.state = GAMEOVER;
-						if (bread[i].item_type == 12)	{
-							if (tos.b_type < 4) tos.b_type++;
-								bread[i] = bread[--g.n_Bread];
-						}
-						break;
-				}
-				// ckeak if collison with bullet
-				for (int j=0; j < g.n_Bullet; j++) {
-						if (bread[i].Collison(bul[j])&& bread[i].item_type == 11) {
-								bread[i].HPdamage(bul[j]);
-								bul[j].HPdamage(bread[i]);
-								if(bread[i].HP_check()) {
-									tos.score += bread[i].point;
+				if (bul[i].ScreenOut()) bul[i] = bul[--g.n_Bullet];
+				bul[i].MoveBullet();
+			}
+			//move of all bread and check collison with bullet and Toaster
+			for (int i=0; i < g.n_Bread; i++) {
+					if (bread[i].ScreenOut()) bread[i] = bread[--g.n_Bread];
+					// ckeak if collison with toaster
+					if (bread[i].Collison(tos)) {
+							if (bread[i].item_type == 11)	{
+									bread[i].HPdamage(tos);
+									tos.HPdamage(bread[i]);
+									if(bread[i].HP_check())
+											bread[i] = bread[--g.n_Bread];
+									if(tos.HP_check())
+											g.state = GAMEOVER;
+							if (bread[i].item_type == 12)	{
+								if (tos.b_type < 4) tos.b_type++;
 									bread[i] = bread[--g.n_Bread];
-								}
-								bul[j] = bul[--g.n_Bullet];
-						}
-				}
-				bread[i].MoveBread();
-		}
+							}
+							break;
+					}
+					// ckeak if collison with bullet
+					for (int j=0; j < g.n_Bullet; j++) {
+							if (bread[i].Collison(bul[j])&& bread[i].item_type == 11) {
+									bread[i].HPdamage(bul[j]);
+									bul[j].HPdamage(bread[i]);
+									if(bread[i].HP_check()) {
+										tos.score += bread[i].point;
+										bread[i] = bread[--g.n_Bread];
+									}
+									bul[j] = bul[--g.n_Bullet];
+							}
+					}
+					bread[i].MoveBread();
+					}
 		// time stuff/ change when timer finish
 		// for bullet
-		if (g.BulletCD > 0) g.BulletCD--;
-		else g.BulletCD=5;
-		// auto create bread
-		if (g.BreadCD > 0) g.BreadCD--;
-		else {
-			g.BreadCD=30;
-			float alp=(((float)rand()) / (float)RAND_MAX);
-			int breadrand = (int)rand()%g.levelchance;
-			if(!breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,1,1);
-			if(breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,2,1);
-		}
-
-
+					if (g.BulletCD > 0) g.BulletCD--;
+					else g.BulletCD=5;
+					// auto create bread
+					if (g.BreadCD > 0) g.BreadCD--;
+					else {
+						g.BreadCD=30;
+						float alp=(((float)rand()) / (float)RAND_MAX);
+						int breadrand = (int)rand()%g.levelchance;
+						if(!breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,1,1);
+						if(breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,2,1);
+					}
+			}
 	}
 }
 
