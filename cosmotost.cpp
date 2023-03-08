@@ -725,6 +725,7 @@ void physics()
 											bread[i] = bread[--g.n_Bread];
 									if(tos.HP_check())
 											g.state = GAMEOVER;
+							}
 							if (bread[i].item_type == 12)	{
 								if (tos.b_type < 4) tos.b_type++;
 									bread[i] = bread[--g.n_Bread];
@@ -744,20 +745,19 @@ void physics()
 							}
 					}
 					bread[i].MoveBread();
-					}
 		// time stuff/ change when timer finish
 		// for bullet
-					if (g.BulletCD > 0) g.BulletCD--;
-					else g.BulletCD=5;
-					// auto create bread
-					if (g.BreadCD > 0) g.BreadCD--;
-					else {
-						g.BreadCD=30;
-						float alp=(((float)rand()) / (float)RAND_MAX);
-						int breadrand = (int)rand()%g.levelchance;
-						if(!breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,1,1);
-						if(breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,2,1);
-					}
+			}
+			if (g.BulletCD > 0) g.BulletCD--;
+			else g.BulletCD=5;
+			// auto create bread
+			if (g.BreadCD > 0) g.BreadCD--;
+			else {
+				g.BreadCD=30;
+				float alp=(((float)rand()) / (float)RAND_MAX);
+				int breadrand = (int)rand()%g.levelchance;
+				if(!breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,1,1);
+				if(breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,2,1);
 			}
 	}
 }
