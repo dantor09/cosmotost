@@ -17,6 +17,8 @@
 
 #### In Progress:
 - stabby forky enemy
+- HUD (dan)
+- ARTWORK... (ailand)
 
 
 #### Done:
@@ -38,9 +40,7 @@
 
 ### Longer Term
 
-- HUD
 - Textures
-- ARTWORK...
 - High score php
 
 - lock screen size so it cant be altered?

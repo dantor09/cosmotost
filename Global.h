@@ -3,6 +3,7 @@
 #include "mkausch.h"
 #include "hzhang.h"
 #include <cstring>
+#include "aparriott.h"
 
 
 enum Gamestate { SPLASH, MAINMENU, GAME, PAUSE, GAMEOVER };

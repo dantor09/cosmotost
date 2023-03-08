@@ -959,8 +959,8 @@ void render()
 	 * 							Help Menu / Text						  *
 	 * 							  Contributors: 						  *
 	 * 								M. Kausch							  *
-	 * 			   								 						  *
-	 * 																	  *
+	 * 			   					H. Zhang	 						  *
+	 * 								D Torres							  *
 	 *********************************************************************/
 
 	if (g.show_help_menu == false) {
@@ -1000,7 +1000,7 @@ void render()
 			ggprint8b(&help_msg, 0, 0x00ffff00, "Press <F1> for help");
 			ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %i",(int)g.gameTimer.getTime());
-			ggprint8b(&bullets, 0, 0x00DC143C, "Active bullets : %i",g.n_Bullet);
+			// ggprint8b(&bullets, 0, 0x00DC143C, "Active bullets : %i",g.n_Bullet);	// debug output
 
 #ifdef USE_OPENAL_SOUND
 

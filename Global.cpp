@@ -1,5 +1,8 @@
 #include "Global.h"
 
+// class EntitySpawn;
+// inline EntitySpawn e;
+
 Global::Global()
 {
 		xres = 1280;
@@ -21,6 +24,7 @@ void Global::GameReset()
 {
 		n_Bullet = 0;
 		n_Bread = 0;
+		e.numEnt = 0;
 		record.GetR();
 		for(int i = 0; i <10; i++)
 				record.gamer[i]='_';

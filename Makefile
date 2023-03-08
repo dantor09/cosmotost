@@ -36,7 +36,6 @@ Box.o: Box.cpp Box.h Global.h Global.cpp
 Global.o: Global.cpp Global.h mkausch.h hzhang.h
 	$(COMP) -c Global.cpp
 
-# still in development
 mkausch.o: mkausch.cpp mkausch.h Box.h Global.h
 	$(COMP) -c mkausch.cpp
 
@@ -44,7 +43,7 @@ mkausch.o: mkausch.cpp mkausch.h Box.h Global.h
 hzhang.o: hzhang.cpp hzhang.h
 	$(COMP) -c hzhang.cpp
 
-# spawning complete, collisions need to be done
+# timing of state needs to be done
 aparriott.o: aparriott.cpp aparriott.h Global.h mkausch.cpp
 	$(COMP) -c aparriott.cpp mkausch.cpp
 
