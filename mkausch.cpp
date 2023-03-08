@@ -351,10 +351,10 @@ Sound::Sound()
     current_track = 1;  // starting track number at splash screen
     is_music_paused = false;
     user_pause = false;
-    alBuffers[0] = alutCreateBufferFromFile("./Songs/bullet_fire.wav");
+    // alBuffers[0] = alutCreateBufferFromFile("./Songs/bullet_fire.wav");
     // alBuffers[1] = alutCreateBufferFromFile("./Songs/Edzes-64TheMagicNumber16kHz.wav");
     // alBuffers[2] = alutCreateBufferFromFile("./Songs/Estrayk-TheHerSong1016kHz.wav");
-    alBuffers[1] = alutCreateBufferFromFile("./Songs/VolkorX-Enclave8kHz.wav.wav");
+    // alBuffers[1] = alutCreateBufferFromFile("./Songs/VolkorX-Enclave8kHz.wav.wav");
     // alBuffers[4] = alutCreateBufferFromFile("./Songs/Quazar-FunkyStars16kHz.wav");
     // alBuffers[5] = alutCreateBufferFromFile("./Songs/XRay-Zizibum-16kHz.wav");
     // alBuffers[6] = alutCreateBufferFromFile("./Songs/Zalza-8bitTheClock16kHz.wav");
@@ -609,9 +609,123 @@ void Item::HPdamage(Entity & e)
     HP = HP - e.damage;
 }
 
+BlockyForky::BlockyForky()
+{
+    srand(time(NULL));
+    set_dim(25.0f, 100.0f);
+    set_rand_color();
+    set_rand_position();
+    set_acc(0.0f,-0.25f,0.0f);
+    set_vel(0.0f, -4.0f, 0.0f);
+    set_damage(20);
+    set_HP(200);
+    point = 200;
+}
+
+BlockyForky::~BlockyForky()
+{
+
+}
+
+void BlockyForky::set_rand_position()
+{
+    static int pm_dir = 1;
+    float curr_player_xpos = tos.pos[0];
+    int delta_from_xpos = rand() % 50;
+    float block_xpos = curr_player_xpos + (delta_from_xpos * pm_dir);
+
+    // set to be this new random position situated near the player char
+    // that is above the yres and out of view of the screen
+    set_pos(block_xpos, g.yres+h,0);
+
+    // if this block was generated in front of the player then
+    // next time make it randomly behind the player (it'll keep switching) 
+    pm_dir *= -1;
+    
+}
+
+void BlockyForky::set_rand_color()
+{
+    // colors based on color scheme defined at the bottom
+    // int color[5][3] = {{61, 89, 114},
+    //                     {47, 61, 63},
+    //                     {68, 84, 89},
+    //                     {40, 63, 61},
+    //                     {24, 38, 36}};
+
+    static int color[5][3] =   {{242, 4, 159},
+                        {4, 177, 216},
+                        {4, 216, 78}, 
+                        {242, 202, 4},
+                        {242, 135, 4}};
+    static int index = rand() % 5;
+    set_color(color[index][0], color[index][1], color[index][2]);
+    index = (index + 1) % 5;
+}
+
+void BlockyForky::draw()
+{
+    // draw item
+    set_rand_color();
+    glPushMatrix();
+    glColor3ub(color[0], color[1], color[2]);
+    glTranslatef(pos[0], pos[1], pos[2]);
+    glBegin(GL_QUADS);
+            glVertex2f(-w, -h);
+            glVertex2f(-w,  h);
+            glVertex2f( w,  h);
+            glVertex2f( w, -h);
+    glEnd();
+    glPopMatrix();
+    
+}
+
+void BlockyForky::reset()
+{
+    if (HP_check())
+        HP = 200;   // give back full health
+
+    set_vel(0.0f, -4.0f, 0.0f);
+    set_rand_position();    // put at a new random position
+}
+
+void BlockyForky::move()
+{
+
+    pos[0] += vel[0];
+    pos[1] += vel[1];
+    pos[2] += vel[2];
+    vel[0] += acc[0];
+    vel[1] += acc[1];
+    vel[2] += acc[2];
+
+}
+
+void Item::HPdamage(BlockyForky & bf)
+{
+    HP = HP - bf.damage;
+}
+
 /*
                 Color Scheme
 
+
+/* Color Theme Swatches in Hex 
+.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-1-hex { color: #F2059F; }
+.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-2-hex { color: #04B2D9; }
+.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-3-hex { color: #04D94F; }
+.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-4-hex { color: #F2CB05; }
+.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-5-hex { color: #F28705; }
+
+ Color Theme Swatches in RGBA 
+.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-1-rgba { color: rgba(242, 4, 159, 1); }
+.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-2-rgba { color: rgba(4, 177, 216, 1); }
+.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-3-rgba { color: rgba(4, 216, 78, 1); }
+.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-4-rgba { color: rgba(242, 202, 4, 1); }
+.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-5-rgba { color: rgba(242, 135, 4, 1); }
+
+
+                            
 .feeling-blue-1-hex { color: #3D5A73; }
 .feeling-blue-2-hex { color: #2F3D40; }
 .feeling-blue-3-hex { color: #455559; }
