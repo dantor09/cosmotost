@@ -29,6 +29,7 @@
 #include "mkausch.h"	// menu
 #include "aparriott.h"	// entity spawning
 #include "hzhang.h"	// record
+#include "dtorres.h"
 
 using namespace std;
 
@@ -840,6 +841,13 @@ void render()
 	} else if (g.state == GAME || g.state == PAUSE ) {
 		// State Message
 
+		// Set up and display Information board on bottom of screen. 
+		InfoBoard info_board_1;
+		info_board_1.set_color(0, 0, 0);
+		glColor3ubv(info_board_1.color);
+		info_board_1.set_dim(g.xres/2, g.yres/20);
+		info_board_1.set_pos(g.xres/2, g.yres/40, 0);
+		info_board_1.draw();
 
 
 		// draw Toaster bullet and bread
