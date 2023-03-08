@@ -1,6 +1,6 @@
 # add object files here and make a rule down below
-OBJECTS = cosmotost.o Box.o Global.o libggfonts.a mkausch.o aparriott.o hzhang.o
-SOBJECTS = s_cosmotost.o Box.o Global.o libggfonts.a s_mkausch.o aparriott.o hzhang.o
+OBJECTS = cosmotost.o Box.o Global.o libggfonts.a mkausch.o aparriott.o hzhang.o dtorres.o
+SOBJECTS = s_cosmotost.o Box.o Global.o libggfonts.a s_mkausch.o aparriott.o hzhang.o dtorres.o
 
 FLAGS =  -Wall -lX11 -lGL -lGLU -lm
 COMP = g++ -std=c++17
