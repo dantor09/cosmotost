@@ -123,6 +123,7 @@ bool Item::Collison(Item a) {
   	bool y = (((pos[1]+h)-(a.pos[1]-a.h))*((pos[1]-h)-(a.pos[1]+a.h))) < 0;
   	return x&&y;
 }
+
 void Item::HPdamage(Item a) {
     // std::cout << "HP 1 :" << HP << "Damage :" << a.damage<< std::endl;
     HP = HP - a.damage;
