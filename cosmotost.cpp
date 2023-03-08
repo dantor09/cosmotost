@@ -691,6 +691,21 @@ void physics()
 				entity[i].pos[1] += entity[i].vel[1]/2;
 				entity[i].vel[0] += entity[i].curve[0] / 32;
 				entity[i].vel[1] += entity[i].curve[1] / 32;
+
+				if (entity[i].collision(tos)) g.state = GAMEOVER;
+
+				for (int j=0; j < g.n_Bullet; j++) {
+					if (entity[i].collision(bul[j])) {
+							entity[i].HPdamage(bul[j]);
+							bul[j].HPdamage(entity[i]);
+							if(entity[i].HP_check()) {
+								tos.score += entity[i].point;
+								entity[i] = entity[--e.numEnt];
+							}
+							bul[j] = bul[--g.n_Bullet];
+					}
+			}
+
 				// DESPAWN
 				if (entity[i].pos[1] < -4 ||
 						entity[i].pos[1] > g.yres + 4 ||
@@ -1179,3 +1194,7 @@ void render()
 	}
 
 }
+
+// Entity functions from aparriott
+
+

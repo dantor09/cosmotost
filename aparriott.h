@@ -7,6 +7,7 @@
 
 #pragma once
 #include <iostream>
+#include "hzhang.h"  
 //#include <stdio.h>
 //#include <unistd.h>
 //#include <cstdlib>
@@ -26,6 +27,9 @@ class Entity {
 	float pos[2];
     float curve[2];
 	unsigned char color[3];
+	int HP;	// how much hp he starts out with
+	int damage;	// how much damage he does if collides with toaster
+	int point;
 	/*void set_color(unsigned char col[3]) {
 		memcpy(color,  col, sizeof(unsigned char) * 3);
 	}*/
@@ -38,6 +42,11 @@ class Entity {
 	// SETTERS
 	void entityPhysics();
 	void entityRender();
+	bool collision(Item & a);	// defined in mkausch.cpp
+	void set_HP(int life);	// defined in mkausch.cpp
+	void set_damage(int x);	// defined in mkausch.cpp
+	void HPdamage(Item & a);	// defined in mkausch.cpp
+	bool HP_check();			// defined in mkausch.cpp
 
 };
 

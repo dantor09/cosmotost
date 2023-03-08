@@ -45,8 +45,8 @@ hzhang.o: hzhang.cpp hzhang.h
 	$(COMP) -c hzhang.cpp
 
 # spawning complete, collisions need to be done
-aparriott.o: aparriott.cpp aparriott.h Global.h
-	$(COMP) -c aparriott.cpp
+aparriott.o: aparriott.cpp aparriott.h Global.h mkausch.cpp
+	$(COMP) -c aparriott.cpp mkausch.cpp
 
 # Empty files but development on bottom screen info soon
 dtorres.o: dtorres.cpp dtorres.h

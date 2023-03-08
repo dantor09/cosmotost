@@ -12,7 +12,6 @@
     - difficulty modes
     - character choice
     - music
-- collission on "entity" enemy
 - naming convention for enemies
 
 
@@ -21,6 +20,7 @@
 
 
 #### Done:
+- collission on "entity" enemy (mike)
 - health bar (mike)
 - reset game / all vars when reset button/ main menu hit from pause (Huaiyu)
 - game clock that counts up so you can feel bad about yourself for how much

@@ -16,8 +16,13 @@
 #include <iostream>
 #include <string>
 #include </usr/include/AL/alut.h>
+
 #include "mkausch.h"
 #include "Global.h"
+//#include "hzhang.h"
+#include "aparriott.h"
+
+
 using namespace std;
 
 #define BSIZE 5
@@ -567,6 +572,41 @@ void HealthBar::draw()
     glPopMatrix();
 
     ggprint8b(&text, 0, 0x00DC143C, "%i/%i", itm->HP, MAX_HEALTH);
+}
+
+// modified from hzhang's file by mkausch
+bool Entity::collision(Item & a) 
+{
+    // for (x0,y0,x1,y1)and(x2,y2,x3,y3) squares
+    // if collison -->(x0-x3)*(x1-x2)<0
+    // same for y
+    bool x = (((pos[0]+dim[0])-(a.pos[0]-a.w))*((pos[0]-dim[0])-(a.pos[0]+a.w))) < 0;
+  	bool y = (((pos[1]+dim[1])-(a.pos[1]-a.h))*((pos[1]-dim[1])-(a.pos[1]+a.h))) < 0;
+  	return x&&y;
+}
+
+void Entity::set_HP(int life)
+{
+    HP = life;
+}
+
+void Entity::set_damage(int x)
+{
+    damage = x;
+}
+
+void Entity::HPdamage(Item & a) {
+    HP = HP - a.damage;
+}
+
+bool Entity::HP_check()
+{
+    return (HP <= 0);
+}
+
+void Item::HPdamage(Entity & e)
+{
+    HP = HP - e.damage;
 }
 
 /*

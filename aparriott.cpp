@@ -23,6 +23,9 @@ Entity::Entity() {
 	vel[1] = -1;
     curve[0] = 0;
     curve[1] = 0;
+	set_HP(2);
+	set_damage(10);
+	point = 10;
 }
 
 Entity::Entity(float wid, float hgt, float posX, float posY, float v0, 
@@ -35,6 +38,9 @@ Entity::Entity(float wid, float hgt, float posX, float posY, float v0,
 	vel[1] = v1;
     curve[0] = curveX;
     curve[1] = curveY;
+	set_HP(2);
+	set_damage(10);
+	point = 10;
 }
 
 // FUNCTIONS
