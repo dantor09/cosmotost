@@ -135,7 +135,7 @@ bool Item::ScreenIn() {
     bool a = (pos[0] <= g.xres-w+1);
     bool b = (pos[0] >= w-1);
     bool c = (pos[1] <= g.yres-h+1);
-    bool d = (pos[1] >= h-1);
+		bool d = (pos[1] >= ((3*g.yres/40)+h-1));
     return a&&b&&c&&d;
 }
 
@@ -144,14 +144,14 @@ bool Item::ScreenOut() {
     bool a = (pos[0] >= g.xres+w);
     bool b = (pos[0] <= -w);
     bool c = (pos[1] >= g.yres+h);
-    bool d = (pos[1] <= -h);
+    bool d = (pos[1] <= ((3*g.yres/40)-h));
     return a||b||c||d;
 }
 
 void Item::draw()
 {
     // draw item
-    
+
     glPushMatrix();
   	glColor3ub(color[0], color[1], color[2]);
   	glTranslatef(pos[0], pos[1], pos[2]);
@@ -219,7 +219,7 @@ void Toaster::MoveToster()
       if(pos[0] > g.xres-w+1) pos[0] = g.xres-w+1;
       if(pos[0] < w-1) pos[0] = w-1;
       if(pos[1] > g.yres-h+1) pos[1] = g.yres-h+1;
-      if(pos[1] < h-1) pos[1] = h-1;
+			if(pos[1] < (3*g.yres/40) + h - 1) pos[1] = (3*g.yres/40) + h-1;
   }
   if (g.keys[XK_space]) {
       //shoot bullet if not in CD

@@ -469,7 +469,18 @@ int X11_wrapper::check_keys(XEvent *e)
 		// *** Should be waiting for mouse input on the menu ***
 	} else if (g.state == GAME) {
 		if (e->type == KeyPress) {
+			float dusha = tos.pos[0] + 100*(g.keys[XK_d]-g.keys[XK_a]);
+			float dushb = tos.pos[1] + 100*(g.keys[XK_w]-g.keys[XK_s]);
 			switch (key) {
+				case XK_j:
+						// int a = 350;
+						tos.pos[0] = dusha;
+						tos.pos[1] = dushb;
+						// pos[0] = 350;
+						// pos[0] += 50;
+						// pos[1] = 350;  			// std::cout << "move w"<<pos[1]<<std::endl;
+				// std::cout << "move w"<<pos[1]<<std::endl;
+						return 0;
 				case XK_p: // p was pressed - toggle Ailand's Entity State
 					if (g.substate == NONE) {
 						g.substate = ENTITY;
@@ -723,7 +734,7 @@ void physics()
 		if (g.substate == MIKE) {
 			blocky.move();
 
-			// check toaster collision with blockyforky 
+			// check toaster collision with blockyforky
 			if (blocky.Collison(tos)) {
 				tos.HPdamage(blocky);
 				blocky.reset();
@@ -891,7 +902,7 @@ void render()
 	} else if (g.state == GAME || g.state == PAUSE ) {
 		// State Message
 
-		// Set up and display Information board on bottom of screen. 
+		// Set up and display Information board on bottom of screen.
 		InfoBoard info_board_1;
 		info_board_1.set_color(0, 0, 0);
 		glColor3ubv(info_board_1.color);
@@ -1236,5 +1247,3 @@ void render()
 }
 
 // Entity functions from aparriott
-
-
