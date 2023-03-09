@@ -19,7 +19,7 @@ s_cosmotost: s_cosmotost.o Box.o Global.o s_mkausch.o aparriott.o dtorres.o hzha
 	$(COMP) -o s_cosmotost $(SOBJECTS) $(FLAGS) \
 			-D USE_OPENAL_SOUND \
 			/usr/lib/x86_64-linux-gnu/libopenal.so \
-			/usr/lib/x86_64-linux-gnu/libalut.so
+			/usr/lib/x86_64-linux-gnu/libalut.so 2>sound_compilation.log
 
 s_cosmotost.o: cosmotost.cpp
 	$(COMP) -c cosmotost.cpp  -os_cosmotost.o\
