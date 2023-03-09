@@ -61,6 +61,7 @@ inline std::string p_text[] = {"Back to Game",
 inline Menu pause_menu(4, 225, 225, g.xres/2.0f, g.yres/2.0f, p_text);
 
 inline BlockyForky blocky;
+inline HealthBar blocky_health(blocky, g.xres/2.0f, 15.0f);
 
 
 #ifdef USE_OPENAL_SOUND
@@ -71,10 +72,9 @@ inline Sound sounds;
 // Huaiyu veribles================================
 const int MAX_bullet = 10000;
 const int MAX_bread = 10;
-const int MAX_HEALTH = 20;
 inline Gamerecord record;
 inline Toaster tos;
-inline HealthBar tos_health(tos);   // added his health bar *<|8^)
+inline HealthBar tos_health(tos, g.xres/2.0f, 40.0f);   // added his health bar *<|8^)
 inline Bullet bul[MAX_bullet];
 inline Bread bread[MAX_bread];
 

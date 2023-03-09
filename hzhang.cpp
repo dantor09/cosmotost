@@ -175,8 +175,10 @@ Toaster::Toaster()
     set_pos(g.xres/4, g.yres/2, 0.0);
     set_color(188, 226, 232);
     set_dim(20,15);
-		set_HP(MAX_HEALTH);
+    starting_hp = 80;
+		set_HP(starting_hp);
 		set_damage(100);
+    lives = 1;
 
 }
 
@@ -188,7 +190,7 @@ void Toaster::posReset()
 {
 		set_pos(g.xres/4, g.yres/2, 0.0);
 		score = 0;
-		set_HP(MAX_HEALTH);
+		set_HP(starting_hp);
 }
 void Toaster::MoveToster()
 {

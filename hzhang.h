@@ -44,7 +44,9 @@ class Item: public Box
     // all item should have hp
     // when two object touch, use HP - damage
     // by check HP we can tell if we need delete that object
+    int starting_hp;
     int HP;
+    int lives;
     int damage;
     // CD is cool down
     //  when create item
