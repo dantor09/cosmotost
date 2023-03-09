@@ -725,8 +725,8 @@ void physics()
 
 			// check toaster collision with blockyforky 
 			if (blocky.Collison(tos)) {
-				blocky.HPdamage(tos);
 				tos.HPdamage(blocky);
+				blocky.reset();
 
 				if (blocky.HP_check()) {
 					blocky.reset();
@@ -926,8 +926,9 @@ void render()
 			}
 		}
 
-		if (g.substate == MIKE || g.state == PAUSE) {
+		if ((g.substate == MIKE || g.state == PAUSE) && blocky.is_alive()) {
 			blocky.draw();
+			blocky_health.draw();
 		}
 
 		if (g.state == PAUSE) {

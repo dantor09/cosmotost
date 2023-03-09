@@ -522,12 +522,12 @@ private:
 */
 
 
-HealthBar::HealthBar(const Item & _itm_)
+HealthBar::HealthBar(const Item & _itm_, float x, float y)
 {
     // maybe put max_health of each enemy type in case were going to 
     // use this healthbar for the boss as well
     total.set_dim(75,10);
-    total.set_pos(g.xres/2.0f,40.0f,0);
+    total.set_pos(x, y, 0);
     total.set_color(255,0,0);   // set it to red
 
     health.set_dim(total.w,total.h);
@@ -566,12 +566,12 @@ void HealthBar::draw()
     glBegin(GL_QUADS);
         glVertex2f(0, -health.h);
         glVertex2f(0,  health.h);
-        glVertex2f( (itm->HP/MAX_HEALTH)*2*health.w,  health.h);
-        glVertex2f( (itm->HP/MAX_HEALTH)*2*health.w, -health.h);
+        glVertex2f( (((float)(itm->HP))/(itm->starting_hp))*2.0f*health.w,  health.h);
+        glVertex2f( (((float)(itm->HP))/(itm->starting_hp))*2.0f*health.w, -health.h);
     glEnd();
     glPopMatrix();
 
-    ggprint8b(&text, 0, 0x00DC143C, "%i/%i", itm->HP, MAX_HEALTH);
+    ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", itm->HP, itm->starting_hp, itm->lives);
 }
 
 // modified from hzhang's file by mkausch
@@ -618,8 +618,11 @@ BlockyForky::BlockyForky()
     set_acc(0.0f,-0.25f,0.0f);
     set_vel(0.0f, -4.0f, 0.0f);
     set_damage(20);
-    set_HP(200);
-    point = 200;
+    starting_hp = 200;
+    set_HP(starting_hp);
+    point = starting_hp;
+    was_hit = false;
+    lives = 2;
 }
 
 BlockyForky::~BlockyForky()
@@ -666,44 +669,70 @@ void BlockyForky::set_rand_color()
 void BlockyForky::draw()
 {
     // draw item
-    set_rand_color();
-    glPushMatrix();
-    glColor3ub(color[0], color[1], color[2]);
-    glTranslatef(pos[0], pos[1], pos[2]);
-    glBegin(GL_QUADS);
-            glVertex2f(-w, -h);
-            glVertex2f(-w,  h);
-            glVertex2f( w,  h);
-            glVertex2f( w, -h);
-    glEnd();
-    glPopMatrix();
+    if (is_alive()) {
+        set_rand_color();
+        glPushMatrix();
+        glColor3ub(color[0], color[1], color[2]);
+        glTranslatef(pos[0], pos[1], pos[2]);
+        glBegin(GL_QUADS);
+                glVertex2f(-w, -h);
+                glVertex2f(-w,  h);
+                glVertex2f( w,  h);
+                glVertex2f( w, -h);
+        glEnd();
+        glPopMatrix();
+    }
     
 }
 
 void BlockyForky::reset()
 {
-    if (HP_check())
-        HP = 200;   // give back full health
+    if (HP_check() && (lives > 0)) {
+        lives--;
+        HP = starting_hp;   // give back full health
+    }
 
     set_vel(0.0f, -4.0f, 0.0f);
     set_rand_position();    // put at a new random position
+    was_hit = false;
+
+}
+
+bool BlockyForky::did_damage()
+{
+    return was_hit;
 }
 
 void BlockyForky::move()
 {
+    if (is_alive()) {
+        pos[0] += vel[0];
+        pos[1] += vel[1];
+        pos[2] += vel[2];
+        vel[0] += acc[0];
+        vel[1] += acc[1];
+        vel[2] += acc[2];
+    }
 
-    pos[0] += vel[0];
-    pos[1] += vel[1];
-    pos[2] += vel[2];
-    vel[0] += acc[0];
-    vel[1] += acc[1];
-    vel[2] += acc[2];
 
 }
 
 void Item::HPdamage(BlockyForky & bf)
 {
-    HP = HP - bf.damage;
+    if (!bf.did_damage()) {
+        HP = HP - bf.damage;
+        bf.set_hit();
+    }
+}
+
+bool BlockyForky::is_alive()
+{
+    return (lives > 0);
+}
+
+void BlockyForky::set_hit()
+{
+    was_hit = true; 
 }
 
 /*

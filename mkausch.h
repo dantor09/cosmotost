@@ -167,7 +167,7 @@ private:
     // void hp_resize();   // resizes hp box based on passed on item's health
 
 public:
-    HealthBar(const Item & _itm_);
+    HealthBar(const Item & _itm_, float x, float y);
     void draw();
 };
 
@@ -177,15 +177,21 @@ class BlockyForky : public Item
     private:
     void set_rand_color();
     void set_rand_position();
+    bool was_hit; // set when the block strikes the toaster that fall
+                        // so it doesn't continuously damage it
+    
 
     public:
-
+    int point;
+    // int lives;
     BlockyForky();
     ~BlockyForky();
-    int point;
     void reset(); // tests to see if the player killed poor forky
     void draw();    // overload function to include redraw
     void move();
+    bool is_alive();
+    bool did_damage();
+    void set_hit();
 
     // inherited void Item::draw() 
     // inherited bool Item::ScreenOut()

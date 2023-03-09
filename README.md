@@ -7,7 +7,6 @@
 - Implement a logging system
     -- #define debug mode && cerr will work fine
     -- alternatively we can pass in a param on the command line 
-- Lives
 - Settings / select player
     - difficulty modes
     - character choice
@@ -16,12 +15,14 @@
 
 
 #### In Progress:
-- stabby forky enemy
 - HUD (dan)
 - ARTWORK... (ailand)
+- hole in the wall obstacle
 
 
 #### Done:
+- Lives
+- stabby forky enemy
 - collission on "entity" enemy (mike)
 - health bar (mike)
 - reset game / all vars when reset button/ main menu hit from pause (Huaiyu)
