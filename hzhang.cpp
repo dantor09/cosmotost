@@ -248,7 +248,8 @@ Toaster::Toaster()
 		set_damage(100);
     lives = 1;
 		set_vertex();
-
+		energy = 100.0f;
+		energy_recover = 0.01f;
 }
 
 Toaster::~Toaster()
@@ -298,6 +299,10 @@ void Toaster::MoveToster()
 					// std::cout << "shoot"<<std::endl;
 			}
   }
+	if(energy < 100)
+	{
+			energy += energy_recover;
+	}
 }
 // string Toaster::PrintScore() {
 //     ostringstream temp;

@@ -91,7 +91,8 @@ class Toaster: public Item
       // the bullet type toaster carrying
       int b_type;
       int score;
-
+      float energy;
+      float energy_recover;
 
       Toaster();
       ~Toaster();

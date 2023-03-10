@@ -471,13 +471,16 @@ int X11_wrapper::check_keys(XEvent *e)
 		// *** Should be waiting for mouse input on the menu ***
 	} else if (g.state == GAME) {
 		if (e->type == KeyPress) {
-			float dusha = tos.pos[0] + 100*(g.keys[XK_d]-g.keys[XK_a]);
-			float dushb = tos.pos[1] + 100*(g.keys[XK_w]-g.keys[XK_s]);
+			float dusha = tos.pos[0] + 150*(g.keys[XK_d]-g.keys[XK_a]);
+			float dushb = tos.pos[1] + 150*(g.keys[XK_w]-g.keys[XK_s]);
 			switch (key) {
 				case XK_j:
 						// int a = 350;
-						tos.pos[0] = dusha;
-						tos.pos[1] = dushb;
+						if(tos.energy >= 10) {
+								tos.pos[0] = dusha;
+								tos.pos[1] = dushb;
+								tos.energy -= 10;
+						}
 						// pos[0] = 350;
 						// pos[0] += 50;
 						// pos[1] = 350;  			// std::cout << "move w"<<pos[1]<<std::endl;
