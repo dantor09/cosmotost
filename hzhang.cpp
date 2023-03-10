@@ -109,6 +109,22 @@ void Item::set_acc(float x, float y, float z) {
     acc[1] = y;
     acc[2] = z;
 }
+// trace toster
+void Item::set_Trace(Item tos) {
+		float dx = pos[0] - tos.pos[0];
+		float dy = pos[1] - tos.pos[1];
+		float dcos = dx/sqrt((dx*dx)+(dy*dy));
+		float dsin = dy/sqrt((dx*dx)+(dy*dy));
+		vertex[0] = -(w*dcos) - (h*dsin);
+		vertex[1] = -(w*dsin) + (h*dcos);
+		vertex[2] =  (w*dcos) - (h*dsin);
+		vertex[3] =  (w*dsin) + (h*dcos);
+		vertex[4] = -(w*dcos) + (h*dsin);
+		vertex[5] = -(w*dsin) - (h*dcos);
+		vertex[6] =  (w*dcos) + (h*dsin);
+		vertex[7] =  (w*dsin) - (h*dcos);
+}
+
 // to check toaster HP, if <=0 then dead
 bool Item::HP_check() {
     // if no HP return true
@@ -148,21 +164,21 @@ bool Item::ScreenOut() {
     return a||b||c||d;
 }
 
-void Item::draw()
+void Item::draw(Item tos)
 {
+		if(trace)
+			set_Trace(tos);
     // draw item
-
     glPushMatrix();
   	glColor3ub(color[0], color[1], color[2]);
   	glTranslatef(pos[0], pos[1], pos[2]);
   	glBegin(GL_QUADS);
-  			glVertex2f(-w, -h);
-  			glVertex2f(-w,  h);
-  			glVertex2f( w,  h);
-  			glVertex2f( w, -h);
+  			glVertex2f(vertex[0],vertex[1]);
+  			glVertex2f(vertex[2],vertex[3]);
+  			glVertex2f(vertex[4],vertex[5]);
+  			glVertex2f(vertex[6],vertex[7]);
   	glEnd();
   	glPopMatrix();
-
 }
 
 Toaster::Toaster()

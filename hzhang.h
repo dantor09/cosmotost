@@ -33,6 +33,7 @@ class Item: public Box
   public:
     //item_type show what kind of item it is
     int item_type;
+    bool trace = false;
 
     // Toaster is 0;
 
@@ -48,6 +49,7 @@ class Item: public Box
     int HP;
     int lives;
     int damage;
+    float vertex[8] = {-w, h, w, h, -w, -h, w, -h};
     // CD is cool down
     //  when create item
     //need a number to tell how long we don't want that object been create again.
@@ -62,7 +64,8 @@ class Item: public Box
     void set_damage(int x);
     void set_vel(float x, float y, float z);
     void set_acc(float x, float y, float z);
-
+    // for trace Bullet
+    voit set_Trace(Item tos);
     // to check toaster HP, if <=0 then dead
     bool HP_check();
     // to check
