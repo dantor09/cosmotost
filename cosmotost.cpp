@@ -921,7 +921,7 @@ void render()
 		// State Message
 
 		// Set up and display Information board on bottom of screen.
-		InfoBoard info_board_1;
+		// info_board_1 object in global.h ... InfoBoard class in dtorres.h
 		info_board_1.set_color(0, 0, 0);
 		glColor3ubv(info_board_1.color);
 		info_board_1.set_dim(g.xres/2, g.yres/20);
@@ -1053,11 +1053,12 @@ void render()
 		help_msg.bot = (g.yres - 20);
 		help_msg.left = 20;
 		help_msg.center = 0;
-		// 					Top Right side of the screen
-		score.bot = g.yres-20;
-		score.left = g.xres - 80;
+		// 					Bottom left of information board
+		score.bot = info_board_1.pos[1] + 15; 
+		score.left = info_board_1.pos[0] - ((info_board_1.w)/2);
 		score.center = 0;
-		// 					Bottom right of the screen
+		// 					Bottom left of information board
+		//					Time display is relative to the position of the score above
 		g_time.bot = score.bot-20;
 		g_time.left = score.left;
 		g_time.center = 0;
