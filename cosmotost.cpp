@@ -429,6 +429,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					g.state = MAINMENU;
 					cerr << "g.state was changed to MAINMENU" << endl;
 					g.GameReset();
+					g.substate = NONE;
 					return 0;
 				case XK_Escape:
 					//Escape key was pressed
@@ -606,6 +607,9 @@ int X11_wrapper::check_keys(XEvent *e)
 							record.ChangeR(tos.score);
 							g.state = MAINMENU;
 							g.GameReset();
+							g.substate = NONE;
+							cerr << "g.state was changed to MAINMENU" << endl;
+							return 0;
 						}
 			}
 		}
@@ -616,6 +620,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					// Go back to the Main Menu
 					g.state = MAINMENU;
 					g.GameReset();
+					g.substate = NONE;
 					cerr << "g.state was changed to MAINMENU" << endl;
 					return 0;
 			}
@@ -1054,7 +1059,7 @@ void render()
 		help_msg.left = 20;
 		help_msg.center = 0;
 		// 					Bottom left of information board
-		score.bot = info_board_1.pos[1] + 15; 
+		score.bot = info_board_1.pos[1] + 15;
 		score.left = info_board_1.pos[0] - ((info_board_1.w)/2);
 		score.center = 0;
 		// 					Bottom left of information board

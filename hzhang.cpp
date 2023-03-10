@@ -260,6 +260,7 @@ void Toaster::posReset()
 		set_pos(g.xres/4, g.yres/2, 0.0);
 		score = 0;
 		set_HP(starting_hp);
+		b_type = 1;
 }
 void Toaster::MoveToster()
 {
@@ -321,24 +322,29 @@ void Bullet::set_Bullet(float x, float y, float z, bool tb, int type) {
             set_color(240,100,100);
             set_damage(1);
             set_HP(1);
+						item_type = 41;
             break;
           case 2:
             // bullet type 2
+						// item type 42
             // up 10degree
             set_vel (10.0,1.76,0.0);
             set_dim (4.0,4.0);
             set_color(240,100,100);
             set_damage(1);
             set_HP(1);
+						item_type = 42;
             break;
           case 3:
             // bullet type 3
+						// item type 43
             // down 10degree
             set_vel (10.0,-1.76,0.0);
             set_dim (4.0,4.0);
             set_color(240,100,100);
             set_damage(1);
             set_HP(1);
+						item_type = 43;
             break;
 
         }
