@@ -165,7 +165,15 @@ bool Item::ScreenOut() {
 }
 void Item::draw()
 {
-    // draw item
+		vertex[0] = -w;
+		vertex[1] = h;
+		vertex[2] = w;
+		vertex[3] = h;
+		vertex[4] = -w;
+		vertex[5] = -h;
+		vertex[6] = w;
+		vertex[7] = -h;
+		// draw item
     glPushMatrix();
   	glColor3ub(color[0], color[1], color[2]);
   	glTranslatef(pos[0], pos[1], pos[2]);

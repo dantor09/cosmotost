@@ -49,7 +49,7 @@ class Item: public Box
     int HP;
     int lives;
     int damage;
-    float vertex[8] = {-w, h, w, h, -w, -h, w, -h};
+    float vertex[8];
     // CD is cool down
     //  when create item
     //need a number to tell how long we don't want that object been create again.
