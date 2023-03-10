@@ -109,6 +109,19 @@ void Item::set_acc(float x, float y, float z) {
     acc[1] = y;
     acc[2] = z;
 }
+
+void Item::set_vertex() {
+    //set the acceleration of item
+		vertex[0] = -w;
+		vertex[1] = h;
+		vertex[2] = w;
+		vertex[3] = h;
+		vertex[4] = w;
+		vertex[5] = -h;
+		vertex[6] = -w;
+		vertex[7] = -h;
+}
+
 // trace toster
 void Item::set_Trace(Item tos) {
 		float dx = pos[0] - tos.pos[0];
@@ -123,6 +136,7 @@ void Item::set_Trace(Item tos) {
 		vertex[5] =  (w*dsin) - (h*dcos);
 		vertex[6] = -(w*dcos) + (h*dsin);
 		vertex[7] = -(w*dsin) - (h*dcos);
+		set_vel(-50*dcos,-50*dsin,0.0);
 }
 
 // to check toaster HP, if <=0 then dead
@@ -165,14 +179,6 @@ bool Item::ScreenOut() {
 }
 void Item::draw()
 {
-		vertex[0] = -w;
-		vertex[1] = h;
-		vertex[2] = w;
-		vertex[3] = h;
-		vertex[4] = w;
-		vertex[5] = -h;
-		vertex[6] = -w;
-		vertex[7] = -h;
 		// draw item
     glPushMatrix();
   	glColor3ub(color[0], color[1], color[2]);
@@ -187,8 +193,8 @@ void Item::draw()
 }
 void Item::draw(Item tos)
 {
-		if(trace)
-			set_Trace(tos);
+		// if(trace)
+		set_Trace(tos);
     // draw item
     glPushMatrix();
   	glColor3ub(color[0], color[1], color[2]);
@@ -201,6 +207,31 @@ void Item::draw(Item tos)
   	glEnd();
   	glPopMatrix();
 }
+
+Item & Item::operator = (const Item &a)
+{
+	this->w = a.w;
+	this->h = a.h;
+	for (int i = 0; i < 3; i++)
+			this->pos[i] = a.pos[i];
+  for (int i = 0; i < 3; i++)
+			this->color[i] = a.color[i];
+	this->item_type = a.item_type;
+	this->trace = a.trace;
+	for (int i = 0; i < 3; i++)
+			this->vel[i] = a.vel[i];
+	for (int i = 0; i < 3; i++)
+			this->acc[i] = a.acc[i];
+	this->starting_hp = a.starting_hp;
+	this->HP = a.HP;
+	this->lives = a.lives;
+	this->damage = a.damage;
+	for (int i = 0; i < 8; i++)
+			this->vertex[i] = a.vertex[i];
+	this->CD = a.CD;
+  return *this;
+}
+
 
 Toaster::Toaster()
 {
@@ -216,6 +247,7 @@ Toaster::Toaster()
 		set_HP(starting_hp);
 		set_damage(100);
     lives = 1;
+		set_vertex();
 
 }
 
@@ -341,6 +373,7 @@ void Bullet::set_Bullet(float x, float y, float z, bool tb, int type) {
             set_acc (0.0,ya,0.0);
         }
     }
+		set_vertex();
 }
 
 void Bullet::MoveBullet() {
@@ -368,6 +401,7 @@ void Bread::set_Bread(float x, float y,float z, int Bread_t, int type) {
           set_color(100,240,100);
           set_damage(10);
           set_HP(2);
+					trace = false;
 					item_type = 11;
           b_type = 1;
           point = 10;
@@ -375,15 +409,43 @@ void Bread::set_Bread(float x, float y,float z, int Bread_t, int type) {
 			case 2:
           set_dim(15.0,10.0);
           set_vel(-4.0, 0.0, 0.0);
-          set_acc (0.0,-ya,0.0);
+          set_acc(0.0,-ya,0.0);
           set_color(156,25,226);
           set_damage(0);
           set_HP(0);
+					trace = false;
           b_type = 1;
 					item_type = 12;
           point = 0;
           break;
+			case 3:
+					set_dim(30.0,5.0);
+					set_vel(-50.0,0.0,0.0);
+					set_acc(0.0,0.0,0.0);
+					set_color(250, 238, 2);
+					set_damage(50);
+					set_HP(100);
+					set_CD(100);
+					trace = true;
+					b_type = 1;
+					item_type = 13;
+          point = 0;
+					break;
+			case 4:
+					set_dim(15.0,10.0);
+					set_vel(-4.0, 0.0, 0.0);
+					set_acc (0.0, 0.0, 0.0);
+					set_color(100,240,100);
+					set_damage(10);
+					set_HP(2);
+					trace = false;
+					item_type = 14;
+					b_type = 1;
+					point = 10;
+					break;
+
     }
+		set_vertex();
 }
 
 void Bread::MoveBread() {

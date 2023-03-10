@@ -768,10 +768,35 @@ void physics()
 				blocky.reset();
 			}
 		}
-
+		if (g.substate == HUAIYU) {
+				for (int i=0; i < g.n_Bread; i++) {
+						if(bread[i].trace) {
+								bread[i].CD--;
+								if(0 == bread[i].CD)
+										bread[i].trace = false;
+						}
+				}
+				if (g.BreadCD == 0 && (int)rand()%3 == 0)
+						make_Bread(g.xres-20.0,(((float)rand()) / (float)RAND_MAX)*g.yres,0.0,3,1);
+		}
 		// cout << tos.pos[0] << endl;
 		// move of toaster
 		tos.MoveToster();
+		if (g.BulletCD > 0) g.BulletCD--;
+		else g.BulletCD=5;
+		// auto create bread
+		if (g.BreadCD > 0) g.BreadCD--;
+		else {
+			g.BreadCD=30;
+			float alp=(((float)rand()) / (float)RAND_MAX);
+			int breadrand = (int)rand()%g.levelchance;
+			if(!breadrand==0 && (int)rand()%3 != 0)
+					make_Bread(g.xres,alp*g.yres,0.0,1,1);
+			else
+					make_Bread(g.xres,alp*g.yres,0.0,4,1);
+			if(breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,2,1);
+		}
+
 		// move of all bullet
 		for (int i=0; i < g.n_Bullet; i++) {
 			// testing to see if this fixes crash
@@ -783,7 +808,7 @@ void physics()
 					if (bread[i].ScreenOut()) bread[i] = bread[--g.n_Bread];
 					// ckeak if collison with toaster
 					if (bread[i].Collison(tos)) {
-							if (bread[i].item_type == 11)	{
+							if (bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)	{
 									bread[i].HPdamage(tos);
 									tos.HPdamage(bread[i]);
 									if(bread[i].HP_check())
@@ -799,7 +824,7 @@ void physics()
 					}
 					// ckeak if collison with bullet
 					for (int j=0; j < g.n_Bullet; j++) {
-							if (bread[i].Collison(bul[j])&& bread[i].item_type == 11) {
+							if (bread[i].Collison(bul[j])&&(bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)) {
 									bread[i].HPdamage(bul[j]);
 									bul[j].HPdamage(bread[i]);
 									if(bread[i].HP_check()) {
@@ -809,20 +834,10 @@ void physics()
 									bul[j] = bul[--g.n_Bullet];
 							}
 					}
-					bread[i].MoveBread();
+					if(!bread[i].trace)
+							bread[i].MoveBread();
 		// time stuff/ change when timer finish
 		// for bullet
-			}
-			if (g.BulletCD > 0) g.BulletCD--;
-			else g.BulletCD=5;
-			// auto create bread
-			if (g.BreadCD > 0) g.BreadCD--;
-			else {
-				g.BreadCD=30;
-				float alp=(((float)rand()) / (float)RAND_MAX);
-				int breadrand = (int)rand()%g.levelchance;
-				if(!breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,1,1);
-				if(breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,2,1);
 			}
 	}
 }
@@ -921,7 +936,10 @@ void render()
 				bul[i].draw();
 		}
 		for (int i=0; i < g.n_Bread; i++) {
-			bread[i].draw();
+			if(!bread[i].trace)
+				bread[i].draw();
+			else
+				bread[i].draw(tos);
 	  }
 		// ENTITY RENDER
 		if (g.substate == ENTITY || g.state == PAUSE) {

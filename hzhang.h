@@ -64,6 +64,7 @@ class Item: public Box
     void set_damage(int x);
     void set_vel(float x, float y, float z);
     void set_acc(float x, float y, float z);
+    void set_vertex();
     // for trace Bullet
     void set_Trace(Item tos);
     // to check toaster HP, if <=0 then dead
@@ -80,6 +81,8 @@ class Item: public Box
     bool ScreenOut();
     void draw();
     void draw(Item tos);
+    Item & operator = (const Item &);
+
 };
 
 class Toaster: public Item
