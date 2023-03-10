@@ -777,7 +777,7 @@ void physics()
 						}
 				}
 				if (g.BreadCD == 0 && (int)rand()%3 == 0)
-						make_Bread(g.xres-20.0,(((float)rand()) / (float)RAND_MAX)*g.yres,0.0,3,1);
+						make_Bread(g.xres-60.0,(((float)rand()) / (float)RAND_MAX)*g.yres,0.0,3,1);
 		}
 		// cout << tos.pos[0] << endl;
 		// move of toaster

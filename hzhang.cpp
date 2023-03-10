@@ -419,7 +419,7 @@ void Bread::set_Bread(float x, float y,float z, int Bread_t, int type) {
           point = 0;
           break;
 			case 3:
-					set_dim(30.0,5.0);
+					set_dim(50.0,5.0);
 					set_vel(-50.0,0.0,0.0);
 					set_acc(0.0,0.0,0.0);
 					set_color(250, 238, 2);
