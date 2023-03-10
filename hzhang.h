@@ -65,7 +65,7 @@ class Item: public Box
     void set_vel(float x, float y, float z);
     void set_acc(float x, float y, float z);
     // for trace Bullet
-    voit set_Trace(Item tos);
+    void set_Trace(Item tos);
     // to check toaster HP, if <=0 then dead
     bool HP_check();
     // to check
