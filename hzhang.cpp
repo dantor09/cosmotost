@@ -119,10 +119,10 @@ void Item::set_Trace(Item tos) {
 		vertex[1] = -(w*dsin) + (h*dcos);
 		vertex[2] =  (w*dcos) - (h*dsin);
 		vertex[3] =  (w*dsin) + (h*dcos);
-		vertex[4] = -(w*dcos) + (h*dsin);
-		vertex[5] = -(w*dsin) - (h*dcos);
-		vertex[6] =  (w*dcos) + (h*dsin);
-		vertex[7] =  (w*dsin) - (h*dcos);
+		vertex[4] =  (w*dcos) + (h*dsin);
+		vertex[5] =  (w*dsin) - (h*dcos);
+		vertex[6] = -(w*dcos) + (h*dsin);
+		vertex[7] = -(w*dsin) - (h*dcos);
 }
 
 // to check toaster HP, if <=0 then dead
@@ -169,9 +169,9 @@ void Item::draw()
 		vertex[1] = h;
 		vertex[2] = w;
 		vertex[3] = h;
-		vertex[4] = -w;
+		vertex[4] = w;
 		vertex[5] = -h;
-		vertex[6] = w;
+		vertex[6] = -w;
 		vertex[7] = -h;
 		// draw item
     glPushMatrix();
