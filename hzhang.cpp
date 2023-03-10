@@ -262,6 +262,7 @@ void Toaster::posReset()
 		score = 0;
 		set_HP(starting_hp);
 		b_type = 1;
+		energy = 100.0f;
 }
 void Toaster::MoveToster()
 {
