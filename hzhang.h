@@ -78,7 +78,7 @@ class Item: public Box
     bool ScreenIn();
     //check if item out of screen
     bool ScreenOut();
-
+    void draw();
     void draw(Item tos);
 };
 

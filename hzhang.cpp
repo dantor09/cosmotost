@@ -163,7 +163,20 @@ bool Item::ScreenOut() {
     bool d = (pos[1] <= ((3*g.yres/40)-h));
     return a||b||c||d;
 }
-
+void Item::draw()
+{
+    // draw item
+    glPushMatrix();
+  	glColor3ub(color[0], color[1], color[2]);
+  	glTranslatef(pos[0], pos[1], pos[2]);
+  	glBegin(GL_QUADS);
+  			glVertex2f(vertex[0],vertex[1]);
+  			glVertex2f(vertex[2],vertex[3]);
+  			glVertex2f(vertex[4],vertex[5]);
+  			glVertex2f(vertex[6],vertex[7]);
+  	glEnd();
+  	glPopMatrix();
+}
 void Item::draw(Item tos)
 {
 		if(trace)
