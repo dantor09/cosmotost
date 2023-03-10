@@ -79,7 +79,7 @@ class Item: public Box
     //check if item out of screen
     bool ScreenOut();
 
-    void draw();
+    void draw(Item tos);
 };
 
 class Toaster: public Item
