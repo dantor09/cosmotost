@@ -446,6 +446,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Escape key was pressed
 					//Enter Pause State
 					g.state = MAINMENU;
+					g.GameReset();
 					g.substate = NONE;
 					cerr << "g.state was changed to MAINMENU" << endl;
 					cerr << "g.substate was changed to NONE" << endl;
@@ -603,6 +604,8 @@ int X11_wrapper::check_keys(XEvent *e)
 						}
 						if(key == XK_Return) {
 							record.ChangeR(tos.score);
+							g.state = MAINMENU;
+							g.GameReset();
 						}
 			}
 		}

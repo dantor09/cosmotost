@@ -407,6 +407,5 @@ void Gamerecord::ChangeR(int s)
 				outfile << s << endl;
 				outfile.close();
 		}
-		g.state = MAINMENU;
 }
 Gamerecord::~Gamerecord(){}
