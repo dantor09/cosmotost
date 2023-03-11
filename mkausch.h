@@ -114,7 +114,7 @@ void pause();
 void unPause();
 
 // getters
-double getTime();
+int getTime(char);
 bool isDone();
 bool isPaused();
 

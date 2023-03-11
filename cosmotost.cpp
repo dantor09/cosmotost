@@ -445,6 +445,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					g.state = MAINMENU;
 					cerr << "g.state was changed to MAINMENU" << endl;
 					g.GameReset();
+					g.substate = NONE;
 					return 0;
 				case XK_Escape:
 					//Escape key was pressed
@@ -486,13 +487,16 @@ int X11_wrapper::check_keys(XEvent *e)
 		// *** Should be waiting for mouse input on the menu ***
 	} else if (g.state == GAME) {
 		if (e->type == KeyPress) {
-			float dusha = tos.pos[0] + 100*(g.keys[XK_d]-g.keys[XK_a]);
-			float dushb = tos.pos[1] + 100*(g.keys[XK_w]-g.keys[XK_s]);
+			float dusha = tos.pos[0] + 150*(g.keys[XK_d]-g.keys[XK_a]);
+			float dushb = tos.pos[1] + 150*(g.keys[XK_w]-g.keys[XK_s]);
 			switch (key) {
 				case XK_j:
 						// int a = 350;
-						tos.pos[0] = dusha;
-						tos.pos[1] = dushb;
+						if(tos.energy >= 10) {
+								tos.pos[0] = dusha;
+								tos.pos[1] = dushb;
+								tos.energy -= 10;
+						}
 						// pos[0] = 350;
 						// pos[0] += 50;
 						// pos[1] = 350;  			// std::cout << "move w"<<pos[1]<<std::endl;
@@ -622,6 +626,9 @@ int X11_wrapper::check_keys(XEvent *e)
 							record.ChangeR(tos.score);
 							g.state = MAINMENU;
 							g.GameReset();
+							g.substate = NONE;
+							cerr << "g.state was changed to MAINMENU" << endl;
+							return 0;
 						}
 			}
 		}
@@ -632,6 +639,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					// Go back to the Main Menu
 					g.state = MAINMENU;
 					g.GameReset();
+					g.substate = NONE;
 					cerr << "g.state was changed to MAINMENU" << endl;
 					return 0;
 			}
@@ -1103,7 +1111,7 @@ void render()
 		help_msg.left = 20;
 		help_msg.center = 0;
 		// 					Bottom left of information board
-		score.bot = info_board_1.pos[1] + 15; 
+		score.bot = info_board_1.pos[1] + 15;
 		score.left = info_board_1.pos[0] - ((info_board_1.w)/2);
 		score.center = 0;
 		// 					Bottom left of information board
@@ -1121,7 +1129,7 @@ void render()
 
 			ggprint8b(&help_msg, 0, 0x00ffff00, "Press <F1> for help");
 			ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
-			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %i",(int)g.gameTimer.getTime());
+			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 			// ggprint8b(&bullets, 0, 0x00DC143C, "Active bullets : %i",g.n_Bullet);	// debug output
 
 #ifdef USE_OPENAL_SOUND
@@ -1278,7 +1286,7 @@ void render()
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&g_time, 0, 0x00DC143C,
-											"Time : %i",(int)g.gameTimer.getTime());
+											"Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 #ifdef USE_OPENAL_SOUND
 				if (!sounds.get_pause()) {
 					ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
@@ -1293,7 +1301,7 @@ void render()
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - PAUSE");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Un-Pause Game");
 				ggprint8b(&g_time, 0, 0x00DC143C,
-											"Time : %i",(int)g.gameTimer.getTime());
+											"Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 #ifdef USE_OPENAL_SOUND
 				ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
 #endif
@@ -1302,7 +1310,7 @@ void render()
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&g_time, 0, 0x00DC143C,
-											"Time : %i",(int)g.gameTimer.getTime());
+											"Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAMEOVER");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Back to Main Menu");
 				break;

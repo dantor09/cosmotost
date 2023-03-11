@@ -265,7 +265,7 @@ Timer::Timer() : duration(-1), pause_duration(0.00),
 Timer::Timer(double sec) : duration(sec), pause_duration(0.00), 
                 pause_timer(nullptr), paused(false)
 {    // set starting time
-    start = std::chrono::system_clock::now();
+    start = std::chrono::system_clock::now();    
 }
 
 // delete pause timer if it were active
@@ -294,20 +294,29 @@ void Timer::reset()
 /****************************** Getters *************************************/
 
 // returns time that has elapsed since the start of the timer 
-double Timer::getTime()
+int Timer::getTime(char time_code)
 {
-    double net_time = 0;
+    int net_time = 0;
+    int time = net_time;
     std::chrono::duration<double> total_elapsed = std::chrono::system_clock::now() - start;
-
+  
     if (paused)
     {
-        net_time = (total_elapsed.count() - pause_duration - pause_timer->getTime());
+        net_time = (total_elapsed.count() - pause_duration - pause_timer->getTime('n'));
     } else {
         net_time = (total_elapsed.count()-pause_duration);
     }
-
-    return net_time;
-
+    
+    // D.T - retrieve minutes, seconds, or net time
+    // based on time_code passed in getTime parameter
+    switch(time_code) {
+        case 'm': time = net_time/60;
+                  break;
+        case 's': time = net_time % 60;
+                  break;
+        case 'n': time = net_time;
+    }
+    return time;
 }
 
 // checks if the timer has elapsed
@@ -318,7 +327,7 @@ bool Timer::isDone()
     if (duration == -1) {   // return false for count up timers
         return false;
     } else {    // return net time for countdown timers
-        return (getTime() > duration);  
+        return (getTime('n') > duration);  
     }   
 }
 
@@ -337,7 +346,7 @@ void Timer::unPause()
 {
     if (paused) {
         paused = false;
-        pause_duration += pause_timer->getTime();
+        pause_duration += pause_timer->getTime('n');
         delete pause_timer;
         pause_timer = nullptr;
     }

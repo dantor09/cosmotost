@@ -14,6 +14,7 @@
 //#include "aparriott.h"
 using namespace std;
 
+
 class Entity; // forward declaration
 class BlockyForky;  // forward declaration
 
@@ -91,7 +92,8 @@ class Toaster: public Item
       // the bullet type toaster carrying
       int b_type;
       int score;
-
+      float energy;
+      float energy_recover;
 
       Toaster();
       ~Toaster();
