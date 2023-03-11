@@ -25,9 +25,13 @@
 #include "fonts.h"
 #include "hzhang.h"
 
+
 using namespace std;
 
-inline const int NUM_SOUNDS = 2;
+inline const int NUM_SOUNDS = 4;
+inline const int NUM_SONGS = 1;
+
+// #define USE_OPENAL_SOUND
 
 #ifdef USE_OPENAL_SOUND
 #include </usr/include/AL/alut.h>
@@ -100,7 +104,7 @@ Timer();    // used to create a timer that counts up or dc about it expiring
             // note: the isDone() function is pretty useless and you should
             //      be looking at getTime to see how long the timer has gone
             //      for
-Timer(double s);    // used to create a timer that counts down and will tell
+Timer(double sec);    // used to create a timer that counts down and will tell
                     // you if it expires
 ~Timer();
 
@@ -121,11 +125,21 @@ class Sound
 {
 private:
    
-    int current_track;
     ALuint alBuffers[NUM_SOUNDS];
 	ALuint alSources[NUM_SOUNDS];
+
+    ALuint menuQueueSource;
+    ALuint songQueueSource;
+    ALint buffersDone;
+    ALint buffersQueued;
+    
+    bool is_intro;
+    bool is_game;
+
+
     void init_openal();
     void close_openal();
+    int current_track;
     string build_song_path(string s);
     bool is_music_paused;
     bool user_pause;
@@ -134,6 +148,8 @@ private:
                     "bullet_fire.wav",
                     // "Edzes-64TheMagicNumber16kHz.wav",
                     // "Estrayk-TheHerSong1016kHz.wav",
+                    "Edzes-64TheMagicNumber-intro8kHz.wav",
+                    "Edzes-64TheMagicNumber-loop8kHz.wav",
                     "VolkorX-Enclave8kHz.wav" };
                     // "Quazar-FunkyStars16kHz.wav",
                     // "XRay-Zizibum-16kHz.wav",
@@ -143,15 +159,21 @@ private:
 public:
 	// Source refers to the sound.
     
-    void cycle_songs();
-    void toggle_user_pause();
-    void pause();
-    void unpause();
-    bool get_pause();
-    string & get_song_name();
-
+    // new
+    void play_start_track();
 	Sound();
 	~Sound();
+    bool check_intro_buffer_done();
+    void reset_buffer_done();
+    void loop_intro();
+    void setup_game_mode();
+    string get_song_name();
+    void pause();
+    void unpause();
+    void toggle_user_pause();
+    bool get_pause();
+    void rewind_game_music();
+
 
 };
 

@@ -17,6 +17,7 @@
 #include <ctime>
 #include <cstring>
 #include <cmath>
+#include <iomanip>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
@@ -57,6 +58,10 @@ void init_opengl(void);
 void physics(void);
 void render(void);
 
+#ifdef USE_OPENAL_SOUND
+void check_sound(void);
+#endif
+
 //=====================================
 // MAIN FUNCTION IS HERE
 //=====================================
@@ -78,6 +83,9 @@ int main()
 		}
 		physics();
 		render();
+#ifdef USE_OPENAL_SOUND
+		check_sound();
+#endif
 		x11.swapBuffers();
 		usleep(200);
 	}
@@ -118,7 +126,6 @@ X11_wrapper::X11_wrapper()
 	set_title();
 	glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
 	glXMakeCurrent(dpy, win, glc);
-
 
 }
 
@@ -322,6 +329,15 @@ int X11_wrapper::check_mouse(XEvent *e)
 					// 	delete g.gameTimer;	// kill game clock
 					// }
 					g.gameTimer.reset();
+
+#ifdef USE_OPENAL_SOUND
+					sounds.rewind_game_music();
+					cerr << "rewinding song " << sounds.get_song_name() << endl;
+#endif
+					return 0;
+
+
+
 					// g.gameTimer.unPause();
 					// g.gameTimer = new Timer();
 					selection = nullptr;
@@ -653,11 +669,44 @@ void init_opengl(void)
 	g.state = SPLASH;
 	g.substate = NONE;
 
-#ifdef USE_OPENAL_SOUND
-	sounds.cycle_songs();	// cycle will start the start song on first play
-#endif
+
 
 }
+
+#ifdef USE_OPENAL_SOUND
+
+void check_sound(void)
+{
+	static bool initial_play = false;
+	static bool loop_set = false;
+	static bool initial_game_setup = false;
+	
+	if (g.state == SPLASH || g.state == MAINMENU || g.state == GAMEOVER) {
+		// init_game_setup will unque intro buffers and queue game songs
+		initial_game_setup = false;	// switch to false if it was prev true
+		if (initial_play == false) {
+			cerr << "calling play_start_track()" << endl;
+			sounds.play_start_track();	// queues intro songs and plays
+			initial_play = true;
+		}
+		if (sounds.check_intro_buffer_done() && !loop_set) {
+			// sounds.reset_buffer_done();
+			cerr << "sounds.checkintobuffer == true" << endl;
+			cerr << "calling loop_intro()" << endl;
+			sounds.loop_intro();
+			loop_set = true;
+		}
+	} else if (g.state == GAME && initial_game_setup == false) {
+			// reset initial play so that intro plays
+		initial_play = loop_set = false;
+		initial_game_setup = true;
+		cerr << "calling setup_game_mode()" << endl;
+		sounds.setup_game_mode();
+
+	}
+
+}
+#endif
 
 void physics()
 {

@@ -28,6 +28,8 @@ using namespace std;
 #define BSIZE 5
 #define PADDING 20
 
+// #define USE_OPENAL_SOUND
+
 
 
 Menu::Menu(unsigned int _n_texts, 
@@ -260,7 +262,7 @@ Timer::Timer() : duration(-1), pause_duration(0.00),
     start = std::chrono::system_clock::now();
 }
 
-Timer::Timer(double s) : duration(s), pause_duration(0.00), 
+Timer::Timer(double sec) : duration(sec), pause_duration(0.00), 
                 pause_timer(nullptr), paused(false)
 {    // set starting time
     start = std::chrono::system_clock::now();
@@ -348,44 +350,57 @@ Sound::Sound()
     
     //Buffer holds the sound information.
     init_openal();
-    current_track = 1;  // starting track number at splash screen
+    current_track = -1;  // starting track number at splash screen
     is_music_paused = false;
     user_pause = false;
-    // alBuffers[0] = alutCreateBufferFromFile("./Songs/bullet_fire.wav");
-    // alBuffers[1] = alutCreateBufferFromFile("./Songs/Edzes-64TheMagicNumber16kHz.wav");
-    // alBuffers[2] = alutCreateBufferFromFile("./Songs/Estrayk-TheHerSong1016kHz.wav");
-    // alBuffers[1] = alutCreateBufferFromFile("./Songs/VolkorX-Enclave8kHz.wav.wav");
-    // alBuffers[4] = alutCreateBufferFromFile("./Songs/Quazar-FunkyStars16kHz.wav");
-    // alBuffers[5] = alutCreateBufferFromFile("./Songs/XRay-Zizibum-16kHz.wav");
-    // alBuffers[6] = alutCreateBufferFromFile("./Songs/Zalza-8bitTheClock16kHz.wav");
-    // alBuffers[7] = alutCreateBufferFromFile("./Songs/AdhesiveWombat-8bitAdventure_16kHz.wav");
+    is_intro = is_game = false;
 
+    //0     "bullet_fire.wav",
+    //1 "Edzes-64TheMagicNumber-intro8kHz.wav",
+    //2 "Edzes-64TheMagicNumber-loop8kHz.wav",
+    //3 "VolkorX-Enclave8kHz.wav" };
+
+
+    // make individual buffers of all sounds
     alBuffers[0] = alutCreateBufferFromFile(build_song_path(sound_names[0]).c_str());
     alBuffers[1] = alutCreateBufferFromFile(build_song_path(sound_names[1]).c_str());
-    // alBuffers[2] = alutCreateBufferFromFile(build_song_path(sound_names[2]).c_str());
-    // alBuffers[3] = alutCreateBufferFromFile(build_song_path(sound_names[3]).c_str());
-    // alBuffers[4] = alutCreateBufferFromFile(build_song_path(sound_names[4]).c_str());
-    // alBuffers[5] = alutCreateBufferFromFile(build_song_path(sound_names[5]).c_str());
-    // alBuffers[6] = alutCreateBufferFromFile(build_song_path(sound_names[6]).c_str());
-    // alBuffers[7] = alutCreateBufferFromFile(build_song_path(sound_names[7]).c_str());
+    alBuffers[2] = alutCreateBufferFromFile(build_song_path(sound_names[2]).c_str());
+    alBuffers[3] = alutCreateBufferFromFile(build_song_path(sound_names[3]).c_str());
 
-    alGenSources(NUM_SOUNDS, alSources);
+    // songBuffers[0] = alBuffers[3];
+    buffersDone = buffersQueued = 0;
+    
+    // generate number of sources
+    alGenSources(NUM_SOUNDS, alSources);    // keep individual sources for now
+    alGenSources(1, &menuQueueSource);
+
+    alSourceQueueBuffers(menuQueueSource, 1, (alBuffers+1));
+    alSourcef(menuQueueSource, AL_GAIN, 1.0f);
+    alSourcef(menuQueueSource, AL_PITCH, 1.0f);
+    // alGenSources(1, &songQueueSource);
+
+    //   [[------- OLD -----------]]
     //Generate a source, and store it in a buffer.
+    // set sfx/songs to not loop
+    int non_looping_sounds = 2;
+    for (int i = 0; i < non_looping_sounds; i++) {
+        alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
+        alSourcef(alSources[i], AL_GAIN, 1.0f);
+        alSourcef(alSources[i], AL_PITCH, 1.0f);
+        alSourcei(alSources[i], AL_LOOPING, AL_FALSE);
+    }
 
     // make all songs to loop
-    for (int i = 1; i < NUM_SOUNDS; i++) {
+    for (int i = 2; i < NUM_SOUNDS; i++) {
         alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
-        alSourcef(alSources[i], AL_GAIN, 0.5f);
+        alSourcef(alSources[i], AL_GAIN, 1.0f);
         alSourcef(alSources[i], AL_PITCH, 1.0f);
         alSourcei(alSources[i], AL_LOOPING, AL_TRUE);
     }
+    //   [[------- END OLD -----------]]
 
-    // set sfx to not loop
-    alSourcei(alSources[0], AL_BUFFER, alBuffers[0]);
-    alSourcef(alSources[0], AL_GAIN, 1.0f);
-    alSourcef(alSources[0], AL_PITCH, 1.0f);
-    alSourcei(alSources[0], AL_LOOPING, AL_FALSE);
-    
+
+    // check for errors after setting sources
     if (alGetError() != AL_NO_ERROR) {
         throw "ERROR: setting source\n";
     }
@@ -399,6 +414,8 @@ Sound::~Sound()
         // delete buffers
         alDeleteBuffers(i+1, (alBuffers+i));
     }
+
+    alDeleteSources(1, &menuQueueSource);
 
     close_openal();
 
@@ -439,6 +456,13 @@ void Sound::close_openal()
 	alcCloseDevice(Device);
 }
 
+void Sound::rewind_game_music()
+{
+    alSourceStop(alSources[3]);
+    alSourceRewind(alSources[3]);
+    alSourcePlay(alSources[3]);
+}
+
 string Sound::build_song_path(string s)
 {
     // format of the song
@@ -453,48 +477,95 @@ string Sound::build_song_path(string s)
 
 }
 
-void Sound::cycle_songs()
+
+bool Sound::check_intro_buffer_done()
 {
-    int first_track = 1;    // first track in list of tracks,this will make 
-                            //  it easier if they're grouped if more sfx are added
-    // int starting_track = 1; // starting track when game opens at splash menu
-    static int track = current_track;   // id of starting track number when game opens
-	static int prev_track = -1; // prevents stopping a song that's not playing when game opens
+    reset_buffer_done();
+    alGetSourcei(menuQueueSource, AL_BUFFERS_PROCESSED, &buffersDone);
+    cerr << "checking intro buffer done, buffers is: " << buffersDone << endl;
+    return (buffersDone == 1);
+}
 
+// resets buffers_done variable for further checks
+void Sound::reset_buffer_done()
+{
+    buffersDone = 0;
+}
 
-    if (prev_track != -1)
-        alSourceStop(alSources[prev_track]);
+// unqueue's intro beat so that only loop track is in the buffer queue
+// loops buffer queue at this point
+void Sound::loop_intro()
+{
 
-    alSourcePlay(alSources[track]);
-    current_track = track;
+    alSourceStop(menuQueueSource);
+    alSourceRewind(menuQueueSource);
+    alSourcePlay(alSources[2]);
+
+}
+
+void Sound::setup_game_mode()
+{
+    // change bools for music state
+    is_intro = false; is_game = true;
+
+    // stop both the intro and loop if either are playing
+    alSourceStop(alSources[2]);
+    alSourceStop(menuQueueSource);
+    alSourceRewind(alSources[2]);
+    alSourceRewind(menuQueueSource);
     
-    prev_track = track;
-
-    track = (track == NUM_SOUNDS-1) ? first_track : track+1;
+    // play the game song
+    alSourcePlay(alSources[3]);
 }
 
-string & Sound::get_song_name()
+void Sound::play_start_track()
 {
-    return sound_names[current_track];
+    // stop game music if it's playing
+    if (is_game == true) {
+        alSourceStop(alSources[3]);
+        alSourceRewind(alSources[3]);
+    }
+
+    is_intro = true; is_game = false;
+
+    // begin playing menu music
+    alSourcePlay(menuQueueSource);
 }
 
+// returns song names, only 2 songs for now
+string Sound::get_song_name()
+{
+    string name;
+    if (is_intro) {
+        name = "Edzes-64TheMagicNumber";
+    }
+    if (is_game) {
+        name = "VolkorX-Enclave";
+    }
+    return name;
+}
+
+// pauses song (when going to pause menu for instance)
 void Sound::pause()
 {
     if (!is_music_paused) {
         is_music_paused = true;
-        alSourcePause(alSources[current_track]);
+        alSourcePause(alSources[3]);
     }
 }
+
+// unpauses
 void Sound::unpause()
 {
     if (!user_pause) {
         if (is_music_paused) {
             is_music_paused = false;
-            alSourcePlay(alSources[current_track]);
+            alSourcePlay(alSources[3]);
         }
     }
 }
 
+// separate pause state for when user explicity mutes music
 void Sound::toggle_user_pause()
 {
     user_pause = (user_pause == true) ? false : true;
@@ -504,23 +575,13 @@ void Sound::toggle_user_pause()
         unpause();
 }
 
+// getter to return the pause state
 bool Sound::get_pause()
 {
     return is_music_paused;
 }
 
 #endif
-
-
-
-    /*
-private:
-    Box total;     // a box that is proportionate to the overall hp of the Item pointed to by itm
-    Box health;     // a box that is proportionate to the size of the current health of itm
-    const Item * itm;   // item that this healthbar is attached to
-    void hp_resize();   // resizes health box based on passed on item's health
-*/
-
 
 HealthBar::HealthBar(const Item & _itm_, float x, float y)
 {
