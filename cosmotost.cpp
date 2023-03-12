@@ -222,9 +222,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 				if (selection && (mm.words[selection->id] == "Start Game")) {
 					mm.set_orig_color();
 					g.state = GAME;
-					// if (g.gameTimer) {
-					// 	delete g.gameTimer;
-					// }
 					g.gameTimer.reset();	// start the game timer
 					selection = nullptr;
 					prev_selection = nullptr;
@@ -270,17 +267,10 @@ int X11_wrapper::check_mouse(XEvent *e)
 				selection = mm.check_t_box(savex, g.yres - savey);
 
 				if (selection) {
-					// cout << "hovering over " << selection->text << endl;
-					if (selection != prev_selection) {
-
-						mm.set_highlight(selection);
-						prev_selection = selection; // remember selection
-						selection = nullptr; // reset selection ptr
-					}
-				} else {
 
 					mm.set_orig_color();
-					prev_selection = nullptr;
+					mm.set_highlight(selection);
+
 				}
 			}
 		}
@@ -309,10 +299,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 				if (selection && (pause_menu.words[selection->id] == "Main Menu")) {
 					pause_menu.set_orig_color();
 					g.state = MAINMENU;
-					// if (g.gameTimer) {
-					// 	cerr << "killing game clock\n";
-					// 	delete g.gameTimer;	// kill game clock
-					// }
 					g.gameTimer.pause();
 					selection = nullptr;
 					prev_selection = nullptr;
@@ -324,24 +310,16 @@ int X11_wrapper::check_mouse(XEvent *e)
 					g.state = GAME;
 					cerr << "g.state was changed back to GAME (RESET SEQUENCE)"
 							<< endl;
-					// if (g.gameTimer) {
-					// 	cerr << "killing game clock\n";
-					// 	delete g.gameTimer;	// kill game clock
-					// }
 					g.gameTimer.reset();
 
 #ifdef USE_OPENAL_SOUND
 					sounds.rewind_game_music();
 					cerr << "rewinding song " << sounds.get_song_name() << endl;
 #endif
-					return 0;
 
-
-
-					// g.gameTimer.unPause();
-					// g.gameTimer = new Timer();
 					selection = nullptr;
 					prev_selection = nullptr;
+					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Back to Game")) {
 					pause_menu.set_orig_color();
@@ -794,7 +772,7 @@ void physics()
 		if (g.substate == MIKE) {
 			blocky.move();
 
-			// check toaster collision with blockyforky
+			// check toaster collision with blocky
 			if (blocky.Collison(tos)) {
 				tos.HPdamage(blocky);
 				blocky.reset();
@@ -820,10 +798,7 @@ void physics()
 				}
 			}
 
-			// reset blocky if he's out of screen
-			if (blocky.ScreenOut()) {
-				blocky.reset();
-			}
+
 		}
 		if (g.substate == HUAIYU) {
 				for (int i=0; i < g.n_Bread; i++) {
@@ -1015,7 +990,9 @@ void render()
 			}
 		}
 
-		if ((g.substate == MIKE || g.state == PAUSE) && blocky.is_alive()) {
+		if ((g.substate == MIKE || g.state == PAUSE) && 
+			(blocky.is_alive() || !blocky.explode_done)) {
+				
 			blocky.draw();
 			blocky_health.draw();
 		}
@@ -1143,7 +1120,7 @@ void render()
 		}
 
 	} else if (g.show_help_menu == true) {
-		const unsigned int KEY_MESSAGES = 11;
+		const unsigned int KEY_MESSAGES = 13;
 		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time, s_name;
 
 		// ***********Locations of all the text rectangles******************
@@ -1235,36 +1212,36 @@ void render()
 				if (g.substate == NONE) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAME");
 
-					ggprint8b(&key_msg[6], 0, 0x00ffff00,
-										"<p> - Go To AParriott Feature Mode");
-					ggprint8b(&key_msg[7], 0, 0x00ffff00,
-										"<h> - Go To HZhang Feature Mode");
 					ggprint8b(&key_msg[8], 0, 0x00ffff00,
-										"<k> - Go To MKausch Feature Mode");
+										"<p> - Go To AParriott Feature Mode");
 					ggprint8b(&key_msg[9], 0, 0x00ffff00,
-										"<t> - Go To DTorres Feature Mode");
+										"<h> - Go To HZhang Feature Mode");
 					ggprint8b(&key_msg[10], 0, 0x00ffff00,
+										"<k> - Go To MKausch Feature Mode");
+					ggprint8b(&key_msg[11], 0, 0x00ffff00,
+										"<t> - Go To DTorres Feature Mode");
+					ggprint8b(&key_msg[12], 0, 0x00ffff00,
 										"<u> - Cycle Music");
 
 				} else if (g.substate == ENTITY) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - ENTITY - APARRIOTT FEATURE MODE");
-					ggprint8b(&key_msg[6], 0, 0x00ffff00,
+					ggprint8b(&key_msg[8], 0, 0x00ffff00,
 										"<p> - Go back to Game Mode");
 				} else if (g.substate == DTORRES) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - DTORRES - DTORRES FEATURE MODE");
-					ggprint8b(&key_msg[6], 0, 0x00ffff00,
+					ggprint8b(&key_msg[8], 0, 0x00ffff00,
 										"<t> - Go back to Game Mode");
 				} else if (g.substate == HUAIYU) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - HUAIYU - HZHANG FEATURE MODE");
-					ggprint8b(&key_msg[6], 0, 0x00ffff00,
+					ggprint8b(&key_msg[8], 0, 0x00ffff00,
 										"<h> - Go back to Game Mode");
 				} else if (g.substate == MIKE) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - MIKE - MKAUSCH FEATURE MODE");
-					ggprint8b(&key_msg[6], 0, 0x00ffff00,
+					ggprint8b(&key_msg[8], 0, 0x00ffff00,
 										"<k> - Go back to Game Mode");
 				}
 
@@ -1280,7 +1257,10 @@ void render()
 												"<s> - Move Down");
 				ggprint8b(&key_msg[5], 0, 0x00ffff00,
 												"<d> - Move Right");
-
+				ggprint8b(&key_msg[6], 0, 0x00ffff00,
+												"<spacebar> - Shoot");
+				ggprint8b(&key_msg[7], 0, 0x00ffff00,
+												"<j> - Dodge");
 
 
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
@@ -1325,4 +1305,3 @@ void render()
 
 }
 
-// Entity functions from aparriott

@@ -150,7 +150,8 @@ private:
                     // "Estrayk-TheHerSong1016kHz.wav",
                     "Edzes-64TheMagicNumber-intro8kHz.wav",
                     "Edzes-64TheMagicNumber-loop8kHz.wav",
-                    "VolkorX-Enclave8kHz.wav" };
+                    "Timecop1983-OnTheRun8kHz.wav" };
+                    // "VolkorX-Enclave8kHz.wav" };
                     // "Quazar-FunkyStars16kHz.wav",
                     // "XRay-Zizibum-16kHz.wav",
                     // "Zalza-8bitTheClock16kHz.wav",
@@ -194,32 +195,40 @@ public:
 };
 
 
-class BlockyForky : public Item
+class Blocky : public Item
 {
     private:
-    void set_rand_color();
+    // void set_rand_color();
     void set_rand_position();
+    void init_rotation_vel();
     bool was_hit; // set when the block strikes the toaster that fall
                         // so it doesn't continuously damage it
-    
+    Item sub_boxes[8];
+    int sb_angles[8];
+    int rot_speed[8];
+    int rot_angle[8];
 
     public:
     int point;
     // int lives;
-    BlockyForky();
-    ~BlockyForky();
+    Blocky();
+    ~Blocky();
     void reset(); // tests to see if the player killed poor forky
     void draw();    // overload function to include redraw
     void move();
     bool is_alive();
     bool did_damage();
     void set_hit();
+    void explode();
+    bool explode_done;
+    bool sub_ScreenIn();
+    void gamereset();
 
     // inherited void Item::draw() 
     // inherited bool Item::ScreenOut()
     // inherited bool Item::HP_check()
     // inherited bool Item::Collison()
 
-
 };
 
+void set_rand_color(Item & it);

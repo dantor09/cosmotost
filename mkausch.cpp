@@ -16,6 +16,7 @@
 #include <iostream>
 #include <string>
 #include </usr/include/AL/alut.h>
+#include <math.h>
 
 #include "mkausch.h"
 #include "Global.h"
@@ -27,6 +28,7 @@ using namespace std;
 
 #define BSIZE 5
 #define PADDING 20
+#define PI 3.1415926535
 
 // #define USE_OPENAL_SOUND
 
@@ -491,7 +493,7 @@ bool Sound::check_intro_buffer_done()
 {
     reset_buffer_done();
     alGetSourcei(menuQueueSource, AL_BUFFERS_PROCESSED, &buffersDone);
-    cerr << "checking intro buffer done, buffers is: " << buffersDone << endl;
+    // cerr << "checking intro buffer done, buffers is: " << buffersDone << endl;
     return (buffersDone == 1);
 }
 
@@ -549,7 +551,7 @@ string Sound::get_song_name()
         name = "Edzes-64TheMagicNumber";
     }
     if (is_game) {
-        name = "VolkorX-Enclave";
+        name = sound_names[3];
     }
     return name;
 }
@@ -679,28 +681,73 @@ void Item::HPdamage(Entity & e)
     HP = HP - e.damage;
 }
 
-BlockyForky::BlockyForky()
+Blocky::Blocky()
 {
     srand(time(NULL));
     set_dim(25.0f, 100.0f);
-    set_rand_color();
+    set_rand_color(*this);
     set_rand_position();
     set_acc(0.0f,-0.25f,0.0f);
     set_vel(0.0f, -4.0f, 0.0f);
     set_damage(20);
-    starting_hp = 200;
+    starting_hp = 10;
     set_HP(starting_hp);
     point = starting_hp;
     was_hit = false;
     lives = 2;
+    explode_done = true;
+
+    // sub box assignment
+    // assignes itself and it's mirror image (i+4 in this case)
+    int angle = 80;
+    int rvel = 8;
+    float deg_to_rad = (PI / 180.0f);
+    for (int i = 0; i < 4; i++) {
+        // set dim
+        sub_boxes[i].set_dim(w/2.0f, h/4.0f);   // should create a box 1/8 size
+        sub_boxes[i+4].set_dim(w/2.0f, h/4.0f);   // should create a box 1/8 size
+
+        // set color
+        sub_boxes[i].set_color(255,0,0);    // make them red for now
+        sub_boxes[i+4].set_color(255,0,0);    // make them red for now
+        
+        // set accel
+        // sub_boxes[i].set_acc(0, -0.25, 0);
+        // sub_boxes[i+4].set_acc(0, -0.25, 0);
+        sub_boxes[i].set_acc(0, 0, 0);
+        sub_boxes[i+4].set_acc(0, 0, 0);
+        
+        // set angle first so we can calc vel vectors
+        sb_angles[i] = angle;
+        sb_angles[i+4] = -sb_angles[i];
+        angle -= 20;
+
+        // set velocity of x and y components based on above angle
+        sub_boxes[i].set_vel((rvel*cos(deg_to_rad * sb_angles[i])), 
+                                    (rvel*sin(deg_to_rad * sb_angles[i])), 0);
+        sub_boxes[i+4].set_vel((rvel*cos(deg_to_rad * sb_angles[i+4])), 
+                                    (rvel*sin(deg_to_rad * sb_angles[i+4])), 0);
+    }
+
+
+    init_rotation_vel();
 }
 
-BlockyForky::~BlockyForky()
+Blocky::~Blocky()
 {
 
 }
 
-void BlockyForky::set_rand_position()
+void Blocky::init_rotation_vel()
+{
+    // 0 the starting angle and assign random change in rotation angle
+    for (int i = 0; i < 8; i++) {
+        rot_angle[i] = 0;
+        rot_speed[i] = -40 + (rand() % 41);
+    }
+}
+
+void Blocky::set_rand_position()
 {
     static int pm_dir = 1;
     float curr_player_xpos = tos.pos[0];
@@ -717,7 +764,7 @@ void BlockyForky::set_rand_position()
     
 }
 
-void BlockyForky::set_rand_color()
+void set_rand_color(Item & it)
 {
     // colors based on color scheme defined at the bottom
     // int color[5][3] = {{61, 89, 114},
@@ -732,15 +779,38 @@ void BlockyForky::set_rand_color()
                         {242, 202, 4},
                         {242, 135, 4}};
     static int index = rand() % 5;
-    set_color(color[index][0], color[index][1], color[index][2]);
+    it.set_color(color[index][0], color[index][1], color[index][2]);
     index = (index + 1) % 5;
 }
 
-void BlockyForky::draw()
+bool Blocky::sub_ScreenIn()
 {
+    bool subs_onscreen = false;
+
+
+    for (int i = 0; i < 8; i++) {
+        subs_onscreen = sub_boxes[i].ScreenIn();
+        if (subs_onscreen)
+            break;
+    }
+
+    return subs_onscreen;
+}
+
+void Blocky::draw()
+{
+    // static int rot_angle = 0;
     // draw item
-    if (is_alive()) {
-        set_rand_color();
+
+        // reset blocky if he's out of screen
+    
+    // draw big blocky
+    if (is_alive() && explode_done) {
+        if (ScreenOut()) {
+            reset();
+        }
+
+        set_rand_color(*this);
         glPushMatrix();
         glColor3ub(color[0], color[1], color[2]);
         glTranslatef(pos[0], pos[1], pos[2]);
@@ -751,43 +821,100 @@ void BlockyForky::draw()
                 glVertex2f( w, -h);
         glEnd();
         glPopMatrix();
-    }
+
     
+    } else {    // draw little blockies
+        // cerr << "checking if sub boxes are in the screen...\n";
+        if (sub_ScreenIn()) {
+            
+            for (int i = 0; i < 8; i++) {
+                set_rand_color(sub_boxes[i]);
+                glPushMatrix();
+                glColor3ub(sub_boxes[i].color[0], 
+                            sub_boxes[i].color[1], 
+                            sub_boxes[i].color[2]);
+                glTranslatef(sub_boxes[i].pos[0], sub_boxes[i].pos[1], sub_boxes[i].pos[2]);
+                glMatrixMode(GL_MODELVIEW);
+                glRotatef(rot_angle[i], 0, 0, 1.0);
+                glBegin(GL_QUADS);
+                        glVertex2f(-sub_boxes[i].w, -sub_boxes[i].h);
+                        glVertex2f(-sub_boxes[i].w,  sub_boxes[i].h);
+                        glVertex2f( sub_boxes[i].w,  sub_boxes[i].h);
+                        glVertex2f( sub_boxes[i].w, -sub_boxes[i].h);
+                glEnd();
+                glPopMatrix();
+                rot_angle[i] -= rot_speed[i];
+            }
+        } else {
+            // rot_angle = 0;
+            init_rotation_vel();
+            explode_done = true;
+            // reset_sub_boxes();
+        }
+    }
 }
 
-void BlockyForky::reset()
+// void Blocky::reset_sub_boxes()
+// {
+
+// }
+
+void Blocky::reset()
 {
-    if (HP_check() && (lives > 0)) {
+    if (HP_check()) {
         lives--;
-        HP = starting_hp;   // give back full health
+        explode();
+        cerr << "explode called\n";
+        explode_done = false;
+        if (lives > 0) {
+            HP = starting_hp;   // give back full health
+        }
     }
 
     set_vel(0.0f, -4.0f, 0.0f);
     set_rand_position();    // put at a new random position
     was_hit = false;
-
 }
 
-bool BlockyForky::did_damage()
+void Blocky::gamereset()
+{
+    lives = 2;
+    HP = starting_hp;
+    set_vel(0.0f, -4.0f, 0.0f);
+    set_rand_position();    // put at a new random position
+    was_hit = false;
+}
+
+bool Blocky::did_damage()
 {
     return was_hit;
 }
 
-void BlockyForky::move()
+void Blocky::move()
 {
-    if (is_alive()) {
+        // move main blocky
+    if (is_alive() && explode_done) {
         pos[0] += vel[0];
         pos[1] += vel[1];
         pos[2] += vel[2];
         vel[0] += acc[0];
         vel[1] += acc[1];
         vel[2] += acc[2];
-    }
-
-
+    } else if (!explode_done) { // move sub boxes until they fall off screen
+        if (sub_ScreenIn()) {
+            for (int i = 0; i < 8; i++) {
+                sub_boxes[i].pos[0] += sub_boxes[i].vel[0];
+                sub_boxes[i].pos[1] += sub_boxes[i].vel[1];
+                sub_boxes[i].pos[2] += sub_boxes[i].vel[2];
+                sub_boxes[i].vel[0] += sub_boxes[i].acc[0];
+                sub_boxes[i].vel[1] += sub_boxes[i].acc[1];
+                sub_boxes[i].vel[2] += sub_boxes[i].acc[2];
+            }
+        }
+    }  
 }
 
-void Item::HPdamage(BlockyForky & bf)
+void Item::HPdamage(Blocky & bf)
 {
     if (!bf.did_damage()) {
         HP = HP - bf.damage;
@@ -795,14 +922,31 @@ void Item::HPdamage(BlockyForky & bf)
     }
 }
 
-bool BlockyForky::is_alive()
+bool Blocky::is_alive()
 {
     return (lives > 0);
 }
 
-void BlockyForky::set_hit()
+void Blocky::set_hit()
 {
     was_hit = true; 
+}
+
+void Blocky::explode()
+{
+    int rvel = 8;
+    float deg_to_rad = PI/180.0f;
+    int pixel_offset = 8;   // sets origin of offset to be 8 left and 8 down
+    int xcoord = pos[0] - pixel_offset;
+    int ycoord = pos[1] - pixel_offset;
+    int rand_offset;    // pixel_offset pixel offset randomly from center of blocky
+
+    for (int i = 0; i < pixel_offset; i++) {
+        rand_offset = rand() % (pixel_offset * 2);
+        sub_boxes[i].set_pos(pos[0]+rand_offset, pos[1]+rand_offset, 0);
+        sub_boxes[i].set_vel((rvel*cos(deg_to_rad * sb_angles[i])), 
+                                    (rvel*sin(deg_to_rad * sb_angles[i])), 0);
+    }
 }
 
 /*

@@ -40,7 +40,7 @@ mkausch.o: mkausch.cpp mkausch.h Box.h Global.h
 	$(COMP) -c mkausch.cpp
 
 
-hzhang.o: hzhang.cpp hzhang.h
+hzhang.o: hzhang.cpp hzhang.h mkausch.cpp
 	$(COMP) -c hzhang.cpp
 
 # timing of state needs to be done
