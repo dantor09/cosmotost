@@ -14,10 +14,7 @@ Global::Global()
 
 Global::~Global()
 {
-	// if (gameTimer != nullptr) {
-	// 	delete gameTimer;
-	// 	gameTimer = nullptr;
-	// }
+
 }
 
 void Global::GameReset()
@@ -29,4 +26,5 @@ void Global::GameReset()
 		for(int i = 0; i <10; i++)
 				record.gamer[i]='_';
 		tos.posReset();
+		blocky.gamereset();
 }

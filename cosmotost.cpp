@@ -17,6 +17,7 @@
 #include <ctime>
 #include <cstring>
 #include <cmath>
+#include <iomanip>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <GL/glx.h>
@@ -57,6 +58,10 @@ void init_opengl(void);
 void physics(void);
 void render(void);
 
+#ifdef USE_OPENAL_SOUND
+void check_sound(void);
+#endif
+
 //=====================================
 // MAIN FUNCTION IS HERE
 //=====================================
@@ -78,6 +83,9 @@ int main()
 		}
 		physics();
 		render();
+#ifdef USE_OPENAL_SOUND
+		check_sound();
+#endif
 		x11.swapBuffers();
 		usleep(200);
 	}
@@ -118,7 +126,6 @@ X11_wrapper::X11_wrapper()
 	set_title();
 	glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
 	glXMakeCurrent(dpy, win, glc);
-
 
 }
 
@@ -215,9 +222,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 				if (selection && (mm.words[selection->id] == "Start Game")) {
 					mm.set_orig_color();
 					g.state = GAME;
-					// if (g.gameTimer) {
-					// 	delete g.gameTimer;
-					// }
 					g.gameTimer.reset();	// start the game timer
 					selection = nullptr;
 					prev_selection = nullptr;
@@ -263,17 +267,10 @@ int X11_wrapper::check_mouse(XEvent *e)
 				selection = mm.check_t_box(savex, g.yres - savey);
 
 				if (selection) {
-					// cout << "hovering over " << selection->text << endl;
-					if (selection != prev_selection) {
-
-						mm.set_highlight(selection);
-						prev_selection = selection; // remember selection
-						selection = nullptr; // reset selection ptr
-					}
-				} else {
 
 					mm.set_orig_color();
-					prev_selection = nullptr;
+					mm.set_highlight(selection);
+
 				}
 			}
 		}
@@ -302,10 +299,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 				if (selection && (pause_menu.words[selection->id] == "Main Menu")) {
 					pause_menu.set_orig_color();
 					g.state = MAINMENU;
-					// if (g.gameTimer) {
-					// 	cerr << "killing game clock\n";
-					// 	delete g.gameTimer;	// kill game clock
-					// }
 					g.gameTimer.pause();
 					selection = nullptr;
 					prev_selection = nullptr;
@@ -317,15 +310,16 @@ int X11_wrapper::check_mouse(XEvent *e)
 					g.state = GAME;
 					cerr << "g.state was changed back to GAME (RESET SEQUENCE)"
 							<< endl;
-					// if (g.gameTimer) {
-					// 	cerr << "killing game clock\n";
-					// 	delete g.gameTimer;	// kill game clock
-					// }
 					g.gameTimer.reset();
-					// g.gameTimer.unPause();
-					// g.gameTimer = new Timer();
+
+#ifdef USE_OPENAL_SOUND
+					sounds.rewind_game_music();
+					cerr << "rewinding song " << sounds.get_song_name() << endl;
+#endif
+
 					selection = nullptr;
 					prev_selection = nullptr;
+					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Back to Game")) {
 					pause_menu.set_orig_color();
@@ -429,6 +423,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					g.state = MAINMENU;
 					cerr << "g.state was changed to MAINMENU" << endl;
 					g.GameReset();
+					g.substate = NONE;
 					return 0;
 				case XK_Escape:
 					//Escape key was pressed
@@ -470,13 +465,16 @@ int X11_wrapper::check_keys(XEvent *e)
 		// *** Should be waiting for mouse input on the menu ***
 	} else if (g.state == GAME) {
 		if (e->type == KeyPress) {
-			float dusha = tos.pos[0] + 100*(g.keys[XK_d]-g.keys[XK_a]);
-			float dushb = tos.pos[1] + 100*(g.keys[XK_w]-g.keys[XK_s]);
+			float dusha = tos.pos[0] + 150*(g.keys[XK_d]-g.keys[XK_a]);
+			float dushb = tos.pos[1] + 150*(g.keys[XK_w]-g.keys[XK_s]);
 			switch (key) {
 				case XK_j:
 						// int a = 350;
-						tos.pos[0] = dusha;
-						tos.pos[1] = dushb;
+						if(tos.energy >= 10) {
+								tos.pos[0] = dusha;
+								tos.pos[1] = dushb;
+								tos.energy -= 10;
+						}
 						// pos[0] = 350;
 						// pos[0] += 50;
 						// pos[1] = 350;  			// std::cout << "move w"<<pos[1]<<std::endl;
@@ -606,6 +604,9 @@ int X11_wrapper::check_keys(XEvent *e)
 							record.ChangeR(tos.score);
 							g.state = MAINMENU;
 							g.GameReset();
+							g.substate = NONE;
+							cerr << "g.state was changed to MAINMENU" << endl;
+							return 0;
 						}
 			}
 		}
@@ -616,6 +617,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					// Go back to the Main Menu
 					g.state = MAINMENU;
 					g.GameReset();
+					g.substate = NONE;
 					cerr << "g.state was changed to MAINMENU" << endl;
 					return 0;
 			}
@@ -653,11 +655,44 @@ void init_opengl(void)
 	g.state = SPLASH;
 	g.substate = NONE;
 
-#ifdef USE_OPENAL_SOUND
-	sounds.cycle_songs();	// cycle will start the start song on first play
-#endif
+
 
 }
+
+#ifdef USE_OPENAL_SOUND
+
+void check_sound(void)
+{
+	static bool initial_play = false;
+	static bool loop_set = false;
+	static bool initial_game_setup = false;
+	
+	if (g.state == SPLASH || g.state == MAINMENU || g.state == GAMEOVER) {
+		// init_game_setup will unque intro buffers and queue game songs
+		initial_game_setup = false;	// switch to false if it was prev true
+		if (initial_play == false) {
+			cerr << "calling play_start_track()" << endl;
+			sounds.play_start_track();	// queues intro songs and plays
+			initial_play = true;
+		}
+		if (sounds.check_intro_buffer_done() && !loop_set) {
+			// sounds.reset_buffer_done();
+			cerr << "sounds.checkintobuffer == true" << endl;
+			cerr << "calling loop_intro()" << endl;
+			sounds.loop_intro();
+			loop_set = true;
+		}
+	} else if (g.state == GAME && initial_game_setup == false) {
+			// reset initial play so that intro plays
+		initial_play = loop_set = false;
+		initial_game_setup = true;
+		cerr << "calling setup_game_mode()" << endl;
+		sounds.setup_game_mode();
+
+	}
+
+}
+#endif
 
 void physics()
 {
@@ -737,7 +772,7 @@ void physics()
 		if (g.substate == MIKE) {
 			blocky.move();
 
-			// check toaster collision with blockyforky
+			// check toaster collision with blocky
 			if (blocky.Collison(tos)) {
 				tos.HPdamage(blocky);
 				blocky.reset();
@@ -763,10 +798,7 @@ void physics()
 				}
 			}
 
-			// reset blocky if he's out of screen
-			if (blocky.ScreenOut()) {
-				blocky.reset();
-			}
+
 		}
 		if (g.substate == HUAIYU) {
 				for (int i=0; i < g.n_Bread; i++) {
@@ -958,13 +990,47 @@ void render()
 			}
 		}
 
-		if ((g.substate == MIKE || g.state == PAUSE) && blocky.is_alive()) {
+		if ((g.substate == MIKE || g.state == PAUSE) && 
+			(blocky.is_alive() || !blocky.explode_done)) {
+				
 			blocky.draw();
 			blocky_health.draw();
 		}
 
 		if (g.state == PAUSE) {
 			pause_menu.draw();
+		}
+
+		if(g.substate == DTORRES) {
+			srand(time(NULL));
+
+			// Make freeze block if it does not exist and timer is NULL
+			if(!freeze_block.position_set && freeze_block.timer == NULL) {
+				freeze_block.set_color(162,210,223); // sky blue
+				freeze_block.w = 10;
+				freeze_block.h = 10;
+
+				// Spawn freeze block within the screen bounds;
+				freeze_block.pos[0] = freeze_block.w + (rand() % (int)(g.xres - freeze_block.w)); // spawn position x is within screen bounds
+				freeze_block.pos[1] = (freeze_block.h + (info_board_1.h * 2)) + (rand() % (int)(g.yres - freeze_block.h)); // spawn position y is withing screen bounds
+				freeze_block.position_set = true;
+			}
+			if(freeze_block.position_set && tos.disable_keys == false) {
+				freeze_block.draw();
+			}
+			// Freeze the toaster as soon as collision is detected and freeze for 3 seconds
+			if(freeze_block.Collison(tos) && !tos.disable_keys ) {
+				tos.disable_keys = true;
+				freeze_block.position_set = false;
+				freeze_block.set_timer(3);
+			}
+			// Unfreeze the toaster after timer is done.
+			if(tos.disable_keys && freeze_block.timer->isDone()) {
+				tos.disable_keys = false;
+				delete freeze_block.timer;
+				freeze_block.timer = NULL;
+			}
+			
 		}
 
 	} else if (g.state == GAMEOVER) {
@@ -1054,7 +1120,7 @@ void render()
 		help_msg.left = 20;
 		help_msg.center = 0;
 		// 					Bottom left of information board
-		score.bot = info_board_1.pos[1] + 15; 
+		score.bot = info_board_1.pos[1] + 15;
 		score.left = info_board_1.pos[0] - ((info_board_1.w)/2);
 		score.center = 0;
 		// 					Bottom left of information board
@@ -1072,7 +1138,7 @@ void render()
 
 			ggprint8b(&help_msg, 0, 0x00ffff00, "Press <F1> for help");
 			ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
-			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %i",(int)g.gameTimer.getTime());
+			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 			// ggprint8b(&bullets, 0, 0x00DC143C, "Active bullets : %i",g.n_Bullet);	// debug output
 
 #ifdef USE_OPENAL_SOUND
@@ -1086,7 +1152,7 @@ void render()
 		}
 
 	} else if (g.show_help_menu == true) {
-		const unsigned int KEY_MESSAGES = 11;
+		const unsigned int KEY_MESSAGES = 13;
 		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time, s_name;
 
 		// ***********Locations of all the text rectangles******************
@@ -1178,36 +1244,36 @@ void render()
 				if (g.substate == NONE) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAME");
 
-					ggprint8b(&key_msg[6], 0, 0x00ffff00,
-										"<p> - Go To AParriott Feature Mode");
-					ggprint8b(&key_msg[7], 0, 0x00ffff00,
-										"<h> - Go To HZhang Feature Mode");
 					ggprint8b(&key_msg[8], 0, 0x00ffff00,
-										"<k> - Go To MKausch Feature Mode");
+										"<p> - Go To AParriott Feature Mode");
 					ggprint8b(&key_msg[9], 0, 0x00ffff00,
-										"<t> - Go To DTorres Feature Mode");
+										"<h> - Go To HZhang Feature Mode");
 					ggprint8b(&key_msg[10], 0, 0x00ffff00,
+										"<k> - Go To MKausch Feature Mode");
+					ggprint8b(&key_msg[11], 0, 0x00ffff00,
+										"<t> - Go To DTorres Feature Mode");
+					ggprint8b(&key_msg[12], 0, 0x00ffff00,
 										"<u> - Cycle Music");
 
 				} else if (g.substate == ENTITY) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - ENTITY - APARRIOTT FEATURE MODE");
-					ggprint8b(&key_msg[6], 0, 0x00ffff00,
+					ggprint8b(&key_msg[8], 0, 0x00ffff00,
 										"<p> - Go back to Game Mode");
 				} else if (g.substate == DTORRES) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - DTORRES - DTORRES FEATURE MODE");
-					ggprint8b(&key_msg[6], 0, 0x00ffff00,
+					ggprint8b(&key_msg[8], 0, 0x00ffff00,
 										"<t> - Go back to Game Mode");
 				} else if (g.substate == HUAIYU) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - HUAIYU - HZHANG FEATURE MODE");
-					ggprint8b(&key_msg[6], 0, 0x00ffff00,
+					ggprint8b(&key_msg[8], 0, 0x00ffff00,
 										"<h> - Go back to Game Mode");
 				} else if (g.substate == MIKE) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - MIKE - MKAUSCH FEATURE MODE");
-					ggprint8b(&key_msg[6], 0, 0x00ffff00,
+					ggprint8b(&key_msg[8], 0, 0x00ffff00,
 										"<k> - Go back to Game Mode");
 				}
 
@@ -1223,13 +1289,16 @@ void render()
 												"<s> - Move Down");
 				ggprint8b(&key_msg[5], 0, 0x00ffff00,
 												"<d> - Move Right");
-
+				ggprint8b(&key_msg[6], 0, 0x00ffff00,
+												"<spacebar> - Shoot");
+				ggprint8b(&key_msg[7], 0, 0x00ffff00,
+												"<j> - Dodge");
 
 
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&g_time, 0, 0x00DC143C,
-											"Time : %i",(int)g.gameTimer.getTime());
+											"Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 #ifdef USE_OPENAL_SOUND
 				if (!sounds.get_pause()) {
 					ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
@@ -1244,7 +1313,7 @@ void render()
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - PAUSE");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Un-Pause Game");
 				ggprint8b(&g_time, 0, 0x00DC143C,
-											"Time : %i",(int)g.gameTimer.getTime());
+											"Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 #ifdef USE_OPENAL_SOUND
 				ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
 #endif
@@ -1253,7 +1322,7 @@ void render()
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&g_time, 0, 0x00DC143C,
-											"Time : %i",(int)g.gameTimer.getTime());
+											"Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAMEOVER");
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Back to Main Menu");
 				break;
@@ -1268,4 +1337,3 @@ void render()
 
 }
 
-// Entity functions from aparriott

@@ -248,7 +248,9 @@ Toaster::Toaster()
 		set_damage(100);
     lives = 1;
 		set_vertex();
-
+		energy = 100.0f;
+		energy_recover = 0.01f;
+	disable_keys = false;
 }
 
 Toaster::~Toaster()
@@ -260,11 +262,13 @@ void Toaster::posReset()
 		set_pos(g.xres/4, g.yres/2, 0.0);
 		score = 0;
 		set_HP(starting_hp);
+		b_type = 1;
+		energy = 100.0f;
 }
 void Toaster::MoveToster()
 {
   // how toaster move by keys and shoot bullet
-  if(ScreenIn()) {
+   if(ScreenIn() && !disable_keys) {
       // if the toaster still in the screen then move
       if (g.keys[XK_w]){
     			pos[1] += 4;
@@ -297,6 +301,10 @@ void Toaster::MoveToster()
 					// std::cout << "shoot"<<std::endl;
 			}
   }
+	if(energy < 100)
+	{
+			energy += energy_recover;
+	}
 }
 // string Toaster::PrintScore() {
 //     ostringstream temp;
@@ -321,24 +329,29 @@ void Bullet::set_Bullet(float x, float y, float z, bool tb, int type) {
             set_color(240,100,100);
             set_damage(1);
             set_HP(1);
+						item_type = 41;
             break;
           case 2:
             // bullet type 2
+						// item type 42
             // up 10degree
             set_vel (10.0,1.76,0.0);
             set_dim (4.0,4.0);
             set_color(240,100,100);
             set_damage(1);
             set_HP(1);
+						item_type = 42;
             break;
           case 3:
             // bullet type 3
+						// item type 43
             // down 10degree
             set_vel (10.0,-1.76,0.0);
             set_dim (4.0,4.0);
             set_color(240,100,100);
             set_damage(1);
             set_HP(1);
+						item_type = 43;
             break;
 
         }

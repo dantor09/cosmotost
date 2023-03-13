@@ -14,8 +14,9 @@
 //#include "aparriott.h"
 using namespace std;
 
+
 class Entity; // forward declaration
-class BlockyForky;  // forward declaration
+class Blocky;  // forward declaration
 
 //make a bullet need the pos of where this bullet creat
 //bool(tb) is means this bullet from toster or not
@@ -74,7 +75,7 @@ class Item: public Box
     //change HP after Collison
     void HPdamage(Item a);
     void HPdamage(Entity & e);  // defined in mkausch.cpp for entity collision
-    void HPdamage(BlockyForky & b); // defined in mkausch.cpp for BF collision
+    void HPdamage(Blocky & b); // defined in mkausch.cpp for BF collision
     // check if item reach the in the screen
     bool ScreenIn();
     //check if item out of screen
@@ -91,7 +92,9 @@ class Toaster: public Item
       // the bullet type toaster carrying
       int b_type;
       int score;
-
+      float energy;
+      float energy_recover;
+      bool disable_keys;
 
       Toaster();
       ~Toaster();

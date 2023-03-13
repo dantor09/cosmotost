@@ -25,9 +25,13 @@
 #include "fonts.h"
 #include "hzhang.h"
 
+
 using namespace std;
 
-inline const int NUM_SOUNDS = 2;
+inline const int NUM_SOUNDS = 4;
+inline const int NUM_SONGS = 1;
+
+// #define USE_OPENAL_SOUND
 
 #ifdef USE_OPENAL_SOUND
 #include </usr/include/AL/alut.h>
@@ -100,7 +104,7 @@ Timer();    // used to create a timer that counts up or dc about it expiring
             // note: the isDone() function is pretty useless and you should
             //      be looking at getTime to see how long the timer has gone
             //      for
-Timer(double s);    // used to create a timer that counts down and will tell
+Timer(double sec);    // used to create a timer that counts down and will tell
                     // you if it expires
 ~Timer();
 
@@ -110,7 +114,7 @@ void pause();
 void unPause();
 
 // getters
-double getTime();
+int getTime(char);
 bool isDone();
 bool isPaused();
 
@@ -121,11 +125,21 @@ class Sound
 {
 private:
    
-    int current_track;
     ALuint alBuffers[NUM_SOUNDS];
 	ALuint alSources[NUM_SOUNDS];
+
+    ALuint menuQueueSource;
+    ALuint songQueueSource;
+    ALint buffersDone;
+    ALint buffersQueued;
+    
+    bool is_intro;
+    bool is_game;
+
+
     void init_openal();
     void close_openal();
+    int current_track;
     string build_song_path(string s);
     bool is_music_paused;
     bool user_pause;
@@ -134,7 +148,10 @@ private:
                     "bullet_fire.wav",
                     // "Edzes-64TheMagicNumber16kHz.wav",
                     // "Estrayk-TheHerSong1016kHz.wav",
-                    "VolkorX-Enclave8kHz.wav" };
+                    "Edzes-64TheMagicNumber-intro8kHz.wav",
+                    "Edzes-64TheMagicNumber-loop8kHz.wav",
+                    "Timecop1983-OnTheRun8kHz.wav" };
+                    // "VolkorX-Enclave8kHz.wav" };
                     // "Quazar-FunkyStars16kHz.wav",
                     // "XRay-Zizibum-16kHz.wav",
                     // "Zalza-8bitTheClock16kHz.wav",
@@ -143,15 +160,21 @@ private:
 public:
 	// Source refers to the sound.
     
-    void cycle_songs();
-    void toggle_user_pause();
-    void pause();
-    void unpause();
-    bool get_pause();
-    string & get_song_name();
-
+    // new
+    void play_start_track();
 	Sound();
 	~Sound();
+    bool check_intro_buffer_done();
+    void reset_buffer_done();
+    void loop_intro();
+    void setup_game_mode();
+    string get_song_name();
+    void pause();
+    void unpause();
+    void toggle_user_pause();
+    bool get_pause();
+    void rewind_game_music();
+
 
 };
 
@@ -172,32 +195,40 @@ public:
 };
 
 
-class BlockyForky : public Item
+class Blocky : public Item
 {
     private:
-    void set_rand_color();
+    // void set_rand_color();
     void set_rand_position();
+    void init_rotation_vel();
     bool was_hit; // set when the block strikes the toaster that fall
                         // so it doesn't continuously damage it
-    
+    Item sub_boxes[8];
+    int sb_angles[8];
+    int rot_speed[8];
+    int rot_angle[8];
 
     public:
     int point;
     // int lives;
-    BlockyForky();
-    ~BlockyForky();
+    Blocky();
+    ~Blocky();
     void reset(); // tests to see if the player killed poor forky
     void draw();    // overload function to include redraw
     void move();
     bool is_alive();
     bool did_damage();
     void set_hit();
+    void explode();
+    bool explode_done;
+    bool sub_ScreenIn();
+    void gamereset();
 
     // inherited void Item::draw() 
     // inherited bool Item::ScreenOut()
     // inherited bool Item::HP_check()
     // inherited bool Item::Collison()
 
-
 };
 
+void set_rand_color(Item & it);
