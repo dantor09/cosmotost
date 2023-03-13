@@ -32,7 +32,6 @@ Timer gameTimer;
 
 
 
-
 Global();
 ~Global();
 void GameReset();
@@ -63,7 +62,7 @@ inline Menu pause_menu(4, 225, 225, g.xres/2.0f, g.yres/2.0f, p_text);
 inline Blocky blocky;
 inline HealthBar blocky_health(blocky, g.xres/2.0f, 15.0f);
 inline InfoBoard info_board_1;
-
+inline FreezeBlock freeze_block;
 #ifdef USE_OPENAL_SOUND
 inline Sound sounds;
 

@@ -94,6 +94,7 @@ class Toaster: public Item
       int score;
       float energy;
       float energy_recover;
+      bool disable_keys;
 
       Toaster();
       ~Toaster();

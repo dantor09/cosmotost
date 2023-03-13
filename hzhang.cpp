@@ -250,6 +250,7 @@ Toaster::Toaster()
 		set_vertex();
 		energy = 100.0f;
 		energy_recover = 0.01f;
+	disable_keys = false;
 }
 
 Toaster::~Toaster()
@@ -267,7 +268,7 @@ void Toaster::posReset()
 void Toaster::MoveToster()
 {
   // how toaster move by keys and shoot bullet
-  if(ScreenIn()) {
+   if(ScreenIn() && !disable_keys) {
       // if the toaster still in the screen then move
       if (g.keys[XK_w]){
     			pos[1] += 4;

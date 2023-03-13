@@ -1001,6 +1001,38 @@ void render()
 			pause_menu.draw();
 		}
 
+		if(g.substate == DTORRES) {
+			srand(time(NULL));
+
+			// Make freeze block if it does not exist and timer is NULL
+			if(!freeze_block.position_set && freeze_block.timer == NULL) {
+				freeze_block.set_color(162,210,223); // sky blue
+				freeze_block.w = 10;
+				freeze_block.h = 10;
+
+				// Spawn freeze block within the screen bounds;
+				freeze_block.pos[0] = freeze_block.w + (rand() % (int)(g.xres - freeze_block.w)); // spawn position x is within screen bounds
+				freeze_block.pos[1] = (freeze_block.h + (info_board_1.h * 2)) + (rand() % (int)(g.yres - freeze_block.h)); // spawn position y is withing screen bounds
+				freeze_block.position_set = true;
+			}
+			if(freeze_block.position_set && tos.disable_keys == false) {
+				freeze_block.draw();
+			}
+			// Freeze the toaster as soon as collision is detected and freeze for 3 seconds
+			if(freeze_block.Collison(tos) && !tos.disable_keys ) {
+				tos.disable_keys = true;
+				freeze_block.position_set = false;
+				freeze_block.set_timer(3);
+			}
+			// Unfreeze the toaster after timer is done.
+			if(tos.disable_keys && freeze_block.timer->isDone()) {
+				tos.disable_keys = false;
+				delete freeze_block.timer;
+				freeze_block.timer = NULL;
+			}
+			
+		}
+
 	} else if (g.state == GAMEOVER) {
 		// draw score display
 		Box end_img;
