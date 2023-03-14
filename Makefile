@@ -48,7 +48,7 @@ aparriott.o: aparriott.cpp aparriott.h Global.h mkausch.cpp
 	$(COMP) -c aparriott.cpp mkausch.cpp
 
 # Empty files but development on bottom screen info soon
-dtorres.o: dtorres.cpp dtorres.h
+dtorres.o: dtorres.cpp dtorres.h mkausch.cpp
 	$(COMP) -c dtorres.cpp
 
 clean:

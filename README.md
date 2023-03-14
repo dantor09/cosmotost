@@ -13,9 +13,6 @@
     - music
 - naming convention for enemies
 - refactoring code
-- consistent coding style
-- gun noises
-- cooldown power bar
 
 
 
@@ -26,6 +23,9 @@
 
 
 #### Done:
+- consistent coding style (dan, huaiyu, ailand)
+- gun noises (mike)
+- cooldown power bar (mike)
 - Lives
 - stabby forky enemy
 - collission on "entity" enemy (mike)

@@ -1034,6 +1034,8 @@ void render()
 		// draw Toaster bullet and bread
 		tos.draw();
 		tos_health.draw();
+		// cerr << "gonna draw..." << endl;
+		tos_cd.draw();
 		for (int i=0; i < g.n_Bullet; i++) {
 				bul[i].draw();
 		}
@@ -1042,7 +1044,7 @@ void render()
 				bread[i].draw();
 			else
 				bread[i].draw(tos);
-	  }
+	  	}
 		// ENTITY RENDER
 		if (g.substate == ENTITY || g.state == PAUSE) {
 

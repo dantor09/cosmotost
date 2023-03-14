@@ -637,56 +637,131 @@ bool Sound::get_pause()
 
 #endif
 
-HealthBar::HealthBar(const Item & _itm_, float x, float y)
+PowerBar::PowerBar(const Item & _itm_, PBType _type_, float x, float y)
 {
     // maybe put max_health of each enemy type in case were going to 
     // use this healthbar for the boss as well
-    total.set_dim(75,10);
-    total.set_pos(x, y, 0);
-    total.set_color(255,0,0);   // set it to red
+    itm = &_itm_;
+    type = _type_;
 
+    if (type == HEALTH) {
+        total.set_color(255,0,0);   // set lost health to red
+        health.set_color(0,255,0);  // set health to green
+        total.set_dim(75,10);
+        total.set_pos(x, y, 0);
+    } else if (type == COOLDOWN) {
+        total.set_color(108,122,137);
+        health.set_color(0,0,0);
+        total.set_dim(75,4);
+        total.set_pos(x, y, 0);
+    }
+    // mimic other bar based on what health was set to
     health.set_dim(total.w,total.h);
     health.set_pos(total.pos[0],total.pos[1],total.pos[2]);
-    health.set_color(0,255,0);
+
+    text.bot = total.pos[1]-5;
+    text.left = total.pos[0];
+    text.center = 1;
+    cerr << "finished itm constructor" << endl;
+}
+
+PowerBar::PowerBar(const Toaster & _tos_, PBType _type_, float x, float y)
+{
+    // maybe put max_health of each enemy type in case were going to 
+    // use this healthbar for the boss as well
+    tos = &_tos_;
+    itm = &_tos_;
+    type = _type_;
+
+    if (type == HEALTH) {
+        total.set_color(255,0,0);   // set lost health to red
+        health.set_color(0,255,0);  // set health to green
+        total.set_dim(75,10);
+        total.set_pos(x, y, 0);
+    } else if (type == COOLDOWN) {
+        total.set_color(196,145,2);
+        health.set_color(255,255,0);
+        total.set_dim(75,8);
+        total.set_pos(x, y, 0);
+    }
+    // mimic other bar based on what health was set to
+    health.set_dim(total.w,total.h);
+    health.set_pos(total.pos[0],total.pos[1],total.pos[2]);
 
     text.bot = total.pos[1]-5;
     text.left = total.pos[0];
     text.center = 1;
 
-    itm = &_itm_;
-    
+    cerr << "finished tos constructor" << endl;
 }
 
-void HealthBar::draw()
+
+void PowerBar::draw()
 {
+    static int max_energy = 100;
     
-    glColor3ubv(total.color);
-    
-    glPushMatrix();
-    glTranslatef(total.pos[0], total.pos[1], total.pos[2]);
-    glBegin(GL_QUADS);
-        glVertex2f(-total.w, -total.h);
-        glVertex2f(-total.w,  total.h);
-        glVertex2f( total.w,  total.h);
-        glVertex2f( total.w, -total.h);
-    glEnd();
-    glPopMatrix();
+    if (type == HEALTH) {
+        glColor3ubv(total.color);
+        glPushMatrix();
+        glTranslatef(total.pos[0], total.pos[1], total.pos[2]);
+        glBegin(GL_QUADS);
+            glVertex2f(-total.w, -total.h);
+            glVertex2f(-total.w,  total.h);
+            glVertex2f( total.w,  total.h);
+            glVertex2f( total.w, -total.h);
+        glEnd();
+        glPopMatrix();
 
-    // draw mainbox
-    // hp_resize();
-    glColor3ubv(health.color);
-    
-    glPushMatrix();
-    glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
-    glBegin(GL_QUADS);
-        glVertex2f(0, -health.h);
-        glVertex2f(0,  health.h);
-        glVertex2f( (((float)(itm->HP))/(itm->starting_hp))*2.0f*health.w,  health.h);
-        glVertex2f( (((float)(itm->HP))/(itm->starting_hp))*2.0f*health.w, -health.h);
-    glEnd();
-    glPopMatrix();
+        // draw mainbox
+        // hp_resize();
+        glColor3ubv(health.color);
+        
+        glPushMatrix();
+        glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
+        glBegin(GL_QUADS);
+            glVertex2f(0, -health.h);
+            glVertex2f(0,  health.h);
+            glVertex2f( (((float)(itm->HP))/(itm->starting_hp))*2.0f*health.w,  health.h);
+            glVertex2f( (((float)(itm->HP))/(itm->starting_hp))*2.0f*health.w, -health.h);
+            
+        glEnd();
+        glPopMatrix();
 
-    ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", itm->HP, itm->starting_hp, itm->lives);
+        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", itm->HP, itm->starting_hp, itm->lives);
+    } else if (type == COOLDOWN) {
+
+        glColor3ubv(total.color);
+        glPushMatrix();
+        glTranslatef(total.pos[0], total.pos[1], total.pos[2]);
+        glBegin(GL_QUADS);
+            glVertex2f(-total.w, -total.h);
+            glVertex2f(-total.w,  total.h);
+            glVertex2f( total.w,  total.h);
+            glVertex2f( total.w, -total.h);
+        glEnd();
+        glPopMatrix();
+
+
+
+        glColor3ubv(health.color);
+        glPushMatrix();
+        glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
+        glBegin(GL_QUADS);
+            glVertex2f(0, -health.h);
+            glVertex2f(0,  health.h);
+            glVertex2f( (((tos->energy))/((float)(max_energy)))*2.0f*health.w,  health.h);
+            glVertex2f( (((tos->energy))/((float)(max_energy)))*2.0f*health.w, -health.h);
+            
+        glEnd();
+        glPopMatrix();
+
+        ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, max_energy);
+        cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
+    }
+
+
+
+    
 }
 
 // modified from hzhang's file by mkausch

@@ -31,6 +31,8 @@ using namespace std;
 inline const int NUM_SOUNDS = 10;
 inline const int NUM_SONGS = 1;
 
+enum PBType {HEALTH, COOLDOWN};
+
 // #define USE_OPENAL_SOUND
 
 #ifdef USE_OPENAL_SOUND
@@ -183,17 +185,21 @@ public:
 
 #endif
 
-class HealthBar
+class PowerBar
 {
 private:
     Box total;     // a box that is proportionate to the overall hp of the Item pointed to by itm
     Box health;     // a box that is proportionate to the size of the current hp of itm
     Rect text;
+    PBType type;
+    const Toaster * tos;   // item that this healthbar is attached to
     const Item * itm;   // item that this healthbar is attached to
     // void hp_resize();   // resizes hp box based on passed on item's health
 
 public:
-    HealthBar(const Item & _itm_, float x, float y);
+    PowerBar(const Toaster & _tos_, PBType type, float x, float y);
+    PowerBar(const Item & _itm_, PBType type, float x, float y);
+    
     void draw();
 };
 
