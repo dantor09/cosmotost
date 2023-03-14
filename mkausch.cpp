@@ -222,7 +222,7 @@ void Menu::set_orig_color()
 
 
 
-void Menu::set_bcolor(int r, int g, int b)
+void Menu::setBcolor(int r, int g, int b)
 {
     bcolor[0] = (char)r;
     bcolor[1] = (char)g;
@@ -243,7 +243,7 @@ void Menu::setPos(float x, float y, float z)
     pos[2] = z;
 }
 
-std::string Menu::get_info()
+std::string Menu::getInfo()
 {
     std::ostringstream temp;
     temp <<             std::endl;
