@@ -27,7 +27,7 @@ class Entity {
 	float pos[2];
     float curve[2];
 	unsigned char color[3];
-	int HP;	// how much hp he starts out with
+	int hp;	// how much hp he starts out with
 	int damage;	// how much damage he does if collides with toaster
 	int point;
 	/*void set_color(unsigned char col[3]) {

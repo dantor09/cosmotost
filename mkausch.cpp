@@ -714,12 +714,12 @@ void Entity::hpDamage(Item & a) {
     hp = hp - a.damage;
 }
 
-bool Entity::HP_check()
+bool Entity::hpCheck()
 {
     return (hp <= 0);
 }
 
-void Item::HPdamage(Entity & e)
+void Item::hpDamage(Entity & e)
 {
     hp = hp - e.damage;
 }
