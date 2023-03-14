@@ -774,29 +774,29 @@ void physics()
 			if (e.spawnSpeed == 0) {
 				e.spawnSpeed = 6;
 				if (e.chainLen == 0) {
-					e.chainLen = e.randnum(4, 12);
-					e.curveRandX = e.randnum(-4, 0);
-					e.curveRandY = e.randnum(-4, 4);
-					e.enterloc = e.randnum(0, 3);
+					e.chainLen = e.randNum(4, 12);
+					e.curveRandX = e.randNum(-4, 0);
+					e.curveRandY = e.randNum(-4, 4);
+					e.enterloc = e.randNum(0, 3);
 					if (e.enterloc == 0) {
 						// makeEntity SPAWN FROM TOP, MOVES LEFT DOWNWARD
-						e.spawnX = e.randnum(g.xres / 2, g.xres);
+						e.spawnX = e.randNum(g.xres / 2, g.xres);
 						e.spawnY = g.yres - 5;
-						e.spawnVelX = e.randnum(-8, -4);
-						e.spawnVelY = e.randnum(-8, 0);
+						e.spawnVelX = e.randNum(-8, -4);
+						e.spawnVelY = e.randNum(-8, 0);
 					} else if (e.enterloc <= 2) {
 						// makeEntity SPAWN FROM RIGHT, MOVES LEFT, RANDUM UP
 						// AND DOWN
 						e.spawnX = g.xres;
-						e.spawnY = e.randnum(0, g.yres);
-						e.spawnVelX = e.randnum(-8, -4);
-						e.spawnVelY = e.randnum(-8, 8);
+						e.spawnY = e.randNum(0, g.yres);
+						e.spawnVelX = e.randNum(-8, -4);
+						e.spawnVelY = e.randNum(-8, 8);
 					} else if (e.enterloc == 3) {
 						// makeEntity SPAWN FROM BOTTOM, MOVES LEFT AND UP
-						e.spawnX = e.randnum(g.xres / 2, g.xres);
+						e.spawnX = e.randNum(g.xres / 2, g.xres);
 						e.spawnY = 5;
-						e.spawnVelX = e.randnum(-8, -4);
-						e.spawnVelY = e.randnum(0, 8);
+						e.spawnVelX = e.randNum(-8, -4);
+						e.spawnVelY = e.randNum(0, 8);
 					}
 				}
 				e.makeEntity(e.spawnX, e.spawnY, e.spawnVelX, e.spawnVelY,
