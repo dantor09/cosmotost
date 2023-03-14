@@ -52,7 +52,7 @@ public:
     Box boarder;
     Box mainbox;
     //float w, h, bw, bh; // width, height, boarder width, boarder height
-    float pos[3]; 
+    float pos[3];
     unsigned char color[3];
     unsigned char bcolor[3];
     unsigned int n_texts;
@@ -62,28 +62,28 @@ public:
     std::string *words;
 
     // constructors
-    Menu(unsigned int n_texts, 
-            float _w, float _h, 
-            float _x, float _y, 
+    Menu(unsigned int n_texts,
+            float _w, float _h,
+            float _x, float _y,
             std::string* _words);
     ~Menu();
 
     // setters
-    void set_bcolor(int r, int g, int b);   // sets boarder color
-    void set_color(int r, int g, int b);   // sets mainbox color
-    void set_pos(float x, float y, float z);
+    void setBcolor(int r, int g, int b);   // sets boarder color
+    void setColor(int r, int g, int b);   // sets mainbox color
+    void setPos(float x, float y, float z);
     void set_highlight(Box * b);
     void set_orig_color();
 
     // getters
     // unsigned char * get_tcolor();
-    std::string get_info(); // get debug info
+    std::string getInfo(); // get debug info
 
     // other
     void draw();
     Box* check_t_box(int x, int y);
 
-    
+
 
 } ;
 
@@ -126,7 +126,7 @@ bool isPaused();
 class Sound
 {
 private:
-   
+
     ALuint alBuffers[NUM_SOUNDS];
 	ALuint alSources[NUM_SOUNDS];
 
@@ -134,7 +134,7 @@ private:
     ALuint songQueueSource;
     ALint buffersDone;
     ALint buffersQueued;
-    
+
     bool is_intro;
     bool is_game;
 
@@ -144,7 +144,7 @@ private:
     string build_song_path(string s);
     bool is_music_paused;
     bool user_pause;
-    
+
     string sound_names[NUM_SOUNDS] = {
                     "bullet_fire.wav",
                     "Edzes-64TheMagicNumber-intro8kHz.wav",
@@ -160,7 +160,7 @@ private:
 
 public:
 	// Source refers to the sound.
-    
+
     // new
     void play_start_track();
 	Sound();
@@ -234,7 +234,7 @@ class Blocky : public Item
     void gamereset();
 
 
-    // inherited void Item::draw() 
+    // inherited void Item::draw()
     // inherited bool Item::ScreenOut()
     // inherited bool Item::HP_check()
     // inherited bool Item::Collison()

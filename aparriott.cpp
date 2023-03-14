@@ -23,90 +23,90 @@ Entity::Entity() {
 	vel[1] = -1;
     curve[0] = 0;
     curve[1] = 0;
-	set_HP(2);
-	set_damage(10);
+	setHP(2);
+	setDamage(10);
 	point = 10;
 }
 
-Entity::Entity(float wid, float hgt, float posX, float posY, float v0, 
-        float v1, float curveX, float curveY) {
+Entity::Entity(float wid, float hgt, float pos_x, float pos_y, float v_x, 
+        float v_y, float curve_x, float curve_y) {
 	dim[0] = wid;
 	dim[1] = hgt;
-	pos[0] = posX;
-	pos[1] = posY;
-	vel[0] = v0;
-	vel[1] = v1;
-    curve[0] = curveX;
-    curve[1] = curveY;
-	set_HP(2);
-	set_damage(10);
+	pos[0] = pos_x;
+	pos[1] = pos_y;
+	vel[0] = v_x;
+	vel[1] = v_y;
+    curve[0] = curve_x;
+    curve[1] = curve_y;
+	setHP(2);
+	setDamage(10);
 	point = 10;
 }
 
 // FUNCTIONS
 #define rnd() ((float)rand() / (float)RAND_MAX)
-int EntitySpawn::randnum(int min, int max) {
+int EntitySpawn::randNum(int min, int max) {
     return min + rand() % ((max + 1) - min);
 }
 
-void EntitySpawn::makeEntity(float posX, float posY, float initVelX, float initVelY, 
-                float curveX, float curveY) {
-	if (e.numEnt < MAX_ENTITIES) {
-		entity[e.numEnt].dim[0] = 8;
-		entity[e.numEnt].dim[1] = 8;
-		entity[e.numEnt].pos[0] = posX;
-		entity[e.numEnt].pos[1] = posY;
-		entity[e.numEnt].vel[0] = initVelX;
-		entity[e.numEnt].vel[1] = initVelY;
-		entity[e.numEnt].color[0] = e.randnum(80, 120);
-		entity[e.numEnt].color[1] = e.randnum(100, 180);
-		entity[e.numEnt].color[2] = e.randnum(200, 255);
-        entity[e.numEnt].curve[0] = curveX;
-        entity[e.numEnt].curve[1] = curveY;
-		e.numEnt++;
+void EntitySpawn::makeEntity(float pos_x, float pos_y, float init_vel_x, float init_vel_y, 
+                float curve_x, float curve_y) {
+	if (e.num_ent < MAX_ENTITIES) {
+		entity[e.num_ent].dim[0] = 8;
+		entity[e.num_ent].dim[1] = 8;
+		entity[e.num_ent].pos[0] = pos_x;
+		entity[e.num_ent].pos[1] = pos_y;
+		entity[e.num_ent].vel[0] = init_vel_x;
+		entity[e.num_ent].vel[1] = init_vel_y;
+		entity[e.num_ent].color[0] = e.randNum(80, 120);
+		entity[e.num_ent].color[1] = e.randNum(100, 180);
+		entity[e.num_ent].color[2] = e.randNum(200, 255);
+        entity[e.num_ent].curve[0] = curve_x;
+        entity[e.num_ent].curve[1] = curve_y;
+		e.num_ent++;
 	}	
 }
 
 // void Entity::entityPhysics() {
-//     // makeEntity(int posX, int posY,  int initVelX, int initVelY) 
+//     // makeEntity(int pos_x, int pos_y,  int init_vel_x, int init_vel_y) 
 // 
 //     // Spawnspeed determines how many ticks until spawning another entity
 //     if (e.spawnSpeed == 0) {
 //         e.spawnSpeed = 6;
-//         if (e.chainLen == 0) {
-//             e.chainLen = e.randnum(4, 12);
-//             e.curveRandX = e.randnum(-4, 0);
-//             e.curveRandY = e.randnum(-4, 4);
+//         if (e.chain_len == 0) {
+//             e.chain_len = e.randNum(4, 12);
+//             e.curveRandX = e.randNum(-4, 0);
+//             e.curveRandY = e.randNum(-4, 4);
 // 
-//             e.enterloc = e.randnum(0, 3);
+//             e.enterloc = e.randNum(0, 3);
 //             if (e.enterloc == 0) {
 //                 // makeEntity SPAWN FROM TOP, MOVES LEFT DOWNWARD
-//                 e.spawnX = e.randnum(g.xres / 2, g.xres);
+//                 e.spawnX = e.randNum(g.xres / 2, g.xres);
 //                 e.spawnY = g.yres - 5;
-//                 e.spawnVelX = e.randnum(-8, -4);
-//                 e.spawnVelY = e.randnum(-8, 0);
+//                 e.spawnVelX = e.randNum(-8, -4);
+//                 e.spawnVelY = e.randNum(-8, 0);
 //             } else if (e.enterloc <= 2) {
 //                 // makeEntity SPAWN FROM RIGHT, MOVES LEFT, RANDUM UP AND DOWN
 //                 e.spawnX = g.xres;
-//                 e.spawnY = e.randnum(0, g.yres);
-//                 e.spawnVelX = e.randnum(-8, -4);
-//                 e.spawnVelY = e.randnum(-8, 8);
+//                 e.spawnY = e.randNum(0, g.yres);
+//                 e.spawnVelX = e.randNum(-8, -4);
+//                 e.spawnVelY = e.randNum(-8, 8);
 //             } else if (e.enterloc == 3) {
 //                 // makeEntity SPAWN FROM BOTTOM, MOVES LEFT AND UP
-//                 e.spawnX = e.randnum(g.xres / 2, g.xres);
+//                 e.spawnX = e.randNum(g.xres / 2, g.xres);
 //                 e.spawnY = 5;
-//                 e.spawnVelX = e.randnum(-8, -4);
-//                 e.spawnVelY = e.randnum(0, 8);
+//                 e.spawnVelX = e.randNum(-8, -4);
+//                 e.spawnVelY = e.randNum(0, 8);
 //             }
 //         }
 //         e.makeEntity(e.spawnX, e.spawnY, e.spawnVelX, e.spawnVelY, e.curveRandX, 
 //                     e.curveRandY);
 // 
-//         e.chainLen--;
+//         e.chain_len--;
 //     }
 //     e.spawnSpeed--;
 // 
-// 	for (int i = 0; i < e.numEnt; i++) {
+// 	for (int i = 0; i < e.num_ent; i++) {
 //         entity[i].pos[0] += entity[i].vel[0]/2;
 // 		entity[i].pos[1] += entity[i].vel[1]/2;
 // 
@@ -117,7 +117,7 @@ void EntitySpawn::makeEntity(float posX, float posY, float initVelX, float initV
 //         if (entity[i].pos[1] < -4 || 
 //                 entity[i].pos[1] > g.yres + 4 ||
 //                 entity[i].pos[0] < -4) {	
-//             entity[i] = entity[--e.numEnt];
+//             entity[i] = entity[--e.num_ent];
 //         }
 // 
 //         // BOUNCE
@@ -146,10 +146,10 @@ void EntitySpawn::makeEntity(float posX, float posY, float initVelX, float initV
 
 //  ENTITYSPAWN CONSTRUCTOR
 EntitySpawn::EntitySpawn() {
-    chainLen = 0;
-    spawnSpeed = 0;
-    curveRandX = 0;
-    curveRandY = 0;
+    chain_len = 0;
+    spawn_speed = 0;
+    curve_rand_x = 0;
+    curve_rand_y = 0;
 }
 
 

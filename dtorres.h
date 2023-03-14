@@ -4,25 +4,22 @@
 #include "hzhang.h"
 using namespace std;
 
-
 class InfoBoard : public Box
 {
-    public: 
-
+    public:
+    
     void draw();
-
 };
 
 class FreezeBlock : public Item 
 {
-    
     public:
+    
+    bool position_set;
+    Timer * ptimer;
+
     FreezeBlock();
     ~FreezeBlock();
-    bool position_set;
-    Timer * timer;
-    void set_timer(int);
+    void setTimer(int);
     void draw();
-
-
 };

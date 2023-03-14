@@ -23,27 +23,27 @@ Box::Box(float _w, float _h, float _x, float _y)
 
 // Setters
 
-void Box::set_color(int r, int g, int b) 
+void Box::setColor(int r, int g, int b)
 {
-    color[0] = (char)r; 
-    color[1] = (char)g; 
+    color[0] = (char)r;
+    color[1] = (char)g;
     color[2] = (char)b;
 }
 
-void Box::set_pos(float x, float y, float z) 
+void Box::setPos(float x, float y, float z)
 {
     pos[0] = x;
     pos[1] = y;
     pos[2] = z;
 }
 
-void Box::set_dim(float _w, float _h)
+void Box::setDim(float _w, float _h)
 {
     w = _w;
     h = _h;
 }
 
-unsigned char * Box::get_color()
+unsigned char * Box::getColor()
 {
     return color;
 }
@@ -53,7 +53,7 @@ unsigned char * Box::get_color()
 //     text = t;
 // }
 
-std::string Box::get_info()
+std::string Box::getInfo()
 {
     std::ostringstream temp;
     temp << "box.w: " << w << std::endl
