@@ -73,9 +73,9 @@ class Item: public Box
     // to check
     bool Collison(Item a);
     //change HP after Collison
-    void HPdamage(Item a);
-    void HPdamage(Entity & e);  // defined in mkausch.cpp for entity collision
-    void HPdamage(Blocky & b); // defined in mkausch.cpp for BF collision
+    void HPDamage(Item a);
+    void HPDamage(Entity & e);  // defined in mkausch.cpp for entity collision
+    void HPDamage(Blocky & b); // defined in mkausch.cpp for BF collision
     // check if item reach the in the screen
     bool ScreenIn();
     //check if item out of screen

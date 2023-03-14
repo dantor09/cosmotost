@@ -36,32 +36,32 @@ class Entity {
 
 	// CONSTRUCTORS
 	Entity();
-	Entity(float wid, float hgt, float posX, float posY, float v0, float v1, 
-            float curveX, float curveY);
+	Entity(float wid, float hgt, float pos_x, float pos_y, float v_x, float v_y, 
+            float curve_x, float curve_y);
 
 	// SETTERS
 	void entityPhysics();
 	void entityRender();
 	bool collision(Item & a);	// defined in mkausch.cpp
-	void set_HP(int life);	// defined in mkausch.cpp
-	void set_damage(int x);	// defined in mkausch.cpp
-	void HPdamage(Item & a);	// defined in mkausch.cpp
-	bool HP_check();			// defined in mkausch.cpp
+	void setHP(int life);	// defined in mkausch.cpp
+	void setDamage(int x);	// defined in mkausch.cpp
+	void HPDamage(Item & a);	// defined in mkausch.cpp
+	bool HPCheck();			// defined in mkausch.cpp
 
 };
 
 class EntitySpawn {
     public:
-    int enterloc, chainLen, spawnSpeed, numEnt;
-    float spawnX, spawnY;
-    float spawnVelX, spawnVelY;
-    float curveRandX, curveRandY;
+    int enter_loc, chain_len, spawn_speed, num_ent;
+    float spawn_x, spawn_y;
+    float spawn_vel_x, spawn_vel_y;
+    float curve_rand_x, curve_rand_y;
 
     EntitySpawn();
 
-	int randnum(int min, int max);
-	void makeEntity(float posX, float posY, float initVelX, float initVelY, 
-            float curveX, float curveY);
+	int randNum(int min, int max);
+	void makeEntity(float pos_x, float pos_y, float init_vel_x, float init_vel_y, 
+            float curve_x, float curve_y);
 };
 
 inline Entity entity[MAX_ENTITIES];

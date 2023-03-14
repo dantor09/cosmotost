@@ -771,41 +771,41 @@ void physics()
 		if (g.substate == ENTITY) {
 			// Spawnspeed determines how many ticks until spawning another
 			// entity
-			if (e.spawnSpeed == 0) {
-				e.spawnSpeed = 6;
-				if (e.chainLen == 0) {
-					e.chainLen = e.randnum(4, 12);
-					e.curveRandX = e.randnum(-4, 0);
-					e.curveRandY = e.randnum(-4, 4);
-					e.enterloc = e.randnum(0, 3);
-					if (e.enterloc == 0) {
+			if (e.spawn_speed == 0) {
+				e.spawn_speed = 6;
+				if (e.chain_len == 0) {
+					e.chain_len = e.randNum(4, 12);
+					e.curve_rand_x = e.randNum(-4, 0);
+					e.curve_rand_y = e.randNum(-4, 4);
+					e.enter_loc = e.randNum(0, 3);
+					if (e.enter_loc == 0) {
 						// makeEntity SPAWN FROM TOP, MOVES LEFT DOWNWARD
-						e.spawnX = e.randnum(g.xres / 2, g.xres);
-						e.spawnY = g.yres - 5;
-						e.spawnVelX = e.randnum(-8, -4);
-						e.spawnVelY = e.randnum(-8, 0);
-					} else if (e.enterloc <= 2) {
+						e.spawn_x = e.randNum(g.xres / 2, g.xres);
+						e.spawn_y = g.yres - 5;
+						e.spawn_vel_x = e.randNum(-8, -4);
+						e.spawn_vel_y = e.randNum(-8, 0);
+					} else if (e.enter_loc <= 2) {
 						// makeEntity SPAWN FROM RIGHT, MOVES LEFT, RANDUM UP
 						// AND DOWN
-						e.spawnX = g.xres;
-						e.spawnY = e.randnum(0, g.yres);
-						e.spawnVelX = e.randnum(-8, -4);
-						e.spawnVelY = e.randnum(-8, 8);
-					} else if (e.enterloc == 3) {
+						e.spawn_x = g.xres;
+						e.spawn_y = e.randNum(0, g.yres);
+						e.spawn_vel_x = e.randNum(-8, -4);
+						e.spawn_vel_y = e.randNum(-8, 8);
+					} else if (e.enter_loc == 3) {
 						// makeEntity SPAWN FROM BOTTOM, MOVES LEFT AND UP
-						e.spawnX = e.randnum(g.xres / 2, g.xres);
-						e.spawnY = 5;
-						e.spawnVelX = e.randnum(-8, -4);
-						e.spawnVelY = e.randnum(0, 8);
+						e.spawn_x = e.randNum(g.xres / 2, g.xres);
+						e.spawn_y = 5;
+						e.spawn_vel_x = e.randNum(-8, -4);
+						e.spawn_vel_y = e.randNum(0, 8);
 					}
 				}
-				e.makeEntity(e.spawnX, e.spawnY, e.spawnVelX, e.spawnVelY,
-							e.curveRandX, e.curveRandY);
-				e.chainLen--;
+				e.makeEntity(e.spawn_x, e.spawn_y, e.spawn_vel_x, e.spawn_vel_y,
+							e.curve_rand_x, e.curve_rand_y);
+				e.chain_len--;
 			}
-			e.spawnSpeed--;
+			e.spawn_speed--;
 
-			for (int i = 0; i < e.numEnt; i++) {
+			for (int i = 0; i < e.num_ent; i++) {
 				entity[i].pos[0] += entity[i].vel[0]/2;
 				entity[i].pos[1] += entity[i].vel[1]/2;
 				entity[i].vel[0] += entity[i].curve[0] / 32;
@@ -815,11 +815,11 @@ void physics()
 
 				for (int j=0; j < g.n_Bullet; j++) {
 					if (entity[i].collision(bul[j])) {
-							entity[i].HPdamage(bul[j]);
-							bul[j].HPdamage(entity[i]);
-							if(entity[i].HP_check()) {
+							entity[i].HPDamage(bul[j]);
+							bul[j].HPDamage(entity[i]);
+							if(entity[i].HPCheck()) {
 								tos.score += entity[i].point;
-								entity[i] = entity[--e.numEnt];
+								entity[i] = entity[--e.num_ent];
 							}
 							bul[j] = bul[--g.n_Bullet];
 					}
@@ -829,7 +829,7 @@ void physics()
 				if (entity[i].pos[1] < -4 ||
 						entity[i].pos[1] > g.yres + 4 ||
 						entity[i].pos[0] < -4) {
-					entity[i] = entity[--e.numEnt];
+					entity[i] = entity[--e.num_ent];
 				}
 				// BOUNCE
 				if (entity[i].pos[1] <= 4 ||
@@ -1046,7 +1046,7 @@ void render()
 		// ENTITY RENDER
 		if (g.substate == ENTITY || g.state == PAUSE) {
 
-			for (int i = 0; i < e.numEnt; i++) {
+			for (int i = 0; i < e.num_ent; i++) {
 				glPushMatrix();
 				glColor3ubv(entity[i].color);
 				glTranslatef(entity[i].pos[0], entity[i].pos[1], 0.0f);

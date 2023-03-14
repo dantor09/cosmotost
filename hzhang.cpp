@@ -136,7 +136,7 @@ void Item::set_Trace(Item tos) {
 		vertex[5] =  (w*dsin) - (h*dcos);
 		vertex[6] = -(w*dcos) + (h*dsin);
 		vertex[7] = -(w*dsin) - (h*dcos);
-		set_vel(-50*dcos,-50*dsin,0.0);
+		set_vel(-50 * dcos, -50 * dsin, 0.0);
 }
 
 // to check toaster HP, if <=0 then dead
@@ -154,7 +154,7 @@ bool Item::Collison(Item a) {
   	return x&&y;
 }
 
-void Item::HPdamage(Item a) {
+void Item::HPDamage(Item a) {
     // std::cout << "HP 1 :" << HP << "Damage :" << a.damage<< std::endl;
     HP = HP - a.damage;
     // std::cout << "HP 2 :" << HP << std::endl;
