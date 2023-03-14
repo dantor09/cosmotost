@@ -702,7 +702,7 @@ bool Entity::collision(Item & a)
 
 void Entity::setHP(int life)
 {
-    HP = life;
+    hp = life;
 }
 
 void Entity::setDamage(int x)
