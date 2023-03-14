@@ -19,10 +19,12 @@ void InfoBoard::draw()
 
 FreezeBlock::FreezeBlock() {
 	position_set = false;
-	timer = NULL;
+	ptimer = NULL;
 }
+
 FreezeBlock::~FreezeBlock(){
 }
+
 void FreezeBlock::draw() {
 	glColor3ubv(color);
 	glPushMatrix();
@@ -35,6 +37,7 @@ void FreezeBlock::draw() {
 	glEnd();
 	glPopMatrix();
 }
-void FreezeBlock::set_timer(int seconds) {
-	timer = new Timer(seconds);
+
+void FreezeBlock::setTimer(int seconds) {
+	ptimer = new Timer(seconds);
 }
