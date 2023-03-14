@@ -17,12 +17,12 @@ Global::~Global()
 
 }
 
-void Global::GameReset()
+void Global::gameReset()
 {
 		n_Bullet = 0;
 		n_Bread = 0;
 		e.numEnt = 0;
-		record.GetR();
+		record.getRecord();
 		for(int i = 0; i <10; i++)
 				record.gamer[i]='_';
 		tos.posReset();

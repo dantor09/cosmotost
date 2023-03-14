@@ -240,9 +240,9 @@ Toaster::Toaster()
     score = 0;
     b_type = 1;
     item_type = 0;
-    set_pos(g.xres/4, g.yres/2, 0.0);
-    set_color(188, 226, 232);
-    set_dim(20,15);
+    setPos(g.xres/4, g.yres/2, 0.0);
+    setColor(188, 226, 232);
+    setDim(20,15);
     starting_hp = 80;
 		setHP(starting_hp);
 		setDamage(100);
@@ -259,7 +259,7 @@ Toaster::~Toaster()
 
 void Toaster::posReset()
 {
-		set_pos(g.xres/4, g.yres/2, 0.0);
+		setPos(g.xres/4, g.yres/2, 0.0);
 		score = 0;
 		setHP(starting_hp);
 		b_type = 1;
@@ -318,15 +318,15 @@ Bullet::Bullet() {
 Bullet::~Bullet() {}
 
 void Bullet::setBullet(float x, float y, float z, bool tb, int type) {
-    set_pos (x,y,z);
+    setPos (x,y,z);
     if (tb) {
       //Toaster bullet
         switch (type) {
           case 1:
             // bullet type 1
             setVel (10.0,0.0,0.0);
-            set_dim (4.0,4.0);
-            set_color(240,100,100);
+            setDim (4.0,4.0);
+            setColor(240,100,100);
             setDamage(1);
             setHP(1);
 						item_type = 41;
@@ -336,8 +336,8 @@ void Bullet::setBullet(float x, float y, float z, bool tb, int type) {
 						// item type 42
             // up 10degree
             setVel (10.0,1.76,0.0);
-            set_dim (4.0,4.0);
-            set_color(240,100,100);
+            setDim (4.0,4.0);
+            setColor(240,100,100);
             setDamage(1);
             setHP(1);
 						item_type = 42;
@@ -347,8 +347,8 @@ void Bullet::setBullet(float x, float y, float z, bool tb, int type) {
 						// item type 43
             // down 10degree
             setVel (10.0,-1.76,0.0);
-            set_dim (4.0,4.0);
-            set_color(240,100,100);
+            setDim (4.0,4.0);
+            setColor(240,100,100);
             setDamage(1);
             setHP(1);
 						item_type = 43;
@@ -363,24 +363,24 @@ void Bullet::setBullet(float x, float y, float z, bool tb, int type) {
             // bullet type 1
             // straight line
             setVel (-6.0,0.0,0.0);
-            set_dim (4.0,4.0);
+            setDim (4.0,4.0);
             break;
           case 2:
             // bullet type 2
             // up 10degree
             setVel (-6.0,1.05,0.0);
-            set_dim (4.0,4.0);
+            setDim (4.0,4.0);
             break;
           case 3:
             // bullet type 3
             // down 10degree
             setVel (-6.0,-1.05,0.0);
-            set_dim (4.0,4.0);
+            setDim (4.0,4.0);
             break;
           case 4:
             // bullet type 4
             // track the origen point of Toaster
-            set_dim (4.0,4.0);
+            setDim (4.0,4.0);
             setVel (-6.0,0.0,0.0);
             float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
             setAcc (0.0,ya,0.0);
@@ -404,14 +404,14 @@ Bread::Bread() {
 Bread::~Bread() {}
 
 void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
-    set_pos (x,y,z);
+    setPos (x,y,z);
 		float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
     switch (Bread_t) {
       case 1:
-          set_dim(15.0,10.0);
+          setDim(15.0,10.0);
           setVel(-4.0, 0.0, 0.0);
           setAcc (0.0,-ya,0.0);
-          set_color(100,240,100);
+          setColor(100,240,100);
           setDamage(10);
           setHP(2);
 					trace = false;
@@ -420,10 +420,10 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
           point = 10;
           break;
 			case 2:
-          set_dim(15.0,10.0);
+          setDim(15.0,10.0);
           setVel(-4.0, 0.0, 0.0);
           setAcc(0.0,-ya,0.0);
-          set_color(156,25,226);
+          setColor(156,25,226);
           setDamage(0);
           setHP(0);
 					trace = false;
@@ -432,10 +432,10 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
           point = 0;
           break;
 			case 3:
-					set_dim(50.0,5.0);
+					setDim(50.0,5.0);
 					setVel(-50.0,0.0,0.0);
 					setAcc(0.0,0.0,0.0);
-					set_color(250, 238, 2);
+					setColor(250, 238, 2);
 					setDamage(50);
 					setHP(100);
 					setCD(100);
@@ -445,10 +445,10 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
           point = 0;
 					break;
 			case 4:
-					set_dim(15.0,10.0);
+					setDim(15.0,10.0);
 					setVel(-4.0, 0.0, 0.0);
 					setAcc (0.0, 0.0, 0.0);
-					set_color(100,240,100);
+					setColor(100,240,100);
 					setDamage(10);
 					setHP(2);
 					trace = false;

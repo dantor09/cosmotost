@@ -334,7 +334,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 				} else if (selection && (pause_menu.words[selection->id] == "Start Over")) {
 					pause_menu.set_orig_color();
 					g.state = MAINMENU;
-					g.GameReset();
+					g.gameReset();
 					g.state = GAME;
 					cerr << "g.state was changed back to GAME (RESET SEQUENCE)"
 							<< endl;
@@ -440,7 +440,7 @@ int X11_wrapper::check_keys(XEvent *e)
 	int key1 = (XLookupKeysym(&e->xkey, 0) & 0x0000ffff);
 	if (e->type == KeyRelease) {
 		g.keys[key1] = 0;
-		
+
 #ifdef USE_OPENAL_SOUND
 		// if (key1 == XK_space) {
 		// 	sounds.gun_stop();
@@ -471,7 +471,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					// Enter was pressed
 					g.state = MAINMENU;
 					cerr << "g.state was changed to MAINMENU" << endl;
-					g.GameReset();
+					g.gameReset();
 					g.substate = NONE;
 					return 0;
 				case XK_Escape:
@@ -490,7 +490,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Escape key was pressed
 					//Enter Pause State
 					g.state = MAINMENU;
-					g.GameReset();
+					g.gameReset();
 					g.substate = NONE;
 					cerr << "g.state was changed to MAINMENU" << endl;
 					cerr << "g.substate was changed to NONE" << endl;
@@ -650,9 +650,9 @@ int X11_wrapper::check_keys(XEvent *e)
 										record.n--;
 						}
 						if(key == XK_Return) {
-							record.ChangeR(tos.score);
+							record.changeRecord(tos.score);
 							g.state = MAINMENU;
-							g.GameReset();
+							g.gameReset();
 							g.substate = NONE;
 							cerr << "g.state was changed to MAINMENU" << endl;
 							return 0;
@@ -665,7 +665,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					// Escape key was pressed
 					// Go back to the Main Menu
 					g.state = MAINMENU;
-					g.GameReset();
+					g.gameReset();
 					g.substate = NONE;
 					cerr << "g.state was changed to MAINMENU" << endl;
 					return 0;
@@ -716,7 +716,7 @@ void check_sound(void)
 	static bool loop_set = false;
 	static bool initial_game_setup = false;
 	static int prev_btype = 1;
-	
+
 	if (g.state == SPLASH || g.state == MAINMENU || g.state == GAMEOVER) {
 		// init_game_setup will unque intro buffers and queue game songs
 		initial_game_setup = false;	// switch to false if it was prev true
@@ -744,7 +744,7 @@ void check_sound(void)
 	// *******     GUN NOISES      **********//
 
 	// start playing new sound if leveled up gun
-	if (tos.b_type != prev_btype) {	
+	if (tos.b_type != prev_btype) {
 		sounds.gun_stop();
 		sounds.gun_play(tos.b_type);
 		prev_btype = tos.b_type;
@@ -771,41 +771,41 @@ void physics()
 		if (g.substate == ENTITY) {
 			// Spawnspeed determines how many ticks until spawning another
 			// entity
-			if (e.spawn_speed == 0) {
-				e.spawn_speed = 6;
-				if (e.chain_len == 0) {
-					e.chain_len = e.randNum(4, 12);
-					e.curve_rand_x = e.randNum(-4, 0);
-					e.curve_rand_y = e.randNum(-4, 4);
-					e.enter_loc = e.randNum(0, 3);
-					if (e.enter_loc == 0) {
+			if (e.spawnSpeed == 0) {
+				e.spawnSpeed = 6;
+				if (e.chainLen == 0) {
+					e.chainLen = e.randnum(4, 12);
+					e.curveRandX = e.randnum(-4, 0);
+					e.curveRandY = e.randnum(-4, 4);
+					e.enterloc = e.randnum(0, 3);
+					if (e.enterloc == 0) {
 						// makeEntity SPAWN FROM TOP, MOVES LEFT DOWNWARD
-						e.spawn_x = e.randNum(g.xres / 2, g.xres);
-						e.spawn_y = g.yres - 5;
-						e.spawn_vel_x = e.randNum(-8, -4);
-						e.spawn_vel_y = e.randNum(-8, 0);
-					} else if (e.enter_loc <= 2) {
+						e.spawnX = e.randnum(g.xres / 2, g.xres);
+						e.spawnY = g.yres - 5;
+						e.spawnVelX = e.randnum(-8, -4);
+						e.spawnVelY = e.randnum(-8, 0);
+					} else if (e.enterloc <= 2) {
 						// makeEntity SPAWN FROM RIGHT, MOVES LEFT, RANDUM UP
 						// AND DOWN
-						e.spawn_x = g.xres;
-						e.spawn_y = e.randNum(0, g.yres);
-						e.spawn_vel_x = e.randNum(-8, -4);
-						e.spawn_vel_y = e.randNum(-8, 8);
-					} else if (e.enter_loc == 3) {
+						e.spawnX = g.xres;
+						e.spawnY = e.randnum(0, g.yres);
+						e.spawnVelX = e.randnum(-8, -4);
+						e.spawnVelY = e.randnum(-8, 8);
+					} else if (e.enterloc == 3) {
 						// makeEntity SPAWN FROM BOTTOM, MOVES LEFT AND UP
-						e.spawn_x = e.randNum(g.xres / 2, g.xres);
-						e.spawn_y = 5;
-						e.spawn_vel_x = e.randNum(-8, -4);
-						e.spawn_vel_y = e.randNum(0, 8);
+						e.spawnX = e.randnum(g.xres / 2, g.xres);
+						e.spawnY = 5;
+						e.spawnVelX = e.randnum(-8, -4);
+						e.spawnVelY = e.randnum(0, 8);
 					}
 				}
-				e.makeEntity(e.spawn_x, e.spawn_y, e.spawn_vel_x, e.spawn_vel_y,
-							e.curve_rand_x, e.curve_rand_y);
-				e.chain_len--;
+				e.makeEntity(e.spawnX, e.spawnY, e.spawnVelX, e.spawnVelY,
+							e.curveRandX, e.curveRandY);
+				e.chainLen--;
 			}
-			e.spawn_speed--;
+			e.spawnSpeed--;
 
-			for (int i = 0; i < e.num_ent; i++) {
+			for (int i = 0; i < e.numEnt; i++) {
 				entity[i].pos[0] += entity[i].vel[0]/2;
 				entity[i].pos[1] += entity[i].vel[1]/2;
 				entity[i].vel[0] += entity[i].curve[0] / 32;
@@ -815,11 +815,11 @@ void physics()
 
 				for (int j=0; j < g.n_Bullet; j++) {
 					if (entity[i].collision(bul[j])) {
-							entity[i].HPDamage(bul[j]);
-							bul[j].HPDamage(entity[i]);
-							if(entity[i].HPCheck()) {
+							entity[i].hpDamage(bul[j]);
+							bul[j].hpDamage(entity[i]);
+							if(entity[i].hpCheck()) {
 								tos.score += entity[i].point;
-								entity[i] = entity[--e.num_ent];
+								entity[i] = entity[--e.numEnt];
 							}
 							bul[j] = bul[--g.n_Bullet];
 					}
@@ -829,7 +829,7 @@ void physics()
 				if (entity[i].pos[1] < -4 ||
 						entity[i].pos[1] > g.yres + 4 ||
 						entity[i].pos[0] < -4) {
-					entity[i] = entity[--e.num_ent];
+					entity[i] = entity[--e.numEnt];
 				}
 				// BOUNCE
 				if (entity[i].pos[1] <= 4 ||
@@ -843,24 +843,24 @@ void physics()
 			blocky.move();
 
 			// check toaster collision with blocky
-			if (blocky.Collison(tos)) {
-				tos.HPdamage(blocky);
+			if (blocky.collision(tos)) {
+				tos.hpDamage(blocky);
 				blocky.reset();
 
-				if (blocky.HP_check()) {
+				if (blocky.hpCheck()) {
 					blocky.reset();
 				}
-				if (tos.HP_check()) {
+				if (tos.hpCheck()) {
 					g.state = GAMEOVER;
 				}
 			}
 
 			// check blocky's collision with bullets
 			for (int j=0; j < g.n_Bullet; j++) {
-				if (blocky.Collison(bul[j])) {
-						blocky.HPdamage(bul[j]);
-						bul[j].HPdamage(blocky);
-						if(blocky.HP_check()) {
+				if (blocky.collision(bul[j])) {
+						blocky.hpDamage(bul[j]);
+						bul[j].hpDamage(blocky);
+						if(blocky.hpCheck()) {
 							tos.score += blocky.point;
 							blocky.reset();
 						}
@@ -879,11 +879,11 @@ void physics()
 						}
 				}
 				if (g.BreadCD == 0 && (int)rand()%3 == 0)
-						make_Bread(g.xres-60.0,(((float)rand()) / (float)RAND_MAX)*g.yres,0.0,3,1);
+						makeBread(g.xres-60.0,(((float)rand()) / (float)RAND_MAX)*g.yres,0.0,3,1);
 		}
 		// cout << tos.pos[0] << endl;
 		// move of toaster
-		tos.MoveToster();
+		tos.moveToster();
 		if (g.BulletCD > 0) g.BulletCD--;
 		else g.BulletCD=5;
 		// auto create bread
@@ -893,29 +893,29 @@ void physics()
 			float alp=(((float)rand()) / (float)RAND_MAX);
 			int breadrand = (int)rand()%g.levelchance;
 			if(!breadrand==0 && (int)rand()%3 != 0)
-					make_Bread(g.xres,alp*g.yres,0.0,1,1);
+					makeBread(g.xres,alp*g.yres,0.0,1,1);
 			else
-					make_Bread(g.xres,alp*g.yres,0.0,4,1);
-			if(breadrand==0) make_Bread(g.xres,alp*g.yres,0.0,2,1);
+					makeBread(g.xres,alp*g.yres,0.0,4,1);
+			if(breadrand==0) makeBread(g.xres,alp*g.yres,0.0,2,1);
 		}
 
 		// move of all bullet
 		for (int i=0; i < g.n_Bullet; i++) {
 			// testing to see if this fixes crash
-				if (bul[i].ScreenOut()) bul[i] = bul[--g.n_Bullet];
-				bul[i].MoveBullet();
+				if (bul[i].screenOut()) bul[i] = bul[--g.n_Bullet];
+				bul[i].moveBullet();
 			}
-			//move of all bread and check collison with bullet and Toaster
+			//move of all bread and check collision with bullet and Toaster
 			for (int i=0; i < g.n_Bread; i++) {
-					if (bread[i].ScreenOut()) bread[i] = bread[--g.n_Bread];
-					// ckeak if collison with toaster
-					if (bread[i].Collison(tos)) {
+					if (bread[i].screenOut()) bread[i] = bread[--g.n_Bread];
+					// ckeak if collision with toaster
+					if (bread[i].collision(tos)) {
 							if (bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)	{
-									bread[i].HPdamage(tos);
-									tos.HPdamage(bread[i]);
-									if(bread[i].HP_check())
+									bread[i].hpDamage(tos);
+									tos.hpDamage(bread[i]);
+									if(bread[i].hpCheck())
 											bread[i] = bread[--g.n_Bread];
-									if(tos.HP_check())
+									if(tos.hpCheck())
 											g.state = GAMEOVER;
 							}
 							if (bread[i].item_type == 12)	{
@@ -924,12 +924,12 @@ void physics()
 							}
 							break;
 					}
-					// ckeak if collison with bullet
+					// ckeak if collision with bullet
 					for (int j=0; j < g.n_Bullet; j++) {
-							if (bread[i].Collison(bul[j])&&(bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)) {
-									bread[i].HPdamage(bul[j]);
-									bul[j].HPdamage(bread[i]);
-									if(bread[i].HP_check()) {
+							if (bread[i].collision(bul[j])&&(bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)) {
+									bread[i].hpDamage(bul[j]);
+									bul[j].hpDamage(bread[i]);
+									if(bread[i].hpCheck()) {
 										tos.score += bread[i].point;
 										bread[i] = bread[--g.n_Bread];
 									}
@@ -937,7 +937,7 @@ void physics()
 							}
 					}
 					if(!bread[i].trace)
-							bread[i].MoveBread();
+							bread[i].moveBread();
 		// time stuff/ change when timer finish
 		// for bullet
 			}
@@ -952,10 +952,10 @@ void render()
 
 	if (g.state == SPLASH) {
 		Box splash_img;
-		splash_img.set_color(61, 90, 115);
+		splash_img.setColor(61, 90, 115);
 		glColor3ubv(splash_img.color);
-		splash_img.set_dim(100.0f, 100.0f);
-		splash_img.set_pos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+		splash_img.setDim(100.0f, 100.0f);
+		splash_img.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
 
 
 		/*******************   SPLASH IMAGE PLACEHOLDER   *******************/
@@ -994,10 +994,10 @@ void render()
 			mm.draw();
 		} else if (g.substate == SETTINGS) {
 			Box settings_b;
-			settings_b.set_color(61, 90, 115);
+			settings_b.setColor(61, 90, 115);
 			glColor3ubv(settings_b.color);
-			settings_b.set_dim(100.0f, 100.0f);
-			settings_b.set_pos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+			settings_b.setDim(100.0f, 100.0f);
+			settings_b.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
 
 			glPushMatrix();
 			glTranslatef(settings_b.pos[0], settings_b.pos[1], settings_b.pos[2]);
@@ -1024,10 +1024,10 @@ void render()
 
 		// Set up and display Information board on bottom of screen.
 		// info_board_1 object in global.h ... InfoBoard class in dtorres.h
-		info_board_1.set_color(0, 0, 0);
+		info_board_1.setColor(0, 0, 0);
 		glColor3ubv(info_board_1.color);
-		info_board_1.set_dim(g.xres/2, g.yres/20);
-		info_board_1.set_pos(g.xres/2, g.yres/40, 0);
+		info_board_1.setDim(g.xres/2, g.yres/20);
+		info_board_1.setPos(g.xres/2, g.yres/40, 0);
 		info_board_1.draw();
 
 
@@ -1046,7 +1046,7 @@ void render()
 		// ENTITY RENDER
 		if (g.substate == ENTITY || g.state == PAUSE) {
 
-			for (int i = 0; i < e.num_ent; i++) {
+			for (int i = 0; i < e.numEnt; i++) {
 				glPushMatrix();
 				glColor3ubv(entity[i].color);
 				glTranslatef(entity[i].pos[0], entity[i].pos[1], 0.0f);
@@ -1060,9 +1060,9 @@ void render()
 			}
 		}
 
-		if ((g.substate == MIKE || g.state == PAUSE) && 
+		if ((g.substate == MIKE || g.state == PAUSE) &&
 			(blocky.is_alive() || !blocky.explode_done)) {
-				
+
 			blocky.draw();
 			blocky_health.draw();
 		}
@@ -1075,8 +1075,8 @@ void render()
 			srand(time(NULL));
 
 			// Make freeze block if it does not exist and timer is NULL
-			if(!freeze_block.position_set && freeze_block.ptimer == NULL) {
-				freeze_block.set_color(162,210,223); // sky blue
+			if(!freeze_block.position_set && freeze_block.timer == NULL) {
+				freeze_block.setColor(162,210,223); // sky blue
 				freeze_block.w = 10;
 				freeze_block.h = 10;
 
@@ -1089,26 +1089,27 @@ void render()
 				freeze_block.draw();
 			}
 			// Freeze the toaster as soon as collision is detected and freeze for 3 seconds
-			if(freeze_block.Collison(tos) && !tos.disable_keys ) {
+			if(freeze_block.collision(tos) && !tos.disable_keys ) {
 				tos.disable_keys = true;
 				freeze_block.position_set = false;
-				freeze_block.setTimer(3);
+				freeze_block.set_timer(3);
 			}
 			// Unfreeze the toaster after timer is done.
-			if(tos.disable_keys && freeze_block.ptimer->isDone()) {
+			if(tos.disable_keys && freeze_block.timer->isDone()) {
 				tos.disable_keys = false;
-				delete freeze_block.ptimer;
-				freeze_block.ptimer = NULL;
-			}	
+				delete freeze_block.timer;
+				freeze_block.timer = NULL;
+			}
+
 		}
 
 	} else if (g.state == GAMEOVER) {
 		// draw score display
 		Box end_img;
-		end_img.set_color(61, 90, 115);
+		end_img.setColor(61, 90, 115);
 		glColor3ubv(end_img.color);
-		end_img.set_dim(100.0f, 100.0f);
-		end_img.set_pos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+		end_img.setDim(100.0f, 100.0f);
+		end_img.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
 
 
 		/*******************   SPLASH IMAGE PLACEHOLDER   *******************/
@@ -1405,4 +1406,3 @@ void render()
 	}
 
 }
-

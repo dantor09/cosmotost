@@ -34,7 +34,7 @@ Timer gameTimer;
 
 Global();
 ~Global();
-void GameReset();
+void gameReset();
 
 };
 
