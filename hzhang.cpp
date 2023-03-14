@@ -268,7 +268,7 @@ void Toaster::posReset()
 void Toaster::moveToster()
 {
   // how toaster move by keys and shoot bullet
-   if(ScreenIn() && !disable_keys) {
+   if(screenIn() && !disable_keys) {
       // if the toaster still in the screen then move
       if (g.keys[XK_w]){
     			pos[1] += 4;
