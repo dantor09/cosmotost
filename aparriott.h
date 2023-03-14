@@ -7,7 +7,7 @@
 
 #pragma once
 #include <iostream>
-#include "hzhang.h"  
+#include "hzhang.h"
 //#include <stdio.h>
 //#include <unistd.h>
 //#include <cstdlib>
@@ -36,7 +36,7 @@ class Entity {
 
 	// CONSTRUCTORS
 	Entity();
-	Entity(float wid, float hgt, float pos_x, float pos_y, float v_x, float v_y, 
+	Entity(float wid, float hgt, float pos_x, float pos_y, float v_x, float v_y,
             float curve_x, float curve_y);
 
 	// SETTERS
@@ -45,8 +45,8 @@ class Entity {
 	bool collision(Item & a);	// defined in mkausch.cpp
 	void setHP(int life);	// defined in mkausch.cpp
 	void setDamage(int x);	// defined in mkausch.cpp
-	void HPDamage(Item & a);	// defined in mkausch.cpp
-	bool HPCheck();			// defined in mkausch.cpp
+	void hpDamage(Item & a);	// defined in mkausch.cpp
+	bool hpCheck();			// defined in mkausch.cpp
 
 };
 
@@ -60,7 +60,7 @@ class EntitySpawn {
     EntitySpawn();
 
 	int randNum(int min, int max);
-	void makeEntity(float pos_x, float pos_y, float init_vel_x, float init_vel_y, 
+	void makeEntity(float pos_x, float pos_y, float init_vel_x, float init_vel_y,
             float curve_x, float curve_y);
 };
 
