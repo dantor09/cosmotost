@@ -21,7 +21,7 @@ void Global::gameReset()
 {
 		n_Bullet = 0;
 		n_Bread = 0;
-		e.num_Ent = 0;
+		e.num_ent = 0;
 		record.getRecord();
 		for(int i = 0; i <10; i++)
 				record.gamer[i]='_';
