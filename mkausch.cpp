@@ -34,26 +34,26 @@ using namespace std;
 
 
 
-Menu::Menu(unsigned int _n_texts, 
-            float w, float h, 
+Menu::Menu(unsigned int _n_texts,
+            float w, float h,
             float x, float y,
             std::string* _words)
     : n_texts{_n_texts}, pos{x, y, 0}
 {
     // dynamially allocate boxes/rects for text display
-    mainbox.set_dim(w, h);
-    mainbox.set_pos(pos[0], pos[1], pos[2]);
-    mainbox.set_color(47, 61, 64);
-    boarder.set_dim(w+BSIZE, h+BSIZE);
-    boarder.set_pos(pos[0], pos[1], pos[2]);
-    boarder.set_color(69, 85, 89);
-    
-    
+    mainbox.setDim(w, h);
+    mainbox.setPos(pos[0], pos[1], pos[2]);
+    mainbox.setColor(47, 61, 64);
+    boarder.setDim(w+BSIZE, h+BSIZE);
+    boarder.setPos(pos[0], pos[1], pos[2]);
+    boarder.setColor(69, 85, 89);
+
+
     try {
         t_boxs = new Box[n_texts];
         texts = new Rect[n_texts];
         words = new std::string[n_texts];
-        
+
 
         float spacing = (2*h)/(n_texts+1);
         std::cout << "spacing: " << spacing << std::endl;
@@ -63,11 +63,11 @@ Menu::Menu(unsigned int _n_texts,
             t_boxs[i].h = (spacing/2.0) - BSIZE;
             t_boxs[i].pos[0] = mainbox.pos[0];
             t_boxs[i].pos[1] = (pos[1]+mainbox.h)-((i+1)*spacing);
-            t_boxs[i].set_color(61, 90, 115);
+            t_boxs[i].setColor(61, 90, 115);
             t_boxs[i].id=i; // set box id for words array check
-            std::cout << "t_box[" << i << "].pos[1]: " 
+            std::cout << "t_box[" << i << "].pos[1]: "
                         << t_boxs[i].pos[1] << std::endl;
-            
+
             words[i] = _words[i];
             // t_boxs[i].set_text(_words[i]);
 
@@ -84,7 +84,7 @@ Menu::Menu(unsigned int _n_texts,
         }
 
     } catch (std::bad_alloc& ba) {
-        // if one was allocated and not the other than delete the one that 
+        // if one was allocated and not the other than delete the one that
         if (texts) delete [] texts;
         if (t_boxs) delete [] t_boxs;
         // if (words) delete [] words;
@@ -101,13 +101,13 @@ Menu::~Menu()
 {
     if (texts)
         delete [] texts;
-    
+
     if (t_boxs)
         delete [] t_boxs;
 
     if (words)
         delete [] words;
-        
+
 }
 
 void Menu::draw()
@@ -115,7 +115,7 @@ void Menu::draw()
     // draw boarder
 
     glColor3ubv(boarder.color);
-    
+
     glPushMatrix();
     glTranslatef(boarder.pos[0], boarder.pos[1], boarder.pos[2]);
     glBegin(GL_QUADS);
@@ -129,7 +129,7 @@ void Menu::draw()
     // draw mainbox
 
     glColor3ubv(mainbox.color);
-    
+
     glPushMatrix();
     glTranslatef(mainbox.pos[0], mainbox.pos[1], mainbox.pos[2]);
     glBegin(GL_QUADS);
@@ -144,7 +144,7 @@ void Menu::draw()
 
     for(size_t i = 0; i < n_texts; i++) {
         glColor3ubv(t_boxs[i].color);
-    
+
         glPushMatrix();
         glTranslatef(t_boxs[i].pos[0], t_boxs[i].pos[1], 0.0f);
         glBegin(GL_QUADS);
@@ -158,7 +158,7 @@ void Menu::draw()
     }
 
     // draw texts - need to pass in texts still; this is only for testing
-    
+
     // for(int i = 0; i < n_texts; i++) {
     //     ggprint8b((texts+i), 16, 0x00FFFFFF, "c0sm0t0asT");
     //     // std::cout << "tests[" << i << "].pos[1]: " << texts[i].pos[1] << std::endl;
@@ -179,7 +179,7 @@ void Menu::draw()
 
         ggprint8b(texts+i, 16, 0x00ffffff, words[i].c_str());
     }
-        
+
 }
 
 // pass in mouse coords to check and see if they are within the bounds
@@ -191,7 +191,7 @@ Box* Menu::check_t_box(int x, int y)
 
     for (i = 0; i < n_texts; i++) {
         // mouse coords are
-        if ((x > (t_boxs[i].pos[0]-t_boxs[i].w)) && 
+        if ((x > (t_boxs[i].pos[0]-t_boxs[i].w)) &&
             (x < (t_boxs[i].pos[0]+t_boxs[i].w)) &&
             (y > (t_boxs[i].pos[1]-t_boxs[i].h)) &&
             (y < (t_boxs[i].pos[1]+t_boxs[i].h))) {
@@ -209,34 +209,34 @@ Box* Menu::check_t_box(int x, int y)
 
 void Menu::set_highlight(Box * b)
 {
-    b->set_color(33,136,171);
+    b->setColor(33,136,171);
 }
 
 
 void Menu::set_orig_color()
 {
     for (size_t i = 0; i < n_texts; i++) {
-        t_boxs[i].set_color(61,90,115);
+        t_boxs[i].setColor(61,90,115);
     }
 }
 
 
 
-void Menu::set_bcolor(int r, int g, int b) 
+void Menu::set_bcolor(int r, int g, int b)
 {
-    bcolor[0] = (char)r; 
-    bcolor[1] = (char)g; 
+    bcolor[0] = (char)r;
+    bcolor[1] = (char)g;
     bcolor[2] = (char)b;
 }
 
-void Menu::set_color(int r, int g, int b) 
+void Menu::setColor(int r, int g, int b)
 {
-    color[0] = (char)r; 
-    color[1] = (char)g; 
+    color[0] = (char)r;
+    color[1] = (char)g;
     color[2] = (char)b;
 }
 
-void Menu::set_pos(float x, float y, float z) 
+void Menu::setPos(float x, float y, float z)
 {
     pos[0] = x;
     pos[1] = y;
@@ -258,16 +258,16 @@ std::string Menu::get_info()
 *           Creates a Timer object with duration based on input
 ******************************************************************************/
 
-Timer::Timer() : duration(-1), pause_duration(0.00), 
+Timer::Timer() : duration(-1), pause_duration(0.00),
                 pause_timer(nullptr), paused(false)
 {    // set starting time
     start = std::chrono::system_clock::now();
 }
 
-Timer::Timer(double sec) : duration(sec), pause_duration(0.00), 
+Timer::Timer(double sec) : duration(sec), pause_duration(0.00),
                 pause_timer(nullptr), paused(false)
 {    // set starting time
-    start = std::chrono::system_clock::now();    
+    start = std::chrono::system_clock::now();
 }
 
 // delete pause timer if it were active
@@ -295,20 +295,20 @@ void Timer::reset()
 
 /****************************** Getters *************************************/
 
-// returns time that has elapsed since the start of the timer 
+// returns time that has elapsed since the start of the timer
 int Timer::getTime(char time_code)
 {
     int net_time = 0;
     int time = net_time;
     std::chrono::duration<double> total_elapsed = std::chrono::system_clock::now() - start;
-  
+
     if (paused)
     {
         net_time = (total_elapsed.count() - pause_duration - pause_timer->getTime('n'));
     } else {
         net_time = (total_elapsed.count()-pause_duration);
     }
-    
+
     // D.T - retrieve minutes, seconds, or net time
     // based on time_code passed in getTime parameter
     switch(time_code) {
@@ -329,8 +329,8 @@ bool Timer::isDone()
     if (duration == -1) {   // return false for count up timers
         return false;
     } else {    // return net time for countdown timers
-        return (getTime('n') > duration);  
-    }   
+        return (getTime('n') > duration);
+    }
 }
 
 void Timer::pause()
@@ -352,13 +352,13 @@ void Timer::unPause()
         delete pause_timer;
         pause_timer = nullptr;
     }
-    
+
 }
 
 #ifdef USE_OPENAL_SOUND
 Sound::Sound()
 {
-    
+
     //Buffer holds the sound information.
     init_openal();
     current_track = -1;  // starting track number at splash screen
@@ -380,7 +380,7 @@ Sound::Sound()
 
     // songBuffers[0] = alBuffers[3];
     buffersDone = buffersQueued = 0;
-    
+
     // generate number of sources
     alGenSources(NUM_SOUNDS, alSources);    // keep individual sources for now
     alGenSources(1, &menuQueueSource);
@@ -435,7 +435,7 @@ Sound::~Sound()
 
 }
 
-void Sound::init_openal() 
+void Sound::init_openal()
 {
 	alutInit(0, NULL);
 	if (alGetError() != AL_NO_ERROR) {
@@ -481,7 +481,7 @@ string Sound::build_song_path(string s)
 {
     // format of the song
     // ./Songs/Edzes-64TheMagicNumber16kHz.wav"
-    
+
     ostringstream path;
     string song_dir = "Songs";
 
@@ -509,7 +509,7 @@ void Sound::gun_play(int btype)
         alSourcePlay(alSources[gun_start+2]);
         alSourcePlay(alSources[gun_start+3]);
     }
-        
+
 }
 
 void Sound::gun_stop()
@@ -567,7 +567,7 @@ void Sound::setup_game_mode()
     alSourceStop(menuQueueSource);
     alSourceRewind(alSources[4]);
     alSourceRewind(menuQueueSource);
-    
+
     // play the game song
     alSourcePlay(alSources[5]);
 }
@@ -639,29 +639,29 @@ bool Sound::get_pause()
 
 HealthBar::HealthBar(const Item & _itm_, float x, float y)
 {
-    // maybe put max_health of each enemy type in case were going to 
+    // maybe put max_health of each enemy type in case were going to
     // use this healthbar for the boss as well
-    total.set_dim(75,10);
-    total.set_pos(x, y, 0);
-    total.set_color(255,0,0);   // set it to red
+    total.setDim(75,10);
+    total.setPos(x, y, 0);
+    total.setColor(255,0,0);   // set it to red
 
-    health.set_dim(total.w,total.h);
-    health.set_pos(total.pos[0],total.pos[1],total.pos[2]);
-    health.set_color(0,255,0);
+    health.setDim(total.w,total.h);
+    health.setPos(total.pos[0],total.pos[1],total.pos[2]);
+    health.setColor(0,255,0);
 
     text.bot = total.pos[1]-5;
     text.left = total.pos[0];
     text.center = 1;
 
     itm = &_itm_;
-    
+
 }
 
 void HealthBar::draw()
 {
-    
+
     glColor3ubv(total.color);
-    
+
     glPushMatrix();
     glTranslatef(total.pos[0], total.pos[1], total.pos[2]);
     glBegin(GL_QUADS);
@@ -675,22 +675,22 @@ void HealthBar::draw()
     // draw mainbox
     // hp_resize();
     glColor3ubv(health.color);
-    
+
     glPushMatrix();
     glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
     glBegin(GL_QUADS);
         glVertex2f(0, -health.h);
         glVertex2f(0,  health.h);
-        glVertex2f( (((float)(itm->HP))/(itm->starting_hp))*2.0f*health.w,  health.h);
-        glVertex2f( (((float)(itm->HP))/(itm->starting_hp))*2.0f*health.w, -health.h);
+        glVertex2f( (((float)(itm->hp))/(itm->starting_hp))*2.0f*health.w,  health.h);
+        glVertex2f( (((float)(itm->hp))/(itm->starting_hp))*2.0f*health.w, -health.h);
     glEnd();
     glPopMatrix();
 
-    ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", itm->HP, itm->starting_hp, itm->lives);
+    ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", itm->hp, itm->starting_hp, itm->lives);
 }
 
 // modified from hzhang's file by mkausch
-bool Entity::collision(Item & a) 
+bool Entity::collision(Item & a)
 {
     // for (x0,y0,x1,y1)and(x2,y2,x3,y3) squares
     // if collison -->(x0-x3)*(x1-x2)<0
@@ -700,41 +700,41 @@ bool Entity::collision(Item & a)
   	return x&&y;
 }
 
-void Entity::set_HP(int life)
+void Entity::setHP(int life)
 {
     HP = life;
 }
 
-void Entity::set_damage(int x)
+void Entity::setDamage(int x)
 {
     damage = x;
 }
 
-void Entity::HPdamage(Item & a) {
-    HP = HP - a.damage;
+void Entity::hpDamage(Item & a) {
+    hp = hp - a.damage;
 }
 
 bool Entity::HP_check()
 {
-    return (HP <= 0);
+    return (hp <= 0);
 }
 
 void Item::HPdamage(Entity & e)
 {
-    HP = HP - e.damage;
+    hp = hp - e.damage;
 }
 
 Blocky::Blocky()
 {
     srand(time(NULL));
-    set_dim(25.0f, 100.0f);
+    setDim(25.0f, 100.0f);
     set_rand_color(*this);
     set_rand_position();
-    set_acc(0.0f,-0.25f,0.0f);
-    set_vel(0.0f, -4.0f, 0.0f);
-    set_damage(20);
+    setAcc(0.0f,-0.25f,0.0f);
+    setVel(0.0f, -4.0f, 0.0f);
+    setDamage(20);
     starting_hp = 10;
-    set_HP(starting_hp);
+    setHP(starting_hp);
     point = starting_hp;
     was_hit = false;
     lives = 2;
@@ -747,28 +747,28 @@ Blocky::Blocky()
     float deg_to_rad = (PI / 180.0f);
     for (int i = 0; i < 4; i++) {
         // set dim
-        sub_boxes[i].set_dim(w/2.0f, h/4.0f);   // should create a box 1/8 size
-        sub_boxes[i+4].set_dim(w/2.0f, h/4.0f);   // should create a box 1/8 size
+        sub_boxes[i].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
+        sub_boxes[i+4].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
 
         // set color
-        sub_boxes[i].set_color(255,0,0);    // make them red for now
-        sub_boxes[i+4].set_color(255,0,0);    // make them red for now
-        
+        sub_boxes[i].setColor(255,0,0);    // make them red for now
+        sub_boxes[i+4].setColor(255,0,0);    // make them red for now
+
         // set accel
         // sub_boxes[i].set_acc(0, -0.25, 0);
         // sub_boxes[i+4].set_acc(0, -0.25, 0);
-        sub_boxes[i].set_acc(0, 0, 0);
-        sub_boxes[i+4].set_acc(0, 0, 0);
-        
+        sub_boxes[i].setAcc(0, 0, 0);
+        sub_boxes[i+4].setAcc(0, 0, 0);
+
         // set angle first so we can calc vel vectors
         sb_angles[i] = angle;
         sb_angles[i+4] = -sb_angles[i];
         angle -= 20;
 
         // set velocity of x and y components based on above angle
-        sub_boxes[i].set_vel((rvel*cos(deg_to_rad * sb_angles[i])), 
+        sub_boxes[i].setVel((rvel*cos(deg_to_rad * sb_angles[i])),
                                     (rvel*sin(deg_to_rad * sb_angles[i])), 0);
-        sub_boxes[i+4].set_vel((rvel*cos(deg_to_rad * sb_angles[i+4])), 
+        sub_boxes[i+4].setVel((rvel*cos(deg_to_rad * sb_angles[i+4])),
                                     (rvel*sin(deg_to_rad * sb_angles[i+4])), 0);
     }
 
@@ -799,12 +799,12 @@ void Blocky::set_rand_position()
 
     // set to be this new random position situated near the player char
     // that is above the yres and out of view of the screen
-    set_pos(block_xpos, g.yres+h,0);
+    setPos(block_xpos, g.yres+h,0);
 
     // if this block was generated in front of the player then
-    // next time make it randomly behind the player (it'll keep switching) 
+    // next time make it randomly behind the player (it'll keep switching)
     pm_dir *= -1;
-    
+
 }
 
 void set_rand_color(Item & it)
@@ -818,11 +818,11 @@ void set_rand_color(Item & it)
 
     static int color[5][3] =   {{242, 4, 159},
                         {4, 177, 216},
-                        {4, 216, 78}, 
+                        {4, 216, 78},
                         {242, 202, 4},
                         {242, 135, 4}};
     static int index = rand() % 5;
-    it.set_color(color[index][0], color[index][1], color[index][2]);
+    it.setColor(color[index][0], color[index][1], color[index][2]);
     index = (index + 1) % 5;
 }
 
@@ -832,7 +832,7 @@ bool Blocky::sub_ScreenIn()
 
 
     for (int i = 0; i < 8; i++) {
-        subs_onscreen = sub_boxes[i].ScreenIn();
+        subs_onscreen = sub_boxes[i].screenIn();
         if (subs_onscreen)
             break;
     }
@@ -846,10 +846,10 @@ void Blocky::draw()
     // draw item
 
         // reset blocky if he's out of screen
-    
+
     // draw big blocky
     if (is_alive() && explode_done) {
-        if (ScreenOut()) {
+        if (screenOut()) {
             reset();
         }
 
@@ -865,16 +865,16 @@ void Blocky::draw()
         glEnd();
         glPopMatrix();
 
-    
+
     } else {    // draw little blockies
         // cerr << "checking if sub boxes are in the screen...\n";
         if (sub_ScreenIn()) {
-            
+
             for (int i = 0; i < 8; i++) {
                 set_rand_color(sub_boxes[i]);
                 glPushMatrix();
-                glColor3ub(sub_boxes[i].color[0], 
-                            sub_boxes[i].color[1], 
+                glColor3ub(sub_boxes[i].color[0],
+                            sub_boxes[i].color[1],
                             sub_boxes[i].color[2]);
                 glTranslatef(sub_boxes[i].pos[0], sub_boxes[i].pos[1], sub_boxes[i].pos[2]);
                 glMatrixMode(GL_MODELVIEW);
@@ -904,17 +904,17 @@ void Blocky::draw()
 
 void Blocky::reset()
 {
-    if (HP_check()) {
+    if (hpCheck()) {
         lives--;
         explode();
         cerr << "explode called\n";
         explode_done = false;
         if (lives > 0) {
-            HP = starting_hp;   // give back full health
+            hp = starting_hp;   // give back full health
         }
     }
 
-    set_vel(0.0f, -4.0f, 0.0f);
+    setVel(0.0f, -4.0f, 0.0f);
     set_rand_position();    // put at a new random position
     was_hit = false;
 }
@@ -922,8 +922,8 @@ void Blocky::reset()
 void Blocky::gamereset()
 {
     lives = 2;
-    HP = starting_hp;
-    set_vel(0.0f, -4.0f, 0.0f);
+    hp = starting_hp;
+    setVel(0.0f, -4.0f, 0.0f);
     set_rand_position();    // put at a new random position
     was_hit = false;
 }
@@ -954,13 +954,13 @@ void Blocky::move()
                 sub_boxes[i].vel[2] += sub_boxes[i].acc[2];
             }
         }
-    }  
+    }
 }
 
-void Item::HPdamage(Blocky & bf)
+void Item::hpDamage(Blocky & bf)
 {
     if (!bf.did_damage()) {
-        HP = HP - bf.damage;
+        hp = hp - bf.damage;
         bf.set_hit();
     }
 }
@@ -972,7 +972,7 @@ bool Blocky::is_alive()
 
 void Blocky::set_hit()
 {
-    was_hit = true; 
+    was_hit = true;
 }
 
 void Blocky::explode()
@@ -986,8 +986,8 @@ void Blocky::explode()
 
     for (int i = 0; i < pixel_offset; i++) {
         rand_offset = rand() % (pixel_offset * 2);
-        sub_boxes[i].set_pos(pos[0]+rand_offset, pos[1]+rand_offset, 0);
-        sub_boxes[i].set_vel((rvel*cos(deg_to_rad * sb_angles[i])), 
+        sub_boxes[i].setPos(pos[0]+rand_offset, pos[1]+rand_offset, 0);
+        sub_boxes[i].setVel((rvel*cos(deg_to_rad * sb_angles[i])),
                                     (rvel*sin(deg_to_rad * sb_angles[i])), 0);
     }
 }
@@ -996,14 +996,14 @@ void Blocky::explode()
                 Color Scheme
 
 
-/* Color Theme Swatches in Hex 
+/* Color Theme Swatches in Hex
 .Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-1-hex { color: #F2059F; }
 .Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-2-hex { color: #04B2D9; }
 .Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-3-hex { color: #04D94F; }
 .Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-4-hex { color: #F2CB05; }
 .Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-5-hex { color: #F28705; }
 
- Color Theme Swatches in RGBA 
+ Color Theme Swatches in RGBA
 .Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-1-rgba { color: rgba(242, 4, 159, 1); }
 .Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-2-rgba { color: rgba(4, 177, 216, 1); }
 .Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-3-rgba { color: rgba(4, 216, 78, 1); }
@@ -1011,7 +1011,7 @@ void Blocky::explode()
 .Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-5-rgba { color: rgba(242, 135, 4, 1); }
 
 
-                            
+
 .feeling-blue-1-hex { color: #3D5A73; }
 .feeling-blue-2-hex { color: #2F3D40; }
 .feeling-blue-3-hex { color: #455559; }
