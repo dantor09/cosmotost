@@ -721,13 +721,13 @@ void PowerBar::draw()
         glBegin(GL_QUADS);
             glVertex2f(0, -health.h);
             glVertex2f(0,  health.h);
-            glVertex2f( (((float)(itm->HP))/(itm->starting_hp))*2.0f*health.w,  health.h);
-            glVertex2f( (((float)(itm->HP))/(itm->starting_hp))*2.0f*health.w, -health.h);
+            glVertex2f( (((float)(itm->hp))/(itm->starting_hp))*2.0f*health.w,  health.h);
+            glVertex2f( (((float)(itm->hp))/(itm->starting_hp))*2.0f*health.w, -health.h);
             
         glEnd();
         glPopMatrix();
 
-        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", itm->HP, itm->starting_hp, itm->lives);
+        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", itm->hp, itm->starting_hp, itm->lives);
     } else if (type == COOLDOWN) {
 
         glColor3ubv(total.color);
