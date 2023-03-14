@@ -366,17 +366,17 @@ Sound::Sound()
     user_pause = false;
     is_intro = is_game = false;
 
-    //0     "bullet_fire.wav",
-    //1 "Edzes-64TheMagicNumber-intro8kHz.wav",
-    //2 "Edzes-64TheMagicNumber-loop8kHz.wav",
-    //3 "VolkorX-Enclave8kHz.wav" };
-
-
     // make individual buffers of all sounds
     alBuffers[0] = alutCreateBufferFromFile(build_song_path(sound_names[0]).c_str());
     alBuffers[1] = alutCreateBufferFromFile(build_song_path(sound_names[1]).c_str());
     alBuffers[2] = alutCreateBufferFromFile(build_song_path(sound_names[2]).c_str());
     alBuffers[3] = alutCreateBufferFromFile(build_song_path(sound_names[3]).c_str());
+    alBuffers[4] = alutCreateBufferFromFile(build_song_path(sound_names[4]).c_str());
+    alBuffers[5] = alutCreateBufferFromFile(build_song_path(sound_names[5]).c_str());
+    alBuffers[6] = alutCreateBufferFromFile(build_song_path(sound_names[6]).c_str());
+    alBuffers[7] = alutCreateBufferFromFile(build_song_path(sound_names[7]).c_str());
+    alBuffers[8] = alutCreateBufferFromFile(build_song_path(sound_names[8]).c_str());
+    alBuffers[9] = alutCreateBufferFromFile(build_song_path(sound_names[9]).c_str());
 
     // songBuffers[0] = alBuffers[3];
     buffersDone = buffersQueued = 0;
@@ -388,12 +388,12 @@ Sound::Sound()
     alSourceQueueBuffers(menuQueueSource, 1, (alBuffers+1));
     alSourcef(menuQueueSource, AL_GAIN, 1.0f);
     alSourcef(menuQueueSource, AL_PITCH, 1.0f);
-    // alGenSources(1, &songQueueSource);
 
-    //   [[------- OLD -----------]]
+
+
     //Generate a source, and store it in a buffer.
     // set sfx/songs to not loop
-    int non_looping_sounds = 2;
+    int non_looping_sounds = 4;
     for (int i = 0; i < non_looping_sounds; i++) {
         alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
         alSourcef(alSources[i], AL_GAIN, 1.0f);
@@ -401,10 +401,13 @@ Sound::Sound()
         alSourcei(alSources[i], AL_LOOPING, AL_FALSE);
     }
 
+        alSourcef(alSources[2], AL_GAIN, 5.0f);
+        alSourcef(alSources[3], AL_GAIN, 5.0f);
+
     // make all songs to loop
-    for (int i = 2; i < NUM_SOUNDS; i++) {
+    for (int i = non_looping_sounds; i < NUM_SOUNDS; i++) {
         alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
-        alSourcef(alSources[i], AL_GAIN, 1.0f);
+        alSourcef(alSources[i], AL_GAIN, 0.25f);
         alSourcef(alSources[i], AL_PITCH, 1.0f);
         alSourcei(alSources[i], AL_LOOPING, AL_TRUE);
     }
@@ -469,9 +472,9 @@ void Sound::close_openal()
 
 void Sound::rewind_game_music()
 {
-    alSourceStop(alSources[3]);
-    alSourceRewind(alSources[3]);
-    alSourcePlay(alSources[3]);
+    alSourceStop(alSources[5]);
+    alSourceRewind(alSources[5]);
+    alSourcePlay(alSources[5]);
 }
 
 string Sound::build_song_path(string s)
@@ -488,6 +491,46 @@ string Sound::build_song_path(string s)
 
 }
 
+void Sound::gun_play(int btype)
+{
+    static int gun_start = 6;
+
+    cerr << "gun shooting..." << endl;
+    if (btype == 1) {
+        alSourcePlay(alSources[gun_start]);
+    } else if (btype == 2) {
+        alSourcePlay(alSources[gun_start]);
+        alSourcePlay(alSources[gun_start+1]);
+    } else if (btype == 3) {
+        alSourcePlay(alSources[gun_start]);
+        alSourcePlay(alSources[gun_start+1]);
+        alSourcePlay(alSources[gun_start+2]);
+    } else if (btype == 4) {
+        alSourcePlay(alSources[gun_start+2]);
+        alSourcePlay(alSources[gun_start+3]);
+    }
+        
+}
+
+void Sound::gun_stop()
+{
+    static int gun_start = 6;
+    static int num_guns = 4;
+    cerr << "gun not shooting..." << endl;
+    for (int i = 0; i < num_guns; i++) {
+        alSourceStop(alSources[i+gun_start]);
+    }
+}
+
+void Sound::beep()
+{
+    alSourcePlay(alSources[2]);
+}
+
+void Sound::boop()
+{
+    alSourcePlay(alSources[3]);
+}
 
 bool Sound::check_intro_buffer_done()
 {
@@ -510,7 +553,7 @@ void Sound::loop_intro()
 
     alSourceStop(menuQueueSource);
     alSourceRewind(menuQueueSource);
-    alSourcePlay(alSources[2]);
+    alSourcePlay(alSources[4]);
 
 }
 
@@ -520,21 +563,21 @@ void Sound::setup_game_mode()
     is_intro = false; is_game = true;
 
     // stop both the intro and loop if either are playing
-    alSourceStop(alSources[2]);
+    alSourceStop(alSources[4]);
     alSourceStop(menuQueueSource);
-    alSourceRewind(alSources[2]);
+    alSourceRewind(alSources[4]);
     alSourceRewind(menuQueueSource);
     
     // play the game song
-    alSourcePlay(alSources[3]);
+    alSourcePlay(alSources[5]);
 }
 
 void Sound::play_start_track()
 {
     // stop game music if it's playing
     if (is_game == true) {
-        alSourceStop(alSources[3]);
-        alSourceRewind(alSources[3]);
+        alSourceStop(alSources[5]);
+        alSourceRewind(alSources[5]);
     }
 
     is_intro = true; is_game = false;
@@ -551,7 +594,7 @@ string Sound::get_song_name()
         name = "Edzes-64TheMagicNumber";
     }
     if (is_game) {
-        name = sound_names[3];
+        name = sound_names[5];
     }
     return name;
 }
@@ -561,7 +604,7 @@ void Sound::pause()
 {
     if (!is_music_paused) {
         is_music_paused = true;
-        alSourcePause(alSources[3]);
+        alSourcePause(alSources[5]);
     }
 }
 
@@ -571,7 +614,7 @@ void Sound::unpause()
     if (!user_pause) {
         if (is_music_paused) {
             is_music_paused = false;
-            alSourcePlay(alSources[3]);
+            alSourcePlay(alSources[5]);
         }
     }
 }

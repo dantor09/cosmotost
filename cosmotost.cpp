@@ -225,23 +225,42 @@ int X11_wrapper::check_mouse(XEvent *e)
 					g.gameTimer.reset();	// start the game timer
 					selection = nullptr;
 					prev_selection = nullptr;
+
+#ifdef USE_OPENAL_SOUND
+					sounds.boop();
+#endif
+
 					return 0;
 				} else if (selection && (mm.words[selection->id] == "High Scores")) {
 					mm.set_orig_color();
 					g.substate = HIGH_SCORES;
 					selection = nullptr;
 					prev_selection = nullptr;
+
+#ifdef USE_OPENAL_SOUND
+					sounds.boop();
+#endif
+
 					return 0;
 				} else if (selection && (mm.words[selection->id] == "Settings")) {
 					mm.set_orig_color();
 					g.substate = SETTINGS;
 					selection = nullptr;
 					prev_selection = nullptr;
+
+#ifdef USE_OPENAL_SOUND
+					sounds.boop();
+#endif
+
 					return 0;
 				} else if (selection && (mm.words[selection->id] == "Quit")) {
 					mm.set_orig_color();
 					selection = nullptr;
 					prev_selection = nullptr;
+
+#ifdef USE_OPENAL_SOUND
+					sounds.boop();
+#endif
 
 					return 1;
 				}
@@ -270,6 +289,10 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 					mm.set_orig_color();
 					mm.set_highlight(selection);
+
+#ifdef USE_OPENAL_SOUND
+					sounds.beep();
+#endif
 
 				}
 			}
@@ -303,6 +326,11 @@ int X11_wrapper::check_mouse(XEvent *e)
 					selection = nullptr;
 					prev_selection = nullptr;
 
+#ifdef USE_OPENAL_SOUND
+					sounds.boop();
+#endif
+					return 0;
+
 				} else if (selection && (pause_menu.words[selection->id] == "Start Over")) {
 					pause_menu.set_orig_color();
 					g.state = MAINMENU;
@@ -311,14 +339,15 @@ int X11_wrapper::check_mouse(XEvent *e)
 					cerr << "g.state was changed back to GAME (RESET SEQUENCE)"
 							<< endl;
 					g.gameTimer.reset();
+					selection = nullptr;
+					prev_selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
+					sounds.boop();
 					sounds.rewind_game_music();
 					cerr << "rewinding song " << sounds.get_song_name() << endl;
 #endif
 
-					selection = nullptr;
-					prev_selection = nullptr;
 					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Back to Game")) {
@@ -332,12 +361,11 @@ int X11_wrapper::check_mouse(XEvent *e)
 					prev_selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
-
+					sounds.boop();
 					sounds.unpause();
 					cerr << "unpausing song " << sounds.get_song_name() << endl;
-					return 0;
-
 #endif
+					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Quit Game")) {
 					pause_menu.set_orig_color();
@@ -353,6 +381,11 @@ int X11_wrapper::check_mouse(XEvent *e)
 					g.gameTimer.pause();
 					selection = nullptr;
 					prev_selection = nullptr;
+
+#ifdef USE_OPENAL_SOUND
+					sounds.boop();
+#endif
+
 					return 1;
 				}
 
@@ -375,11 +408,16 @@ int X11_wrapper::check_mouse(XEvent *e)
 				selection = pause_menu.check_t_box(savex, g.yres - savey);
 
 				if (selection) {
-					if (selection != prev_selection) {
+					// if (selection != prev_selection) {
+						pause_menu.set_orig_color();
 						pause_menu.set_highlight(selection);
-						prev_selection = selection; // remember selection
-						selection = nullptr; // reset selection ptr
-					}
+						// prev_selection = selection; // remember selection
+						// selection = nullptr; // reset selection ptr
+#ifdef USE_OPENAL_SOUND
+					sounds.beep();
+#endif
+
+					// }
 				} else {
 					// was previously on something and now it's not
 					pause_menu.set_orig_color();
@@ -402,6 +440,15 @@ int X11_wrapper::check_keys(XEvent *e)
 	int key1 = (XLookupKeysym(&e->xkey, 0) & 0x0000ffff);
 	if (e->type == KeyRelease) {
 		g.keys[key1] = 0;
+		
+#ifdef USE_OPENAL_SOUND
+		// if (key1 == XK_space) {
+		// 	sounds.gun_stop();
+		// 	sounds.gun_shooting = false;
+		// }
+
+#endif
+
 		// if (key == XK_Shift_L || key == XK_Shift_R)
 		// 	shift = 0;
 	}
@@ -410,6 +457,8 @@ int X11_wrapper::check_keys(XEvent *e)
 		g.keys[key1]=1;
 		// if (key == XK_Shift_L || key == XK_Shift_R) {
 		// 	shift = 1;
+
+
 	}
 
 	if (g.state == SPLASH) {
@@ -666,6 +715,7 @@ void check_sound(void)
 	static bool initial_play = false;
 	static bool loop_set = false;
 	static bool initial_game_setup = false;
+	static int prev_btype = 1;
 	
 	if (g.state == SPLASH || g.state == MAINMENU || g.state == GAMEOVER) {
 		// init_game_setup will unque intro buffers and queue game songs
@@ -691,8 +741,28 @@ void check_sound(void)
 
 	}
 
+	// *******     GUN NOISES      **********//
+
+	// start playing new sound if leveled up gun
+	if (tos.b_type != prev_btype) {	
+		sounds.gun_stop();
+		sounds.gun_play(tos.b_type);
+		prev_btype = tos.b_type;
+	}
+	// if space bar is pressed down and gun not already shooting
+	if ((g.keys[XK_space] == 1) && (!sounds.gun_shooting)) {
+		cerr << "tos.b_type: " << tos.b_type << endl;
+		sounds.gun_play(tos.b_type);
+		sounds.gun_shooting = true;
+		// if spacebar not pressed down and gun noise currently set to shoot
+	} else if (g.keys[XK_space] == 0 && (sounds.gun_shooting)) {
+		sounds.gun_stop();
+		sounds.gun_shooting = false;
+	}
+
 }
 #endif
+
 
 void physics()
 {

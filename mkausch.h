@@ -28,7 +28,7 @@
 
 using namespace std;
 
-inline const int NUM_SOUNDS = 4;
+inline const int NUM_SOUNDS = 10;
 inline const int NUM_SONGS = 1;
 
 // #define USE_OPENAL_SOUND
@@ -136,7 +136,6 @@ private:
     bool is_intro;
     bool is_game;
 
-
     void init_openal();
     void close_openal();
     int current_track;
@@ -146,16 +145,16 @@ private:
     
     string sound_names[NUM_SOUNDS] = {
                     "bullet_fire.wav",
-                    // "Edzes-64TheMagicNumber16kHz.wav",
-                    // "Estrayk-TheHerSong1016kHz.wav",
                     "Edzes-64TheMagicNumber-intro8kHz.wav",
+                    "beep.wav",
+                    "boop.wav",
                     "Edzes-64TheMagicNumber-loop8kHz.wav",
-                    "Timecop1983-OnTheRun8kHz.wav" };
-                    // "VolkorX-Enclave8kHz.wav" };
-                    // "Quazar-FunkyStars16kHz.wav",
-                    // "XRay-Zizibum-16kHz.wav",
-                    // "Zalza-8bitTheClock16kHz.wav",
-                    // "AdhesiveWombat-8bitAdventure_16kHz.wav"};
+                    "Timecop1983-OnTheRun8kHz.wav",
+                    "pop1.wav",
+                    "pop2.wav",
+                    "pop_gun.wav",
+                    "ray_pop.wav"};
+
 
 public:
 	// Source refers to the sound.
@@ -173,8 +172,12 @@ public:
     void unpause();
     void toggle_user_pause();
     bool get_pause();
+    bool gun_shooting;
     void rewind_game_music();
-
+    void gun_play(int btype);
+    void gun_stop();
+    void beep();
+    void boop();
 
 };
 
@@ -223,6 +226,7 @@ class Blocky : public Item
     bool explode_done;
     bool sub_ScreenIn();
     void gamereset();
+
 
     // inherited void Item::draw() 
     // inherited bool Item::ScreenOut()

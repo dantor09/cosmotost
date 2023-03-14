@@ -12,6 +12,11 @@
     - character choice
     - music
 - naming convention for enemies
+- refactoring code
+- consistent coding style
+- gun noises
+- cooldown power bar
+
 
 
 #### In Progress:
