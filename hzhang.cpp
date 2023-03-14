@@ -9,71 +9,71 @@
 using namespace std;
 
 
-void make_Bullet(float x, float y,float z, bool tb, int type) {
+void makeBullet(float x, float y,float z, bool tb, int type) {
 		switch(type){
 			case 1:
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].set_Bullet(x, y, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y, z, tb, 1);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 					}
 				break;
 			case 2:
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].set_Bullet(x, y+5, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y+5, z, tb, 1);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 					}
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].set_Bullet(x, y-5, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y-5, z, tb, 1);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 					}
 				break;
 			case 3:
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].set_Bullet(x, y, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y, z, tb, 1);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].set_Bullet(x, y+5, z, tb, 2);
+						bul[g.n_Bullet].setBullet(x, y+5, z, tb, 2);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].set_Bullet(x, y-5, z, tb, 3);
+						bul[g.n_Bullet].setBullet(x, y-5, z, tb, 3);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				break;
 			case 4:
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].set_Bullet(x, y-5, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y-5, z, tb, 1);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].set_Bullet(x, y+5, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y+5, z, tb, 1);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].set_Bullet(x, y+8, z, tb, 2);
+						bul[g.n_Bullet].setBullet(x, y+8, z, tb, 2);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].set_Bullet(x, y-8, z, tb, 3);
+						bul[g.n_Bullet].setBullet(x, y-8, z, tb, 3);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 		}
 
 }
-void make_Bread(float x, float y,float z, int Bread_t, int type) {
+void makeBread(float x, float y,float z, int Bread_t, int type) {
   if (g.n_Bread < MAX_bread){
-      bread[g.n_Bread].set_Bread(x, y, z, Bread_t, type);
+      bread[g.n_Bread].setBread(x, y, z, Bread_t, type);
       ++g.n_Bread;
       // cout<<"make Bread!!!"<<endl;
     }
@@ -86,31 +86,31 @@ Item::Item(){
 Item::~Item(){
 }
 
-void Item::set_HP(int life) {
-    HP = life;
+void Item::setHP(int life) {
+    hp = life;
 }
-void Item::set_CD(int x) {
-    CD = x;
+void Item::setCD(int x) {
+    cd = x;
 }
-void Item::set_damage(int x) {
+void Item::setDamage(int x) {
     damage = x;
 }
 
-void Item::set_vel(float x, float y, float z) {
+void Item::setVel(float x, float y, float z) {
     //set the velocity of item
     vel[0] = x;
     vel[1] = y;
     vel[2] = z;
 }
 
-void Item::set_acc(float x, float y, float z) {
+void Item::setAcc(float x, float y, float z) {
     //set the acceleration of item
     acc[0] = x;
     acc[1] = y;
     acc[2] = z;
 }
 
-void Item::set_vertex() {
+void Item::setVertex() {
     //set the acceleration of item
 		vertex[0] = -w;
 		vertex[1] = h;
@@ -123,7 +123,7 @@ void Item::set_vertex() {
 }
 
 // trace toster
-void Item::set_Trace(Item tos) {
+void Item::setTrace(Item tos) {
 		float dx = pos[0] - tos.pos[0];
 		float dy = pos[1] - tos.pos[1];
 		float dcos = dx/sqrt((dx*dx)+(dy*dy));
@@ -136,16 +136,16 @@ void Item::set_Trace(Item tos) {
 		vertex[5] =  (w*dsin) - (h*dcos);
 		vertex[6] = -(w*dcos) + (h*dsin);
 		vertex[7] = -(w*dsin) - (h*dcos);
-		set_vel(-50*dcos,-50*dsin,0.0);
+		setVel(-50*dcos,-50*dsin,0.0);
 }
 
-// to check toaster HP, if <=0 then dead
-bool Item::HP_check() {
-    // if no HP return true
-    return (HP <= 0);
+// to check toaster hp, if <=0 then dead
+bool Item::hpCheck() {
+    // if no hp return true
+    return (hp <= 0);
 }
 
-bool Item::Collison(Item a) {
+bool Item::collision(Item a) {
     // for (x0,y0,x1,y1)and(x2,y2,x3,y3) squares
     // if collison -->(x0-x3)*(x1-x2)<0
     // same for y
@@ -154,13 +154,13 @@ bool Item::Collison(Item a) {
   	return x&&y;
 }
 
-void Item::HPdamage(Item a) {
-    // std::cout << "HP 1 :" << HP << "Damage :" << a.damage<< std::endl;
-    HP = HP - a.damage;
-    // std::cout << "HP 2 :" << HP << std::endl;
+void Item::hpDamage(Item a) {
+    // std::cout << "hp 1 :" << hp << "Damage :" << a.damage<< std::endl;
+    hp = hp - a.damage;
+    // std::cout << "hp 2 :" << hp << std::endl;
 }
 
-bool Item::ScreenIn() {
+bool Item::screenIn() {
     //check if item reach the edge of screen
     bool a = (pos[0] <= g.xres-w+1);
     bool b = (pos[0] >= w-1);
@@ -169,7 +169,7 @@ bool Item::ScreenIn() {
     return a&&b&&c&&d;
 }
 
-bool Item::ScreenOut() {
+bool Item::screenOut() {
     //check if item out of screen
     bool a = (pos[0] >= g.xres+w);
     bool b = (pos[0] <= -w);
@@ -194,7 +194,7 @@ void Item::draw()
 void Item::draw(Item tos)
 {
 		// if(trace)
-		set_Trace(tos);
+		setTrace(tos);
     // draw item
     glPushMatrix();
   	glColor3ub(color[0], color[1], color[2]);
@@ -223,12 +223,12 @@ Item & Item::operator = (const Item &a)
 	for (int i = 0; i < 3; i++)
 			this->acc[i] = a.acc[i];
 	this->starting_hp = a.starting_hp;
-	this->HP = a.HP;
+	this->hp = a.hp;
 	this->lives = a.lives;
 	this->damage = a.damage;
 	for (int i = 0; i < 8; i++)
 			this->vertex[i] = a.vertex[i];
-	this->CD = a.CD;
+	this->cd = a.cd;
   return *this;
 }
 
@@ -244,13 +244,13 @@ Toaster::Toaster()
     set_color(188, 226, 232);
     set_dim(20,15);
     starting_hp = 80;
-		set_HP(starting_hp);
-		set_damage(100);
+		setHP(starting_hp);
+		setDamage(100);
     lives = 1;
-		set_vertex();
+		setVertex();
 		energy = 100.0f;
 		energy_recover = 0.01f;
-	disable_keys = false;
+		disable_keys = false;
 }
 
 Toaster::~Toaster()
@@ -261,11 +261,11 @@ void Toaster::posReset()
 {
 		set_pos(g.xres/4, g.yres/2, 0.0);
 		score = 0;
-		set_HP(starting_hp);
+		setHP(starting_hp);
 		b_type = 1;
 		energy = 100.0f;
 }
-void Toaster::MoveToster()
+void Toaster::moveToster()
 {
   // how toaster move by keys and shoot bullet
    if(ScreenIn() && !disable_keys) {
@@ -297,7 +297,7 @@ void Toaster::MoveToster()
   if (g.keys[XK_space]) {
       //shoot bullet if not in CD
 			if (g.BulletCD==5) {
-					make_Bullet(pos[0]+w,pos[1],pos[2],1,b_type);
+					makeBullet(pos[0]+w,pos[1],pos[2],1,b_type);
 					// std::cout << "shoot"<<std::endl;
 			}
   }
@@ -317,40 +317,40 @@ Bullet::Bullet() {
 }
 Bullet::~Bullet() {}
 
-void Bullet::set_Bullet(float x, float y, float z, bool tb, int type) {
+void Bullet::setBullet(float x, float y, float z, bool tb, int type) {
     set_pos (x,y,z);
     if (tb) {
       //Toaster bullet
         switch (type) {
           case 1:
             // bullet type 1
-            set_vel (10.0,0.0,0.0);
+            setVel (10.0,0.0,0.0);
             set_dim (4.0,4.0);
             set_color(240,100,100);
-            set_damage(1);
-            set_HP(1);
+            setDamage(1);
+            setHP(1);
 						item_type = 41;
             break;
           case 2:
             // bullet type 2
 						// item type 42
             // up 10degree
-            set_vel (10.0,1.76,0.0);
+            setVel (10.0,1.76,0.0);
             set_dim (4.0,4.0);
             set_color(240,100,100);
-            set_damage(1);
-            set_HP(1);
+            setDamage(1);
+            setHP(1);
 						item_type = 42;
             break;
           case 3:
             // bullet type 3
 						// item type 43
             // down 10degree
-            set_vel (10.0,-1.76,0.0);
+            setVel (10.0,-1.76,0.0);
             set_dim (4.0,4.0);
             set_color(240,100,100);
-            set_damage(1);
-            set_HP(1);
+            setDamage(1);
+            setHP(1);
 						item_type = 43;
             break;
 
@@ -362,34 +362,34 @@ void Bullet::set_Bullet(float x, float y, float z, bool tb, int type) {
           case 1:
             // bullet type 1
             // straight line
-            set_vel (-6.0,0.0,0.0);
+            setVel (-6.0,0.0,0.0);
             set_dim (4.0,4.0);
             break;
           case 2:
             // bullet type 2
             // up 10degree
-            set_vel (-6.0,1.05,0.0);
+            setVel (-6.0,1.05,0.0);
             set_dim (4.0,4.0);
             break;
           case 3:
             // bullet type 3
             // down 10degree
-            set_vel (-6.0,-1.05,0.0);
+            setVel (-6.0,-1.05,0.0);
             set_dim (4.0,4.0);
             break;
           case 4:
             // bullet type 4
             // track the origen point of Toaster
             set_dim (4.0,4.0);
-            set_vel (-6.0,0.0,0.0);
+            setVel (-6.0,0.0,0.0);
             float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
-            set_acc (0.0,ya,0.0);
+            setAcc (0.0,ya,0.0);
         }
     }
-		set_vertex();
+		setVertex();
 }
 
-void Bullet::MoveBullet() {
+void Bullet::moveBullet() {
     pos[0] += vel[0];
     pos[1] += vel[1];
     pos[2] += vel[2];
@@ -403,17 +403,17 @@ Bread::Bread() {
 }
 Bread::~Bread() {}
 
-void Bread::set_Bread(float x, float y,float z, int Bread_t, int type) {
+void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
     set_pos (x,y,z);
 		float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
     switch (Bread_t) {
       case 1:
           set_dim(15.0,10.0);
-          set_vel(-4.0, 0.0, 0.0);
-          set_acc (0.0,-ya,0.0);
+          setVel(-4.0, 0.0, 0.0);
+          setAcc (0.0,-ya,0.0);
           set_color(100,240,100);
-          set_damage(10);
-          set_HP(2);
+          setDamage(10);
+          setHP(2);
 					trace = false;
 					item_type = 11;
           b_type = 1;
@@ -421,11 +421,11 @@ void Bread::set_Bread(float x, float y,float z, int Bread_t, int type) {
           break;
 			case 2:
           set_dim(15.0,10.0);
-          set_vel(-4.0, 0.0, 0.0);
-          set_acc(0.0,-ya,0.0);
+          setVel(-4.0, 0.0, 0.0);
+          setAcc(0.0,-ya,0.0);
           set_color(156,25,226);
-          set_damage(0);
-          set_HP(0);
+          setDamage(0);
+          setHP(0);
 					trace = false;
           b_type = 1;
 					item_type = 12;
@@ -433,12 +433,12 @@ void Bread::set_Bread(float x, float y,float z, int Bread_t, int type) {
           break;
 			case 3:
 					set_dim(50.0,5.0);
-					set_vel(-50.0,0.0,0.0);
-					set_acc(0.0,0.0,0.0);
+					setVel(-50.0,0.0,0.0);
+					setAcc(0.0,0.0,0.0);
 					set_color(250, 238, 2);
-					set_damage(50);
-					set_HP(100);
-					set_CD(100);
+					setDamage(50);
+					setHP(100);
+					setCD(100);
 					trace = true;
 					b_type = 1;
 					item_type = 13;
@@ -446,11 +446,11 @@ void Bread::set_Bread(float x, float y,float z, int Bread_t, int type) {
 					break;
 			case 4:
 					set_dim(15.0,10.0);
-					set_vel(-4.0, 0.0, 0.0);
-					set_acc (0.0, 0.0, 0.0);
+					setVel(-4.0, 0.0, 0.0);
+					setAcc (0.0, 0.0, 0.0);
 					set_color(100,240,100);
-					set_damage(10);
-					set_HP(2);
+					setDamage(10);
+					setHP(2);
 					trace = false;
 					item_type = 14;
 					b_type = 1;
@@ -458,10 +458,10 @@ void Bread::set_Bread(float x, float y,float z, int Bread_t, int type) {
 					break;
 
     }
-		set_vertex();
+		setVertex();
 }
 
-void Bread::MoveBread() {
+void Bread::moveBread() {
     pos[0] += vel[0];
     pos[1] += vel[1];
     pos[2] += vel[2];
@@ -493,7 +493,7 @@ Gamerecord::Gamerecord()
 		for(int i = 0; i <10; i++)
 				gamer[i]='_';
 }
-void Gamerecord::GetR()
+void Gamerecord::getRecord()
 {
 	ifstream fin("Highscore.txt");
 	if (fin.fail()) {
@@ -504,7 +504,7 @@ void Gamerecord::GetR()
 	}
 
 }
-void Gamerecord::ChangeR(int s)
+void Gamerecord::changeRecord(int s)
 {
 		if (record.delt) {
 				record.str = record.gamer;

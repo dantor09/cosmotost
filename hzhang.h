@@ -21,11 +21,11 @@ class Blocky;  // forward declaration
 //make a bullet need the pos of where this bullet creat
 //bool(tb) is means this bullet from toster or not
 //type is id of Bullet_type
-void make_Bullet(float x, float y,float z, bool tb, int type);
+void makeBullet(float x, float y,float z, bool tb, int type);
 //make a bread need the pos of where this bread creat
 //int Bread_t is the type of bread
 //type is id of Bullet_type this bread carrying
-void make_Bread(float x, float y,float z, int Bread_t, int type);
+void makeBread(float x, float y,float z, int Bread_t, int type);
 
 // item class is the parent class for all the object might have HP in game
 // include toaster, bullets and breads
@@ -47,39 +47,39 @@ class Item: public Box
     // when two object touch, use HP - damage
     // by check HP we can tell if we need delete that object
     int starting_hp;
-    int HP;
+    int hp;
     int lives;
     int damage;
     float vertex[8];
     // CD is cool down
     //  when create item
     //need a number to tell how long we don't want that object been create again.
-    int CD;
+    int cd;
 
     Item();
     ~Item();
 
     // setters
-    void set_HP(int life);
-    void set_CD(int x);
-    void set_damage(int x);
-    void set_vel(float x, float y, float z);
-    void set_acc(float x, float y, float z);
-    void set_vertex();
+    void setHP(int life);
+    void setCD(int x);
+    void setDamage(int x);
+    void setVel(float x, float y, float z);
+    void setAcc(float x, float y, float z);
+    void setVertex();
     // for trace Bullet
-    void set_Trace(Item tos);
+    void setTrace(Item tos);
     // to check toaster HP, if <=0 then dead
-    bool HP_check();
+    bool hpCheck();
     // to check
-    bool Collison(Item a);
+    bool collision(Item a);
     //change HP after Collison
-    void HPdamage(Item a);
-    void HPdamage(Entity & e);  // defined in mkausch.cpp for entity collision
-    void HPdamage(Blocky & b); // defined in mkausch.cpp for BF collision
+    void hpDamage(Item a);
+    void hpDamage(Entity & e);  // defined in mkausch.cpp for entity collision
+    void hpDamage(Blocky & b); // defined in mkausch.cpp for BF collision
     // check if item reach the in the screen
-    bool ScreenIn();
+    bool screenIn();
     //check if item out of screen
-    bool ScreenOut();
+    bool screenOut();
     void draw();
     void draw(Item tos);
     Item & operator = (const Item &);
@@ -105,7 +105,7 @@ class Toaster: public Item
       // other
       // draw toaster
       // void draw();
-      void MoveToster();
+      void moveToster();
       // string PrintScore();
 
 } ;
@@ -120,8 +120,8 @@ class Bullet: public Item
      // tb to check if from Toaster or Bread
      // type is id of what type of bullet
      // different bullet may have different damage hp or velocitys
-     void set_Bullet(float x, float y,float z, bool tb, int type);
-     void MoveBullet();
+     void setBullet(float x, float y,float z, bool tb, int type);
+     void moveBullet();
 };
 
 class Bread: public Item
@@ -138,8 +138,8 @@ class Bread: public Item
     // Bread_t is the id of what type of Bread
     // type is id of what type of bullet this Bread carrying
     // different bullet may have different damage hp or velocitys
-    void set_Bread(float x, float y,float z, int Bread_t, int type);
-    void MoveBread();
+    void setBread(float x, float y,float z, int Bread_t, int type);
+    void moveBread();
 };
 //=======================================================================
 class Gamerecord
@@ -158,7 +158,7 @@ public:
 		bool delt;
 		Gamerecord();
     ~Gamerecord();
-    void ChangeR(int);
-    void GetR();
+    void changeRecord(int);
+    void getRecord();
 
 };
