@@ -1075,7 +1075,7 @@ void render()
 			srand(time(NULL));
 
 			// Make freeze block if it does not exist and timer is NULL
-			if(!freeze_block.position_set && freeze_block.timer == NULL) {
+			if(!freeze_block.position_set && freeze_block.ptimer == NULL) {
 				freeze_block.set_color(162,210,223); // sky blue
 				freeze_block.w = 10;
 				freeze_block.h = 10;
@@ -1092,15 +1092,14 @@ void render()
 			if(freeze_block.Collison(tos) && !tos.disable_keys ) {
 				tos.disable_keys = true;
 				freeze_block.position_set = false;
-				freeze_block.set_timer(3);
+				freeze_block.setTimer(3);
 			}
 			// Unfreeze the toaster after timer is done.
-			if(tos.disable_keys && freeze_block.timer->isDone()) {
+			if(tos.disable_keys && freeze_block.ptimer->isDone()) {
 				tos.disable_keys = false;
-				delete freeze_block.timer;
-				freeze_block.timer = NULL;
-			}
-			
+				delete freeze_block.ptimer;
+				freeze_block.ptimer = NULL;
+			}	
 		}
 
 	} else if (g.state == GAMEOVER) {
