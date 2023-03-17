@@ -154,6 +154,41 @@ bool Item::collision(Item a) {
   	return x&&y;
 }
 
+// bool Item::collision(Item a) {
+// 	float arr[8];
+// 	float aArr[8];
+// 	for(int i = 0; i < 4; i++)
+// 	{
+// 		arr[i*2] = pos[0] + vertex[i*2];
+// 		arr[i*2+1] = pos[1] + vertex[i*2];
+// 		aArr[i*2] = a.pos[0] + a.vertex[i*2];
+// 		aArr[i*2+1] = a.pos[0] + a.vertex[i*2+1];		
+// 	}
+// 	float R0 = maxRadius(arr,8);
+// 	float r0 = minRadius(arr,8);
+// 	float R1 = maxRadius(aArr,8);
+// 	float r1 = minRadius(aArr,8);
+// 	float T0 = maxTan(arr,8);
+// 	float t0 = minTan(arr,8);
+// 	float T1 = maxTan(aArr,8);
+// 	float t1 = minTan(aArr,8);
+// 	if(R0 < r1 || R1 < r0 || T0 < t1 || T1 < t0)
+// 		return false;
+// 	else {
+// 		bool delta = false;
+// 		for(int i = 0; i < 4; i++) {
+// 			if(!delta)
+// 				delta = pointIn(pos[0]+vertex[i*2],pos[1]+vertex[i*2+1],aArr,8);
+// 		}
+// 		for(int i = 0; i < 4; i++) {
+// 			if(!delta)
+// 				delta = pointIn(a.pos[0]+a.vertex[i*2],a.pos[1]+a.vertex[i*2+1],arr,8);
+// 		}
+// 		return delta;	
+// 	}
+// }
+
+
 void Item::hpDamage(Item a) {
     // std::cout << "hp 1 :" << hp << "Damage :" << a.damage<< std::endl;
     hp = hp - a.damage;
@@ -249,7 +284,7 @@ Toaster::Toaster()
     lives = 1;
 		setVertex();
 		energy = 100.0f;
-		energy_recover = 0.01f;
+		energy_recover = 0.1f;
 		disable_keys = false;
 }
 
@@ -521,3 +556,73 @@ void Gamerecord::changeRecord(int s)
 		}
 }
 Gamerecord::~Gamerecord(){}
+
+
+
+//=======================================================================================//
+//math functions//
+bool pointIn(float x0, float y0, float * arr, int n) {
+		float point[n/2];
+		for(int i = 0; i < (n/2); i++)
+		{
+				point[i] = crossX(x0,y0,(arr[2*i]),(arr[2*i+1]),(arr[(2*i+2)%n]),(arr[(2*i+3)%n]));
+		}
+		float large=0;
+		float small=0;
+		for(int i = 0; i < (n/2); i++)
+		{
+				if(large < point[i])
+						small = large;
+						large = point[i];
+				if(large > point[i] && small < point[i])
+						small = point[i];
+		}
+		cout << large << " " << small <<endl;
+		if (x0 > large || x0 < small)
+				return false;
+		else 
+				return true;
+} 
+
+float crossX(float x0,float y0,float xa,float ya,float xb,float yb) {
+		float result = (ya-((ya-yb)*xa/(xa-xb)))/((y0/x0)-((ya-yb)/(xa-xb)));
+		if(result < fmin(xa,xb)|| result > fmax(xa,xb))
+			return 0;
+		else
+			return result;
+}
+
+float maxRadius(float *arr,int n) {
+		float result = 0.0f;
+		for(int i = 0; i < (n/2); i++) {
+				if(result < ((arr[i*2]*arr[i*2])+(arr[i*2+1]*arr[i*2+1])))
+						result = ((arr[i*2]*arr[i*2])+(arr[i*2+1]*arr[i*2+1]));
+		}
+		return result;
+}
+
+float minRadius(float *arr,int n) {
+		float result = ((arr[0]*arr[0])+(arr[1]*arr[1]));
+		for(int i = 0; i < (n/2); i++) {
+				if(result > ((arr[i*2]*arr[i*2])+(arr[i*2+1]*arr[i*2+1])))
+						result = ((arr[i*2]*arr[i*2])+(arr[i*2+1]*arr[i*2+1]));
+		}
+		return result;
+}
+
+float maxTan(float *arr,int n) {
+		float result = 0.0f;
+		for(int i = 0; i < (n/2); i++) {
+				if(result < (arr[2 * i] / arr[2 * i + 1]))
+						result = (arr[2 * i] / arr[2 * i + 1]);
+		}
+		return result;
+}
+float minTan(float *arr,int n) {
+		float result = (arr[0] / arr[1]);
+		for(int i = 0; i < (n/2); i++) {
+				if(result > (arr[2 * i] / arr[2 * i + 1]))
+						result = (arr[2 * i] / arr[2 * i + 1]);
+		}
+		return result;
+}

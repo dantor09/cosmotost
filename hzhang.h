@@ -27,6 +27,14 @@ void makeBullet(float x, float y,float z, bool tb, int type);
 //type is id of Bullet_type this bread carrying
 void makeBread(float x, float y,float z, int Bread_t, int type);
 
+float crossX(float x0,float y0,float xa,float ya,float xb,float yb);
+float maxRadius(float *arr,int n);
+float minRadius(float *arr,int n);
+float maxTan(float *arr,int n);
+float minTan(float *arr,int n);
+bool pointIn(float x0, float y0, float *arr, int n);
+
+
 // item class is the parent class for all the object might have HP in game
 // include toaster, bullets and breads
 class Item: public Box
