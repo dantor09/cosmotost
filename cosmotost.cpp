@@ -744,15 +744,15 @@ void check_sound(void)
 	// *******     GUN NOISES      **********//
 
 	// start playing new sound if leveled up gun
-	if (tos.b_type != prev_btype) {
+	if (tos.bullet_type_prime != prev_btype) {
 		sounds.gun_stop();
-		sounds.gun_play(tos.b_type);
-		prev_btype = tos.b_type;
+		sounds.gun_play(tos.bullet_type_prime);
+		prev_btype = tos.bullet_type_prime;
 	}
 	// if space bar is pressed down and gun not already shooting
 	if ((g.keys[XK_space] == 1) && (!sounds.gun_shooting)) {
-		cerr << "tos.b_type: " << tos.b_type << endl;
-		sounds.gun_play(tos.b_type);
+		cerr << "tos.bullet_type_prime: " << tos.bullet_type_prime << endl;
+		sounds.gun_play(tos.bullet_type_prime);
 		sounds.gun_shooting = true;
 		// if spacebar not pressed down and gun noise currently set to shoot
 	} else if (g.keys[XK_space] == 0 && (sounds.gun_shooting)) {
@@ -919,7 +919,7 @@ void physics()
 											g.state = GAMEOVER;
 							}
 							if (bread[i].item_type == 12)	{
-								if (tos.b_type < 4) tos.b_type++;
+								if (tos.bullet_type_prime < 4) tos.bullet_type_prime++;
 									bread[i] = bread[--g.n_Bread];
 							}
 							break;

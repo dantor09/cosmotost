@@ -162,7 +162,7 @@ bool Item::collision(Item a) {
 // 		arr[i*2] = pos[0] + vertex[i*2];
 // 		arr[i*2+1] = pos[1] + vertex[i*2];
 // 		aArr[i*2] = a.pos[0] + a.vertex[i*2];
-// 		aArr[i*2+1] = a.pos[0] + a.vertex[i*2+1];		
+// 		aArr[i*2+1] = a.pos[0] + a.vertex[i*2+1];
 // 	}
 // 	float R0 = maxRadius(arr,8);
 // 	float r0 = minRadius(arr,8);
@@ -184,7 +184,7 @@ bool Item::collision(Item a) {
 // 			if(!delta)
 // 				delta = pointIn(a.pos[0]+a.vertex[i*2],a.pos[1]+a.vertex[i*2+1],arr,8);
 // 		}
-// 		return delta;	
+// 		return delta;
 // 	}
 // }
 
@@ -273,7 +273,7 @@ Toaster::Toaster()
     // To set item_type 0
     // the origen bullet type will be 1
     score = 0;
-    b_type = 1;
+    bullet_type_prime = 1;
     item_type = 0;
     setPos(g.xres/4, g.yres/2, 0.0);
     setColor(188, 226, 232);
@@ -297,7 +297,7 @@ void Toaster::posReset()
 		setPos(g.xres/4, g.yres/2, 0.0);
 		score = 0;
 		setHP(starting_hp);
-		b_type = 1;
+		bullet_type_prime = 1;
 		energy = 100.0f;
 }
 void Toaster::moveToster()
@@ -332,7 +332,7 @@ void Toaster::moveToster()
   if (g.keys[XK_space]) {
       //shoot bullet if not in CD
 			if (g.BulletCD==5) {
-					makeBullet(pos[0]+w,pos[1],pos[2],1,b_type);
+					makeBullet(pos[0]+w,pos[1],pos[2],1,bullet_type_prime);
 					// std::cout << "shoot"<<std::endl;
 			}
   }
@@ -451,7 +451,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
           setHP(2);
 					trace = false;
 					item_type = 11;
-          b_type = 1;
+          bullet_type_prime = 1;
           point = 10;
           break;
 			case 2:
@@ -462,7 +462,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
           setDamage(0);
           setHP(0);
 					trace = false;
-          b_type = 1;
+          bullet_type_prime = 1;
 					item_type = 12;
           point = 0;
           break;
@@ -475,7 +475,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
 					setHP(100);
 					setCD(100);
 					trace = true;
-					b_type = 1;
+					bullet_type_prime = 1;
 					item_type = 13;
           point = 0;
 					break;
@@ -488,7 +488,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
 					setHP(2);
 					trace = false;
 					item_type = 14;
-					b_type = 1;
+					bullet_type_prime = 1;
 					point = 10;
 					break;
 
@@ -580,9 +580,9 @@ bool pointIn(float x0, float y0, float * arr, int n) {
 		cout << large << " " << small <<endl;
 		if (x0 > large || x0 < small)
 				return false;
-		else 
+		else
 				return true;
-} 
+}
 
 float crossX(float x0,float y0,float xa,float ya,float xb,float yb) {
 		float result = (ya-((ya-yb)*xa/(xa-xb)))/((y0/x0)-((ya-yb)/(xa-xb)));

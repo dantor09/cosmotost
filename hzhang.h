@@ -98,7 +98,7 @@ class Toaster: public Item
 {
   public:
       // the bullet type toaster carrying
-      int b_type;
+      int bullet_type_prime;
       int score;
       float energy;
       float energy_recover;
@@ -136,7 +136,7 @@ class Bread: public Item
 {
   public:
   // the bullet type bread carrying
-    int b_type;
+    int bullet_type_prime;
   // how many point(score) bread carrying
     int point;
 
