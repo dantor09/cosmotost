@@ -9,8 +9,8 @@
 using namespace std;
 
 
-void makeBullet(float x, float y,float z, bool tb, int type) {
-		switch(type){
+void makeBullet(float x, float y,float z, bool tb, int bullet_type) {
+		switch(bullet_type){
 			case 1:
 				if (g.n_Bullet < MAX_bullet){
 						bul[g.n_Bullet].setBullet(x, y, z, tb, 1);
@@ -67,6 +67,12 @@ void makeBullet(float x, float y,float z, bool tb, int type) {
 						bul[g.n_Bullet].setBullet(x, y-8, z, tb, 3);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
+				}
+				break;
+			case 5:
+				if (g.n_Bullet < MAX_bullet){
+						bul[g.n_Bullet].setBullet(x, y, z, tb, 1);
+						++g.n_Bullet;
 				}
 		}
 
@@ -187,8 +193,6 @@ bool Item::collision(Item a) {
 // 		return delta;
 // 	}
 // }
-
-
 void Item::hpDamage(Item a) {
     // std::cout << "hp 1 :" << hp << "Damage :" << a.damage<< std::endl;
     hp = hp - a.damage;
@@ -270,26 +274,40 @@ Item & Item::operator = (const Item &a)
 
 Toaster::Toaster()
 {
-    // To set item_type 0
-    // the origen bullet type will be 1
-    score = 0;
-    bullet_type_prime = 1;
-    item_type = 0;
-    setPos(g.xres/4, g.yres/2, 0.0);
-    setColor(188, 226, 232);
-    setDim(20,15);
-    starting_hp = 80;
+		// To set item_type 0
+		// the origen bullet type will be 1
+		score = 0;
+		bullet_type_prime = 1;
+		bullet_type_minor = 5;
+		item_type = 0;
+		setPos(g.xres/4, g.yres/2, 0.0);
+		setColor(188, 226, 232);
+		setDim(20,15);
+		starting_hp = 80;
 		setHP(starting_hp);
 		setDamage(100);
-    lives = 1;
+		lives = 1;
 		setVertex();
 		energy = 100.0f;
 		energy_recover = 0.1f;
 		disable_keys = false;
+		laserOn = false;
 }
 
 Toaster::~Toaster()
 {
+}
+
+bool Toaster::laserCollision(Item a){
+		return (pos[1] > a.pos[1]-a.h && pos[1] < a.pos[1]+a.h && pos[0] < a.pos[0] - a.w - w);
+}
+void Toaster::setDistance(float val){
+		distance = val;
+}
+void Toaster::laserDamage(Item a){
+		cerr << " a.HP " << a.hp <<endl;
+		a.hp = a.hp - laser_damage[bullet_type_prime-5];
+		cerr << "make damage " << laser_damage[bullet_type_prime-5] << " a.HP " << a.hp <<endl;
 }
 
 void Toaster::posReset()
@@ -323,23 +341,65 @@ void Toaster::moveToster()
     	}
   }
   else {
-      // to keep toaster in the screen
-      if(pos[0] > g.xres-w+1) pos[0] = g.xres-w+1;
-      if(pos[0] < w-1) pos[0] = w-1;
-      if(pos[1] > g.yres-h+1) pos[1] = g.yres-h+1;
-			if(pos[1] < (3*g.yres/40) + h - 1) pos[1] = (3*g.yres/40) + h-1;
+		// to keep toaster in the screen
+		if(pos[0] > g.xres-w+1) pos[0] = g.xres-w+1;
+		if(pos[0] < w-1) pos[0] = w-1;
+		if(pos[1] > g.yres-h+1) pos[1] = g.yres-h+1;
+				if(pos[1] < (3*g.yres/40) + h - 1) pos[1] = (3*g.yres/40) + h-1;
   }
-  if (g.keys[XK_space]) {
+  if (g.keys[XK_space] && bullet_type_prime <= 4) {
       //shoot bullet if not in CD
-			if (g.BulletCD==5) {
-					makeBullet(pos[0]+w,pos[1],pos[2],1,bullet_type_prime);
-					// std::cout << "shoot"<<std::endl;
-			}
+		if (bullet_type_prime < 5 && g.BulletCD==5) {
+				makeBullet(pos[0]+w,pos[1],pos[2],1,bullet_type_prime);
+				// std::cout << "shoot"<<std::endl;
+		}
   }
-	if(energy < 100)
-	{
+  if(bullet_type_prime > 4 && bullet_type_prime <= 8) {
+	 if(g.keys[XK_space] && energy > 5) {
+			laserOn = true;
+			energy -= 0.2;
+
+	 } else {
+			laserOn = false;
+	 }
+  }
+	if(energy < 100) {
 			energy += energy_recover;
 	}
+}
+
+void Toaster::bulletReload(){
+		int temp;
+		temp = bullet_type_prime;
+		bullet_type_prime = bullet_type_minor;
+		bullet_type_minor = temp;
+		laserOn = false;
+}
+
+void Toaster::tdraw(){
+	if(laserOn && energy > 5) {
+			glPushMatrix();
+			glColor3ub(255, 100, 100);
+			glTranslatef(pos[0]+w, pos[1], pos[2]);
+			glBegin(GL_QUADS);
+					glVertex2f(0,laser_h[bullet_type_prime - 5]);
+					glVertex2f(0,-laser_h[bullet_type_prime - 5]);
+					glVertex2f(distance,-laser_h[bullet_type_prime - 5]);
+					glVertex2f(distance,laser_h[bullet_type_prime - 5]);
+			glEnd();
+			glPopMatrix();
+	}
+	glPushMatrix();
+  	glColor3ub(color[0], color[1], color[2]);
+  	glTranslatef(pos[0], pos[1], pos[2]);
+  	glBegin(GL_QUADS);
+  			glVertex2f(vertex[0],vertex[1]);
+  			glVertex2f(vertex[2],vertex[3]);
+  			glVertex2f(vertex[4],vertex[5]);
+  			glVertex2f(vertex[6],vertex[7]);
+  	glEnd();
+  	glPopMatrix();
+
 }
 // string Toaster::PrintScore() {
 //     ostringstream temp;

@@ -529,6 +529,9 @@ int X11_wrapper::check_keys(XEvent *e)
 						// pos[1] = 350;  			// std::cout << "move w"<<pos[1]<<std::endl;
 				// std::cout << "move w"<<pos[1]<<std::endl;
 						return 0;
+				case XK_e:
+						tos.bulletReload();
+						return 0;
 				case XK_p: // p was pressed - toggle Ailand's Entity State
 					if (g.substate == NONE) {
 						g.substate = ENTITY;
@@ -838,10 +841,14 @@ void physics()
 				}
 			}
 		}
-
+		int distanceBread = g.xres;
+		int whichBread = -1;
 		if (g.substate == MIKE) {
 			blocky.move();
-
+			if (tos.laserCollision(blocky)){
+				whichBread = -2;
+				distanceBread = blocky.pos[0] - tos.pos[0] - blocky.w - tos.w;
+			}
 			// check toaster collision with blocky
 			if (blocky.collision(tos)) {
 				tos.hpDamage(blocky);
@@ -892,11 +899,11 @@ void physics()
 			g.BreadCD=30;
 			float alp=(((float)rand()) / (float)RAND_MAX);
 			int breadrand = (int)rand()%g.levelchance;
-			if(!breadrand==0 && (int)rand()%3 != 0)
+			if(breadrand !=0 && (int)rand()%3 != 0)
 					makeBread(g.xres,alp*g.yres,0.0,1,1);
 			else
 					makeBread(g.xres,alp*g.yres,0.0,4,1);
-			if(breadrand==0) makeBread(g.xres,alp*g.yres,0.0,2,1);
+			if(breadrand==0) makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1);
 		}
 
 		// move of all bullet
@@ -905,42 +912,66 @@ void physics()
 				if (bul[i].screenOut()) bul[i] = bul[--g.n_Bullet];
 				bul[i].moveBullet();
 			}
-			//move of all bread and check collision with bullet and Toaster
-			for (int i=0; i < g.n_Bread; i++) {
-					if (bread[i].screenOut()) bread[i] = bread[--g.n_Bread];
-					// ckeak if collision with toaster
-					if (bread[i].collision(tos)) {
-							if (bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)	{
-									bread[i].hpDamage(tos);
-									tos.hpDamage(bread[i]);
-									if(bread[i].hpCheck())
-											bread[i] = bread[--g.n_Bread];
-									if(tos.hpCheck())
-											g.state = GAMEOVER;
-							}
-							if (bread[i].item_type == 12)	{
-								if (tos.bullet_type_prime < 4) tos.bullet_type_prime++;
-									bread[i] = bread[--g.n_Bread];
-							}
-							break;
-					}
-					// ckeak if collision with bullet
-					for (int j=0; j < g.n_Bullet; j++) {
-							if (bread[i].collision(bul[j])&&(bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)) {
-									bread[i].hpDamage(bul[j]);
-									bul[j].hpDamage(bread[i]);
-									if(bread[i].hpCheck()) {
-										tos.score += bread[i].point;
+		//move of all bread and check collision with bullet and Toaster
+		for (int i=0; i < g.n_Bread; i++) {
+				if (bread[i].screenOut()||bread[i].hpCheck()) {
+					bread[i] = bread[--g.n_Bread];
+				}
+				// ckeak if collision with toaster
+				if (bread[i].collision(tos)) {
+						if (bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)	{
+								bread[i].hpDamage(tos);
+								tos.hpDamage(bread[i]);
+								if(tos.hpCheck())
+										g.state = GAMEOVER;
+								if(bread[i].hpCheck())
 										bread[i] = bread[--g.n_Bread];
-									}
-									bul[j] = bul[--g.n_Bullet];
-							}
-					}
-					if(!bread[i].trace)
-							bread[i].moveBread();
+						}
+						if (bread[i].item_type == 12) {
+							if (tos.bullet_type_prime != 4	&&	tos.bullet_type_prime != 8) tos.bullet_type_prime++;
+							bread[i] = bread[--g.n_Bread];
+						}
+						break;
+				}
+				// ckeak if collision with bullet
+				for (int j=0; j < g.n_Bullet; j++) {
+						if (bread[i].collision(bul[j])&&(bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)) {
+								bread[i].hpDamage(bul[j]);
+								bul[j].hpDamage(bread[i]);
+								bul[j] = bul[--g.n_Bullet];
+								if(bread[i].hpCheck()) {
+									tos.score += bread[i].point;
+									bread[i] = bread[--g.n_Bread];
+								}
+						}
+				}
+				if(!bread[i].trace)
+						bread[i].moveBread();
+				if(tos.laserCollision(bread[i])&& !bread[i].hpCheck()) {
+						if((bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w) < distanceBread) {
+								distanceBread = bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w;
+								whichBread = i;
+						}
+				}
 		// time stuff/ change when timer finish
 		// for bullet
+		}
+		tos.setDistance(distanceBread);
+		if(tos.laserOn)  {
+			if (whichBread == -2) {
+					tos.laserDamage(blocky);
+					cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
+			} 
+			else if (whichBread != -1) {
+					tos.laserDamage(bread[whichBread]);
+        			cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
+					if(bread[whichBread].hpCheck()) {
+						bread[whichBread] = bread[--g.n_Bread];
+					}
 			}
+
+		}
+
 	}
 }
 
@@ -1032,7 +1063,7 @@ void render()
 
 
 		// draw Toaster bullet and bread
-		tos.draw();
+		tos.tdraw();
 		tos_health.draw();
 		// cerr << "gonna draw..." << endl;
 		tos_cd.draw();

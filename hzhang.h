@@ -21,7 +21,7 @@ class Blocky;  // forward declaration
 //make a bullet need the pos of where this bullet creat
 //bool(tb) is means this bullet from toster or not
 //type is id of Bullet_type
-void makeBullet(float x, float y,float z, bool tb, int type);
+void makeBullet(float x, float y,float z, bool tb, int bullet_type);
 //make a bread need the pos of where this bread creat
 //int Bread_t is the type of bread
 //type is id of Bullet_type this bread carrying
@@ -99,14 +99,22 @@ class Toaster: public Item
   public:
       // the bullet type toaster carrying
       int bullet_type_prime;
+      int bullet_type_minor;
       int score;
       float energy;
       float energy_recover;
       bool disable_keys;
+      bool laserOn;
+      float distance;
+      float laser_damage[4] = {1,2,3,4};
+      float laser_h[4] = {1,1.5,2,2.5};
 
       Toaster();
       ~Toaster();
       void posReset();
+      bool laserCollision(Item a);
+      void setDistance(float val);
+      void laserDamage(Item a);
       // getters
       // unsigned char * get_tcolor();
 
@@ -114,6 +122,8 @@ class Toaster: public Item
       // draw toaster
       // void draw();
       void moveToster();
+      void bulletReload();
+      void tdraw();
       // string PrintScore();
 
 } ;
