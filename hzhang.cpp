@@ -379,12 +379,15 @@ void Toaster::bulletReload(){
 void Toaster::tdraw(){
 	if(laserOn && energy > 5) {
 			glPushMatrix();
-			glColor3ub(255, 100, 100);
+			glColor3ub(20,0,0);
 			glTranslatef(pos[0]+w, pos[1], pos[2]);
 			glBegin(GL_QUADS);
 					glVertex2f(0,laser_h[bullet_type_prime - 5]);
+					glColor3ub(20,0,0);
 					glVertex2f(0,-laser_h[bullet_type_prime - 5]);
+					glColor3ub(255, 0, 100);
 					glVertex2f(distance,-laser_h[bullet_type_prime - 5]);
+					glColor3ub(255, 100, 0);
 					glVertex2f(distance,laser_h[bullet_type_prime - 5]);
 			glEnd();
 			glPopMatrix();
@@ -686,3 +689,5 @@ float minTan(float *arr,int n) {
 		}
 		return result;
 }
+///====================================Draw shape Functions=======================
+//===============================================================================
