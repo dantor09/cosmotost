@@ -8,7 +8,7 @@ Global::Global()
 		xres = 1280;
 		yres = 720;
 	  show_help_menu = false;
-		levelchance = 30;
+		levelchance = 15;
 }
 
 
@@ -24,7 +24,7 @@ void Global::gameReset()
 		e.num_ent = 0;
 		record.getRecord();
 		for(int i = 0; i <10; i++)
-				record.gamer[i]='_';
+		record.gamer[i]='_';
 		tos.posReset();
 		blocky.gamereset();
 }

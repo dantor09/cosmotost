@@ -55,9 +55,9 @@ class Item: public Box
     // when two object touch, use HP - damage
     // by check HP we can tell if we need delete that object
     int starting_hp;
-    int hp;
+    float hp;
     int lives;
-    int damage;
+    float damage;
     float vertex[8];
     // CD is cool down
     //  when create item
@@ -68,9 +68,9 @@ class Item: public Box
     ~Item();
 
     // setters
-    void setHP(int life);
+    void setHP(float life);
     void setCD(int x);
-    void setDamage(int x);
+    void setDamage(float x);
     void setVel(float x, float y, float z);
     void setAcc(float x, float y, float z);
     void setVertex();
@@ -106,7 +106,7 @@ class Toaster: public Item
       bool disable_keys;
       bool laserOn;
       float distance;
-      float laser_damage[4] = {1,2,3,4};
+      float laser_damage[4] = {0.1,0.25,0.5,1};
       float laser_h[4] = {1,1.5,2,2.5};
 
       Toaster();
@@ -114,7 +114,7 @@ class Toaster: public Item
       void posReset();
       bool laserCollision(Item a);
       void setDistance(float val);
-      void laserDamage(Item a);
+      void laserDamage(Item &a);
       // getters
       // unsigned char * get_tcolor();
 

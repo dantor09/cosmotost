@@ -87,7 +87,7 @@ int main()
 		check_sound();
 #endif
 		x11.swapBuffers();
-		usleep(200);
+		usleep(2000);
 	}
 	return 0;
 }
@@ -965,9 +965,6 @@ void physics()
 			else if (whichBread != -1) {
 					tos.laserDamage(bread[whichBread]);
         			cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
-					if(bread[whichBread].hpCheck()) {
-						bread[whichBread] = bread[--g.n_Bread];
-					}
 			}
 
 		}

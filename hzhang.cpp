@@ -92,13 +92,13 @@ Item::Item(){
 Item::~Item(){
 }
 
-void Item::setHP(int life) {
+void Item::setHP(float life) {
     hp = life;
 }
 void Item::setCD(int x) {
     cd = x;
 }
-void Item::setDamage(int x) {
+void Item::setDamage(float x) {
     damage = x;
 }
 
@@ -148,7 +148,7 @@ void Item::setTrace(Item tos) {
 // to check toaster hp, if <=0 then dead
 bool Item::hpCheck() {
     // if no hp return true
-    return (hp <= 0);
+    return (hp < 0.01);
 }
 
 bool Item::collision(Item a) {
@@ -304,7 +304,7 @@ bool Toaster::laserCollision(Item a){
 void Toaster::setDistance(float val){
 		distance = val;
 }
-void Toaster::laserDamage(Item a){
+void Toaster::laserDamage(Item& a){
 		cerr << " a.HP " << a.hp <<endl;
 		a.hp = a.hp - laser_damage[bullet_type_prime-5];
 		cerr << "make damage " << laser_damage[bullet_type_prime-5] << " a.HP " << a.hp <<endl;
@@ -502,7 +502,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
     setPos (x,y,z);
 		float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
     switch (Bread_t) {
-      case 1:
+     	case 1:
           setDim(15.0,10.0);
           setVel(-4.0, 0.0, 0.0);
           setAcc (0.0,-ya,0.0);
@@ -514,43 +514,43 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
           bullet_type_prime = 1;
           point = 10;
           break;
-			case 2:
-          setDim(15.0,10.0);
-          setVel(-4.0, 0.0, 0.0);
-          setAcc(0.0,-ya,0.0);
-          setColor(156,25,226);
-          setDamage(0);
-          setHP(0);
-					trace = false;
-          bullet_type_prime = 1;
-					item_type = 12;
-          point = 0;
-          break;
-			case 3:
-					setDim(50.0,5.0);
-					setVel(-50.0,0.0,0.0);
-					setAcc(0.0,0.0,0.0);
-					setColor(250, 238, 2);
-					setDamage(50);
-					setHP(100);
-					setCD(100);
-					trace = true;
-					bullet_type_prime = 1;
-					item_type = 13;
-          point = 0;
-					break;
-			case 4:
-					setDim(15.0,10.0);
-					setVel(-4.0, 0.0, 0.0);
-					setAcc (0.0, 0.0, 0.0);
-					setColor(100,240,100);
-					setDamage(10);
-					setHP(2);
-					trace = false;
-					item_type = 14;
-					bullet_type_prime = 1;
-					point = 10;
-					break;
+		case 2:
+			setDim(15.0,10.0);
+			setVel(-4.0, 0.0, 0.0);
+			setAcc(0.0,-ya,0.0);
+			setColor(156,25,226);
+			setDamage(0);
+			setHP(1);
+			trace = false;
+			bullet_type_prime = 1;
+			item_type = 12;
+			point = 0;
+			break;
+		case 3:
+			setDim(50.0,5.0);
+			setVel(-50.0,0.0,0.0);
+			setAcc(0.0,0.0,0.0);
+			setColor(250, 238, 2);
+			setDamage(50);
+			setHP(100);
+			setCD(100);
+			trace = true;
+			bullet_type_prime = 1;
+			item_type = 13;
+    	    point = 0;
+			break;
+		case 4:
+			setDim(15.0,10.0);
+			setVel(-4.0, 0.0, 0.0);
+			setAcc (0.0, 0.0, 0.0);
+			setColor(100,240,100);
+			setDamage(10);
+			setHP(2);
+			trace = false;
+			item_type = 14;
+			bullet_type_prime = 1;
+			point = 10;
+			break;
 
     }
 		setVertex();

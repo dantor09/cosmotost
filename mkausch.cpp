@@ -721,8 +721,8 @@ void PowerBar::draw()
         glBegin(GL_QUADS);
             glVertex2f(0, -health.h);
             glVertex2f(0,  health.h);
-            glVertex2f( (((float)(itm->hp))/(itm->starting_hp))*2.0f*health.w,  health.h);
-            glVertex2f( (((float)(itm->hp))/(itm->starting_hp))*2.0f*health.w, -health.h);
+            glVertex2f( (((float)(itm->hp))/(float)(itm->starting_hp))*2.0f*health.w,  health.h);
+            glVertex2f( (((float)(itm->hp))/(float)(itm->starting_hp))*2.0f*health.w, -health.h);
             
         glEnd();
         glPopMatrix();
@@ -775,12 +775,12 @@ bool Entity::collision(Item & a)
   	return x&&y;
 }
 
-void Entity::setHP(int life)
+void Entity::setHP(float life)
 {
     hp = life;
 }
 
-void Entity::setDamage(int x)
+void Entity::setDamage(float x)
 {
     damage = x;
 }

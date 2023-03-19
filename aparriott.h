@@ -43,8 +43,8 @@ class Entity {
 	void entityPhysics();
 	void entityRender();
 	bool collision(Item & a);	// defined in mkausch.cpp
-	void setHP(int life);	// defined in mkausch.cpp
-	void setDamage(int x);	// defined in mkausch.cpp
+	void setHP(float life);	// defined in mkausch.cpp
+	void setDamage(float x);	// defined in mkausch.cpp
 	void hpDamage(Item & a);	// defined in mkausch.cpp
 	bool hpCheck();			// defined in mkausch.cpp
 
