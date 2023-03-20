@@ -220,7 +220,7 @@ class Blocky : public Item
     public:
     int point;
     // int lives;
-    Blocky();
+    Blocky(char type);
     ~Blocky();
     void reset(); // tests to see if the player killed poor forky
     void draw();    // overload function to include redraw

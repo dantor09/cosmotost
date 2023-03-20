@@ -794,10 +794,14 @@ void Item::hpDamage(Entity & e)
     hp = hp - e.damage;
 }
 
-Blocky::Blocky()
+Blocky::Blocky(char type)
 {
     srand(time(NULL));
-    setDim(25.0f, 100.0f);
+    if (type == 'v') {
+        setDim(25.0f, 100.0f);
+    } else if (type == 'h') {
+        setDim(100.0f, 25.0f);
+    }
     set_rand_color(*this);
     set_rand_position();
     setAcc(0.0f,-0.25f,0.0f);
@@ -1172,7 +1176,7 @@ void check_level()
                 case LEVEL5:
                     // Level6: Blocky(2) + Bread(2) + Entities(2)
                     g.level = LEVEL6;
-                    blocky.gamereset();
+                    vblocky.gamereset();
                     g.entity_active = true;
                     g.mike_active = true;
                     // change blocky vars

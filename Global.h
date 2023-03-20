@@ -66,8 +66,10 @@ inline std::string p_text[] = {"Back to Game",
                                 "Quit Game"};
 inline Menu pause_menu(4, 225, 225, g.xres/2.0f, g.yres/2.0f, p_text);
 
-inline Blocky blocky;
-inline PowerBar blocky_health(blocky, HEALTH, g.xres/2.0f, 15.0f);
+inline Blocky hblocky('h');
+inline Blocky vblocky('v');
+inline PowerBar vblocky_health(hblocky, HEALTH, g.xres/2.0f, 15.0f);
+inline PowerBar hblocky_health(vblocky, HEALTH, g.xres/2.0f, 15.0f);
 inline InfoBoard info_board_1;
 inline FreezeBlock freeze_block;
 
