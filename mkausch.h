@@ -242,3 +242,35 @@ class Blocky : public Item
 };
 
 void set_rand_color(Item & it);
+void check_sound(void);
+
+class Shield : public Box
+{
+
+public:
+
+    // vars
+    float radius;
+    // float angle;
+    float pos[3];
+    unsigned char color[3];
+
+    // constructors
+    Shield();
+    Shield(float _w, float _h, float _x, float _y);
+
+    // setters
+    void setColor(int r, int g, int b);
+    void setPos(float x, float y, float z);
+    void setRad(float _r);
+    void draw();
+    void move();
+    // void set_text(std::string t);
+
+    unsigned char * getColor();
+
+    // debug
+    std::string getInfo();
+};
+
+void check_level();

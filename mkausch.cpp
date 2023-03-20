@@ -302,8 +302,7 @@ int Timer::getTime(char time_code)
     int time = net_time;
     std::chrono::duration<double> total_elapsed = std::chrono::system_clock::now() - start;
 
-    if (paused)
-    {
+    if (paused) {
         net_time = (total_elapsed.count() - pause_duration - pause_timer->getTime('n'));
     } else {
         net_time = (total_elapsed.count()-pause_duration);
@@ -756,7 +755,7 @@ void PowerBar::draw()
         glPopMatrix();
 
         ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, max_energy);
-        cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
+        // cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
     }
 
 
@@ -1067,41 +1066,157 @@ void Blocky::explode()
     }
 }
 
-/*
-                Color Scheme
+#ifdef USE_OPENAL_SOUND
 
+void check_sound(void)
+{
+	static bool initial_play = false;
+	static bool loop_set = false;
+	static bool initial_game_setup = false;
+	static int prev_btype = 1;
 
-/* Color Theme Swatches in Hex
-.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-1-hex { color: #F2059F; }
-.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-2-hex { color: #04B2D9; }
-.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-3-hex { color: #04D94F; }
-.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-4-hex { color: #F2CB05; }
-.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-5-hex { color: #F28705; }
+	if (g.state == SPLASH || g.state == MAINMENU || g.state == GAMEOVER) {
+		// init_game_setup will unque intro buffers and queue game songs
+		initial_game_setup = false;	// switch to false if it was prev true
+		if (initial_play == false) {
+			cerr << "calling play_start_track()" << endl;
+			sounds.play_start_track();	// queues intro songs and plays
+			initial_play = true;
+		}
+		if (sounds.check_intro_buffer_done() && !loop_set) {
+			// sounds.reset_buffer_done();
+			cerr << "sounds.checkintobuffer == true" << endl;
+			cerr << "calling loop_intro()" << endl;
+			sounds.loop_intro();
+			loop_set = true;
+		}
+	} else if (g.state == GAME && initial_game_setup == false) {
+			// reset initial play so that intro plays
+		initial_play = loop_set = false;
+		initial_game_setup = true;
+		cerr << "calling setup_game_mode()" << endl;
+		sounds.setup_game_mode();
 
- Color Theme Swatches in RGBA
-.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-1-rgba { color: rgba(242, 4, 159, 1); }
-.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-2-rgba { color: rgba(4, 177, 216, 1); }
-.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-3-rgba { color: rgba(4, 216, 78, 1); }
-.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-4-rgba { color: rgba(242, 202, 4, 1); }
-.Top-view-of-many-colorful-balls-in-ball-pool-at-indoors-playground-5-rgba { color: rgba(242, 135, 4, 1); }
+	}
 
+	// *******     GUN NOISES      **********//
 
+	// start playing new sound if leveled up gun
+	if (tos.bullet_type_prime != prev_btype) {
+		sounds.gun_stop();
+		sounds.gun_play(tos.bullet_type_prime);
+		prev_btype = tos.bullet_type_prime;
+	}
+	// if space bar is pressed down and gun not already shooting
+	if ((g.keys[XK_space] == 1) && (!sounds.gun_shooting)) {
+		cerr << "tos.bullet_type_prime: " << tos.bullet_type_prime << endl;
+		sounds.gun_play(tos.bullet_type_prime);
+		sounds.gun_shooting = true;
+		// if spacebar not pressed down and gun noise currently set to shoot
+	} else if (g.keys[XK_space] == 0 && (sounds.gun_shooting)) {
+		sounds.gun_stop();
+		sounds.gun_shooting = false;
+	}
 
-.feeling-blue-1-hex { color: #3D5A73; }
-.feeling-blue-2-hex { color: #2F3D40; }
-.feeling-blue-3-hex { color: #455559; }
-.feeling-blue-4-hex { color: #28403D; }
-.feeling-blue-5-hex { color: #182625; }
+}
+#endif
 
-.feeling-blue-1-rgba { color: rgba(61, 89, 114, 1); }
-.feeling-blue-2-rgba { color: rgba(47, 61, 63, 1); }
-.feeling-blue-3-rgba { color: rgba(68, 84, 89, 1); }
-.feeling-blue-4-rgba { color: rgba(40, 63, 61, 1); }
-.feeling-blue-5-rgba { color: rgba(24, 38, 36, 1); }
+void check_level()
+{
+    static bool lvl_change = false;
 
-.feeling-blue-1-hsla { color: hsla(207, 30, 34, 1); }
-.feeling-blue-2-hsla { color: hsla(190, 15, 21, 1); }
-.feeling-blue-3-hsla { color: hsla(192, 12, 30, 1); }
-.feeling-blue-4-hsla { color: hsla(172, 23, 20, 1); }
-.feeling-blue-5-hsla { color: hsla(175, 22, 12, 1); }
-*/
+    int level_duration = 10; // 30 second levels at the moment
+    int level_time = g.gameTimer.getTime('n');
+    
+
+    static int lvl_change_time;
+
+    // wait until the next clock tick
+    if (lvl_change && lvl_change_time != level_time) {
+        lvl_change = false;
+        cerr << "lvl_change toggled to false\n";
+        
+    }
+
+    if (g.state == GAME && 
+        lvl_change == false && 
+        level_time != 0 &&
+        ((level_time % (level_duration)) == 0)) {
+
+        lvl_change = true;
+        cerr << "lvl change being toggled to true\n";
+        lvl_change_time = level_time; 
+        // level up handler
+        switch (g.level) {
+            case LEVEL1:
+                // Level2: Bread(2)
+                g.level = LEVEL2;
+                // change bread vars
+                break;
+            case LEVEL2:
+                // Level3: Entities(1) + Bread(1)
+                g.level = LEVEL3;
+                g.entity_active = true;
+                break;
+            case LEVEL3:
+                // Level4: Entities(2) + Bread(2)
+                g.level = LEVEL4;
+                g.entity_active = true;
+                // change entity vars
+                break;
+            case LEVEL4:
+                // Level5: Blocky(1) + Bread(2) + Entities(2)
+                g.level = LEVEL5;
+                g.entity_active = true;
+                g.mike_active = true;
+                break;
+            case LEVEL5:
+                // Level6: Blocky(2) + Bread(2) + Entities(2)
+                g.level = LEVEL6;
+                blocky.gamereset();
+                g.entity_active = true;
+                g.mike_active = true;
+                // change blocky vars
+                break;
+            case LEVEL6:
+                // Level7: HBlocky(1) + Bread(2) + Entities(2)
+                g.level = LEVEL7;
+                g.entity_active = true;
+                // change blocky to horizontal
+                blocky.gamereset();
+                g.mike_active = true;
+                break;
+            case LEVEL7:
+                // Level8: HBlocky(2) + Bread(2) + Entities(2)
+                g.level = LEVEL8;
+                g.entity_active = true;
+                // change HBlocky vars
+                blocky.gamereset();
+                g.mike_active = true;
+                break;
+            case LEVEL8:
+                // Level9: Boss
+                g.level = LEVEL9;
+                // unleash bossman randy savage
+                g.huaiyu_active = true;
+
+                break;
+            case LEVEL9:
+                // should transition to game over
+                g.level = LEVEL1;
+                break;
+            default:    // Level 1 behavior (Bread(1))   // shouldn't need
+                g.level = LEVEL1;
+
+                break;
+        }
+    }
+
+    if (g.state == GAMEOVER) {
+        g.level = LEVEL1;
+        g.huaiyu_active = false;
+        g.entity_active = false;
+        g.dtorres_active = false;
+        g.mike_active = false;
+    }
+}

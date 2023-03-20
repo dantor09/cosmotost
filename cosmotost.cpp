@@ -58,9 +58,9 @@ void init_opengl(void);
 void physics(void);
 void render(void);
 
-#ifdef USE_OPENAL_SOUND
-void check_sound(void);
-#endif
+// #ifdef USE_OPENAL_SOUND
+// void check_sound(void);
+// #endif
 
 //=====================================
 // MAIN FUNCTION IS HERE
@@ -81,6 +81,7 @@ int main()
 				break;
 			}
 		}
+		check_level();
 		physics();
 		render();
 #ifdef USE_OPENAL_SOUND
@@ -126,7 +127,6 @@ X11_wrapper::X11_wrapper()
 	set_title();
 	glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
 	glXMakeCurrent(dpy, win, glc);
-
 }
 
 void X11_wrapper::set_title()
@@ -189,9 +189,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 	static int savex = 0;
 	static int savey = 0;
 	static Box * selection = nullptr;
-	static Box * prev_selection = nullptr;
-
-	static unsigned char * prev_color;
 
 	// do nothing with mouse at splash screen
 	if (g.state == SPLASH) {
@@ -224,7 +221,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 					g.state = GAME;
 					g.gameTimer.reset();	// start the game timer
 					selection = nullptr;
-					prev_selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
@@ -235,7 +231,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 					mm.set_orig_color();
 					g.substate = HIGH_SCORES;
 					selection = nullptr;
-					prev_selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
@@ -246,7 +241,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 					mm.set_orig_color();
 					g.substate = SETTINGS;
 					selection = nullptr;
-					prev_selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
@@ -256,7 +250,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 				} else if (selection && (mm.words[selection->id] == "Quit")) {
 					mm.set_orig_color();
 					selection = nullptr;
-					prev_selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
@@ -324,7 +317,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 					g.state = MAINMENU;
 					g.gameTimer.pause();
 					selection = nullptr;
-					prev_selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
@@ -340,7 +332,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 							<< endl;
 					g.gameTimer.reset();
 					selection = nullptr;
-					prev_selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
@@ -358,7 +349,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 					}
 					cerr << "g.state was changed back to GAME" << endl;
 					selection = nullptr;
-					prev_selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
@@ -380,7 +370,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 					cerr << "killing game clock\n";
 					g.gameTimer.pause();
 					selection = nullptr;
-					prev_selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
@@ -408,10 +397,8 @@ int X11_wrapper::check_mouse(XEvent *e)
 				selection = pause_menu.check_t_box(savex, g.yres - savey);
 
 				if (selection) {
-					// if (selection != prev_selection) {
 						pause_menu.set_orig_color();
 						pause_menu.set_highlight(selection);
-						// prev_selection = selection; // remember selection
 						// selection = nullptr; // reset selection ptr
 #ifdef USE_OPENAL_SOUND
 					sounds.beep();
@@ -421,7 +408,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 				} else {
 					// was previously on something and now it's not
 					pause_menu.set_orig_color();
-					prev_selection = nullptr;
 
 				}
 			}
@@ -533,39 +519,55 @@ int X11_wrapper::check_keys(XEvent *e)
 						tos.bulletReload();
 						return 0;
 				case XK_p: // p was pressed - toggle Ailand's Entity State
-					if (g.substate == NONE) {
-						g.substate = ENTITY;
-						cerr << "g.substate was changed to ENTITY\n";
-					} else if (g.substate == ENTITY) {
-						g.substate = NONE;
-						cerr << "g.substate was changed back to NONE\n";
+					// if (g.substate == NONE) {
+					if (g.entity_active == false) {
+						// g.substate = ENTITY;
+						g.entity_active = true;
+						cerr << "g.entity_active set to true\n";
+					// } else if (g.substate == ENTITY) {
+					} else if (g.entity_active == true) {
+						// g.substate = NONE;
+						g.entity_active = false;
+						cerr << "g.entity_active set to false\n";
 					}
 					return 0;
 				case XK_t: // t was pressed - toggle Dan's Feature Mode
-					if (g.substate == NONE) {
-						g.substate = DTORRES;
-						cerr << "g.substate was changed to DTORRES\n";
-					} else if (g.substate == DTORRES) {
-						g.substate = NONE;
-						cerr << "g.substate was changed back to NONE\n";
+					if (g.dtorres_active == false) {
+						// g.substate = DTORRES;
+						g.dtorres_active = true;
+						cerr << "g.dtorres_active set to true\n";
+					// } else if (g.substate == DTORRES) {
+					} else if (g.dtorres_active == true) {
+						// g.substate = NONE;
+						g.dtorres_active = false;
+						cerr << "g.dtorres_active set to false\n";
 					}
 					return 0;
 				case XK_h: // h was pressed - toggle Huaiyu's Feature Mode
-					if (g.substate == NONE) {
-						g.substate = HUAIYU;
-						cerr << "g.substate was changed to HUAIYU\n";
-					} else if (g.substate == HUAIYU) {
-						g.substate = NONE;
-						cerr << "g.substate was changed back to NONE\n";
+					// if (g.substate == NONE) {
+					if (g.huaiyu_active == false) {
+						// g.substate = HUAIYU;
+						g.huaiyu_active = true;
+						cerr << "g.huaiyu_active set to true\n";
+					// } else if (g.substate == HUAIYU) {
+					} else if (g.huaiyu_active == true) {
+						g.huaiyu_active = false;
+						// g.substate = NONE;
+						cerr << "g.huaiyu_active set to false\n";
 					}
 					return 0;
 				case XK_k: // t was pressed - toggle Dan's Feature Mode
-					if (g.substate == NONE) {
-						g.substate = MIKE;
-						cerr << "g.substate was changed to MIKE\n";
-					} else if (g.substate == MIKE) {
-						g.substate = NONE;
-						cerr << "g.substate was changed back to NONE\n";
+					// if (g.substate == NONE) {
+					if (g.mike_active == false) {
+						// g.substate = MIKE;
+						g.mike_active = true;
+						cerr << "g.mike_active set to true\n";
+					// } else if (g.substate == MIKE) {
+					} else if (g.mike_active == true) {
+						g.mike_active = false;
+						blocky.gamereset();
+						// g.substate = NONE;
+						cerr << "g.mike_active set to false\n";
 					}
 					return 0;
 
@@ -706,72 +708,17 @@ void init_opengl(void)
 	// set initial game state
 	g.state = SPLASH;
 	g.substate = NONE;
-
+	g.level = LEVEL1;
 
 
 }
-
-#ifdef USE_OPENAL_SOUND
-
-void check_sound(void)
-{
-	static bool initial_play = false;
-	static bool loop_set = false;
-	static bool initial_game_setup = false;
-	static int prev_btype = 1;
-
-	if (g.state == SPLASH || g.state == MAINMENU || g.state == GAMEOVER) {
-		// init_game_setup will unque intro buffers and queue game songs
-		initial_game_setup = false;	// switch to false if it was prev true
-		if (initial_play == false) {
-			cerr << "calling play_start_track()" << endl;
-			sounds.play_start_track();	// queues intro songs and plays
-			initial_play = true;
-		}
-		if (sounds.check_intro_buffer_done() && !loop_set) {
-			// sounds.reset_buffer_done();
-			cerr << "sounds.checkintobuffer == true" << endl;
-			cerr << "calling loop_intro()" << endl;
-			sounds.loop_intro();
-			loop_set = true;
-		}
-	} else if (g.state == GAME && initial_game_setup == false) {
-			// reset initial play so that intro plays
-		initial_play = loop_set = false;
-		initial_game_setup = true;
-		cerr << "calling setup_game_mode()" << endl;
-		sounds.setup_game_mode();
-
-	}
-
-	// *******     GUN NOISES      **********//
-
-	// start playing new sound if leveled up gun
-	if (tos.bullet_type_prime != prev_btype) {
-		sounds.gun_stop();
-		sounds.gun_play(tos.bullet_type_prime);
-		prev_btype = tos.bullet_type_prime;
-	}
-	// if space bar is pressed down and gun not already shooting
-	if ((g.keys[XK_space] == 1) && (!sounds.gun_shooting)) {
-		cerr << "tos.bullet_type_prime: " << tos.bullet_type_prime << endl;
-		sounds.gun_play(tos.bullet_type_prime);
-		sounds.gun_shooting = true;
-		// if spacebar not pressed down and gun noise currently set to shoot
-	} else if (g.keys[XK_space] == 0 && (sounds.gun_shooting)) {
-		sounds.gun_stop();
-		sounds.gun_shooting = false;
-	}
-
-}
-#endif
 
 
 void physics()
 {
 	if (g.state == GAME) {
 		// ENTITY PHYSICS
-		if (g.substate == ENTITY) {
+		if (g.entity_active == true) {
 			// spawn_speed determines how many ticks until spawning another
 			// entity
 			if (e.spawn_speed == 0) {
@@ -843,7 +790,7 @@ void physics()
 		}
 		int distanceBread = g.xres;
 		int whichBread = -1;
-		if (g.substate == MIKE) {
+		if (g.mike_active == true) {
 			blocky.move();
 			if (tos.laserCollision(blocky)){
 				whichBread = -2;
@@ -877,7 +824,7 @@ void physics()
 
 
 		}
-		if (g.substate == HUAIYU) {
+		if (g.huaiyu_active == true) {
 				for (int i=0; i < g.n_Bread; i++) {
 						if(bread[i].trace) {
 								bread[i].cd--;
@@ -1074,7 +1021,9 @@ void render()
 				bread[i].draw(tos);
 	  	}
 		// ENTITY RENDER
-		if (g.substate == ENTITY || g.state == PAUSE) {
+		// if (g.substate == ENTITY || g.state == PAUSE) {
+		if (g.entity_active == true &&
+			(g.state == GAME || g.state == PAUSE)) {
 
 			for (int i = 0; i < e.num_ent; i++) {
 				glPushMatrix();
@@ -1090,7 +1039,10 @@ void render()
 			}
 		}
 
-		if ((g.substate == MIKE || g.state == PAUSE) &&
+		// if ((g.substate == MIKE || g.state == PAUSE) &&
+		// 	(blocky.is_alive() || !blocky.explode_done)) {
+		if ((g.mike_active == true &&
+			(g.state == GAME || g.state == PAUSE)) &&
 			(blocky.is_alive() || !blocky.explode_done)) {
 
 			blocky.draw();
@@ -1101,7 +1053,9 @@ void render()
 			pause_menu.draw();
 		}
 
-		if(g.substate == DTORRES) {
+		// if(g.substate == DTORRES) {
+		if(g.dtorres_active == true &&
+			(g.state == GAME || g.state == PAUSE)) {
 			srand(time(NULL));
 
 			// Make freeze block if it does not exist and timer is NULL
@@ -1203,7 +1157,7 @@ void render()
 
 	if (g.show_help_menu == false) {
 
-		Rect help_msg, score, g_time, bullets;
+		Rect help_msg, score, g_time, bullets, lvl;
 
 #ifdef USE_OPENAL_SOUND
 		Rect s_name;
@@ -1229,9 +1183,13 @@ void render()
 		g_time.left = score.left;
 		g_time.center = 0;
 
-		bullets.bot = g_time.bot-20;
-		bullets.left = g_time.left-80;
+		bullets.bot = score.bot;
+		bullets.left = score.left-80;
 		bullets.center = 0;
+
+		lvl.bot = bullets.bot-20;
+		lvl.left = bullets.left;
+		lvl.center = 0;
 
 
 		if (g.state == GAME || g.state == PAUSE) {
@@ -1239,6 +1197,7 @@ void render()
 			ggprint8b(&help_msg, 0, 0x00ffff00, "Press <F1> for help");
 			ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
+			ggprint8b(&lvl, 0, 0x00DC143C, "Level %i", g.level);
 			// ggprint8b(&bullets, 0, 0x00DC143C, "Active bullets : %i",g.n_Bullet);	// debug output
 
 #ifdef USE_OPENAL_SOUND
@@ -1253,7 +1212,7 @@ void render()
 
 	} else if (g.show_help_menu == true) {
 		const unsigned int KEY_MESSAGES = 13;
-		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time, s_name;
+		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time, s_name, bullets, lvl;
 
 		// ***********Locations of all the text rectangles******************
 		// 					Top Left side of the screen					//
@@ -1278,6 +1237,14 @@ void render()
 		g_time.bot = score.bot-20;
 		g_time.left = score.left;
 		g_time.center = 0;
+
+		bullets.bot = g_time.bot-20;
+		bullets.left = g_time.left-80;
+		bullets.center = 0;
+
+		lvl.bot = bullets.bot-20;
+		lvl.left = bullets.left;
+		lvl.center = 0;
 
 		// bottom right of the screen
 #ifdef USE_OPENAL_SOUND
@@ -1355,22 +1322,26 @@ void render()
 					ggprint8b(&key_msg[12], 0, 0x00ffff00,
 										"<u> - Cycle Music");
 
-				} else if (g.substate == ENTITY) {
+				// } else if (g.substate == ENTITY) {
+				} else if (g.entity_active == true) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - ENTITY - APARRIOTT FEATURE MODE");
 					ggprint8b(&key_msg[8], 0, 0x00ffff00,
 										"<p> - Go back to Game Mode");
-				} else if (g.substate == DTORRES) {
+				// } else if (g.substate == DTORRES) {
+				} else if (g.dtorres_active == true) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - DTORRES - DTORRES FEATURE MODE");
 					ggprint8b(&key_msg[8], 0, 0x00ffff00,
 										"<t> - Go back to Game Mode");
-				} else if (g.substate == HUAIYU) {
+				// } else if (g.substate == HUAIYU) {
+				} else if (g.dtorres_active == true) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - HUAIYU - HZHANG FEATURE MODE");
 					ggprint8b(&key_msg[8], 0, 0x00ffff00,
 										"<h> - Go back to Game Mode");
-				} else if (g.substate == MIKE) {
+				// } else if (g.substate == MIKE) {
+				} else if (g.mike_active == true) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - MIKE - MKAUSCH FEATURE MODE");
 					ggprint8b(&key_msg[8], 0, 0x00ffff00,

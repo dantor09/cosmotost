@@ -8,7 +8,11 @@
 
 //                  0       1       2       3       4
 enum Gamestate { SPLASH, MAINMENU, GAME, PAUSE, GAMEOVER };
-enum Substate { NONE, ENTITY, HIGH_SCORES, SETTINGS, DTORRES, HUAIYU, MIKE };
+enum Substate { NONE, HIGH_SCORES, SETTINGS };
+enum Levels { LEVEL1=1, LEVEL2, LEVEL3, LEVEL4, LEVEL5, LEVEL6, LEVEL7, LEVEL8, LEVEL9 };
+
+// removing Substates ENTITY, DTORRES, HUAIYU, MIKE and made into bools
+
 
 class Global {
 public:
@@ -26,7 +30,12 @@ char keys[65536];
 bool show_help_menu;
 int levelchance;
 Timer gameTimer;
-
+Levels level;
+// bools made from states
+bool entity_active,
+        dtorres_active,
+        huaiyu_active,
+        mike_active;
 
 
 Global();

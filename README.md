@@ -12,17 +12,23 @@
     - character choice
     - music
 - naming convention for enemies
-- refactoring code
-
+- Make multiple difficulties of enemies
+- horizontal blocky
+- forky needs to be a bullet
+- shield
 
 
 #### In Progress:
-- HUD (dan)
 - ARTWORK... (ailand)
 - hole in the wall obstacle
-
+- circle enemy (mike)
+- freeze enemy (dan)
 
 #### Done:
+- State transitions b/w levels (mike)
+- create level states (mike)
+- HUD (dan)
+- refactoring code (dan, huaiyu, ailand)
 - consistent coding style (dan, huaiyu, ailand)
 - gun noises (mike)
 - cooldown power bar (mike)
