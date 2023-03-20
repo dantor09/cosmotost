@@ -8,7 +8,7 @@
 
 //                  0       1       2       3       4
 enum Gamestate { SPLASH, MAINMENU, GAME, PAUSE, GAMEOVER };
-enum Substate { NONE, HIGH_SCORES, SETTINGS };
+enum Substate { NONE, HIGH_SCORES, SETTINGS, DEBUG };
 enum Levels { LEVEL1=1, LEVEL2, LEVEL3, LEVEL4, LEVEL5, LEVEL6, LEVEL7, LEVEL8, LEVEL9 };
 
 // removing Substates ENTITY, DTORRES, HUAIYU, MIKE and made into bools
@@ -54,10 +54,11 @@ void gameReset();
 inline Global g;
 
 inline std::string mm_text[] = {"Start Game",
+                                "Debug Mode",
                                 "High Scores",
                                 "Settings",
                                 "Quit"};
-inline Menu mm(4, 225, 225, g.xres/2.0f, g.yres/2.0f, mm_text);
+inline Menu mm(5, 225, 225, g.xres/2.0f, g.yres/2.0f, mm_text);
 
 inline std::string p_text[] = {"Back to Game",
                                 "Start Over",

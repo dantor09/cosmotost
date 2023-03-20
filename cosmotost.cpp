@@ -227,6 +227,12 @@ int X11_wrapper::check_mouse(XEvent *e)
 #endif
 
 					return 0;
+				} else if (selection && (mm.words[selection->id] == "Debug Mode")) {
+					mm.set_orig_color();
+					g.state = GAME;
+					g.substate = DEBUG;
+					g.gameTimer.reset();
+					selection = nullptr;
 				} else if (selection && (mm.words[selection->id] == "High Scores")) {
 					mm.set_orig_color();
 					g.substate = HIGH_SCORES;

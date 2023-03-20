@@ -16,6 +16,8 @@
 - horizontal blocky
 - forky needs to be a bullet
 - shield
+- game_reset() for entity state
+
 
 
 #### In Progress:
@@ -25,6 +27,7 @@
 - freeze enemy (dan)
 
 #### Done:
+- debug mode (mike)
 - State transitions b/w levels (mike)
 - create level states (mike)
 - HUD (dan)

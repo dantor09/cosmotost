@@ -553,7 +553,6 @@ void Sound::loop_intro()
     alSourceStop(menuQueueSource);
     alSourceRewind(menuQueueSource);
     alSourcePlay(alSources[4]);
-
 }
 
 void Sound::setup_game_mode()
@@ -726,7 +725,7 @@ void PowerBar::draw()
         glEnd();
         glPopMatrix();
 
-        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", itm->hp, itm->starting_hp, itm->lives);
+        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", (int)(itm->hp), itm->starting_hp, itm->lives);
     } else if (type == COOLDOWN) {
 
         glColor3ubv(total.color);
@@ -758,9 +757,6 @@ void PowerBar::draw()
         // cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
     }
 
-
-
-    
 }
 
 // modified from hzhang's file by mkausch
@@ -1125,98 +1121,105 @@ void check_level()
 {
     static bool lvl_change = false;
 
-    int level_duration = 10; // 30 second levels at the moment
-    int level_time = g.gameTimer.getTime('n');
-    
 
-    static int lvl_change_time;
+    if (g.substate != DEBUG) {
+        int level_duration = 20; // 20 second levels at the moment
+        int level_time = g.gameTimer.getTime('n');
+        
 
-    // wait until the next clock tick
-    if (lvl_change && lvl_change_time != level_time) {
-        lvl_change = false;
-        cerr << "lvl_change toggled to false\n";
+        static int lvl_change_time;
+
+
+        // wait until the next clock tick
+        if (lvl_change && lvl_change_time != level_time) {
+            lvl_change = false;
+            cerr << "lvl_change toggled to false\n";
+            
+        }
+
+        if (g.state == GAME && 
+            lvl_change == false && 
+            level_time != 0 &&
+            ((level_time % (level_duration)) == 0)) {
+
+            lvl_change = true;
+            cerr << "lvl change being toggled to true\n";
+            lvl_change_time = level_time; 
+            // level up handler
+            switch (g.level) {
+                case LEVEL1:
+                    // Level2: Bread(2)
+                    g.level = LEVEL2;
+                    // change bread vars
+                    break;
+                case LEVEL2:
+                    // Level3: Entities(1) + Bread(1)
+                    g.level = LEVEL3;
+                    g.entity_active = true;
+                    break;
+                case LEVEL3:
+                    // Level4: Entities(2) + Bread(2)
+                    g.level = LEVEL4;
+                    g.entity_active = true;
+                    // change entity vars
+                    break;
+                case LEVEL4:
+                    // Level5: Blocky(1) + Bread(2) + Entities(2)
+                    g.level = LEVEL5;
+                    g.entity_active = true;
+                    g.mike_active = true;
+                    break;
+                case LEVEL5:
+                    // Level6: Blocky(2) + Bread(2) + Entities(2)
+                    g.level = LEVEL6;
+                    blocky.gamereset();
+                    g.entity_active = true;
+                    g.mike_active = true;
+                    // change blocky vars
+                    break;
+                case LEVEL6:
+                    // Level7: HBlocky(1) + Bread(2) + Entities(2)
+                    g.level = LEVEL7;
+                    g.entity_active = true;
+                    // change blocky to horizontal
+                    blocky.gamereset();
+                    g.mike_active = true;
+                    break;
+                case LEVEL7:
+                    // Level8: HBlocky(2) + Bread(2) + Entities(2)
+                    g.level = LEVEL8;
+                    g.entity_active = true;
+                    // change HBlocky vars
+                    blocky.gamereset();
+                    g.mike_active = true;
+                    break;
+                case LEVEL8:
+                    // Level9: Boss
+                    g.level = LEVEL9;
+                    // unleash bossman randy savage
+                    g.huaiyu_active = true;
+
+                    break;
+                case LEVEL9:
+                    // should transition to game over
+                    g.level = LEVEL1;
+                    break;
+                default:    // Level 1 behavior (Bread(1))   // shouldn't need
+                    g.level = LEVEL1;
+
+                    break;
+            }
+        }
+
         
     }
 
-    if (g.state == GAME && 
-        lvl_change == false && 
-        level_time != 0 &&
-        ((level_time % (level_duration)) == 0)) {
-
-        lvl_change = true;
-        cerr << "lvl change being toggled to true\n";
-        lvl_change_time = level_time; 
-        // level up handler
-        switch (g.level) {
-            case LEVEL1:
-                // Level2: Bread(2)
-                g.level = LEVEL2;
-                // change bread vars
-                break;
-            case LEVEL2:
-                // Level3: Entities(1) + Bread(1)
-                g.level = LEVEL3;
-                g.entity_active = true;
-                break;
-            case LEVEL3:
-                // Level4: Entities(2) + Bread(2)
-                g.level = LEVEL4;
-                g.entity_active = true;
-                // change entity vars
-                break;
-            case LEVEL4:
-                // Level5: Blocky(1) + Bread(2) + Entities(2)
-                g.level = LEVEL5;
-                g.entity_active = true;
-                g.mike_active = true;
-                break;
-            case LEVEL5:
-                // Level6: Blocky(2) + Bread(2) + Entities(2)
-                g.level = LEVEL6;
-                blocky.gamereset();
-                g.entity_active = true;
-                g.mike_active = true;
-                // change blocky vars
-                break;
-            case LEVEL6:
-                // Level7: HBlocky(1) + Bread(2) + Entities(2)
-                g.level = LEVEL7;
-                g.entity_active = true;
-                // change blocky to horizontal
-                blocky.gamereset();
-                g.mike_active = true;
-                break;
-            case LEVEL7:
-                // Level8: HBlocky(2) + Bread(2) + Entities(2)
-                g.level = LEVEL8;
-                g.entity_active = true;
-                // change HBlocky vars
-                blocky.gamereset();
-                g.mike_active = true;
-                break;
-            case LEVEL8:
-                // Level9: Boss
-                g.level = LEVEL9;
-                // unleash bossman randy savage
-                g.huaiyu_active = true;
-
-                break;
-            case LEVEL9:
-                // should transition to game over
-                g.level = LEVEL1;
-                break;
-            default:    // Level 1 behavior (Bread(1))   // shouldn't need
-                g.level = LEVEL1;
-
-                break;
-        }
-    }
-
     if (g.state == GAMEOVER) {
-        g.level = LEVEL1;
-        g.huaiyu_active = false;
-        g.entity_active = false;
-        g.dtorres_active = false;
-        g.mike_active = false;
-    }
+            g.level = LEVEL1;
+            g.huaiyu_active = false;
+            g.entity_active = false;
+            g.dtorres_active = false;
+            g.mike_active = false;
+        }
+    
 }
