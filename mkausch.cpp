@@ -1127,7 +1127,7 @@ void check_level()
 
 
     if (g.substate != DEBUG) {
-        int level_duration = 20; // 20 second levels at the moment
+        int level_duration = 10; // 20 second levels at the moment
         int level_time = g.gameTimer.getTime('n');
         
 
@@ -1176,7 +1176,7 @@ void check_level()
                 case LEVEL5:
                     // Level6: Blocky(2) + Bread(2) + Entities(2)
                     g.level = LEVEL6;
-                    vblocky.gamereset();
+                    blocky->gamereset();
                     g.entity_active = true;
                     g.mike_active = true;
                     // change blocky vars
@@ -1185,8 +1185,10 @@ void check_level()
                     // Level7: HBlocky(1) + Bread(2) + Entities(2)
                     g.level = LEVEL7;
                     g.entity_active = true;
+                    blocky = &hblocky;
+                    blocky_health = &hblocky_health;
                     // change blocky to horizontal
-                    blocky.gamereset();
+                    blocky->gamereset();
                     g.mike_active = true;
                     break;
                 case LEVEL7:
@@ -1194,7 +1196,7 @@ void check_level()
                     g.level = LEVEL8;
                     g.entity_active = true;
                     // change HBlocky vars
-                    blocky.gamereset();
+                    blocky->gamereset();
                     g.mike_active = true;
                     break;
                 case LEVEL8:
@@ -1213,9 +1215,7 @@ void check_level()
 
                     break;
             }
-        }
-
-        
+        }        
     }
 
     if (g.state == GAMEOVER) {
@@ -1224,6 +1224,10 @@ void check_level()
             g.entity_active = false;
             g.dtorres_active = false;
             g.mike_active = false;
-        }
+            blocky = &vblocky;
+            blocky_health = &vblocky_health;
+    }
+
     
+
 }

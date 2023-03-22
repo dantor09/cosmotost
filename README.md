@@ -13,10 +13,11 @@
     - music
 - naming convention for enemies
 - Make multiple difficulties of enemies
-- horizontal blocky
 - forky needs to be a bullet
 - shield
 - game_reset() for entity state
+- list of 10 high scores
+- linke high scores with odin
 
 
 
@@ -27,6 +28,7 @@
 - freeze enemy (dan)
 
 #### Done:
+- horizontal blocky (mike)
 - debug mode (mike)
 - State transitions b/w levels (mike)
 - create level states (mike)

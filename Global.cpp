@@ -26,5 +26,5 @@ void Global::gameReset()
 		for(int i = 0; i <10; i++)
 		record.gamer[i]='_';
 		tos.posReset();
-		blocky.gamereset();
+		vblocky.gamereset();
 }

@@ -286,6 +286,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 				if (selection) {
 
+					
 					mm.set_orig_color();
 					mm.set_highlight(selection);
 
@@ -567,11 +568,14 @@ int X11_wrapper::check_keys(XEvent *e)
 					if (g.mike_active == false) {
 						// g.substate = MIKE;
 						g.mike_active = true;
+						blocky = (blocky == &vblocky) ? &hblocky : &vblocky;
+						blocky_health = (blocky_health == &vblocky_health) ? 
+															&hblocky_health : &hblocky_health;
 						cerr << "g.mike_active set to true\n";
 					// } else if (g.substate == MIKE) {
 					} else if (g.mike_active == true) {
 						g.mike_active = false;
-						blocky.gamereset();
+						blocky->gamereset();
 						// g.substate = NONE;
 						cerr << "g.mike_active set to false\n";
 					}
@@ -641,8 +645,7 @@ int X11_wrapper::check_keys(XEvent *e)
 		// 		Escape: Go back to the main menu
 		//		Game Over text with credits rolling?
 	} else if (g.state == GAMEOVER) {
-		if (tos.score > record.highscore)
-		{
+		if (tos.score > record.highscore) {
 				int key = XLookupKeysym(&e->xkey, 0);
 				if (e->type == KeyPress) {
 						// cout << key << endl;
@@ -668,7 +671,7 @@ int X11_wrapper::check_keys(XEvent *e)
 							cerr << "g.state was changed to MAINMENU" << endl;
 							return 0;
 						}
-			}
+				}
 		}
 		if (e->type == KeyPress) {
 			switch (key) {
@@ -715,6 +718,8 @@ void init_opengl(void)
 	g.state = SPLASH;
 	g.substate = NONE;
 	g.level = LEVEL1;
+	blocky = &vblocky;
+	blocky_health = &vblocky_health;
 
 
 }
@@ -797,18 +802,18 @@ void physics()
 		int distanceBread = g.xres;
 		int whichBread = -1;
 		if (g.mike_active == true) {
-			blocky.move();
-			if (tos.laserCollision(blocky)){
+			blocky->move();
+			if (tos.laserCollision(vblocky)){
 				whichBread = -2;
-				distanceBread = blocky.pos[0] - tos.pos[0] - blocky.w - tos.w;
+				distanceBread = blocky->pos[0] - tos.pos[0] - blocky->w - tos.w;
 			}
 			// check toaster collision with blocky
-			if (blocky.collision(tos)) {
-				tos.hpDamage(blocky);
-				blocky.reset();
+			if (blocky->collision(tos)) {
+				tos.hpDamage(vblocky);
+				blocky->reset();
 
-				if (blocky.hpCheck()) {
-					blocky.reset();
+				if (blocky->hpCheck()) {
+					blocky->reset();
 				}
 				if (tos.hpCheck()) {
 					g.state = GAMEOVER;
@@ -817,12 +822,12 @@ void physics()
 
 			// check blocky's collision with bullets
 			for (int j=0; j < g.n_Bullet; j++) {
-				if (blocky.collision(bul[j])) {
-						blocky.hpDamage(bul[j]);
-						bul[j].hpDamage(blocky);
-						if(blocky.hpCheck()) {
-							tos.score += blocky.point;
-							blocky.reset();
+				if (blocky->collision(bul[j])) {
+						blocky->hpDamage(bul[j]);
+						bul[j].hpDamage(vblocky);
+						if(blocky->hpCheck()) {
+							tos.score += blocky->point;
+							blocky->reset();
 						}
 						bul[j] = bul[--g.n_Bullet];
 				}
@@ -912,7 +917,7 @@ void physics()
 		tos.setDistance(distanceBread);
 		if(tos.laserOn)  {
 			if (whichBread == -2) {
-					tos.laserDamage(blocky);
+					tos.laserDamage(vblocky);
 					cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
 			} 
 			else if (whichBread != -1) {
@@ -1049,10 +1054,10 @@ void render()
 		// 	(blocky.is_alive() || !blocky.explode_done)) {
 		if ((g.mike_active == true &&
 			(g.state == GAME || g.state == PAUSE)) &&
-			(blocky.is_alive() || !blocky.explode_done)) {
+			(blocky->is_alive() || !blocky->explode_done)) {
 
-			blocky.draw();
-			blocky_health.draw();
+			blocky->draw();
+			blocky_health->draw();
 		}
 
 		if (g.state == PAUSE) {
