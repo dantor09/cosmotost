@@ -317,17 +317,18 @@ public:
 
     Gamerecord();
     ~Gamerecord();
-    void submitRecord(int);
+    void submitRecord(int); // submits score to be added to list of scores
+                            // and makes a new menu
 
-    bool getRecord();
-    void writeRecord();
+    bool getRecord();   // gets all the records (from local txt file currently)
+    void writeRecord();// writes out the records (to a local txt file currently)
     
-    void sortRecord();
-    void addRecord(HighScore s);
-    bool isHighScore();
-    bool isTopTen();
+    void sortRecord();  // sorts the records
+    void addRecord(HighScore s);    // adds a record
+    bool isHighScore(); // tests if the user's score is a high score
+    bool isTopTen();    // tests if the the scores is in top ten
 
     Menu * hs_menu; // use menu class to display the names nicely
-    void makeMenu();
+    void makeMenu();    // makes the high score menu
     
 };

@@ -16,7 +16,6 @@
 - forky needs to be a bullet
 - shield
 - game_reset() for entity state
-- list of 10 high scores
 - linke high scores with odin
 
 
@@ -28,6 +27,7 @@
 - freeze enemy (dan)
 
 #### Done:
+- list of 10 high scores (mike)
 - horizontal blocky (mike)
 - debug mode (mike)
 - State transitions b/w levels (mike)
