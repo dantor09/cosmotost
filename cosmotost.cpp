@@ -193,7 +193,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 	// do nothing with mouse at splash screen
 	if (g.state == SPLASH) {
 
-	} else if (g.state == MAINMENU) {
+	} else if (g.state == MAINMENU && g.substate == NONE) {
 		//Weed out non-mouse events
 		if (e->type != ButtonRelease &&
 			e->type != ButtonPress &&
@@ -644,55 +644,80 @@ int X11_wrapper::check_keys(XEvent *e)
 		// Only valid key entries are:
 		// 		Escape: Go back to the main menu
 		//		Game Over text with credits rolling?
-	} else if (g.state == GAMEOVER) {
-		if (tos.score > record.highscore) {
-				int key = XLookupKeysym(&e->xkey, 0);
-				if (e->type == KeyPress) {
-						// cout << key << endl;
-						if(key >=97 && key <= 122) {
-								record.gamer[record.n]= (char)key;
-								record.str = record.gamer;
-								cout << (char)key << endl;
-								cout << record.str << endl;
-								if (record.n < 9)
-									record.n++;
-						}
-						if(key == XK_BackSpace) {
-								cout << "de" <<endl;
-								record.gamer[record.n] = '_';
-								if(record.n > 0)
-										record.n--;
-						}
-						if(key == XK_Return) {
-							record.changeRecord(tos.score);
-							g.state = MAINMENU;
-							g.gameReset();
-							g.substate = NONE;
-							cerr << "g.state was changed to MAINMENU" << endl;
-							return 0;
-						}
-				}
-		}
+	} else if (g.state == GAMEOVER && g.substate == NONE) {
+		// if (tos.score > record.highscore) {
+		int key = XLookupKeysym(&e->xkey, 0);
 		if (e->type == KeyPress) {
-			switch (key) {
-				case XK_Escape:
-					// Escape key was pressed
-					// Go back to the Main Menu
-					g.state = MAINMENU;
-					g.gameReset();
-					g.substate = NONE;
-					cerr << "g.state was changed to MAINMENU" << endl;
-					return 0;
+			// cout << key << endl;
+			if(key >=97 && key <= 122) {
+					record.gamer[record.n]= (char)key;
+					// record.str = record.gamer;
+					cout << (char)key << endl;
+					cout << record.gamer << endl;
+					if (record.n < 9)
+						record.n++;
+			}
+			if(key == XK_BackSpace) {
+					cout << "<<backspace>>" <<endl;
+					record.gamer[record.n] = ' ';
+					if(record.n > 0)
+							record.n--;
+			}
+			if(key == XK_Return) {
+				record.submitRecord(tos.score);
+				// g.state = MAINMENU;
+				// g.gameReset();
+				g.substate = HIGH_SCORES;
+				cerr << "g.substate was changed to HIGH_SCORES" << endl;
+				return 0;
+			}
+
+			if (key == XK_Escape) {
+				// Escape key was pressed
+				// Go back to the Main Menu
+				// g.state = MAINMENU;
+				// g.gameReset();
+				g.substate = HIGH_SCORES;
+				cerr << "g.substate was changed to HIGH_SCORES" << endl;
+				return 0;
+			}
+		}
+	} else if (g.state == GAMEOVER && g.substate == HIGH_SCORES) {
+		// if (tos.score > record.highscore) {
+		int key = XLookupKeysym(&e->xkey, 0);
+		if (e->type == KeyPress) {
+			// cout << key << endl;
+			if(key == XK_Return) {
+				// g.state = MAINMENU;
+				g.gameReset();
+				g.state = MAINMENU;
+				g.substate = NONE;
+				record.makeMenu();
+				// record.hs_menu->set_orig_color();
+				cerr << "g.state was changed to MAINMENU" << endl;
+				return 0;
+			}
+			if (key == XK_Escape) {
+				// Escape key was pressed
+				// Go back to the Main Menu
+				// g.state = MAINMENU;
+				g.gameReset();
+				g.state = MAINMENU;
+				g.substate = NONE;
+				record.makeMenu();
+				cerr << "g.state was changed to MAINMENU" << endl;
+				return 0;
 			}
 		}
 	}
-
 	return 0;
 }
+
 
 // won't have to mess with this much in the project
 void init_opengl(void)
 {
+	cerr << "starting initializing opengl\n";
 	//OpenGL initialization
     // make the viewport the size of the whole window
 	glViewport(0, 0, g.xres, g.yres);
@@ -721,6 +746,7 @@ void init_opengl(void)
 	blocky = &vblocky;
 	blocky_health = &vblocky_health;
 
+	cerr << "finished initializing opengl" << endl;
 
 }
 
@@ -1003,6 +1029,10 @@ void render()
 			ggprint8b(&settings_msg, 0, 0x00ffff00, "Settings Img Placeholder");
 
 
+		} else if (g.substate == HIGH_SCORES) {
+
+			record.hs_menu->draw();
+
 		}
 
 	} else if (g.state == GAME || g.state == PAUSE ) {
@@ -1098,57 +1128,44 @@ void render()
 
 		}
 
-	} else if (g.state == GAMEOVER) {
-		// draw score display
-		Box end_img;
-		end_img.setColor(61, 90, 115);
-		glColor3ubv(end_img.color);
-		end_img.setDim(100.0f, 100.0f);
-		end_img.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
-
-
-		/*******************   SPLASH IMAGE PLACEHOLDER   *******************/
-		glPushMatrix();
-		glTranslatef(end_img.pos[0], end_img.pos[1], end_img.pos[2]);
-		glBegin(GL_QUADS);
-			glVertex2f(-end_img.w, -end_img.h);
-			glVertex2f(-end_img.w,  end_img.h);
-			glVertex2f( end_img.w,  end_img.h);
-			glVertex2f( end_img.w, -end_img.h);
-		glEnd();
-		glPopMatrix();
-
-		Rect end_msg;
-		end_msg.bot = end_img.pos[1];
-        end_msg.left = end_img.pos[0];
-        end_msg.center = 1;
-
-        ggprint8b(&end_msg, 0, 0x00ffff00, "End Game Image Placeholder");
-
-		/******************    END SPLASH IMAGE    ***************************/
+	} else if (g.state == GAMEOVER && g.substate == NONE) {
 
 		Rect game_msg;
 		Rect typename_m, hscore_msg;
 
-		typename_m.bot = g.yres * (1/10.0f);
-				typename_m.left = g.xres / 2.0f;
-				typename_m.center = 1;
-		hscore_msg.bot = g.yres * (3/10.0f);
-        hscore_msg.left = g.xres / 2.0f;
-        hscore_msg.center = 1;
-		if(tos.score > record.highscore) {
-				game_msg.bot = g.yres * (2/5.0f);
-		        game_msg.left = g.xres / 2.0f;
-		        game_msg.center = 1;
-				ggprint16(&typename_m, 0, 0x00ffffff, "%s", record.gamer);
-				ggprint16(&hscore_msg, 0, 0x00DC143C, "New Record: %i", tos.score);
-		} else {
-				game_msg.bot = g.yres * (1/4.0f);
-						game_msg.left = g.xres / 2.0f;
-						game_msg.center = 1;
+		game_msg.bot = g.yres / 2.0f;
+		game_msg.left = g.xres / 2.0f;
+		game_msg.center = 1;
 
-		}
+		hscore_msg.bot = game_msg.bot - 40;
+        hscore_msg.left = game_msg.left;
+        hscore_msg.center = 1;
+
+		typename_m.bot = hscore_msg.bot - 40;
+		typename_m.left = hscore_msg.left;
+		typename_m.center = 1;
+
+		glPushMatrix();
+		glTranslatef(typename_m.left, typename_m.bot, 0);
+		glColor3ub(255, 0, 0);
+		glBegin(GL_QUADS);
+			glVertex2f(-75, 0);
+			glVertex2f(75, 0);
+			glVertex2f(75, 4);
+			glVertex2f(-75, 4);
+		glEnd();
+		glPopMatrix();
+
+		ggprint16(&typename_m, 0, 0x00ffffff, "%s", record.gamer);
+		ggprint16(&hscore_msg, 0, 0x00DC143C, "New Record: %i", tos.score);
 		ggprint16(&game_msg, 0, 0x00ffffff, "GAME OVER");
+
+
+
+	} else if (g.state == GAMEOVER && g.substate == HIGH_SCORES) {
+	
+
+		record.hs_menu->draw();
 
 	}
 
@@ -1265,14 +1282,7 @@ void render()
 
 #endif
 
-// 				Record Middle of the screen				//
-		Rect typename_m, hscore_msg;
-		typename_m.bot = g.yres * (3/5.0f);
-				typename_m.left = g.xres / 2.0f;
-				typename_m.center = 1;
-		hscore_msg.bot = g.yres * (2/5.0f);
-        hscore_msg.left = g.xres / 2.0f;
-        hscore_msg.center = 1;
+
 
 
 		// 					Write Messages Based On State					//
@@ -1306,15 +1316,15 @@ void render()
 															"STATE - High Scores");
 					ggprint8b(&key_msg[0], 0, 0x00ffff00,
 												"<ESC> - Back to Main Menu");
-					if(record.highscore == 0) {
-							ggprint16(&hscore_msg, 0, 0x00DC143C,
-								 						"No Record Yet!!");
-					} else {
-							ggprint16(&hscore_msg, 0, 0x00DC143C,
-								 						"Score : %i",tos.score);
-							ggprint16(&typename_m, 0, 0x00DC143C,
-								 						"%s",record.reName);
-					}
+					// if(record.highscore == 0) {
+					// 		ggprint16(&hscore_msg, 0, 0x00DC143C,
+					// 			 						"No Record Yet!!");
+					// } else {
+					// 		ggprint16(&hscore_msg, 0, 0x00DC143C,
+					// 			 						"Score : %i",tos.score);
+					// 		// ggprint16(&typename_m, 0, 0x00DC143C,
+					// 		// 	 						"%s",record.reName);
+					// }
 				}
 
 				break;
@@ -1401,11 +1411,12 @@ void render()
 #endif
 				break;
 			case GAMEOVER:
-				// ggprint8b(&score, 100, 0x00DC143C, "Score");
+				ggprint8b(&score, 100, 0x00DC143C, "Score");
 				ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 				ggprint8b(&g_time, 0, 0x00DC143C,
 											"Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 				ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAMEOVER");
+
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Back to Main Menu");
 				break;
 

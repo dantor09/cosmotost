@@ -17,9 +17,17 @@
 #include <string>
 #include </usr/include/AL/alut.h>
 #include <math.h>
+#include <new>
+#include <sstream>
+#include <GL/glx.h>
+#include <iostream>
+#include <iomanip>
+#include <chrono>
+#include <time.h>
+#include <cstdlib>
 
-#include "mkausch.h"
 #include "Global.h"
+#include "mkausch.h"
 //#include "hzhang.h"
 #include "aparriott.h"
 
@@ -37,8 +45,9 @@ using namespace std;
 Menu::Menu(unsigned int _n_texts,
             float w, float h,
             float x, float y,
-            std::string* _words)
-    : n_texts{_n_texts}, pos{x, y, 0}
+            std::string* _words,
+            int _centering)
+    : n_texts{_n_texts}, pos{x, y, 0}, centering(_centering)
 {
     // dynamially allocate boxes/rects for text display
     mainbox.setDim(w, h);
@@ -167,8 +176,11 @@ void Menu::draw()
 
     for(int i = 0; i < n_texts; i++) {
         texts[i].bot = t_boxs[i].pos[1] - 5;
-        texts[i].left = t_boxs[i].pos[0];
-        texts[i].center = 1;
+        if (!centering)
+            texts[i].left = t_boxs[i].pos[0]-t_boxs[i].w + 100;
+        else
+            texts[i].left = t_boxs[i].pos[0];
+        texts[i].center = centering;
 
 
         // r[i].bot = t_boxs[i].pos[1] - 5;
@@ -195,7 +207,6 @@ Box* Menu::check_t_box(int x, int y)
             (x < (t_boxs[i].pos[0]+t_boxs[i].w)) &&
             (y > (t_boxs[i].pos[1]-t_boxs[i].h)) &&
             (y < (t_boxs[i].pos[1]+t_boxs[i].h))) {
-
 
             box_ptr = (t_boxs+i);
             break;
@@ -1121,6 +1132,8 @@ void check_sound(void)
 }
 #endif
 
+// directs enemies to be present during specified states
+// also changes enemy settings if it's relevent
 void check_level()
 {
     static bool lvl_change = false;
@@ -1208,7 +1221,7 @@ void check_level()
                     break;
                 case LEVEL9:
                     // should transition to game over
-                    g.level = LEVEL1;
+                    // g.level = LEVEL1;
                     break;
                 default:    // Level 1 behavior (Bread(1))   // shouldn't need
                     g.level = LEVEL1;
@@ -1228,6 +1241,244 @@ void check_level()
             blocky_health = &vblocky_health;
     }
 
-    
+}
 
+HighScore::HighScore(string n, int s)
+    : uname(n), score(s) { }
+
+// overloaded < operator to compare scores in algorithm lib
+bool HighScore::operator < (const HighScore & rhs)
+{
+    return (score < rhs.score);
+}
+
+// overloaded = operator used to see if it's exactly equal to the last
+// score in the highscores list.. if it is then it keeps the new val
+bool HighScore::operator == (const HighScore & rhs)
+{
+    return (score == rhs.score);
+}
+
+bool HighScore::operator == (int val)
+{
+    return score == val;
+}
+
+bool HighScore::operator == (string str)
+{
+    return uname == str;
+}
+
+Gamerecord::Gamerecord()
+{
+	bool read_success = getRecord();
+	
+	// make new blank record with fake names
+	if (!read_success) {
+		genFakeNames();	// generate and load fake scores into file so that there's always 10
+		writeRecord();	// write file to disk so that it now exists for the future
+	}
+
+	memset(gamer,' ',9); gamer[9] = '\0';
+	highscore = scores[scores.size()-1].score;
+	user_score = nullptr;
+    hs_menu = nullptr;
+    place = -1;
+    makeMenu();
+}
+
+Gamerecord::~Gamerecord()
+{
+	writeRecord();
+	if (user_score) {
+		delete user_score;
+		user_score = nullptr;
+	}
+
+    if (hs_menu) {
+        delete hs_menu;
+        hs_menu = nullptr;
+    }
+
+}
+
+// reads highscores from local file and loads them into the scores vector
+bool Gamerecord::getRecord()
+{
+	// ****--------------------------[[ TODO: ]]---------------------------****
+	// replace this line of code with the query to odin to retrieve the high scores
+	ifstream fin("Highscore.txt");
+
+	if (!fin) {
+		return false;
+	}
+
+	string user;
+	int score;
+	int count = 0;
+
+	while (fin >> user >> score) {
+        // cerr << user << " : " << score << endl;
+		HighScore entry = HighScore(user, score);
+		scores.push_back(entry);
+		count++;
+	}
+
+	if (count < 10) {
+		genFakeNames();
+	}
+
+	return true;
+
+}
+
+// writes top ten records to disk
+void Gamerecord::writeRecord()
+{
+	ofstream fout("Highscore.txt");
+
+	if (!fout) {
+		throw "could not write to highscore file";
+	}
+
+	// only write top 10 scores
+	for (int i = 0; i < scores.size(); i++) {
+		fout << scores[i].uname << "\t" << scores[i].score;
+        if (i != (scores.size() - 1)){
+            fout << endl;
+        }
+	}
+
+	cerr << "Highscore.txt written successfully...\n";
+}
+
+
+void Gamerecord::submitRecord(int s)
+{
+	if (user_score == nullptr) {
+		user_score = new HighScore(string(gamer), s);
+	} else {
+        delete user_score;
+		user_score = new HighScore(string(gamer), s);
+	}
+
+    cerr << user_score->uname << "'s score is " << user_score->score << endl;
+
+    cerr << "adding to records..." << endl;
+	addRecord(*user_score);
+    for (int i = 0; i < scores.size(); i++) {
+        if ((scores[i].score == user_score->score) && 
+                (scores[i].uname == user_score->uname))
+            place = i;
+    }
+
+    
+    if (isHighScore()) {
+        highscore = s;
+    }
+
+    cerr << "making new menu... " << endl;
+    makeMenu(); // make the menu with 11 people
+
+	scores.pop_back();	// delete the lowest
+}
+
+// sorts the records
+void Gamerecord::sortRecord()
+{
+	sort(scores.begin(), scores.end());	// sorts in ascending
+	reverse(scores.begin(), scores.end());	// changes to descending
+
+    cerr << "finished sorting scores\n";
+}
+
+// adds a record then sorts the records
+void Gamerecord::addRecord(HighScore s)
+{
+	scores.push_back(s);
+    cerr << "finished adding score\n";
+	sortRecord();
+}
+
+// tests to see if the user's score is equal to the high score
+bool Gamerecord::isHighScore()
+{
+	// return (place == (*user_score).score);
+    if (place == -1)
+        return false;
+    
+    return (place == 0);
+        
+}
+
+bool Gamerecord::isTopTen()
+{
+    if (place == -1)
+        return false;
+
+	return (place >= 0 && place < 11);
+}
+
+void Gamerecord::genFakeNames()
+{
+	string names[10] = {"Amy", "Mike", "Grayson", "Gavin", "Dan", 
+						"Huaiyu", "Ailand", "Newb1234", "tehBest", "Gordon"};
+	int nums[10] = {100, 200, 300, 400, 500, 600, 700, 800, 900, 1000};
+	int i = 0;
+
+	while (scores.size() < 10) {
+		// make sure the dummy value is unique,.
+		auto it = find(scores.begin(), scores.end(), nums[i]);
+		if (it == scores.end())
+			scores.push_back(HighScore(names[i],nums[i]));
+		i++;
+	}
+	
+	sortRecord();
+}
+
+void Gamerecord::makeMenu()
+{
+    ostringstream temp;
+    string name_list[scores.size()];
+
+
+    for (int i = 0; i < scores.size(); i++) {
+        temp << left << setw(12) << scores[i].uname 
+             << right << setw(60) << scores[i].score;
+        cerr << left << setw(12) << scores[i].uname 
+             << right << setw(60) << scores[i].score << endl;
+
+        name_list[i] = temp.str();
+        temp.str("");
+    }
+    
+    // allocate mem for new menu
+    if (!hs_menu) {
+        // cerr << "menu set to null so far" << endl;
+        hs_menu = new Menu(scores.size(), 300.0, 300.0, 
+                            g.xres/2.0, g.yres/2.0, name_list, 1);
+    } else if (hs_menu) {   // make a new menu
+        // cerr << "deleting the prev menu" << endl;
+        delete hs_menu;
+        // cerr << "now making a new menu" << endl;
+        hs_menu = new Menu(scores.size(), 300.0, 300.0, 
+                            g.xres/2.0, g.yres/2.0, name_list, 1);
+    }
+
+    // cerr << "checking if high score" << endl;
+    if (isHighScore()) {
+        // cerr << "setting high score color" << endl;
+        (hs_menu->t_boxs[0]).setColor(124,10,2);
+    } else if (isTopTen()) {
+        // cerr << "setting top ten color" << endl;
+        (hs_menu->t_boxs[place]).setColor(178,222,39);
+    }
+
+    // set 11th element to yellow (will be deleted)
+    // cerr << "setting 11th element color" << endl;
+    if (scores.size() == 11)
+        (hs_menu->t_boxs[scores.size()-1]).setColor(189,195,199);
+
+    // cerr << "finished making menu...\n" << endl;
 }

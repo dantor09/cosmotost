@@ -42,7 +42,6 @@ enum PBType {HEALTH, COOLDOWN};
 // const int U_TO_S = 1000000;
 // const int SONG_LENGTH = U_TO_S * ((4 * 60) + 30);
 
-
 class Menu
 {
 
@@ -60,12 +59,14 @@ public:
     // Rect texts[4];
     Box *t_boxs;
     std::string *words;
+    int centering;
 
     // constructors
     Menu(unsigned int n_texts,
             float _w, float _h,
             float _x, float _y,
-            std::string* _words);
+            std::string* _words,
+            int _centering = 1);
     ~Menu();
 
     // setters
@@ -274,3 +275,59 @@ public:
 };
 
 void check_level();
+
+struct HighScore
+{
+    string uname;
+    int score;
+
+    HighScore(string n, int s);
+    bool operator < (const HighScore & rhs);
+    bool operator == (const HighScore & rhs);
+    bool operator == (int val);
+    bool operator == (string str);
+};
+
+class Gamerecord
+{
+
+private:
+
+    void genFakeNames();
+    
+
+public:
+    
+    int n = 0;  // letter input index
+
+    // current gamers name, set for the first time when the first game ends
+    char gamer[10]; // type in name
+
+    HighScore * user_score; // struct of last scores info
+    int place;  // index of the last score
+    int highscore; //the highest score in file
+
+    // string reName;  //the name in the file
+    
+    vector<HighScore> scores; // vector of all scores from highscore file
+
+	// true mean no record in it
+	// false means file exist
+    // bool delt;
+
+    Gamerecord();
+    ~Gamerecord();
+    void submitRecord(int);
+
+    bool getRecord();
+    void writeRecord();
+    
+    void sortRecord();
+    void addRecord(HighScore s);
+    bool isHighScore();
+    bool isTopTen();
+
+    Menu * hs_menu; // use menu class to display the names nicely
+    void makeMenu();
+    
+};

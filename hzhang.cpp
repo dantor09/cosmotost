@@ -1,13 +1,18 @@
 //Huaiyu Zhang
 //Feb 24
 #include <iostream>
-#include <string>
+#include <fstream>
+// #include <string>
 #include <cmath>
 #include "hzhang.h"
 #include "Global.h"
-#include <fstream>
-using namespace std;
+#include "mkausch.h"
+#include "fonts.h"
+#include <new>
+#include <algorithm>
+#include <cstring>
 
+using namespace std;
 
 void makeBullet(float x, float y,float z, bool tb, int bullet_type) {
 		switch(bullet_type){
@@ -568,57 +573,6 @@ void Bread::moveBread() {
     vel[2] += acc[2];
 }
 //=========================================================================
-
-
-Gamerecord::Gamerecord()
-{
-		n = 0;
-		ifstream fin("Highscore.txt");
-		if (fin.fail()) {
-				ofstream outfile("Highscore.txt");
-				outfile.close();
-				delt = true;
-		} else {
-				getline(fin,reName);
-				if(!fin.eof()) {
-						fin.getline(gamer,10);
-						if(atoi(gamer) > highscore)
-								highscore = atoi(gamer);
-						delt = false;
-				}
-				delt = true;
-		}
-		for(int i = 0; i <10; i++)
-				gamer[i]='_';
-}
-void Gamerecord::getRecord()
-{
-	ifstream fin("Highscore.txt");
-	if (fin.fail()) {
-		getline(fin,reName);
-		fin.getline(gamer,10);
-		if(atoi(gamer) > highscore)
-				highscore = atoi(gamer);
-	}
-
-}
-void Gamerecord::changeRecord(int s)
-{
-		if (record.delt) {
-				record.str = record.gamer;
-				ofstream outfile("Highscore.txt");
-				outfile << record.str << endl;
-				outfile << s << endl;
-				outfile.close();
-		} else {
-				ofstream outfile;
-				outfile.open("Highscore.txt", ios::out | ios::trunc);
-				outfile << record.str << endl;
-				outfile << s << endl;
-				outfile.close();
-		}
-}
-Gamerecord::~Gamerecord(){}
 
 
 

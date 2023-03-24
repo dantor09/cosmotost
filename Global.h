@@ -3,7 +3,7 @@
 #include "mkausch.h"
 #include "hzhang.h"
 #include "dtorres.h"
-#include <cstring>
+// #include <cstring>
 #include "aparriott.h"
 
 //                  0       1       2       3       4

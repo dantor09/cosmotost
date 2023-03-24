@@ -7,16 +7,20 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <algorithm>
 #include <new>
 #include <sstream>
 #include "fonts.h"
 #include <string>
+#include <vector>
+
 //#include "aparriott.h"
 using namespace std;
 
 
 class Entity; // forward declaration
 class Blocky;  // forward declaration
+struct HighScore; // forward declaration
 
 //make a bullet need the pos of where this bullet creat
 //bool(tb) is means this bullet from toster or not
@@ -160,23 +164,4 @@ class Bread: public Item
     void moveBread();
 };
 //=======================================================================
-class Gamerecord
-{
-public:
-		int n = 0;
-		char gamer[10];
-  // type in name
-    string str;
-  //the highest score in file
-    int highscore = 0;
-  //the name in the file
-    string reName;
-	// true mean no record in it
-	// false means file exist
-		bool delt;
-		Gamerecord();
-    ~Gamerecord();
-    void changeRecord(int);
-    void getRecord();
 
-};
