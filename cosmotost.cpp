@@ -1012,28 +1012,31 @@ void render()
 		{
 			mm.draw();
 		} else if (g.substate == SETTINGS) {
-			Box settings_b;
-			settings_b.setColor(61, 90, 115);
-			glColor3ubv(settings_b.color);
-			settings_b.setDim(100.0f, 100.0f);
-			settings_b.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+			// Box settings_b;
+			// settings_b.setColor(61, 90, 115);
+			// glColor3ubv(settings_b.color);
+			// settings_b.setDim(100.0f, 100.0f);
+			// settings_b.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
 
-			glPushMatrix();
-			glTranslatef(settings_b.pos[0], settings_b.pos[1], settings_b.pos[2]);
-			glBegin(GL_QUADS);
-				glVertex2f(-settings_b.w, -settings_b.h);
-				glVertex2f(-settings_b.w,  settings_b.h);
-				glVertex2f( settings_b.w,  settings_b.h);
-				glVertex2f( settings_b.w, -settings_b.h);
-			glEnd();
-			glPopMatrix();
+			// glPushMatrix();
+			// glTranslatef(settings_b.pos[0], settings_b.pos[1], settings_b.pos[2]);
+			// glBegin(GL_QUADS);
+			// 	glVertex2f(-settings_b.w, -settings_b.h);
+			// 	glVertex2f(-settings_b.w,  settings_b.h);
+			// 	glVertex2f( settings_b.w,  settings_b.h);
+			// 	glVertex2f( settings_b.w, -settings_b.h);
+			// glEnd();
+			// glPopMatrix();
 
-			Rect settings_msg;
-			settings_msg.bot = settings_b.pos[1];
-			settings_msg.left = settings_b.pos[0];
-			settings_msg.center = 1;
+			// Rect settings_msg;
+			// settings_msg.bot = settings_b.pos[1];
+			// settings_msg.left = settings_b.pos[0];
+			// settings_msg.center = 1;
 
-			ggprint8b(&settings_msg, 0, 0x00ffff00, "Settings Img Placeholder");
+			// ggprint8b(&settings_msg, 0, 0x00ffff00, "Settings Img Placeholder");
+
+			vol_slider.draw();
+			sfx_slider.draw();
 
 
 		} else if (g.substate == HIGH_SCORES) {

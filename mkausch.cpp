@@ -74,8 +74,8 @@ Menu::Menu(unsigned int _n_texts,
             t_boxs[i].pos[1] = (pos[1]+mainbox.h)-((i+1)*spacing);
             t_boxs[i].setColor(61, 90, 115);
             t_boxs[i].id=i; // set box id for words array check
-            std::cout << "t_box[" << i << "].pos[1]: "
-                        << t_boxs[i].pos[1] << std::endl;
+            // std::cout << "t_box[" << i << "].pos[1]: "
+            //             << t_boxs[i].pos[1] << std::endl;
 
             words[i] = _words[i];
             // t_boxs[i].set_text(_words[i]);
@@ -368,13 +368,16 @@ void Timer::unPause()
 #ifdef USE_OPENAL_SOUND
 Sound::Sound()
 {
-
     //Buffer holds the sound information.
     init_openal();
     current_track = -1;  // starting track number at splash screen
     is_music_paused = false;
     user_pause = false;
     is_intro = is_game = false;
+    m_vol = g.m_vol;
+    sfx_vol  = g.sfx_vol;
+    
+
 
     // make individual buffers of all sounds
     alBuffers[0] = alutCreateBufferFromFile(build_song_path(sound_names[0]).c_str());
@@ -1627,4 +1630,188 @@ void Gamerecord::makeMenu()
         (hs_menu->t_boxs[scores.size()-1]).setColor(189,195,199);
 
     // cerr << "finished making menu...\n" << endl;
+}
+
+SoundBar::SoundBar(float * _val, float _x, float _y)
+    : value(_val), pos{_x,_y,0}
+{
+    const float total_box_length = 200.0f;
+    const float button_box_width = 20.0f; 
+    const float sound_bar_thickness = 60.0f;
+    const float line_thickness = 5.0f;
+    const float line_length = total_box_length 
+                                            -((2*button_box_width) + (10*2));
+    const float half_length = line_length / 2.0f;
+
+
+    bckgr.setDim(total_box_length, sound_bar_thickness);
+    bckgr.setPos(pos[0], pos[1], pos[2]);
+    bckgr.setColor(47, 61, 64);
+
+    const float left_pos = bckgr.pos[0]-line_length+button_box_width;
+    const float right_pos = bckgr.pos[0]+line_length-button_box_width;
+    slider_left_stop_pos = left_pos + 2*button_box_width;
+    slider_right_stop_pos = right_pos - 2*button_box_width;
+
+
+    boarder.setDim(total_box_length+BSIZE, sound_bar_thickness + BSIZE);
+    boarder.setPos(pos[0], pos[1], pos[2]);
+    boarder.setColor(69, 85, 89);
+
+    leftb.setDim(button_box_width, button_box_width);
+    leftb.setPos(left_pos, bckgr.pos[1], pos[2]);
+    leftb.setColor(61, 90, 115);
+
+    rightb.setDim(button_box_width, button_box_width);
+    rightb.setPos(right_pos, bckgr.pos[1], pos[2]);
+    rightb.setColor(61, 90, 115);
+
+    line.setDim(line_length, line_thickness);
+    line.setPos((bckgr.pos[0]), bckgr.pos[1], pos[2]);
+    line.setColor(27, 27, 27);
+
+    slider.setDim(button_box_width, 30);
+            //    (beginnning of line ) + (proportion of volume to full vol)
+    slider_position = get_slider_position();
+    slider.setPos(slider_position,pos[1],0); 
+    slider.setColor(69,85,89);
+
+    words[0] = "<";
+    words[1] = ">";
+    
+    texts[0].bot = leftb.pos[1]-4;
+    texts[0].left = leftb.pos[0];
+    texts[0].center = 1;
+
+    texts[1].bot = rightb.pos[1]-4;
+    texts[1].left = rightb.pos[0];
+    texts[1].center = 1;
+}
+
+void SoundBar::draw()
+{
+    // draw boarder
+
+    glColor3ubv(boarder.color);
+
+    glPushMatrix();
+    glTranslatef(boarder.pos[0], boarder.pos[1], boarder.pos[2]);
+    glBegin(GL_QUADS);
+        glVertex2f(-boarder.w, -boarder.h);
+        glVertex2f(-boarder.w,  boarder.h);
+        glVertex2f( boarder.w,  boarder.h);
+        glVertex2f( boarder.w, -boarder.h);
+    glEnd();
+    glPopMatrix();
+
+    // draw mainbox
+
+    glColor3ubv(bckgr.color);
+
+    glPushMatrix();
+    glTranslatef(bckgr.pos[0], bckgr.pos[1], bckgr.pos[2]);
+    glBegin(GL_QUADS);
+        glVertex2f(-bckgr.w, -bckgr.h);
+        glVertex2f(-bckgr.w,  bckgr.h);
+        glVertex2f( bckgr.w,  bckgr.h);
+        glVertex2f( bckgr.w, -bckgr.h);
+    glEnd();
+    glPopMatrix();
+
+    // draw line
+
+    glColor3ubv(line.color);
+
+    glPushMatrix();
+    glTranslatef(line.pos[0], line.pos[1], 0.0f);
+    glBegin(GL_QUADS);
+        glVertex2f(-line.w, -line.h);
+        glVertex2f(-line.w,  line.h);
+        glVertex2f( line.w,  line.h);
+        glVertex2f( line.w, -line.h);
+    glEnd();
+    glPopMatrix();
+
+
+    // draw leftb
+
+    glColor3ubv(leftb.color);
+
+    glPushMatrix();
+    glTranslatef(leftb.pos[0], leftb.pos[1], 0.0f);
+    glBegin(GL_QUADS);
+        glVertex2f(-leftb.w, -leftb.h);
+        glVertex2f(-leftb.w,  leftb.h);
+        glVertex2f( leftb.w,  leftb.h);
+        glVertex2f( leftb.w, -leftb.h);
+    glEnd();
+    glPopMatrix();
+
+
+    // draw rightb
+
+    glColor3ubv(rightb.color);
+
+    glPushMatrix();
+    glTranslatef(rightb.pos[0], rightb.pos[1], 0.0f);
+    glBegin(GL_QUADS);
+        glVertex2f(-rightb.w, -rightb.h);
+        glVertex2f(-rightb.w,  rightb.h);
+        glVertex2f( rightb.w,  rightb.h);
+        glVertex2f( rightb.w, -rightb.h);
+    glEnd();
+    glPopMatrix();
+
+    // draw slider
+
+    glColor3ubv(slider.color);
+
+    glPushMatrix();
+    glTranslatef(slider.pos[0], slider.pos[1], 0.0f);
+    glBegin(GL_QUADS);
+        glVertex2f(-slider.w, -slider.h);
+        glVertex2f(-slider.w,  slider.h);
+        glVertex2f( slider.w,  slider.h);
+        glVertex2f( slider.w, -slider.h);
+    glEnd();
+    glPopMatrix();
+
+
+        ggprint8b(&texts[0], 0, 0x00ffffff, words[0].c_str());
+        ggprint8b(&texts[1], 0, 0x00ffffff, words[1].c_str());
+
+}
+
+float SoundBar::get_slider_position()
+{
+    return (slider_left_stop_pos + ((*value)*(slider_right_stop_pos-
+                                                        slider_left_stop_pos)));
+}
+
+// pass in mouse coords to check and see if they are within the bounds
+// of the menu's text boxes
+Box* SoundBar::check_buttons(float x, float y)
+{
+    Box * box_ptr = nullptr;
+
+    size_t i;
+
+        if ((x > (leftb.pos[0]-leftb.w)) &&
+            (x < (leftb.pos[0]+leftb.w)) &&
+            (y > (leftb.pos[1]-leftb.h)) &&
+            (y < (leftb.pos[1]+leftb.h))) {
+            
+            box_ptr = &leftb;
+        }
+        else if ((x > (rightb.pos[0]-rightb.w)) &&
+            (x < (rightb.pos[0]+rightb.w)) &&
+            (y > (rightb.pos[1]-rightb.h)) &&
+            (y < (rightb.pos[1]+rightb.h))) {
+            
+            box_ptr = &rightb;
+        }
+
+    // std::cout << "match for " << box_ptr << " aka " << t_boxs+i << std::endl;
+
+    return box_ptr;
 }

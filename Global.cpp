@@ -9,6 +9,8 @@ Global::Global()
 		yres = 720;
 	  show_help_menu = false;
 		levelchance = 15;
+		sfx_vol = 1.0f;
+		m_vol = 1.0f;
 }
 
 

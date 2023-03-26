@@ -167,6 +167,8 @@ private:
 public:
 	// Source refers to the sound.
     bool gun_shooting;
+    float m_vol;
+    float sfx_vol;
 
 	Sound();
 	~Sound();
@@ -338,4 +340,41 @@ public:
     Menu * hs_menu; // use menu class to display the names nicely
     void makeMenu();    // makes the high score menu
     
+};
+
+class SoundBar  
+{          
+private:
+    float slider_left_stop_pos;
+    float slider_right_stop_pos;
+             
+             
+                    //---------- design ---------------//
+public:           // ______________________________
+    Box boarder;//  /  ________________________   /
+    Box bckgr; //  / /                        /  /
+    Box leftb;  //   < L |
+    Box rightb; //                  | H >
+    Box line;  //         ----------
+                //            _
+    Box slider; //        <--|_| -->
+    float pos[3];
+    unsigned char color[3];
+    Rect texts[2];
+    std::string words[2];    
+    float slider_position;
+    float * value;
+    float get_slider_position();
+
+
+
+    SoundBar(float * _val, float _x, float _y);
+    // ~SoundBar();./
+    
+    void draw();
+    Box* check_buttons(float x, float y);
+    // void setColor(int r, int g, int b);
+    // void set_orig_color();
+    // void set_highlight(Box * b);
+    // void move(float y
 };
