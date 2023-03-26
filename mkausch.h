@@ -183,7 +183,7 @@ public:
     void rewind_game_music();
     void gun_play(int btype);
     void gun_stop();
-    void doosh();
+    void doosh(int i = 0);
     void shieldSFX();
     void exploSFX();
     void beep();
@@ -218,7 +218,6 @@ class Blocky : public Item
     // void set_rand_color();
     void set_rand_position();
     void init_rotation_vel();
-    bool was_hit; // set when the block strikes the toaster that fall
                         // so it doesn't continuously damage it
     Item sub_boxes[8];
     int sb_angles[8];
@@ -226,6 +225,7 @@ class Blocky : public Item
     int rot_angle[8];
 
     public:
+    bool was_hit; // set when the block strikes the toaster that fall
     int point;
     // int lives;
     Blocky(char type);
