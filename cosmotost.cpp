@@ -1113,11 +1113,15 @@ void render()
 			(g.state == GAME || g.state == PAUSE)) {
 			srand(time(NULL));
 
+			// Follow the first bread to randomize the freeze block path 
+			// Freeze block could be set to follow any Item object
+			freeze_block.followPlayer(bread[0]);
 			// Make freeze block if it does not exist and timer is NULL
 			if(!freeze_block.position_set && freeze_block.ptimer == NULL) {
 				freeze_block.setColor(162,210,223); // sky blue
-				freeze_block.w = 10;
-				freeze_block.h = 10;
+				freeze_block.setMinMaxBlockDimensions(2, 80); // set min and max freeze block dimensions
+				freeze_block.w = freeze_block.randomDimension(); // random width
+				freeze_block.h = freeze_block.randomDimension(); // random height
 
 				// Spawn freeze block within the screen bounds;
 				freeze_block.pos[0] = freeze_block.w + (rand() % (int)(g.xres - freeze_block.w)); // spawn position x is within screen bounds
@@ -1131,7 +1135,7 @@ void render()
 			if(freeze_block.collision(tos) && !tos.disable_keys ) {
 				tos.disable_keys = true;
 				freeze_block.position_set = false;
-				freeze_block.setTimer(3);
+				freeze_block.setTimer(1);
 			}
 			// Unfreeze the toaster after timer is done.
 			if(tos.disable_keys && freeze_block.ptimer->isDone()) {

@@ -47,9 +47,47 @@ FreezeBlock::~FreezeBlock()
 {
 }
 
+void FreezeBlock::followPlayer(Item & player)
+{
+	if (player.pos[0] < pos[0] && player.pos[1] < pos[1]) {
+		setVel(-1, -1, 0);
+		pos[0] += vel[0];
+		pos[1] += vel[1];
+	}
+	else if (player.pos[0] > pos[0] && player.pos[1] > pos[1]) {
+		setVel(1, 1, 0);
+		pos[0] += vel[0];
+		pos[1] += vel[1];
+	}
+	else if (player.pos[0] < pos[0] && player.pos[1] > pos[1]) {
+		setVel(-1, 1, 0);
+		pos[0] += vel[0];
+		pos[1] += vel[1];
+	}
+	else if(player.pos[0] > pos[0] && player.pos[1] < pos[1]) {
+		setVel(1, -1, 0);
+		pos[0] += vel[0];
+		pos[1] += vel[1];
+	}
+	else if (player.pos[0] == pos[0] && player.pos[1] < pos[1]) {
+		setVel(0, -1, 0);
+		pos[1] += vel[1];
+	}
+	else if (player.pos[0] == pos[0] && player.pos[1] > pos[1]) {
+		setVel(0, 1, 0);
+		pos[1] += vel[1];
+	}
+	else if (player.pos[0] < pos[0] && player.pos[1] == pos[1]) {
+		setVel(-1, 0, 0);
+		pos[0] += vel[0];
+	}
+	else if (player.pos[0] > pos[0] && player.pos[1] == pos[1]) {
+		setVel(1, 0, 0);
+		pos[0] += vel[0];
+	}
+}
 void FreezeBlock::draw()
 {
-	setTrace(tos);
 	glColor3ubv(color);
 	glPushMatrix();
 	glTranslatef(pos[0], pos[1], pos[2]);
@@ -60,43 +98,6 @@ void FreezeBlock::draw()
 	glVertex2f( w, -h);
 	glEnd();
 	glPopMatrix();
-	
-	if (tos.pos[0] < pos[0] && tos.pos[1] < pos[1]) {
-		freeze_block.setVel(-1, -1, 0);
-		pos[0] += vel[0];
-		pos[1] += vel[1];
-	}
-	else if (tos.pos[0] > pos[0] && tos.pos[1] > pos[1]) {
-		freeze_block.setVel(1, 1, 0);
-		pos[0] += vel[0];
-		pos[1] += vel[1];
-	}
-	else if (tos.pos[0] < pos[0] && tos.pos[1] > pos[1]) {
-		freeze_block.setVel(-1, 1, 0);
-		pos[0] += vel[0];
-		pos[1] += vel[1];
-	}
-	else if(tos.pos[0] > pos[0] && tos.pos[1] < pos[1]) {
-		freeze_block.setVel(1, -1, 0);
-		pos[0] += vel[0];
-		pos[1] += vel[1];
-	}
-	else if (tos.pos[0] == pos[0] && tos.pos[1] < pos[1]) {
-		freeze_block.setVel(0, -1, 0);
-		pos[1] += vel[1];
-	}
-	else if (tos.pos[0] == pos[0] && tos.pos[1] > pos[1]) {
-		freeze_block.setVel(0, 1, 0);
-		pos[1] += vel[1];
-	}
-	else if (tos.pos[0] < pos[0] && tos.pos[1] == pos[1]) {
-		freeze_block.setVel(-1, 0, 0);
-		pos[0] += vel[0];
-	}
-	else if (tos.pos[0] > pos[0] && tos.pos[1] == pos[1]) {
-		freeze_block.setVel(1, 0, 0);
-		pos[0] += vel[0];
-	}
 
 }
 
