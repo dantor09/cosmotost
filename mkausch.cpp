@@ -468,7 +468,7 @@ Sound::Sound()
     alSourcei(alSources[11], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[12], AL_BUFFER, alBuffers[12]); // doosh2
-    alSourcef(alSources[12], AL_GAIN, 3.0f);
+    alSourcef(alSources[12], AL_GAIN, 1.0f);
     alSourcef(alSources[12], AL_PITCH, 1.0f);
     alSourcei(alSources[12], AL_LOOPING, AL_FALSE);
 
@@ -604,7 +604,7 @@ void Sound::gun_stop()
 {
     static int gun_start = 6;
     static int num_guns = 4;
-    cerr << "gun not shooting..." << endl;
+    // cerr << "gun not shooting..." << endl;
     for (int i = 0; i < num_guns; i++) {
         alSourceStop(alSources[i+gun_start]);
     }
@@ -620,9 +620,16 @@ void Sound::boop()
     alSourcePlay(alSources[3]);
 }
 
-void Sound::doosh()
+void Sound::doosh(int select)
 {
-    int index = 12; // index of doosh sound effect 11 or 12 currently
+    int index; // index of doosh sound effect 11 or 12 currently
+
+    if (select == 0) {
+
+        index = 12; // index of doosh sound effect 11 or 12 currently
+    } else {
+        index = 11;
+    }
     alSourcePlay(alSources[index]);
 }
 
@@ -1089,16 +1096,19 @@ void Blocky::reset()
     if (hpCheck()) {
         lives--;
         explode();
-        cerr << "explode called\n";
+        // cerr << "explode called\n";
         explode_done = false;
         if (lives > 0) {
             hp = starting_hp;   // give back full health
         }
+        was_hit = false;
+
     }
 
     setVel(0.0f, -4.0f, 0.0f);
     set_rand_position();    // put at a new random position
-    was_hit = false;
+    // was_hit = false;
+    // cerr << "was_hit set to " << boolalpha << was_hit << endl;
 }
 
 void Blocky::gamereset()
@@ -1141,9 +1151,11 @@ void Blocky::move()
 
 void Item::hpDamage(Blocky & bf)
 {
-    if (!bf.did_damage()) {
+    // cerr << "blocky's hpDamage called" << endl;
+    if (!bf.was_hit) {
         hp = hp - bf.damage;
-        bf.set_hit();
+        bf.was_hit = true;
+        // cerr << "blocky hit something" << endl;
     }
 }
 
@@ -1155,6 +1167,7 @@ bool Blocky::is_alive()
 void Blocky::set_hit()
 {
     was_hit = true;
+    // cerr << "setting hit in blocky" << endl;
 }
 
 void Blocky::explode()
@@ -1183,6 +1196,7 @@ void check_sound(void)
 	static bool initial_game_setup = false;
 	static int prev_btype = 1;
     static int exploded = 0;
+    static int bhit_occured = 0;
 
 
     // Main menu / music SFX loop check
@@ -1190,14 +1204,14 @@ void check_sound(void)
 		// init_game_setup will unque intro buffers and queue game songs
 		initial_game_setup = false;	// switch to false if it was prev true
 		if (initial_play == false) {
-			cerr << "calling play_start_track()" << endl;
+			// cerr << "calling play_start_track()" << endl;
 			sounds.play_start_track();	// queues intro songs and plays
 			initial_play = true;
 		}
 		if (sounds.check_intro_buffer_done() && !loop_set) {
 			// sounds.reset_buffer_done();
-			cerr << "sounds.checkintobuffer == true" << endl;
-			cerr << "calling loop_intro()" << endl;
+			// cerr << "sounds.checkintobuffer == true" << endl;
+			// cerr << "calling loop_intro()" << endl;
 			sounds.loop_intro();
 			loop_set = true;
 		}
@@ -1205,7 +1219,7 @@ void check_sound(void)
 			// reset initial play so that intro plays
 		initial_play = loop_set = false;
 		initial_game_setup = true;
-		cerr << "calling setup_game_mode()" << endl;
+		// cerr << "calling setup_game_mode()" << endl;
 		sounds.setup_game_mode();
 
 	}
@@ -1242,9 +1256,19 @@ void check_sound(void)
             exploded = false;
         }
 
+        if (blocky->was_hit == true && bhit_occured == 0) {
+            cerr << "should be playing doosh";
+            sounds.doosh(1);
+            bhit_occured = true;
+            blocky->was_hit = false;
+        } else if (blocky->was_hit == false && bhit_occured == 1) {
+            bhit_occured = false;
+        }
+
     } else {
         if (sounds.gun_shooting == true) {
             sounds.gun_stop();
+            sounds.gun_shooting = false;
         }
     }
 

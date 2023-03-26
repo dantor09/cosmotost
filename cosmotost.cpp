@@ -685,7 +685,8 @@ int X11_wrapper::check_keys(XEvent *e)
 				return 0;
 			}
 		}
-	} else if (g.state == GAMEOVER && g.substate == HIGH_SCORES) {
+	} else if (g.state == GAMEOVER && (g.substate == HIGH_SCORES ||
+											g.substate == DEBUG)) {
 		// if (tos.score > record.highscore) {
 		int key = XLookupKeysym(&e->xkey, 0);
 		if (e->type == KeyPress) {
@@ -832,13 +833,16 @@ void physics()
 		int whichBread = -1;
 		if (g.mike_active == true) {
 			blocky->move();
-			if (tos.laserCollision(vblocky)){
+			if (tos.laserCollision(*blocky)){
 				whichBread = -2;
 				distanceBread = blocky->pos[0] - tos.pos[0] - blocky->w - tos.w;
 			}
 			// check toaster collision with blocky
 			if (blocky->collision(tos)) {
-				tos.hpDamage(vblocky);
+				tos.hpDamage(*blocky);
+				// blocky->hpDamage(tos);
+
+				// cerr << "resetting blocky..." << endl;
 				blocky->reset();
 
 				if (blocky->hpCheck()) {
@@ -1166,6 +1170,11 @@ void render()
 
 
 	} else if (g.state == GAMEOVER && g.substate == HIGH_SCORES) {
+	
+
+		record.hs_menu->draw();
+
+	} else if (g.state == GAMEOVER && g.substate == DEBUG) {
 	
 
 		record.hs_menu->draw();
