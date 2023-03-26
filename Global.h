@@ -37,6 +37,8 @@ bool entity_active,
         huaiyu_active,
         mike_active;
 
+float sfx_vol;
+float m_vol;
 
 Global();
 ~Global();
@@ -72,7 +74,9 @@ inline PowerBar vblocky_health(vblocky, HEALTH, g.xres/2.0f, 15.0f);
 inline PowerBar hblocky_health(hblocky, HEALTH, g.xres/2.0f, 15.0f);
 inline Blocky * blocky;
 inline PowerBar * blocky_health;
-inline InfoBoard info_board;
+inline SoundBar vol_slider(&g.m_vol, g.xres*(1.0f/3.0f), g.yres/2.0f, "Music Volume");
+inline SoundBar sfx_slider(&g.sfx_vol, g.xres*(2.0f/3.0f), g.yres/2.0f, "SFX Volume");
+inline InfoBoard info_board_1;
 inline FreezeBlock freeze_block;
 
 #ifdef USE_OPENAL_SOUND

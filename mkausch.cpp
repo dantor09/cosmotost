@@ -74,8 +74,8 @@ Menu::Menu(unsigned int _n_texts,
             t_boxs[i].pos[1] = (pos[1]+mainbox.h)-((i+1)*spacing);
             t_boxs[i].setColor(61, 90, 115);
             t_boxs[i].id=i; // set box id for words array check
-            std::cout << "t_box[" << i << "].pos[1]: "
-                        << t_boxs[i].pos[1] << std::endl;
+            // std::cout << "t_box[" << i << "].pos[1]: "
+            //             << t_boxs[i].pos[1] << std::endl;
 
             words[i] = _words[i];
             // t_boxs[i].set_text(_words[i]);
@@ -368,13 +368,16 @@ void Timer::unPause()
 #ifdef USE_OPENAL_SOUND
 Sound::Sound()
 {
-
     //Buffer holds the sound information.
     init_openal();
     current_track = -1;  // starting track number at splash screen
     is_music_paused = false;
     user_pause = false;
     is_intro = is_game = false;
+    m_vol = g.m_vol;
+    sfx_vol  = g.sfx_vol;
+    
+
 
     // make individual buffers of all sounds
     alBuffers[0] = alutCreateBufferFromFile(build_song_path(sound_names[0]).c_str());
@@ -405,80 +408,80 @@ Sound::Sound()
     alSourcef(menuQueueSource, AL_PITCH, 1.0f);
 
     alSourcei(alSources[0], AL_BUFFER, alBuffers[0]);   // bullet_fire
-    alSourcef(alSources[0], AL_GAIN, 1.0f);
+    alSourcef(alSources[0], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[0], AL_PITCH, 1.0f);
     alSourcei(alSources[0], AL_LOOPING, AL_TRUE);
 
     alSourcei(alSources[1], AL_BUFFER, alBuffers[1]);   // intro
-    alSourcef(alSources[1], AL_GAIN, 0.8f);
+    alSourcef(alSources[1], AL_GAIN, g.m_vol);
     alSourcef(alSources[1], AL_PITCH, 1.0f);
     alSourcei(alSources[1], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[2], AL_BUFFER, alBuffers[2]);   // beep
-    alSourcef(alSources[2], AL_GAIN, 1.0f);
+    alSourcef(alSources[2], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[2], AL_PITCH, 1.0f);
     alSourcei(alSources[2], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[3], AL_BUFFER, alBuffers[3]); // boop
-    alSourcef(alSources[3], AL_GAIN, 1.0f);
+    alSourcef(alSources[3], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[3], AL_PITCH, 1.0f);
     alSourcei(alSources[3], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[4], AL_BUFFER, alBuffers[4]); // intro's loop
-    alSourcef(alSources[4], AL_GAIN, 0.8f);
+    alSourcef(alSources[4], AL_GAIN, g.m_vol);
     alSourcef(alSources[4], AL_PITCH, 1.0f);
     alSourcei(alSources[4], AL_LOOPING, AL_TRUE);
 
     alSourcei(alSources[5], AL_BUFFER, alBuffers[5]); // AdhesiveWombat song
-    alSourcef(alSources[5], AL_GAIN, 0.8f);
+    alSourcef(alSources[5], AL_GAIN, g.m_vol);
     alSourcef(alSources[5], AL_PITCH, 1.0f);
     alSourcei(alSources[5], AL_LOOPING, AL_TRUE);
 
     alSourcei(alSources[6], AL_BUFFER, alBuffers[6]); // zap1
-    alSourcef(alSources[6], AL_GAIN, 1.0f);
+    alSourcef(alSources[6], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[6], AL_PITCH, 1.0f);
     alSourcei(alSources[6], AL_LOOPING, AL_TRUE);
 
 
     alSourcei(alSources[7], AL_BUFFER, alBuffers[7]); // zap2
-    alSourcef(alSources[7], AL_GAIN, 1.0f);
+    alSourcef(alSources[7], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[7], AL_PITCH, 1.0f);
     alSourcei(alSources[7], AL_LOOPING, AL_TRUE);
 
 
     alSourcei(alSources[8], AL_BUFFER, alBuffers[8]); // zap3
-    alSourcef(alSources[8], AL_GAIN, 1.0f);
+    alSourcef(alSources[8], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[8], AL_PITCH, 1.0f);
     alSourcei(alSources[8], AL_LOOPING, AL_TRUE);
 
 
     alSourcei(alSources[9], AL_BUFFER, alBuffers[9]); // zap4
-    alSourcef(alSources[9], AL_GAIN, 1.0f);
+    alSourcef(alSources[9], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[9], AL_PITCH, 1.0f);
     alSourcei(alSources[9], AL_LOOPING, AL_TRUE);
 
     alSourcei(alSources[10], AL_BUFFER, alBuffers[10]); // shield
-    alSourcef(alSources[10], AL_GAIN, 1.0f);
+    alSourcef(alSources[10], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[10], AL_PITCH, 1.0f);
     alSourcei(alSources[10], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[11], AL_BUFFER, alBuffers[11]); // doosh
-    alSourcef(alSources[11], AL_GAIN, 1.0f);
+    alSourcef(alSources[11], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[11], AL_PITCH, 1.0f);
     alSourcei(alSources[11], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[12], AL_BUFFER, alBuffers[12]); // doosh2
-    alSourcef(alSources[12], AL_GAIN, 1.0f);
+    alSourcef(alSources[12], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[12], AL_PITCH, 1.0f);
     alSourcei(alSources[12], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[13], AL_BUFFER, alBuffers[13]); // doosh
-    alSourcef(alSources[13], AL_GAIN, 1.0f);
+    alSourcef(alSources[13], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[13], AL_PITCH, 1.0f);
     alSourcei(alSources[13], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[14], AL_BUFFER, alBuffers[14]); // doosh2
-    alSourcef(alSources[14], AL_GAIN, 3.0f);
+    alSourcef(alSources[14], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[14], AL_PITCH, 1.0f);
     alSourcei(alSources[14], AL_LOOPING, AL_FALSE);
 
@@ -746,6 +749,29 @@ void Sound::toggle_user_pause()
 bool Sound::get_pause()
 {
     return is_music_paused;
+}
+
+
+void Sound::updateMusicVol()
+{
+    int n_songs = 3;
+    int song_indices[n_songs] = {1, 4, 5};
+
+    for (int i = 0; i < n_songs; i++) {
+        alSourcef(alSources[song_indices[i]], AL_GAIN, g.m_vol);
+    }
+
+    alSourcef(menuQueueSource, AL_GAIN, g.m_vol);
+}
+
+void Sound::updateSFXVol()
+{
+    int n_sfx = 12;
+    int sfx_indices[n_sfx] = {0, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+
+    for (int i = 0; i < n_sfx; i++) {
+        alSourcef(alSources[sfx_indices[i]], AL_GAIN, g.sfx_vol);
+    }
 }
 
 #endif
@@ -1627,4 +1653,239 @@ void Gamerecord::makeMenu()
         (hs_menu->t_boxs[scores.size()-1]).setColor(189,195,199);
 
     // cerr << "finished making menu...\n" << endl;
+}
+
+SoundBar::SoundBar(float * _val, float _x, float _y, std::string _bn_)
+    : value(_val), pos{_x,_y,0}, bar_name(_bn_)
+{
+    const float total_box_length = 200.0f;
+    const float button_box_width = 20.0f; 
+    const float sound_bar_thickness = 60.0f;
+    const float line_thickness = 5.0f;
+    const float line_length = total_box_length 
+                                            -((2*button_box_width) + (10*2));
+    const float half_length = line_length / 2.0f;
+
+
+    bckgr.setDim(total_box_length, sound_bar_thickness);
+    bckgr.setPos(pos[0], pos[1], pos[2]);
+    bckgr.setColor(47, 61, 64);
+
+    const float left_pos = bckgr.pos[0]-line_length+button_box_width;
+    const float right_pos = bckgr.pos[0]+line_length-button_box_width;
+    slider_left_stop_pos = left_pos + 2*button_box_width;
+    slider_right_stop_pos = right_pos - 2*button_box_width;
+
+
+    boarder.setDim(total_box_length+BSIZE, sound_bar_thickness + BSIZE);
+    boarder.setPos(pos[0], pos[1], pos[2]);
+    boarder.setColor(69, 85, 89);
+
+    leftb.setDim(button_box_width, button_box_width);
+    leftb.setPos(left_pos, bckgr.pos[1], pos[2]);
+    leftb.setColor(61, 90, 115);
+    leftb.id=0;
+
+    rightb.setDim(button_box_width, button_box_width);
+    rightb.setPos(right_pos, bckgr.pos[1], pos[2]);
+    rightb.setColor(61, 90, 115);
+    rightb.id=1;
+
+    line.setDim(line_length, line_thickness);
+    line.setPos((bckgr.pos[0]), bckgr.pos[1], pos[2]);
+    line.setColor(27, 27, 27);
+
+    slider.setDim(button_box_width, 30);
+            //    (beginnning of line ) + (proportion of volume to full vol)
+    slider_position = get_slider_position();
+    slider.setPos(slider_position,pos[1],0); 
+    slider.setColor(69,85,89);
+
+    words[0] = "<";
+    words[1] = ">";
+    
+    // button text
+    texts[0].bot = leftb.pos[1]-4;
+    texts[0].left = leftb.pos[0];
+    texts[0].center = 1;
+
+    texts[1].bot = rightb.pos[1]-4;
+    texts[1].left = rightb.pos[0];
+    texts[1].center = 1;
+
+    // bar title
+    texts[2].bot = bckgr.pos[1] + 5;
+    texts[2].left = bckgr.pos[0];
+    texts[2].center = 1;
+}
+
+void SoundBar::draw()
+{
+    // draw boarder
+
+    glColor3ubv(boarder.color);
+
+    glPushMatrix();
+    glTranslatef(boarder.pos[0], boarder.pos[1], boarder.pos[2]);
+    glBegin(GL_QUADS);
+        glVertex2f(-boarder.w, -boarder.h);
+        glVertex2f(-boarder.w,  boarder.h);
+        glVertex2f( boarder.w,  boarder.h);
+        glVertex2f( boarder.w, -boarder.h);
+    glEnd();
+    glPopMatrix();
+
+    // draw mainbox
+
+    glColor3ubv(bckgr.color);
+
+    glPushMatrix();
+    glTranslatef(bckgr.pos[0], bckgr.pos[1], bckgr.pos[2]);
+    glBegin(GL_QUADS);
+        glVertex2f(-bckgr.w, -bckgr.h);
+        glVertex2f(-bckgr.w,  bckgr.h);
+        glVertex2f( bckgr.w,  bckgr.h);
+        glVertex2f( bckgr.w, -bckgr.h);
+    glEnd();
+    glPopMatrix();
+
+    // draw line
+
+    glColor3ubv(line.color);
+
+    glPushMatrix();
+    glTranslatef(line.pos[0], line.pos[1], 0.0f);
+    glBegin(GL_QUADS);
+        glVertex2f(-line.w, -line.h);
+        glVertex2f(-line.w,  line.h);
+        glVertex2f( line.w,  line.h);
+        glVertex2f( line.w, -line.h);
+    glEnd();
+    glPopMatrix();
+
+
+    // draw leftb
+
+    glColor3ubv(leftb.color);
+
+    glPushMatrix();
+    glTranslatef(leftb.pos[0], leftb.pos[1], 0.0f);
+    glBegin(GL_QUADS);
+        glVertex2f(-leftb.w, -leftb.h);
+        glVertex2f(-leftb.w,  leftb.h);
+        glVertex2f( leftb.w,  leftb.h);
+        glVertex2f( leftb.w, -leftb.h);
+    glEnd();
+    glPopMatrix();
+
+
+    // draw rightb
+
+    glColor3ubv(rightb.color);
+
+    glPushMatrix();
+    glTranslatef(rightb.pos[0], rightb.pos[1], 0.0f);
+    glBegin(GL_QUADS);
+        glVertex2f(-rightb.w, -rightb.h);
+        glVertex2f(-rightb.w,  rightb.h);
+        glVertex2f( rightb.w,  rightb.h);
+        glVertex2f( rightb.w, -rightb.h);
+    glEnd();
+    glPopMatrix();
+
+    // draw slider
+
+    glColor3ubv(slider.color);
+
+    glPushMatrix();
+    glTranslatef(slider.pos[0], slider.pos[1], 0.0f);
+    glBegin(GL_QUADS);
+        glVertex2f(-slider.w, -slider.h);
+        glVertex2f(-slider.w,  slider.h);
+        glVertex2f( slider.w,  slider.h);
+        glVertex2f( slider.w, -slider.h);
+    glEnd();
+    glPopMatrix();
+
+
+        ggprint8b(&texts[0], 0, 0x00ffffff, words[0].c_str());
+        ggprint8b(&texts[1], 0, 0x00ffffff, words[1].c_str());
+        ggprint12(&texts[2], 0, 0x00ffffff, bar_name.c_str());
+
+}
+
+float SoundBar::get_slider_position()
+{
+    return (slider_left_stop_pos + ((*value)*(slider_right_stop_pos-
+                                                        slider_left_stop_pos)));
+}
+
+// pass in mouse coords to check and see if they are within the bounds
+// of the menu's text boxes
+Box* SoundBar::checkButtons(float x, float y)
+{
+    Box * box_ptr = nullptr;
+
+    size_t i;
+
+        if ((x > (leftb.pos[0]-leftb.w)) &&
+            (x < (leftb.pos[0]+leftb.w)) &&
+            (y > (leftb.pos[1]-leftb.h)) &&
+            (y < (leftb.pos[1]+leftb.h))) {
+            
+            box_ptr = &leftb;
+        }
+        else if ((x > (rightb.pos[0]-rightb.w)) &&
+            (x < (rightb.pos[0]+rightb.w)) &&
+            (y > (rightb.pos[1]-rightb.h)) &&
+            (y < (rightb.pos[1]+rightb.h))) {
+            
+            box_ptr = &rightb;
+        }
+
+    // std::cout << "match for " << box_ptr << " aka " << t_boxs+i << std::endl;
+
+    return box_ptr;
+}
+
+void SoundBar::set_orig_color()
+{
+    leftb.setColor(61, 90, 115);
+    rightb.setColor(61, 90, 115);
+}
+
+void SoundBar::set_highlight(Box * b)
+{
+    b->setColor(33,136,171);
+}
+
+void SoundBar::move_slider_down()
+{
+    // if (slider_position > slider_left_stop_pos) {
+    if (*value >= 0.18) {
+        *value -= 0.1f;
+        slider_position = get_slider_position();
+        slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
+    } else {
+        *value = 0;
+        slider_position = get_slider_position();
+        slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
+    }
+}
+
+void SoundBar::move_slider_up()
+{
+
+    // if (slider_position < slider_right_stop_pos) {
+    if (*value < 0.82f) {
+        *value += 0.1f;
+        slider_position = get_slider_position();
+        slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
+    } else {
+        *value = 1;
+        slider_position = get_slider_position();
+        slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
+    }
+
+
 }
