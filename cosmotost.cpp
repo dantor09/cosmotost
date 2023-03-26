@@ -913,8 +913,15 @@ void physics()
 						if (bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)	{
 								bread[i].hpDamage(tos);
 								tos.hpDamage(bread[i]);
-								if(tos.hpCheck())
-										g.state = GAMEOVER;
+								
+								// D.T Reset HP and decrease lives if toaster still has lives left
+								if(tos.hpCheck() && (tos.lives - 1 > 0)) {
+									tos.lives--;
+									tos.setHP(80);
+								}
+								else if(tos.hpCheck()) {
+									g.state = GAMEOVER;
+								}
 								if(bread[i].hpCheck())
 										bread[i] = bread[--g.n_Bread];
 						}
