@@ -300,7 +300,7 @@ Toaster::Toaster()
 			plive[i].h = 10;
 			
 			// Position to the left of the health bar
-			plive[i].setPos(info_board.pos[0] + offset_x, 40, 0);
+			plive[i].setPos(info_board_1.pos[0] + offset_x, 40, 0);
 			offset_x += 20;
 		}
 		setVertex();
