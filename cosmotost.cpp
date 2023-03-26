@@ -1042,12 +1042,12 @@ void render()
 		// State Message
 
 		// Set up and display Information board on bottom of screen.
-		// info_board_1 object in global.h ... InfoBoard class in dtorres.h
-		info_board_1.setColor(0, 0, 0);
-		glColor3ubv(info_board_1.color);
-		info_board_1.setDim(g.xres/2, g.yres/20);
-		info_board_1.setPos(g.xres/2, g.yres/40, 0);
-		info_board_1.draw();
+		// info_board object in global.h ... InfoBoard class in dtorres.h
+		info_board.setColor(0, 0, 0);
+		glColor3ubv(info_board.color);
+		info_board.setDim(g.xres/2, g.yres/20);
+		info_board.setPos(g.xres/2, g.yres/40, 0);
+		info_board.draw();
 
 
 		// draw Toaster bullet and bread
@@ -1110,7 +1110,7 @@ void render()
 
 				// Spawn freeze block within the screen bounds;
 				freeze_block.pos[0] = freeze_block.w + (rand() % (int)(g.xres - freeze_block.w)); // spawn position x is within screen bounds
-				freeze_block.pos[1] = (freeze_block.h + (info_board_1.h * 2)) + (rand() % (int)(g.yres - freeze_block.h)); // spawn position y is withing screen bounds
+				freeze_block.pos[1] = (freeze_block.h + (info_board.h * 2)) + (rand() % (int)(g.yres - freeze_block.h)); // spawn position y is withing screen bounds
 				freeze_block.position_set = true;
 			}
 			if(freeze_block.position_set && tos.disable_keys == false) {
@@ -1205,8 +1205,8 @@ void render()
 		help_msg.left = 20;
 		help_msg.center = 0;
 		// 					Bottom left of information board
-		score.bot = info_board_1.pos[1] + 15;
-		score.left = info_board_1.pos[0] - ((info_board_1.w)/2);
+		score.bot = info_board.pos[1] + 15;
+		score.left = info_board.pos[0] - ((info_board.w)/2);
 		score.center = 0;
 		// 					Bottom left of information board
 		//					Time display is relative to the position of the score above

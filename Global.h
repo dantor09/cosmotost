@@ -72,7 +72,7 @@ inline PowerBar vblocky_health(vblocky, HEALTH, g.xres/2.0f, 15.0f);
 inline PowerBar hblocky_health(hblocky, HEALTH, g.xres/2.0f, 15.0f);
 inline Blocky * blocky;
 inline PowerBar * blocky_health;
-inline InfoBoard info_board_1;
+inline InfoBoard info_board;
 inline FreezeBlock freeze_block;
 
 #ifdef USE_OPENAL_SOUND
