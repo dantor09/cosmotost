@@ -190,6 +190,8 @@ public:
     void exploSFX();
     void beep();
     void boop();
+    void updateMusicVol();
+    void updateSFXVol();
 
 };
 
@@ -360,21 +362,24 @@ public:           // ______________________________
     Box slider; //        <--|_| -->
     float pos[3];
     unsigned char color[3];
-    Rect texts[2];
+    Rect texts[3];
     std::string words[2];    
     float slider_position;
     float * value;
     float get_slider_position();
+    void move_slider_down();
+    void move_slider_up();
+    std::string bar_name;
 
 
 
-    SoundBar(float * _val, float _x, float _y);
-    // ~SoundBar();./
+    SoundBar(float * _val, float _x, float _y, std::string _bn_);
+    // ~SoundBar();
     
     void draw();
-    Box* check_buttons(float x, float y);
+    Box* checkButtons(float x, float y);
     // void setColor(int r, int g, int b);
-    // void set_orig_color();
-    // void set_highlight(Box * b);
+    void set_orig_color();
+    void set_highlight(Box * b);
     // void move(float y
 };

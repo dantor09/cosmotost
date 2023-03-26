@@ -408,80 +408,80 @@ Sound::Sound()
     alSourcef(menuQueueSource, AL_PITCH, 1.0f);
 
     alSourcei(alSources[0], AL_BUFFER, alBuffers[0]);   // bullet_fire
-    alSourcef(alSources[0], AL_GAIN, 1.0f);
+    alSourcef(alSources[0], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[0], AL_PITCH, 1.0f);
     alSourcei(alSources[0], AL_LOOPING, AL_TRUE);
 
     alSourcei(alSources[1], AL_BUFFER, alBuffers[1]);   // intro
-    alSourcef(alSources[1], AL_GAIN, 0.8f);
+    alSourcef(alSources[1], AL_GAIN, g.m_vol);
     alSourcef(alSources[1], AL_PITCH, 1.0f);
     alSourcei(alSources[1], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[2], AL_BUFFER, alBuffers[2]);   // beep
-    alSourcef(alSources[2], AL_GAIN, 1.0f);
+    alSourcef(alSources[2], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[2], AL_PITCH, 1.0f);
     alSourcei(alSources[2], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[3], AL_BUFFER, alBuffers[3]); // boop
-    alSourcef(alSources[3], AL_GAIN, 1.0f);
+    alSourcef(alSources[3], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[3], AL_PITCH, 1.0f);
     alSourcei(alSources[3], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[4], AL_BUFFER, alBuffers[4]); // intro's loop
-    alSourcef(alSources[4], AL_GAIN, 0.8f);
+    alSourcef(alSources[4], AL_GAIN, g.m_vol);
     alSourcef(alSources[4], AL_PITCH, 1.0f);
     alSourcei(alSources[4], AL_LOOPING, AL_TRUE);
 
     alSourcei(alSources[5], AL_BUFFER, alBuffers[5]); // AdhesiveWombat song
-    alSourcef(alSources[5], AL_GAIN, 0.8f);
+    alSourcef(alSources[5], AL_GAIN, g.m_vol);
     alSourcef(alSources[5], AL_PITCH, 1.0f);
     alSourcei(alSources[5], AL_LOOPING, AL_TRUE);
 
     alSourcei(alSources[6], AL_BUFFER, alBuffers[6]); // zap1
-    alSourcef(alSources[6], AL_GAIN, 1.0f);
+    alSourcef(alSources[6], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[6], AL_PITCH, 1.0f);
     alSourcei(alSources[6], AL_LOOPING, AL_TRUE);
 
 
     alSourcei(alSources[7], AL_BUFFER, alBuffers[7]); // zap2
-    alSourcef(alSources[7], AL_GAIN, 1.0f);
+    alSourcef(alSources[7], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[7], AL_PITCH, 1.0f);
     alSourcei(alSources[7], AL_LOOPING, AL_TRUE);
 
 
     alSourcei(alSources[8], AL_BUFFER, alBuffers[8]); // zap3
-    alSourcef(alSources[8], AL_GAIN, 1.0f);
+    alSourcef(alSources[8], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[8], AL_PITCH, 1.0f);
     alSourcei(alSources[8], AL_LOOPING, AL_TRUE);
 
 
     alSourcei(alSources[9], AL_BUFFER, alBuffers[9]); // zap4
-    alSourcef(alSources[9], AL_GAIN, 1.0f);
+    alSourcef(alSources[9], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[9], AL_PITCH, 1.0f);
     alSourcei(alSources[9], AL_LOOPING, AL_TRUE);
 
     alSourcei(alSources[10], AL_BUFFER, alBuffers[10]); // shield
-    alSourcef(alSources[10], AL_GAIN, 1.0f);
+    alSourcef(alSources[10], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[10], AL_PITCH, 1.0f);
     alSourcei(alSources[10], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[11], AL_BUFFER, alBuffers[11]); // doosh
-    alSourcef(alSources[11], AL_GAIN, 1.0f);
+    alSourcef(alSources[11], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[11], AL_PITCH, 1.0f);
     alSourcei(alSources[11], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[12], AL_BUFFER, alBuffers[12]); // doosh2
-    alSourcef(alSources[12], AL_GAIN, 1.0f);
+    alSourcef(alSources[12], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[12], AL_PITCH, 1.0f);
     alSourcei(alSources[12], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[13], AL_BUFFER, alBuffers[13]); // doosh
-    alSourcef(alSources[13], AL_GAIN, 1.0f);
+    alSourcef(alSources[13], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[13], AL_PITCH, 1.0f);
     alSourcei(alSources[13], AL_LOOPING, AL_FALSE);
 
     alSourcei(alSources[14], AL_BUFFER, alBuffers[14]); // doosh2
-    alSourcef(alSources[14], AL_GAIN, 3.0f);
+    alSourcef(alSources[14], AL_GAIN, g.sfx_vol);
     alSourcef(alSources[14], AL_PITCH, 1.0f);
     alSourcei(alSources[14], AL_LOOPING, AL_FALSE);
 
@@ -749,6 +749,29 @@ void Sound::toggle_user_pause()
 bool Sound::get_pause()
 {
     return is_music_paused;
+}
+
+
+void Sound::updateMusicVol()
+{
+    int n_songs = 3;
+    int song_indices[n_songs] = {1, 4, 5};
+
+    for (int i = 0; i < n_songs; i++) {
+        alSourcef(alSources[song_indices[i]], AL_GAIN, g.m_vol);
+    }
+
+    alSourcef(menuQueueSource, AL_GAIN, g.m_vol);
+}
+
+void Sound::updateSFXVol()
+{
+    int n_sfx = 12;
+    int sfx_indices[n_sfx] = {0, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+
+    for (int i = 0; i < n_sfx; i++) {
+        alSourcef(alSources[sfx_indices[i]], AL_GAIN, g.sfx_vol);
+    }
 }
 
 #endif
@@ -1632,8 +1655,8 @@ void Gamerecord::makeMenu()
     // cerr << "finished making menu...\n" << endl;
 }
 
-SoundBar::SoundBar(float * _val, float _x, float _y)
-    : value(_val), pos{_x,_y,0}
+SoundBar::SoundBar(float * _val, float _x, float _y, std::string _bn_)
+    : value(_val), pos{_x,_y,0}, bar_name(_bn_)
 {
     const float total_box_length = 200.0f;
     const float button_box_width = 20.0f; 
@@ -1661,10 +1684,12 @@ SoundBar::SoundBar(float * _val, float _x, float _y)
     leftb.setDim(button_box_width, button_box_width);
     leftb.setPos(left_pos, bckgr.pos[1], pos[2]);
     leftb.setColor(61, 90, 115);
+    leftb.id=0;
 
     rightb.setDim(button_box_width, button_box_width);
     rightb.setPos(right_pos, bckgr.pos[1], pos[2]);
     rightb.setColor(61, 90, 115);
+    rightb.id=1;
 
     line.setDim(line_length, line_thickness);
     line.setPos((bckgr.pos[0]), bckgr.pos[1], pos[2]);
@@ -1679,6 +1704,7 @@ SoundBar::SoundBar(float * _val, float _x, float _y)
     words[0] = "<";
     words[1] = ">";
     
+    // button text
     texts[0].bot = leftb.pos[1]-4;
     texts[0].left = leftb.pos[0];
     texts[0].center = 1;
@@ -1686,6 +1712,11 @@ SoundBar::SoundBar(float * _val, float _x, float _y)
     texts[1].bot = rightb.pos[1]-4;
     texts[1].left = rightb.pos[0];
     texts[1].center = 1;
+
+    // bar title
+    texts[2].bot = bckgr.pos[1] + 5;
+    texts[2].left = bckgr.pos[0];
+    texts[2].center = 1;
 }
 
 void SoundBar::draw()
@@ -1779,6 +1810,7 @@ void SoundBar::draw()
 
         ggprint8b(&texts[0], 0, 0x00ffffff, words[0].c_str());
         ggprint8b(&texts[1], 0, 0x00ffffff, words[1].c_str());
+        ggprint12(&texts[2], 0, 0x00ffffff, bar_name.c_str());
 
 }
 
@@ -1790,7 +1822,7 @@ float SoundBar::get_slider_position()
 
 // pass in mouse coords to check and see if they are within the bounds
 // of the menu's text boxes
-Box* SoundBar::check_buttons(float x, float y)
+Box* SoundBar::checkButtons(float x, float y)
 {
     Box * box_ptr = nullptr;
 
@@ -1814,4 +1846,46 @@ Box* SoundBar::check_buttons(float x, float y)
     // std::cout << "match for " << box_ptr << " aka " << t_boxs+i << std::endl;
 
     return box_ptr;
+}
+
+void SoundBar::set_orig_color()
+{
+    leftb.setColor(61, 90, 115);
+    rightb.setColor(61, 90, 115);
+}
+
+void SoundBar::set_highlight(Box * b)
+{
+    b->setColor(33,136,171);
+}
+
+void SoundBar::move_slider_down()
+{
+    // if (slider_position > slider_left_stop_pos) {
+    if (*value >= 0.18) {
+        *value -= 0.1f;
+        slider_position = get_slider_position();
+        slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
+    } else {
+        *value = 0;
+        slider_position = get_slider_position();
+        slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
+    }
+}
+
+void SoundBar::move_slider_up()
+{
+
+    // if (slider_position < slider_right_stop_pos) {
+    if (*value < 0.82f) {
+        *value += 0.1f;
+        slider_position = get_slider_position();
+        slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
+    } else {
+        *value = 1;
+        slider_position = get_slider_position();
+        slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
+    }
+
+
 }

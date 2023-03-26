@@ -297,6 +297,123 @@ int X11_wrapper::check_mouse(XEvent *e)
 				}
 			}
 		}
+	} else if (g.state == MAINMENU && g.substate == SETTINGS) {
+	
+		//Weed out non-mouse events
+			if (e->type != ButtonRelease &&
+				e->type != ButtonPress &&
+				e->type != MotionNotify) {
+				//This is not a mouse event that we care about.
+				return 0;
+			}
+			// leave for reference
+			if (e->type == ButtonRelease) {
+				return 0;
+			}
+			if (e->type == ButtonPress) {
+				if (e->xbutton.button==1) {
+				//Left button was pressed.
+				//int y = g.yres - e->xbutton.y;
+					if (savex != e->xbutton.x || savey != e->xbutton.y) {
+						savex = e->xbutton.x;
+						savey = e->xbutton.y;
+					}
+
+					// check and see if the user clicked on slider buttons
+					selection = vol_slider.checkButtons(savex, g.yres - savey);
+					if (selection && (vol_slider.words[selection->id] == "<")) {
+						vol_slider.move_slider_down();
+
+#ifdef USE_OPENAL_SOUND
+						sounds.updateMusicVol();
+						sounds.boop();
+
+#endif
+						// std::cerr << "sound turned down to: " << g.m_vol << endl;
+
+						return 0;
+					} else if (selection && (vol_slider.words[selection->id] == ">")) {
+						vol_slider.move_slider_up();
+
+#ifdef USE_OPENAL_SOUND
+						sounds.updateMusicVol();
+						sounds.boop();
+
+#endif
+						// std::cerr << "sound turned up to: " << g.m_vol << endl;
+
+						return 0;
+					} 
+
+					selection = sfx_slider.checkButtons(savex, g.yres - savey);
+					if (selection && (sfx_slider.words[selection->id] == "<")) {
+						sfx_slider.move_slider_down();
+
+#ifdef USE_OPENAL_SOUND
+						sounds.updateSFXVol();
+						sounds.boop();
+
+#endif
+						// std::cerr << "sfx turned down to: " << g.sfx_vol << endl;
+
+						return 0;
+					} else if (selection && (sfx_slider.words[selection->id] == ">")) {
+						sfx_slider.move_slider_up();
+
+#ifdef USE_OPENAL_SOUND
+						sounds.updateSFXVol();
+						sounds.boop();
+
+#endif
+						// std::cerr << "sfx turned down to: " << g.sfx_vol << endl;
+
+						return 0;
+					}
+
+					
+				}
+			}
+
+			if (e->type == MotionNotify) {
+				//The mouse moved!
+				if (savex != e->xbutton.x || savey != e->xbutton.y) {
+					savex = e->xbutton.x;
+					savey = e->xbutton.y;
+					//Code placed here will execute whenever the mouse moves.
+
+					// need to send in flipped y coord because window and
+					// mouse coords have different origins
+					selection = vol_slider.checkButtons(savex, g.yres - savey);
+					if (selection) {
+						vol_slider.set_orig_color();
+						vol_slider.set_highlight(selection);
+
+#ifdef USE_OPENAL_SOUND
+						sounds.beep();
+#endif
+
+					} else {
+						vol_slider.set_orig_color();
+					}
+
+					selection = sfx_slider.checkButtons(savex, g.yres - savey);
+					if (selection) {
+						sfx_slider.set_orig_color();
+						sfx_slider.set_highlight(selection);
+
+#ifdef USE_OPENAL_SOUND
+						sounds.beep();
+#endif
+
+					} else {
+						sfx_slider.set_orig_color();
+					}
+
+				}
+			}
+	
+	
+	
 	} else if (g.state == PAUSE) {
 		if (e->type != ButtonRelease &&
 			e->type != ButtonPress &&
@@ -490,14 +607,58 @@ int X11_wrapper::check_keys(XEvent *e)
 					cerr << "Back to the main menu" << endl;
 					return 0;
 
+				case XK_7:
+
+					vol_slider.move_slider_down();
+
 #ifdef USE_OPENAL_SOUND
-				case XK_u:	// go back to main menu
-					//Escape key was pressed
-					//Enter Pause State
-					sounds.pause();
-					cerr << "cycling song to " << sounds.get_song_name() << endl;
-					return 0;
+					sounds.updateMusicVol();
 #endif
+					// cerr << "sound turned down to: " << g.m_vol << endl;
+
+					// sfx_slider.move_slider_down();
+					return 0;
+				case XK_8:
+					vol_slider.move_slider_up();
+
+#ifdef USE_OPENAL_SOUND
+					sounds.updateMusicVol();
+#endif
+					// cerr << "sound turned up to: " << g.m_vol << endl;
+					// sfx_slider.move_slider_up();
+					return 0;
+
+
+				case XK_9:
+
+					sfx_slider.move_slider_down();
+
+#ifdef USE_OPENAL_SOUND
+					sounds.updateSFXVol();
+#endif
+					// cerr << "sfx turned down to: " << g.sfx_vol << endl;
+
+					// sfx_slider.move_slider_down();
+					return 0;
+				case XK_0:
+					sfx_slider.move_slider_up();
+
+#ifdef USE_OPENAL_SOUND
+					sounds.updateSFXVol();
+#endif
+					// cerr << "sfx turned up to: " << g.sfx_vol << endl;
+					// sfx_slider.move_slider_up();
+					return 0;
+
+
+// #ifdef USE_OPENAL_SOUND
+// 				case XK_u:	// go back to main menu
+// 					//Escape key was pressed
+// 					//Enter Pause State
+// 					sounds.toggle_user_pause();
+// 					cerr << "toggling pause"  << endl;
+// 					return 0;
+// #endif
 
 			}
 		}
@@ -505,7 +666,11 @@ int X11_wrapper::check_keys(XEvent *e)
 		// Only valid key entries are:
 		// 		Escape: Leave Pause Menu
 		// *** Should be waiting for mouse input on the menu ***
-	} else if (g.state == GAME) {
+	} 
+	
+	
+	
+	else if (g.state == GAME) {
 		if (e->type == KeyPress) {
 			float dusha = tos.pos[0] + 150*(g.keys[XK_d]-g.keys[XK_a]);
 			float dushb = tos.pos[1] + 150*(g.keys[XK_w]-g.keys[XK_s]);
@@ -612,7 +777,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Escape key was pressed
 					//Enter Pause State
 					sounds.toggle_user_pause();
-					cerr << "cycling song to " << sounds.get_song_name() << endl;
+					cerr << "toggling pause"  << endl;
 					return 0;
 #endif
 
