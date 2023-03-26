@@ -14,19 +14,21 @@
 - naming convention for enemies
 - Make multiple difficulties of enemies
 - forky needs to be a bullet
-- shield
+- shield (note: i have a shield sound effect - mike)
 - game_reset() for entity state
 - linke high scores with odin
-
+- circle enemy
 
 
 #### In Progress:
+- implement volume change feature (mike)
 - ARTWORK... (ailand)
 - hole in the wall obstacle
-- circle enemy (mike)
 - freeze enemy (dan)
 
 #### Done:
+- implement sound effects (mike)
+- fix volume issues (mike)
 - list of 10 high scores (mike)
 - horizontal blocky (mike)
 - debug mode (mike)

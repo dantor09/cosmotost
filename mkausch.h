@@ -28,8 +28,8 @@
 
 using namespace std;
 
-inline const int NUM_SOUNDS = 10;
-inline const int NUM_SONGS = 1;
+inline const int NUM_SOUNDS = 15;
+// inline const int NUM_SONGS = 1;
 
 enum PBType {HEALTH, COOLDOWN};
 
@@ -138,13 +138,13 @@ private:
 
     bool is_intro;
     bool is_game;
+    bool is_music_paused;
+    bool user_pause;
+    int current_track;
 
     void init_openal();
     void close_openal();
-    int current_track;
     string build_song_path(string s);
-    bool is_music_paused;
-    bool user_pause;
 
     string sound_names[NUM_SOUNDS] = {
                     "bullet_fire.wav",
@@ -152,20 +152,25 @@ private:
                     "beep.wav",
                     "boop.wav",
                     "Edzes-64TheMagicNumber-loop8kHz.wav",
-                    "Timecop1983-OnTheRun8kHz.wav",
-                    "pop1.wav",
-                    "pop2.wav",
-                    "pop_gun.wav",
-                    "ray_pop.wav"};
+                    "AdhesiveWombat-8bitAdventure_16kHz.wav",
+                    "zap1.wav",
+                    "zap2.wav",
+                    "zap3.wav",
+                    "zap4.wav",
+                    "shield.wav",
+                    "doosh.wav",
+                    "doosh2.wav",
+                    "explo3.wav",
+                    "explo4.wav"};
 
 
 public:
 	// Source refers to the sound.
+    bool gun_shooting;
 
-    // new
-    void play_start_track();
 	Sound();
 	~Sound();
+    void play_start_track();
     bool check_intro_buffer_done();
     void reset_buffer_done();
     void loop_intro();
@@ -175,10 +180,12 @@ public:
     void unpause();
     void toggle_user_pause();
     bool get_pause();
-    bool gun_shooting;
     void rewind_game_music();
     void gun_play(int btype);
     void gun_stop();
+    void doosh();
+    void shieldSFX();
+    void exploSFX();
     void beep();
     void boop();
 

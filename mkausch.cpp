@@ -387,6 +387,11 @@ Sound::Sound()
     alBuffers[7] = alutCreateBufferFromFile(build_song_path(sound_names[7]).c_str());
     alBuffers[8] = alutCreateBufferFromFile(build_song_path(sound_names[8]).c_str());
     alBuffers[9] = alutCreateBufferFromFile(build_song_path(sound_names[9]).c_str());
+    alBuffers[10] = alutCreateBufferFromFile(build_song_path(sound_names[10]).c_str());
+    alBuffers[11] = alutCreateBufferFromFile(build_song_path(sound_names[11]).c_str());
+    alBuffers[12] = alutCreateBufferFromFile(build_song_path(sound_names[12]).c_str());
+   alBuffers[13] = alutCreateBufferFromFile(build_song_path(sound_names[13]).c_str());
+    alBuffers[14] = alutCreateBufferFromFile(build_song_path(sound_names[14]).c_str());
 
     // songBuffers[0] = alBuffers[3];
     buffersDone = buffersQueued = 0;
@@ -399,28 +404,102 @@ Sound::Sound()
     alSourcef(menuQueueSource, AL_GAIN, 1.0f);
     alSourcef(menuQueueSource, AL_PITCH, 1.0f);
 
+    alSourcei(alSources[0], AL_BUFFER, alBuffers[0]);   // bullet_fire
+    alSourcef(alSources[0], AL_GAIN, 1.0f);
+    alSourcef(alSources[0], AL_PITCH, 1.0f);
+    alSourcei(alSources[0], AL_LOOPING, AL_TRUE);
+
+    alSourcei(alSources[1], AL_BUFFER, alBuffers[1]);   // intro
+    alSourcef(alSources[1], AL_GAIN, 0.8f);
+    alSourcef(alSources[1], AL_PITCH, 1.0f);
+    alSourcei(alSources[1], AL_LOOPING, AL_FALSE);
+
+    alSourcei(alSources[2], AL_BUFFER, alBuffers[2]);   // beep
+    alSourcef(alSources[2], AL_GAIN, 1.0f);
+    alSourcef(alSources[2], AL_PITCH, 1.0f);
+    alSourcei(alSources[2], AL_LOOPING, AL_FALSE);
+
+    alSourcei(alSources[3], AL_BUFFER, alBuffers[3]); // boop
+    alSourcef(alSources[3], AL_GAIN, 1.0f);
+    alSourcef(alSources[3], AL_PITCH, 1.0f);
+    alSourcei(alSources[3], AL_LOOPING, AL_FALSE);
+
+    alSourcei(alSources[4], AL_BUFFER, alBuffers[4]); // intro's loop
+    alSourcef(alSources[4], AL_GAIN, 0.8f);
+    alSourcef(alSources[4], AL_PITCH, 1.0f);
+    alSourcei(alSources[4], AL_LOOPING, AL_TRUE);
+
+    alSourcei(alSources[5], AL_BUFFER, alBuffers[5]); // AdhesiveWombat song
+    alSourcef(alSources[5], AL_GAIN, 0.8f);
+    alSourcef(alSources[5], AL_PITCH, 1.0f);
+    alSourcei(alSources[5], AL_LOOPING, AL_TRUE);
+
+    alSourcei(alSources[6], AL_BUFFER, alBuffers[6]); // zap1
+    alSourcef(alSources[6], AL_GAIN, 1.0f);
+    alSourcef(alSources[6], AL_PITCH, 1.0f);
+    alSourcei(alSources[6], AL_LOOPING, AL_TRUE);
 
 
-    //Generate a source, and store it in a buffer.
-    // set sfx/songs to not loop
-    int non_looping_sounds = 4;
-    for (int i = 0; i < non_looping_sounds; i++) {
-        alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
-        alSourcef(alSources[i], AL_GAIN, 1.0f);
-        alSourcef(alSources[i], AL_PITCH, 1.0f);
-        alSourcei(alSources[i], AL_LOOPING, AL_FALSE);
-    }
+    alSourcei(alSources[7], AL_BUFFER, alBuffers[7]); // zap2
+    alSourcef(alSources[7], AL_GAIN, 1.0f);
+    alSourcef(alSources[7], AL_PITCH, 1.0f);
+    alSourcei(alSources[7], AL_LOOPING, AL_TRUE);
 
-        alSourcef(alSources[2], AL_GAIN, 5.0f);
-        alSourcef(alSources[3], AL_GAIN, 5.0f);
 
-    // make all songs to loop
-    for (int i = non_looping_sounds; i < NUM_SOUNDS; i++) {
-        alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
-        alSourcef(alSources[i], AL_GAIN, 0.25f);
-        alSourcef(alSources[i], AL_PITCH, 1.0f);
-        alSourcei(alSources[i], AL_LOOPING, AL_TRUE);
-    }
+    alSourcei(alSources[8], AL_BUFFER, alBuffers[8]); // zap3
+    alSourcef(alSources[8], AL_GAIN, 1.0f);
+    alSourcef(alSources[8], AL_PITCH, 1.0f);
+    alSourcei(alSources[8], AL_LOOPING, AL_TRUE);
+
+
+    alSourcei(alSources[9], AL_BUFFER, alBuffers[9]); // zap4
+    alSourcef(alSources[9], AL_GAIN, 1.0f);
+    alSourcef(alSources[9], AL_PITCH, 1.0f);
+    alSourcei(alSources[9], AL_LOOPING, AL_TRUE);
+
+    alSourcei(alSources[10], AL_BUFFER, alBuffers[10]); // shield
+    alSourcef(alSources[10], AL_GAIN, 1.0f);
+    alSourcef(alSources[10], AL_PITCH, 1.0f);
+    alSourcei(alSources[10], AL_LOOPING, AL_FALSE);
+
+    alSourcei(alSources[11], AL_BUFFER, alBuffers[11]); // doosh
+    alSourcef(alSources[11], AL_GAIN, 1.0f);
+    alSourcef(alSources[11], AL_PITCH, 1.0f);
+    alSourcei(alSources[11], AL_LOOPING, AL_FALSE);
+
+    alSourcei(alSources[12], AL_BUFFER, alBuffers[12]); // doosh2
+    alSourcef(alSources[12], AL_GAIN, 3.0f);
+    alSourcef(alSources[12], AL_PITCH, 1.0f);
+    alSourcei(alSources[12], AL_LOOPING, AL_FALSE);
+
+    alSourcei(alSources[13], AL_BUFFER, alBuffers[13]); // doosh
+    alSourcef(alSources[13], AL_GAIN, 1.0f);
+    alSourcef(alSources[13], AL_PITCH, 1.0f);
+    alSourcei(alSources[13], AL_LOOPING, AL_FALSE);
+
+    alSourcei(alSources[14], AL_BUFFER, alBuffers[14]); // doosh2
+    alSourcef(alSources[14], AL_GAIN, 3.0f);
+    alSourcef(alSources[14], AL_PITCH, 1.0f);
+    alSourcei(alSources[14], AL_LOOPING, AL_FALSE);
+
+
+    // //Generate a source, and store it in a buffer.
+    // // set sfx/songs to not loop
+    // int non_looping_sounds = 4;
+    // for (int i = 0; i < non_looping_sounds; i++) {
+    //     alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
+    //     alSourcef(alSources[i], AL_GAIN, 1.0f);
+    //     alSourcef(alSources[i], AL_PITCH, 1.0f);
+    //     alSourcei(alSources[i], AL_LOOPING, AL_FALSE);
+    // }
+
+    // // make all songs to loop
+    // for (int i = non_looping_sounds; i < NUM_SOUNDS; i++) {
+    //     alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
+    //     alSourcef(alSources[i], AL_GAIN, 0.25f);
+    //     alSourcef(alSources[i], AL_PITCH, 1.0f);
+    //     alSourcei(alSources[i], AL_LOOPING, AL_TRUE);
+    // }
     //   [[------- END OLD -----------]]
 
 
@@ -503,23 +582,22 @@ string Sound::build_song_path(string s)
 
 void Sound::gun_play(int btype)
 {
-    static int gun_start = 6;
+    // static int gun_start = 6;
 
     cerr << "gun shooting..." << endl;
     if (btype == 1) {
-        alSourcePlay(alSources[gun_start]);
+        alSourcePlay(alSources[6]);
     } else if (btype == 2) {
-        alSourcePlay(alSources[gun_start]);
-        alSourcePlay(alSources[gun_start+1]);
+        alSourcePlay(alSources[7]);
+        // alSourcePlay(alSources[gun_start+1]);
     } else if (btype == 3) {
-        alSourcePlay(alSources[gun_start]);
-        alSourcePlay(alSources[gun_start+1]);
-        alSourcePlay(alSources[gun_start+2]);
+        alSourcePlay(alSources[8]);
+        // alSourcePlay(alSources[gun_start+1]);
+        // alSourcePlay(alSources[gun_start+2]);
     } else if (btype == 4) {
-        alSourcePlay(alSources[gun_start+2]);
-        alSourcePlay(alSources[gun_start+3]);
+        alSourcePlay(alSources[9]);
+        // alSourcePlay(alSources[gun_start+3]);
     }
-
 }
 
 void Sound::gun_stop()
@@ -540,6 +618,25 @@ void Sound::beep()
 void Sound::boop()
 {
     alSourcePlay(alSources[3]);
+}
+
+void Sound::doosh()
+{
+    int index = 12; // index of doosh sound effect 11 or 12 currently
+    alSourcePlay(alSources[index]);
+}
+
+
+void Sound::shieldSFX()
+{
+    int index = 10; // index of doosh sound effect 
+    alSourcePlay(alSources[index]);
+}
+
+void Sound::exploSFX()
+{
+    int index = 14; // index of doosh sound effect 13 or 14 currently
+    alSourcePlay(alSources[index]);
 }
 
 bool Sound::check_intro_buffer_done()
@@ -1085,7 +1182,10 @@ void check_sound(void)
 	static bool loop_set = false;
 	static bool initial_game_setup = false;
 	static int prev_btype = 1;
+    static int exploded = 0;
 
+
+    // Main menu / music SFX loop check
 	if (g.state == SPLASH || g.state == MAINMENU || g.state == GAMEOVER) {
 		// init_game_setup will unque intro buffers and queue game songs
 		initial_game_setup = false;	// switch to false if it was prev true
@@ -1110,24 +1210,44 @@ void check_sound(void)
 
 	}
 
-	// *******     GUN NOISES      **********//
 
-	// start playing new sound if leveled up gun
-	if (tos.bullet_type_prime != prev_btype) {
-		sounds.gun_stop();
-		sounds.gun_play(tos.bullet_type_prime);
-		prev_btype = tos.bullet_type_prime;
-	}
-	// if space bar is pressed down and gun not already shooting
-	if ((g.keys[XK_space] == 1) && (!sounds.gun_shooting)) {
-		cerr << "tos.bullet_type_prime: " << tos.bullet_type_prime << endl;
-		sounds.gun_play(tos.bullet_type_prime);
-		sounds.gun_shooting = true;
-		// if spacebar not pressed down and gun noise currently set to shoot
-	} else if (g.keys[XK_space] == 0 && (sounds.gun_shooting)) {
-		sounds.gun_stop();
-		sounds.gun_shooting = false;
-	}
+
+
+	// *******     SFX NOISES      **********//
+
+    if (g.state == GAME) {
+        
+        // start playing new sound if leveled up gun
+        if ((tos.bullet_type_prime != prev_btype) && (sounds.gun_shooting)) {
+            sounds.gun_stop();
+            sounds.gun_play(tos.bullet_type_prime);
+            prev_btype = tos.bullet_type_prime;
+        }
+        // if space bar is pressed down and gun not already shooting
+        if ((g.keys[XK_space] == 1) && (!sounds.gun_shooting)) {
+            cerr << "tos.bullet_type_prime: " << tos.bullet_type_prime << endl;
+            sounds.gun_play(tos.bullet_type_prime);
+            sounds.gun_shooting = true;
+            // if spacebar not pressed down and gun noise currently set to shoot
+        } else if (g.keys[XK_space] == 0 && (sounds.gun_shooting)) {
+            sounds.gun_stop();
+            sounds.gun_shooting = false;
+        }
+
+
+        if (blocky->explode_done == false && exploded == 0) {
+            sounds.exploSFX();
+            exploded = true;
+        } else if (blocky->explode_done == true && exploded == 1) {
+            exploded = false;
+        }
+
+    } else {
+        if (sounds.gun_shooting == true) {
+            sounds.gun_stop();
+        }
+    }
+
 
 }
 #endif
@@ -1289,6 +1409,7 @@ Gamerecord::Gamerecord()
 
 Gamerecord::~Gamerecord()
 {
+    cerr << "constructor called..." << endl;
 	writeRecord();
 	if (user_score) {
 		delete user_score;
@@ -1300,6 +1421,7 @@ Gamerecord::~Gamerecord()
         hs_menu = nullptr;
     }
 
+    cerr << "gamerecord constructor finishing..." << endl;
 }
 
 // reads highscores from local file and loads them into the scores vector

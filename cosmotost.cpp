@@ -512,10 +512,13 @@ int X11_wrapper::check_keys(XEvent *e)
 			switch (key) {
 				case XK_j:
 						// int a = 350;
-						if(tos.energy >= 10) {
+						if (tos.energy >= 10) {
 								tos.pos[0] = dusha;
 								tos.pos[1] = dushb;
 								tos.energy -= 10;
+#ifdef USE_OPENAL_SOUND
+							sounds.doosh();
+#endif
 						}
 						// pos[0] = 350;
 						// pos[0] += 50;
