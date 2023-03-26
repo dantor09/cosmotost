@@ -3,7 +3,11 @@
 #include "Global.h"
 #include "dtorres.h"
 #include <GL/glx.h>
+#include <unistd.h>
 
+InfoBoard::InfoBoard() 
+{
+}
 void InfoBoard::draw()
 {
 	glPushMatrix();
@@ -20,12 +24,32 @@ void InfoBoard::draw()
 FreezeBlock::FreezeBlock() {
 	position_set = false;
 	ptimer = NULL;
+	min_block_dimension = 1;
+	max_block_dimension = 30;
+}
+int FreezeBlock::randomDimension()
+{
+	int random_dimension = min_block_dimension + rand() % (max_block_dimension - min_block_dimension) + 1;
+	return random_dimension;
+}
+void FreezeBlock::setMinMaxBlockDimensions(int min, int max)
+{
+	if(min < 1 || max > g.yres/3 || max > g.xres/3) {
+		cout << "Invalid block dimensions" << endl;
+		usleep(3000000);
+	}
+	else {
+		min_block_dimension = min;
+		max_block_dimension = max;
+	}
+}
+FreezeBlock::~FreezeBlock()
+{
 }
 
-FreezeBlock::~FreezeBlock(){
-}
-
-void FreezeBlock::draw() {
+void FreezeBlock::draw()
+{
+	setTrace(tos);
 	glColor3ubv(color);
 	glPushMatrix();
 	glTranslatef(pos[0], pos[1], pos[2]);
@@ -36,6 +60,44 @@ void FreezeBlock::draw() {
 	glVertex2f( w, -h);
 	glEnd();
 	glPopMatrix();
+	
+	if (tos.pos[0] < pos[0] && tos.pos[1] < pos[1]) {
+		freeze_block.setVel(-1, -1, 0);
+		pos[0] += vel[0];
+		pos[1] += vel[1];
+	}
+	else if (tos.pos[0] > pos[0] && tos.pos[1] > pos[1]) {
+		freeze_block.setVel(1, 1, 0);
+		pos[0] += vel[0];
+		pos[1] += vel[1];
+	}
+	else if (tos.pos[0] < pos[0] && tos.pos[1] > pos[1]) {
+		freeze_block.setVel(-1, 1, 0);
+		pos[0] += vel[0];
+		pos[1] += vel[1];
+	}
+	else if(tos.pos[0] > pos[0] && tos.pos[1] < pos[1]) {
+		freeze_block.setVel(1, -1, 0);
+		pos[0] += vel[0];
+		pos[1] += vel[1];
+	}
+	else if (tos.pos[0] == pos[0] && tos.pos[1] < pos[1]) {
+		freeze_block.setVel(0, -1, 0);
+		pos[1] += vel[1];
+	}
+	else if (tos.pos[0] == pos[0] && tos.pos[1] > pos[1]) {
+		freeze_block.setVel(0, 1, 0);
+		pos[1] += vel[1];
+	}
+	else if (tos.pos[0] < pos[0] && tos.pos[1] == pos[1]) {
+		freeze_block.setVel(-1, 0, 0);
+		pos[0] += vel[0];
+	}
+	else if (tos.pos[0] > pos[0] && tos.pos[1] == pos[1]) {
+		freeze_block.setVel(1, 0, 0);
+		pos[0] += vel[0];
+	}
+
 }
 
 void FreezeBlock::setTimer(int seconds) {
