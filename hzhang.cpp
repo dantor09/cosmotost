@@ -93,6 +93,8 @@ void makeBread(float x, float y,float z, int Bread_t, int type) {
 
 //==================================================================================
 Item::Item(){
+	tex = nullptr;	// assign texture to null in the base class
+					// this var should be overridden in classes with textures
 }
 Item::~Item(){
 }
@@ -287,7 +289,7 @@ Toaster::Toaster()
 		item_type = 0;
 		setPos(g.xres/4, g.yres/2, 0.0);
 		setColor(188, 226, 232);
-		setDim(20,15);
+		setDim(30,25);
 		starting_hp = 80;
 		setHP(starting_hp);
 		setDamage(100);
@@ -308,6 +310,7 @@ Toaster::Toaster()
 		energy_recover = 0.1f;
 		disable_keys = false;
 		laserOn = false;
+		tex = &g.toaster_silhouette;
 }
 
 Toaster::~Toaster()
@@ -409,15 +412,26 @@ void Toaster::tdraw(){
 			glEnd();
 			glPopMatrix();
 	}
+
 	glPushMatrix();
-  	glColor3ub(color[0], color[1], color[2]);
+	glBindTexture(GL_TEXTURE_2D, *(tos.tex));
+  	// glColor3ub(color[0], color[1], color[2]);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
   	glTranslatef(pos[0], pos[1], pos[2]);
   	glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 1.0f);
   			glVertex2f(vertex[0],vertex[1]);
+			glTexCoord2f(1.0f, 1.0f);
   			glVertex2f(vertex[2],vertex[3]);
+			glTexCoord2f(1.0f, 0.0f);
   			glVertex2f(vertex[4],vertex[5]);
+			glTexCoord2f(0.0f, 0.0f);
   			glVertex2f(vertex[6],vertex[7]);
   	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_ALPHA_TEST);
   	glPopMatrix();
 
 	//D.T Draw the lives boxes on the information board

@@ -44,6 +44,7 @@ bool pointIn(float x0, float y0, float *arr, int n);
 class Item: public Box
 {
   public:
+    GLuint * tex;
     Box * plive;
     //item_type show what kind of item it is
     int item_type;

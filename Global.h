@@ -5,6 +5,7 @@
 #include "dtorres.h"
 // #include <cstring>
 #include "aparriott.h"
+#include "image.h"
 
 //                  0       1       2       3       4
 enum Gamestate { SPLASH, MAINMENU, GAME, PAUSE, GAMEOVER };
@@ -39,6 +40,11 @@ bool entity_active,
 
 float sfx_vol;
 float m_vol;
+
+GLuint bkg_texture;
+GLuint toaster_texture;
+GLuint toaster_silhouette;
+
 
 Global();
 ~Global();
@@ -78,6 +84,18 @@ inline SoundBar vol_slider(&g.m_vol, g.xres*(1.0f/3.0f), g.yres/2.0f, "Music Vol
 inline SoundBar sfx_slider(&g.sfx_vol, g.xres*(2.0f/3.0f), g.yres/2.0f, "SFX Volume");
 inline InfoBoard info_board_1;
 inline FreezeBlock freeze_block;
+
+/*******************************
+ * 
+ *      Textures
+ * 
+********************************/
+
+inline Image background("textures/background.jpg");
+inline Image toaster_img("textures/toaster.png");
+
+
+
 
 #ifdef USE_OPENAL_SOUND
 inline Sound sounds;

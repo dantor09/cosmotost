@@ -31,6 +31,7 @@
 #include "aparriott.h"	// entity spawning
 #include "hzhang.h"	// record
 #include "dtorres.h"
+#include "image.h"
 
 using namespace std;
 
@@ -903,6 +904,12 @@ void init_opengl(void)
 	//Set the screen background color
     // makes it almost black
 
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_FOG);
+	glDisable(GL_CULL_FACE);
+
+
     // initialize fonts
 
 	glEnable(GL_TEXTURE_2D);
@@ -915,8 +922,42 @@ void init_opengl(void)
 	blocky = &vblocky;
 	blocky_health = &vblocky_health;
 
-	cerr << "finished initializing opengl" << endl;
+	/*
+		generate and define textures
+	*/
 
+	glGenTextures(1, &g.bkg_texture);
+	int w = background.width;
+    int h = background.height;
+    glBindTexture(GL_TEXTURE_2D, g.bkg_texture);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
+	    GL_RGB, GL_UNSIGNED_BYTE, background.data);
+
+
+
+	w = toaster_img.width;
+    h = toaster_img.height;
+	// glGenTextures(1, &g.toaster_texture);
+    // glBindTexture(GL_TEXTURE_2D, g.toaster_texture);
+	glGenTextures(1, &g.toaster_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.toaster_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	unsigned char *silhouetteData = buildAlphaData(&toaster_img);
+    // glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
+	//     GL_RGB, GL_UNSIGNED_BYTE, toaster_img.data);
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+	// 	GL_RGBA, GL_UNSIGNED_BYTE, toaster_img.data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+
+
+	cerr << "finished initializing opengl" << endl;
 }
 
 
@@ -1139,6 +1180,23 @@ void render()
 {
 	glClearColor(24.0/255, 38.0/255, 37.0/255, 1.0);	// clear it to a bluish
 	glClear(GL_COLOR_BUFFER_BIT);	// clear screen
+
+
+	/*
+		render background
+	*/
+
+	glBindTexture(GL_TEXTURE_2D, g.bkg_texture);
+
+    glColor3f(0.2, 0.2, 0.2);
+	glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(0,  g.xres);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(g.xres,  g.yres);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(g.xres, 0);
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 
 
 	if (g.state == SPLASH) {
