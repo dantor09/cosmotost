@@ -649,6 +649,12 @@ void Sound::exploSFX()
     alSourcePlay(alSources[index]);
 }
 
+void Sound::playZap2()
+{
+    int index = 7; // index of zap2 for blocky crashes, 2nd gun
+    alSourcePlay(alSources[index]);
+}
+
 bool Sound::check_intro_buffer_done()
 {
     reset_buffer_done();
@@ -938,6 +944,7 @@ void Item::hpDamage(Entity & e)
 Blocky::Blocky(char type)
 {
     srand(time(NULL));
+    float sub_blocky_size = sqrt((25.0*100.0)/SUB_BLOCK_N);
     if (type == 'v') {
         setDim(25.0f, 100.0f);
     } else if (type == 'h') {
@@ -958,33 +965,35 @@ Blocky::Blocky(char type)
     // sub box assignment
     // assignes itself and it's mirror image (i+4 in this case)
     int angle = 80;
+    float angle_offset = (angle*2/SUB_BLOCK_N);
     int rvel = 8;
     float deg_to_rad = (PI / 180.0f);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < SUB_BLOCK_N; i++) {
         // set dim
-        sub_boxes[i].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
-        sub_boxes[i+4].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
-
+        // sub_boxes[i].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
+        // sub_boxes[i+4].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
+        sub_boxes[i].setDim(sub_blocky_size, sub_blocky_size);
+        // sub_boxes[i+4].setDim(15, 15);
         // set color
         sub_boxes[i].setColor(255,0,0);    // make them red for now
-        sub_boxes[i+4].setColor(255,0,0);    // make them red for now
+        // sub_boxes[i+4].setColor(255,0,0);    // make them red for now
 
         // set accel
         // sub_boxes[i].set_acc(0, -0.25, 0);
         // sub_boxes[i+4].set_acc(0, -0.25, 0);
         sub_boxes[i].setAcc(0, 0, 0);
-        sub_boxes[i+4].setAcc(0, 0, 0);
+        // sub_boxes[i+4].setAcc(0, 0, 0);
 
         // set angle first so we can calc vel vectors
         sb_angles[i] = angle;
-        sb_angles[i+4] = -sb_angles[i];
-        angle -= 20;
+        // sb_angles[i+4] = -sb_angles[i];
+        angle -= angle_offset;
 
         // set velocity of x and y components based on above angle
         sub_boxes[i].setVel((rvel*cos(deg_to_rad * sb_angles[i])),
                                     (rvel*sin(deg_to_rad * sb_angles[i])), 0);
-        sub_boxes[i+4].setVel((rvel*cos(deg_to_rad * sb_angles[i+4])),
-                                    (rvel*sin(deg_to_rad * sb_angles[i+4])), 0);
+        // sub_boxes[i+4].setVel((rvel*cos(deg_to_rad * sb_angles[i+4])),
+        //                             (rvel*sin(deg_to_rad * sb_angles[i+4])), 0);
     }
 
 
@@ -999,7 +1008,7 @@ Blocky::~Blocky()
 void Blocky::init_rotation_vel()
 {
     // 0 the starting angle and assign random change in rotation angle
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < SUB_BLOCK_N; i++) {
         rot_angle[i] = 0;
         rot_speed[i] = -40 + (rand() % 41);
     }
@@ -1046,7 +1055,7 @@ bool Blocky::sub_ScreenIn()
     bool subs_onscreen = false;
 
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < SUB_BLOCK_N; i++) {
         subs_onscreen = sub_boxes[i].screenIn();
         if (subs_onscreen)
             break;
@@ -1085,7 +1094,7 @@ void Blocky::draw()
         // cerr << "checking if sub boxes are in the screen...\n";
         if (sub_ScreenIn()) {
 
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < SUB_BLOCK_N; i++) {
                 set_rand_color(sub_boxes[i]);
                 glPushMatrix();
                 glColor3ub(sub_boxes[i].color[0],
@@ -1163,7 +1172,7 @@ void Blocky::move()
         vel[2] += acc[2];
     } else if (!explode_done) { // move sub boxes until they fall off screen
         if (sub_ScreenIn()) {
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < SUB_BLOCK_N; i++) {
                 sub_boxes[i].pos[0] += sub_boxes[i].vel[0];
                 sub_boxes[i].pos[1] += sub_boxes[i].vel[1];
                 sub_boxes[i].pos[2] += sub_boxes[i].vel[2];
@@ -1174,6 +1183,27 @@ void Blocky::move()
         }
     }
 }
+
+bool Blocky::subBoxCollision(Item & itm)
+{
+    for (int i = 0; i < SUB_BLOCK_N; i++) {
+        if (sub_boxes[i].collision(itm)){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Blocky::subBoxCollision(Entity & ent)
+{
+    for (int i = 0; i < SUB_BLOCK_N; i++) {
+        if (ent.collision(sub_boxes[i])){
+            return true;
+        }
+    }
+    return false;
+}
+
 
 void Item::hpDamage(Blocky & bf)
 {
@@ -1205,7 +1235,7 @@ void Blocky::explode()
     int ycoord = pos[1] - pixel_offset;
     int rand_offset;    // pixel_offset pixel offset randomly from center of blocky
 
-    for (int i = 0; i < pixel_offset; i++) {
+    for (int i = 0; i < SUB_BLOCK_N; i++) {
         rand_offset = rand() % (pixel_offset * 2);
         sub_boxes[i].setPos(pos[0]+rand_offset, pos[1]+rand_offset, 0);
         sub_boxes[i].setVel((rvel*cos(deg_to_rad * sb_angles[i])),

@@ -1008,7 +1008,39 @@ void physics()
 				entity[i].vel[0] += entity[i].curve[0] / 32;
 				entity[i].vel[1] += entity[i].curve[1] / 32;
 
-				if (entity[i].collision(tos)) g.state = GAMEOVER;
+				// TODO:
+				if (blocky->is_alive() && blocky->explode_done)  {
+					if (entity[i].collision(*blocky)) {
+						entity[i].hpDamage(*blocky);
+						if (entity[i].hpCheck()) {
+							entity[i] = entity[--e.num_ent];
+						} 
+					}
+				} else if (!blocky->explode_done) {
+					if (blocky->subBoxCollision(entity[i])) {
+						entity[i].hpDamage(*blocky);
+						if (entity[i].hpCheck()) {
+							entity[i] = entity[--e.num_ent];
+						} 
+					}
+				}
+
+				if (entity[i].collision(tos)) {
+					entity[i].hpDamage(tos);
+					tos.hpDamage(entity[i]);
+					if (entity[i].hpCheck()) {
+						tos.score += entity[i].point;
+						entity[i] = entity[--e.num_ent];
+					}
+
+					if (tos.hpCheck() && (tos.lives - 1 > 0)) {
+						tos.lives--;
+						tos.setHP(80);
+					} else if (tos.hpCheck()) {
+						g.state = GAMEOVER;
+					}
+
+				}
 
 				for (int j=0; j < g.n_Bullet; j++) {
 					if (entity[i].collision(bul[j])) {
@@ -1054,16 +1086,23 @@ void physics()
 				if (blocky->hpCheck()) {
 					blocky->reset();
 				}
-				if (tos.hpCheck()) {
+
+				if (tos.hpCheck() && (tos.lives - 1 > 0)) {
+					tos.lives--;
+					tos.setHP(80);
+				} else if (tos.hpCheck()) {
 					g.state = GAMEOVER;
 				}
+
+
 			}
+
 
 			// check blocky's collision with bullets
 			for (int j=0; j < g.n_Bullet; j++) {
 				if (blocky->collision(bul[j])) {
 						blocky->hpDamage(bul[j]);
-						bul[j].hpDamage(vblocky);
+						bul[j].hpDamage(*blocky);
 						if(blocky->hpCheck()) {
 							tos.score += blocky->point;
 							blocky->reset();
@@ -1071,6 +1110,73 @@ void physics()
 						bul[j] = bul[--g.n_Bullet];
 				}
 			}
+
+			// check for blocky's (and sub blockies) collision with enemies
+			if (blocky->is_alive() && blocky->explode_done) {
+				// blocky's collision with bread
+				for (int i = 0; i < g.n_Bread; i++) {
+					if (bread[i].collision(*blocky)) {
+						bread[i].hpDamage(*blocky);
+						if (bread[i].hpCheck()) {
+							bread[i] = bread[--g.n_Bread];
+							// tos.score += bread[i].point;
+
+#ifdef USE_OPENAL_SOUND
+							sounds.playZap2();
+#endif
+
+						}
+					}
+				}
+
+				// blocky's collision with entities
+				for (int i = 0; i < e.num_ent; i++) {
+					if (entity[i].collision(*blocky)) {
+						entity[i].hpDamage(*blocky);
+						if(entity[i].hpCheck()) {
+							// tos.score += entity[i].point;
+							entity[i] = entity[--e.num_ent];
+#ifdef USE_OPENAL_SOUND
+							sounds.playZap2();
+#endif
+						}
+					}
+				}
+
+			} else if (!blocky->explode_done) {
+				// sunblocky's collision with bread
+				for (int i = 0; i < g.n_Bread; i++) {
+					if (blocky->subBoxCollision(bread[i])) {
+						bread[i].hpDamage(*blocky);
+						if (bread[i].hpCheck()) {
+							bread[i] = bread[--g.n_Bread];
+							tos.score += bread[i].point;
+
+#ifdef USE_OPENAL_SOUND
+							sounds.playZap2();
+#endif
+						}
+					}
+				}
+
+				// blocky's collision with entities
+				for (int i = 0; i < e.num_ent; i++) {
+					if (blocky->subBoxCollision(entity[i])) {
+					// if (entity[i].collision(*blocky)) {
+						entity[i].hpDamage(*blocky);
+						if(entity[i].hpCheck()) {
+							tos.score += entity[i].point;
+							entity[i] = entity[--e.num_ent];
+
+#ifdef USE_OPENAL_SOUND
+							sounds.playZap2();
+#endif
+						}
+					}
+				}
+			}
+
+
 
 
 		}
@@ -1139,16 +1245,18 @@ void physics()
 				}
 				// ckeak if collision with bullet
 				for (int j=0; j < g.n_Bullet; j++) {
-						if (bread[i].collision(bul[j])&&(bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)) {
-								bread[i].hpDamage(bul[j]);
-								bul[j].hpDamage(bread[i]);
-								bul[j] = bul[--g.n_Bullet];
-								if(bread[i].hpCheck()) {
-									tos.score += bread[i].point;
-									bread[i] = bread[--g.n_Bread];
-								}
+					if (bread[i].collision(bul[j])&&(bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)) {
+						bread[i].hpDamage(bul[j]);
+						bul[j].hpDamage(bread[i]);
+						bul[j] = bul[--g.n_Bullet];
+						if(bread[i].hpCheck()) {
+							tos.score += bread[i].point;
+							bread[i] = bread[--g.n_Bread];
 						}
+					}
 				}
+
+
 				if(!bread[i].trace)
 						bread[i].moveBread();
 				if(tos.laserCollision(bread[i])&& !bread[i].hpCheck()) {
@@ -1163,7 +1271,7 @@ void physics()
 		tos.setDistance(distanceBread);
 		if(tos.laserOn)  {
 			if (whichBread == -2) {
-					tos.laserDamage(vblocky);
+					tos.laserDamage(*blocky);
 					cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
 			} 
 			else if (whichBread != -1) {

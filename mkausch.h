@@ -25,6 +25,7 @@
 #include "fonts.h"
 #include "hzhang.h"
 
+#define SUB_BLOCK_N 100
 
 using namespace std;
 
@@ -192,6 +193,7 @@ public:
     void boop();
     void updateMusicVol();
     void updateSFXVol();
+    void playZap2();
 
 };
 
@@ -223,10 +225,10 @@ class Blocky : public Item
     void set_rand_position();
     void init_rotation_vel();
                         // so it doesn't continuously damage it
-    Item sub_boxes[8];
-    int sb_angles[8];
-    int rot_speed[8];
-    int rot_angle[8];
+    Item sub_boxes[SUB_BLOCK_N];
+    int sb_angles[SUB_BLOCK_N];
+    int rot_speed[SUB_BLOCK_N];
+    int rot_angle[SUB_BLOCK_N];
 
     public:
     bool was_hit; // set when the block strikes the toaster that fall
@@ -244,6 +246,8 @@ class Blocky : public Item
     bool explode_done;
     bool sub_ScreenIn();
     void gamereset();
+    bool subBoxCollision(Item & itm);
+    bool subBoxCollision(Entity & ent);
 
 
     // inherited void Item::draw()
