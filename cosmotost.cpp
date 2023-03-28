@@ -964,6 +964,9 @@ void init_opengl(void)
 void physics()
 {
 	if (g.state == GAME) {
+		int distanceBread = g.xres;
+		int whichBread = -1;
+		bool entity_or_tos = true;
 		// ENTITY PHYSICS
 		if (g.entity_active == true) {
 			// spawn_speed determines how many ticks until spawning another
@@ -1003,6 +1006,10 @@ void physics()
 			e.spawn_speed--;
 
 			for (int i = 0; i < e.num_ent; i++) {
+				if (entity[i].hpCheck()) {
+					tos.score += entity[i].point;
+					entity[i] = entity[--e.num_ent];
+				}
 				entity[i].pos[0] += entity[i].vel[0]/2;
 				entity[i].pos[1] += entity[i].vel[1]/2;
 				entity[i].vel[0] += entity[i].curve[0] / 32;
@@ -1046,10 +1053,6 @@ void physics()
 					if (entity[i].collision(bul[j])) {
 							entity[i].hpDamage(bul[j]);
 							bul[j].hpDamage(entity[i]);
-							if(entity[i].hpCheck()) {
-								tos.score += entity[i].point;
-								entity[i] = entity[--e.num_ent];
-							}
 							bul[j] = bul[--g.n_Bullet];
 					}
 				}
@@ -1065,10 +1068,14 @@ void physics()
 						entity[i].pos[1] >= g.yres - 4) {
 					entity[i].vel[1] = -entity[i].vel[1];
 				}
+				if (tos.laserCollision(entity[i])) {
+						if((entity[i].pos[0] - tos.pos[0] - entity[i].dim[0] - tos.w) < distanceBread) {
+								distanceBread = entity[i].pos[0] - tos.pos[0] - entity[i].dim[0] - tos.w;
+								whichBread = i;
+						}
+				}
 			}
 		}
-		int distanceBread = g.xres;
-		int whichBread = -1;
 		if (g.mike_active == true) {
 			blocky->move();
 			if (tos.laserCollision(*blocky)){
@@ -1217,8 +1224,13 @@ void physics()
 			}
 		//move of all bread and check collision with bullet and Toaster
 		for (int i=0; i < g.n_Bread; i++) {
-				if (bread[i].screenOut()||bread[i].hpCheck()) {
+				if (bread[i].screenOut()) {
 					bread[i] = bread[--g.n_Bread];
+				}
+				if (bread[i].hpCheck()) {
+					tos.score += bread[i].point;
+					bread[i] = bread[--g.n_Bread];
+
 				}
 				// ckeak if collision with toaster
 				if (bread[i].collision(tos)) {
@@ -1263,6 +1275,7 @@ void physics()
 						if((bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w) < distanceBread) {
 								distanceBread = bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w;
 								whichBread = i;
+								entity_or_tos = false;
 						}
 				}
 		// time stuff/ change when timer finish
@@ -1274,7 +1287,11 @@ void physics()
 					tos.laserDamage(*blocky);
 					cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
 			} 
-			else if (whichBread != -1) {
+			else if (whichBread != -1 && entity_or_tos) {
+					tos.laserDamage(entity[whichBread]);
+        			cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
+			}
+			else if (whichBread != -1 && !entity_or_tos) {
 					tos.laserDamage(bread[whichBread]);
         			cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
 			}

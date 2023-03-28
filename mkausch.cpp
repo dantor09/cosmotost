@@ -933,7 +933,7 @@ void Entity::hpDamage(Item & a) {
 
 bool Entity::hpCheck()
 {
-    return (hp <= 0);
+    return (hp < 0.01);
 }
 
 void Item::hpDamage(Entity & e)

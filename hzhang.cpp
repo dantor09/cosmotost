@@ -7,6 +7,7 @@
 #include "hzhang.h"
 #include "Global.h"
 #include "mkausch.h"
+#include "aparriott.h"
 #include "fonts.h"
 #include <new>
 #include <algorithm>
@@ -321,10 +322,19 @@ Toaster::~Toaster()
 bool Toaster::laserCollision(Item a){
 		return (pos[1] > a.pos[1]-a.h && pos[1] < a.pos[1]+a.h && pos[0] < a.pos[0] - a.w - w);
 }
+bool Toaster::laserCollision(Entity a){
+		return (pos[1] > a.pos[1]-a.dim[1] && pos[1] < a.pos[1]+a.dim[1] && pos[0] < a.pos[0] - a.dim[0] - w);
+}
 void Toaster::setDistance(float val){
 		distance = val;
 }
 void Toaster::laserDamage(Item& a){
+		cerr << " a.HP " << a.hp <<endl;
+		a.hp = a.hp - laser_damage[bullet_type_prime-5];
+		cerr << "make damage " << laser_damage[bullet_type_prime-5] << " a.HP " << a.hp <<endl;
+}
+
+void Toaster::laserDamage(Entity& a){
 		cerr << " a.HP " << a.hp <<endl;
 		a.hp = a.hp - laser_damage[bullet_type_prime-5];
 		cerr << "make damage " << laser_damage[bullet_type_prime-5] << " a.HP " << a.hp <<endl;

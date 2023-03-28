@@ -119,8 +119,11 @@ class Toaster: public Item
       ~Toaster();
       void posReset();
       bool laserCollision(Item a);
+      bool laserCollision(Entity a);
       void setDistance(float val);
       void laserDamage(Item &a);
+      void laserDamage(Entity &a);
+
       // getters
       // unsigned char * get_tcolor();
 
