@@ -29,7 +29,7 @@
 
 using namespace std;
 
-inline const int NUM_SOUNDS = 15;
+inline const int NUM_SOUNDS = 16;
 // inline const int NUM_SONGS = 1;
 
 enum PBType {HEALTH, COOLDOWN};
@@ -162,7 +162,8 @@ private:
                     "doosh.wav",
                     "doosh2.wav",
                     "explo3.wav",
-                    "explo4.wav"};
+                    "explo4.wav",
+                    "zap2.wav"};
 
 
 public:
@@ -260,7 +261,7 @@ class Blocky : public Item
 void set_rand_color(Item & it);
 void check_sound(void);
 
-class Shield : public Box
+class Bomb
 {
 
 public:
@@ -269,24 +270,23 @@ public:
     float radius;
     // float angle;
     float pos[3];
+    float dim[3];
+    Timer * bomb_timer;
+    Item * shards;
     unsigned char color[3];
+    bool is_thrown;
 
     // constructors
-    Shield();
-    Shield(float _w, float _h, float _x, float _y);
+    Bomb();
+    ~Bomb();
 
     // setters
     void setColor(int r, int g, int b);
     void setPos(float x, float y, float z);
     void setRad(float _r);
-    void draw();
+    void launch();
     void move();
-    // void set_text(std::string t);
-
-    unsigned char * getColor();
-
-    // debug
-    std::string getInfo();
+    void draw();
 };
 
 void check_level();
@@ -310,7 +310,6 @@ private:
 
     void genFakeNames();
     
-
 public:
     
     int n = 0;  // letter input index

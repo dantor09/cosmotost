@@ -393,8 +393,10 @@ Sound::Sound()
     alBuffers[10] = alutCreateBufferFromFile(build_song_path(sound_names[10]).c_str());
     alBuffers[11] = alutCreateBufferFromFile(build_song_path(sound_names[11]).c_str());
     alBuffers[12] = alutCreateBufferFromFile(build_song_path(sound_names[12]).c_str());
-   alBuffers[13] = alutCreateBufferFromFile(build_song_path(sound_names[13]).c_str());
+    alBuffers[13] = alutCreateBufferFromFile(build_song_path(sound_names[13]).c_str());
     alBuffers[14] = alutCreateBufferFromFile(build_song_path(sound_names[14]).c_str());
+    alBuffers[15] = alutCreateBufferFromFile(build_song_path(sound_names[15]).c_str());
+
 
     // songBuffers[0] = alBuffers[3];
     buffersDone = buffersQueued = 0;
@@ -485,6 +487,11 @@ Sound::Sound()
     alSourcef(alSources[14], AL_PITCH, 1.0f);
     alSourcei(alSources[14], AL_LOOPING, AL_FALSE);
 
+    alSourcei(alSources[15], AL_BUFFER, alBuffers[15]); // zap2 - noloop
+    alSourcef(alSources[15], AL_GAIN, g.sfx_vol);
+    alSourcef(alSources[15], AL_PITCH, 1.0f);
+    alSourcei(alSources[15], AL_LOOPING, AL_FALSE);
+
 
     // //Generate a source, and store it in a buffer.
     // // set sfx/songs to not loop
@@ -510,6 +517,8 @@ Sound::Sound()
     if (alGetError() != AL_NO_ERROR) {
         throw "ERROR: setting source\n";
     }
+    cout << "does it reach here???" << endl;
+
 }
 
 Sound::~Sound()
@@ -651,7 +660,8 @@ void Sound::exploSFX()
 
 void Sound::playZap2()
 {
-    int index = 7; // index of zap2 for blocky crashes, 2nd gun
+    int index = 15; // index of zap2 (non-loop version) 
+                    // for blocky crashes, 2nd gun
     alSourcePlay(alSources[index]);
 }
 
@@ -966,6 +976,7 @@ Blocky::Blocky(char type)
     // assignes itself and it's mirror image (i+4 in this case)
     int angle = 80;
     float angle_offset = (angle*2/SUB_BLOCK_N);
+    angle = 70;
     int rvel = 8;
     float deg_to_rad = (PI / 180.0f);
     for (int i = 0; i < SUB_BLOCK_N; i++) {
@@ -1136,9 +1147,9 @@ void Blocky::reset()
         if (lives > 0) {
             hp = starting_hp;   // give back full health
         }
-        was_hit = false;
 
     }
+    was_hit = false;
 
     setVel(0.0f, -4.0f, 0.0f);
     set_rand_position();    // put at a new random position
@@ -1190,6 +1201,9 @@ bool Blocky::subBoxCollision(Item & itm)
         if (sub_boxes[i].collision(itm)){
             return true;
         }
+        // if (itm.collision(sub_boxes[i])){
+        //     return true;
+        // }
     }
     return false;
 }
@@ -1209,8 +1223,12 @@ void Item::hpDamage(Blocky & bf)
 {
     // cerr << "blocky's hpDamage called" << endl;
     if (!bf.was_hit) {
-        hp = hp - bf.damage;
-        bf.was_hit = true;
+        if (item_type == 0) {   // toaster collision
+            hp = hp - bf.damage;
+            bf.was_hit = true;
+        } else {
+            hp = hp - bf.damage;
+        }
         // cerr << "blocky hit something" << endl;
     }
 }

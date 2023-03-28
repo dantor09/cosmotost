@@ -41,7 +41,6 @@ Global.o: Global.cpp Global.h mkausch.h hzhang.h image.cpp image.h
 mkausch.o: mkausch.cpp mkausch.h Box.h Global.h
 	$(COMP) -c mkausch.cpp
 
-
 hzhang.o: hzhang.cpp hzhang.h mkausch.cpp
 	$(COMP) -c hzhang.cpp
 

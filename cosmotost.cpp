@@ -1008,7 +1008,7 @@ void physics()
 				entity[i].vel[0] += entity[i].curve[0] / 32;
 				entity[i].vel[1] += entity[i].curve[1] / 32;
 
-				// TODO:
+				
 				if (blocky->is_alive() && blocky->explode_done)  {
 					if (entity[i].collision(*blocky)) {
 						entity[i].hpDamage(*blocky);
@@ -1083,9 +1083,9 @@ void physics()
 				// cerr << "resetting blocky..." << endl;
 				blocky->reset();
 
-				if (blocky->hpCheck()) {
-					blocky->reset();
-				}
+				// if (blocky->hpCheck()) {
+				// 	blocky->reset();
+				// }
 
 				if (tos.hpCheck() && (tos.lives - 1 > 0)) {
 					tos.lives--;
@@ -1175,9 +1175,6 @@ void physics()
 					}
 				}
 			}
-
-
-
 
 		}
 		if (g.huaiyu_active == true) {
