@@ -790,6 +790,14 @@ void Sound::updateSFXVol()
     }
 }
 
+
+void Sound::bombExplosion()
+{
+    int bomb_index = 13;
+
+    alSourcePlay(alSources[bomb_index]);
+}
+
 #endif
 
 PowerBar::PowerBar(const Item & _itm_, PBType _type_, float x, float y)
@@ -1271,6 +1279,7 @@ void check_sound(void)
 	static int prev_btype = 1;
     static int exploded = 0;
     static int bhit_occured = 0;
+    static bool bomb_playing = false;
 
 
     // Main menu / music SFX loop check
@@ -1337,6 +1346,16 @@ void check_sound(void)
             blocky->was_hit = false;
         } else if (blocky->was_hit == false && bhit_occured == 1) {
             bhit_occured = false;
+        }
+
+        // bomb explosion noise
+        if (bomb.is_thrown && !bomb_playing) {
+            sounds.bombExplosion();
+            bomb_playing = true;
+        } else if (!bomb.is_thrown && 
+                    !bomb.is_exploding && 
+                        bomb_playing) {
+            bomb_playing = false;
         }
 
     } else {
@@ -1934,6 +1953,135 @@ void SoundBar::move_slider_up()
         slider_position = get_slider_position();
         slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
     }
+}
 
 
+Bomb::Bomb()
+{
+    curr_radius = 100;
+    start_radius = 100;
+    stop_radius = 300;
+    pos[0] = g.xres/2.0;
+    pos[1] = g.yres/2.0;
+    pos[2] = 0;
+    setPos(g.xres/2.0f, g.yres/2.0f, 0);
+    setColor(0, 0, 150);
+    // is_gone = false;
+    is_thrown = false;
+    is_exploding = true;
+    num_bombs = 3;
+}
+
+Bomb::~Bomb()
+{
+    // destructor
+    if (bomb_timer) {
+        delete bomb_timer;
+        bomb_timer = nullptr;
+    }
+}
+
+void Bomb::draw()
+{
+    if (is_thrown && !is_exploding) {
+        glColor3ubv(color);
+        glPushMatrix();
+        glTranslatef(pos[0], pos[1], pos[2]);
+        glBegin(GL_QUADS);
+            glVertex2f(-15, -15);
+            glVertex2f(-15,  15);
+            glVertex2f( 15,  15);
+            glVertex2f( 15, -15);
+        glEnd();
+        glPopMatrix();
+    } else if (is_exploding) {
+        float angle1 = (2 * PI * 1)/100;
+        float angle2 = (2 * PI * 2)/100;
+        float vert1[2] = {cos(angle1) * curr_radius, sin(angle1) * curr_radius};
+        float vert2[2] = {cos(angle2) * curr_radius, sin(angle2) * curr_radius};
+        float center[3] = {pos[0], pos[1], pos[2]};
+
+        // cerr << "center: " << pos[0] << "," << pos[1] << "," << pos[2] << endl; 
+
+        glPushMatrix();
+        glTranslatef(center[0], center[1], center[2]);
+        glBegin(GL_TRIANGLE_FAN);
+        glColor3ub(255, 255, 255);
+        glVertex2f(0,0);
+        for (int i = 0; i < 103; i++) {
+            glColor3ubv(color);
+            glVertex2f(vert1[0], vert1[1]);
+            // cerr << "vert1: " << vert1[0] << "," << vert1[1] << endl; 
+
+            glVertex2f(vert2[0], vert2[1]);
+            // cerr << "vert2: " << vert2[0] << "," << vert2[1] << endl; 
+
+            glColor3ub(0, 0, 0);
+            glVertex2f(0, 0);
+
+            // move vert2 to vert1 vertices
+            vert1[0] = vert2[0];
+            vert1[1] = vert2[1];
+
+            // calc new vert for vert2
+            angle2 = (2 * PI * i)/100;
+            vert2[0] = cos(angle2) * curr_radius;
+            vert2[1] = sin(angle2) * curr_radius;
+        }
+        glEnd();
+        glPopMatrix();
+    }
+}
+
+void Bomb::setColor(int r, int g, int b)
+{
+    color[0] = (char)r;
+    color[1] = (char)g;
+    color[2] = (char)b;
+}
+
+void Bomb::setPos(float x, float y, float z)
+{
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
+}
+
+void Bomb::explode()
+{
+    if (bomb_timer) {
+        delete bomb_timer;
+        bomb_timer = nullptr;
+    }
+
+    if (curr_radius >= stop_radius) {
+        // is_gone = true;
+        is_exploding = false;
+        is_thrown = false;
+        curr_radius = start_radius;
+    } else {
+        is_exploding = true;
+        // is_gone = false;
+        radius += 1;
+    }
+}
+
+void Bomb::move()
+{
+    if (bomb_timer && !(bomb_timer->isDone())) {
+        pos[0] += 4;
+    } else if (bomb_timer && bomb_timer->isDone()) {
+        explode();
+    }
+}
+
+void Bomb::launch()
+{
+    if (!is_thrown && num_bombs > 0) {
+        is_thrown = true;
+        bomb_timer = new Timer(0.7);
+        num_bombs--;
+    } else {
+        cerr << "no bombs or one already active" << endl;
+    }
 }

@@ -588,6 +588,8 @@ int X11_wrapper::check_keys(XEvent *e)
 				case XK_Escape:
 					//Escape key was pressed
 					return 1;
+				case XK_y:
+					bomb.launch();
 			}
 		}
 		// Game State
@@ -963,8 +965,17 @@ void init_opengl(void)
 
 void physics()
 {
+	if (g.state == SPLASH) {
+
+		if (bomb.is_thrown) {
+			bomb.move();
+		}
+	}
+
 	if (g.state == GAME) {
 		// ENTITY PHYSICS
+
+
 		if (g.entity_active == true) {
 			// spawn_speed determines how many ticks until spawning another
 			// entity
@@ -1781,5 +1792,7 @@ void render()
 		}
 
 	}
+
+	bomb.draw();
 
 }

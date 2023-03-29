@@ -25,7 +25,7 @@
 #include "fonts.h"
 #include "hzhang.h"
 
-#define SUB_BLOCK_N 100
+#define SUB_BLOCK_N 150
 
 using namespace std;
 
@@ -195,6 +195,7 @@ public:
     void updateMusicVol();
     void updateSFXVol();
     void playZap2();
+    void bombExplosion();
 
 };
 
@@ -268,13 +269,20 @@ public:
 
     // vars
     float radius;
+    float start_radius;
+    float curr_radius;
+    float stop_radius;
     // float angle;
     float pos[3];
     float dim[3];
     Timer * bomb_timer;
-    Item * shards;
+    // Item * shards;
     unsigned char color[3];
     bool is_thrown;
+    bool is_exploding;
+    int num_bombs;
+    // bool is_gone;
+    
 
     // constructors
     Bomb();
@@ -283,10 +291,12 @@ public:
     // setters
     void setColor(int r, int g, int b);
     void setPos(float x, float y, float z);
-    void setRad(float _r);
+    // void setRad(float _r);
     void launch();
     void move();
     void draw();
+    void explode();
+    // bool onScreen();
 };
 
 void check_level();
