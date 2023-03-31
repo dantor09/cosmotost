@@ -268,16 +268,18 @@ class Bomb
 public:
 
     // vars
-    float radius;
+    // float radius;
     float start_radius;
     float curr_radius;
     float stop_radius;
     // float angle;
     float pos[3];
-    float dim[3];
+    float w, h;
+    float hitbox_dim[3];
     Timer * bomb_timer;
     // Item * shards;
     unsigned char color[3];
+    unsigned char launch_color[3];
     bool is_thrown;
     bool is_exploding;
     int num_bombs;
@@ -289,13 +291,18 @@ public:
     ~Bomb();
 
     // setters
-    void setColor(int r, int g, int b);
+    void setColor(unsigned char * col, int r, int g, int b);
     void setPos(float x, float y, float z);
     // void setRad(float _r);
     void launch();
     void move();
     void draw();
     void explode();
+    void updateHitbox();
+    bool hitboxCollision(Item & itm);
+    bool hitboxCollision(Entity & ent);
+    bool collision(Item & itm);
+    bool collision(Entity & ent);
     // bool onScreen();
 };
 

@@ -589,7 +589,12 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Escape key was pressed
 					return 1;
 				case XK_y:
-					bomb.launch();
+					// if (tos.energy > 20) {
+					// bomb.launch();
+						// tos.energy -= 20;
+					// }
+					
+					return 0;
 			}
 		}
 		// Game State
@@ -750,6 +755,10 @@ int X11_wrapper::check_keys(XEvent *e)
 						// g.substate = NONE;
 						cerr << "g.mike_active set to false\n";
 					}
+					return 0;
+
+				case XK_y:
+					bomb.launch();
 					return 0;
 
 				case XK_Escape:	// pause the game
@@ -967,14 +976,15 @@ void physics()
 {
 	if (g.state == SPLASH) {
 
-		if (bomb.is_thrown) {
-			bomb.move();
-		}
+
 	}
 
 	if (g.state == GAME) {
 		// ENTITY PHYSICS
 
+		if (bomb.is_thrown) {
+			bomb.move();
+		}
 
 		if (g.entity_active == true) {
 			// spawn_speed determines how many ticks until spawning another
@@ -1053,6 +1063,16 @@ void physics()
 
 				}
 
+				if (bomb.is_exploding &&
+						bomb.collision(entity[i])) {
+
+						entity[i].hp -= entity[i].hp;	// wipe out all health
+						tos.score += entity[i].point;
+						entity[i] = entity[--e.num_ent];
+					
+				}
+
+
 				for (int j=0; j < g.n_Bullet; j++) {
 					if (entity[i].collision(bul[j])) {
 							entity[i].hpDamage(bul[j]);
@@ -1064,6 +1084,7 @@ void physics()
 							bul[j] = bul[--g.n_Bullet];
 					}
 				}
+
 
 				// DESPAWN
 				if (entity[i].pos[1] < -4 ||
@@ -1080,6 +1101,9 @@ void physics()
 		}
 		int distanceBread = g.xres;
 		int whichBread = -1;
+
+
+
 		if (g.mike_active == true) {
 			blocky->move();
 			if (tos.laserCollision(*blocky)){
@@ -1126,6 +1150,7 @@ void physics()
 			if (blocky->is_alive() && blocky->explode_done) {
 				// blocky's collision with bread
 				for (int i = 0; i < g.n_Bread; i++) {
+					
 					if (bread[i].collision(*blocky)) {
 						bread[i].hpDamage(*blocky);
 						if (bread[i].hpCheck()) {
@@ -1154,8 +1179,18 @@ void physics()
 					}
 				}
 
+				if (bomb.is_exploding &&
+						bomb.collision(*blocky)) {
+
+						blocky->hp = 0;	// wipe out all health
+						tos.score += blocky->point;
+						blocky->reset();
+				}
+
+				
+
 			} else if (!blocky->explode_done) {
-				// sunblocky's collision with bread
+				// sub-blocky's collision with bread
 				for (int i = 0; i < g.n_Bread; i++) {
 					if (blocky->subBoxCollision(bread[i])) {
 						bread[i].hpDamage(*blocky);
@@ -1185,7 +1220,18 @@ void physics()
 						}
 					}
 				}
+
+
+				// if (bomb.is_exploding &&
+				// 		bomb.collision(*blocky)) {
+
+				// 		blocky->hp = 0;	// wipe out all health
+				// 		tos.score += blocky->point;
+				// 		blocky->reset();
+				// }
 			}
+
+
 
 		}
 		if (g.huaiyu_active == true) {
@@ -1262,6 +1308,15 @@ void physics()
 							bread[i] = bread[--g.n_Bread];
 						}
 					}
+
+				}
+
+
+				if (bomb.is_exploding && 
+						(bomb.collision(bread[i]))) {
+						bread[i].hp -= bread[i].hp;
+						tos.score += bread[i].point;
+						bread[i] = bread[--g.n_Bread];
 				}
 
 
@@ -1288,7 +1343,6 @@ void physics()
 			}
 
 		}
-
 	}
 }
 
@@ -1313,6 +1367,7 @@ void render()
     glEnd();
 
     glBindTexture(GL_TEXTURE_2D, 0);
+
 
 
 	if (g.state == SPLASH) {
@@ -1392,6 +1447,9 @@ void render()
 		}
 
 	} else if (g.state == GAME || g.state == PAUSE ) {
+
+		
+
 		// State Message
 
 		// Set up and display Information board on bottom of screen.
@@ -1401,6 +1459,9 @@ void render()
 		info_board_1.setDim(g.xres/2, g.yres/20);
 		info_board_1.setPos(g.xres/2, g.yres/40, 0);
 		info_board_1.draw();
+
+		
+		
 
 
 		// draw Toaster bullet and bread
@@ -1487,6 +1548,9 @@ void render()
 			}
 
 		}
+
+		bomb.draw();
+
 
 	} else if (g.state == GAMEOVER && g.substate == NONE) {
 
@@ -1793,6 +1857,6 @@ void render()
 
 	}
 
-	bomb.draw();
+	
 
 }
