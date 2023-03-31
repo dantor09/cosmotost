@@ -25,11 +25,11 @@
 #include "fonts.h"
 #include "hzhang.h"
 
-#define SUB_BLOCK_N 100
+#define SUB_BLOCK_N 150
 
 using namespace std;
 
-inline const int NUM_SOUNDS = 15;
+inline const int NUM_SOUNDS = 16;
 // inline const int NUM_SONGS = 1;
 
 enum PBType {HEALTH, COOLDOWN};
@@ -162,7 +162,8 @@ private:
                     "doosh.wav",
                     "doosh2.wav",
                     "explo3.wav",
-                    "explo4.wav"};
+                    "explo4.wav",
+                    "zap2.wav"};
 
 
 public:
@@ -194,6 +195,7 @@ public:
     void updateMusicVol();
     void updateSFXVol();
     void playZap2();
+    void bombExplosion();
 
 };
 
@@ -260,33 +262,48 @@ class Blocky : public Item
 void set_rand_color(Item & it);
 void check_sound(void);
 
-class Shield : public Box
+class Bomb
 {
 
 public:
 
     // vars
-    float radius;
+    // float radius;
+    float start_radius;
+    float curr_radius;
+    float stop_radius;
     // float angle;
     float pos[3];
+    float w, h;
+    float hitbox_dim[3];
+    Timer * bomb_timer;
+    // Item * shards;
     unsigned char color[3];
+    unsigned char launch_color[3];
+    bool is_thrown;
+    bool is_exploding;
+    int num_bombs;
+    // bool is_gone;
+    
 
     // constructors
-    Shield();
-    Shield(float _w, float _h, float _x, float _y);
+    Bomb();
+    ~Bomb();
 
     // setters
-    void setColor(int r, int g, int b);
+    void setColor(unsigned char * col, int r, int g, int b);
     void setPos(float x, float y, float z);
-    void setRad(float _r);
-    void draw();
+    // void setRad(float _r);
+    void launch();
     void move();
-    // void set_text(std::string t);
-
-    unsigned char * getColor();
-
-    // debug
-    std::string getInfo();
+    void draw();
+    void explode();
+    void updateHitbox();
+    bool hitboxCollision(Item & itm);
+    bool hitboxCollision(Entity & ent);
+    bool collision(Item & itm);
+    bool collision(Entity & ent);
+    // bool onScreen();
 };
 
 void check_level();
@@ -310,7 +327,6 @@ private:
 
     void genFakeNames();
     
-
 public:
     
     int n = 0;  // letter input index

@@ -4,9 +4,7 @@
 ### TODO:
 
 ### Short Term
-- Implement a logging system
-    -- #define debug mode && cerr will work fine
-    -- alternatively we can pass in a param on the command line 
+ 
 - Settings / select player
     - difficulty modes
     - character choice
@@ -17,16 +15,16 @@
 - shield (note: i have a shield sound effect - mike)
 - game_reset() for entity state
 - linke high scores with odin
-- circle enemy
+- hole in the wall obstacle
 
 
 #### In Progress:
-- implement volume change feature (mike)
+- Bomb (mike)
 - ARTWORK... (ailand)
-- hole in the wall obstacle
 - freeze enemy (dan)
 
 #### Done:
+- implement volume change feature (mike)
 - implement sound effects (mike)
 - fix volume issues (mike)
 - list of 10 high scores (mike)
@@ -59,10 +57,10 @@
 
 ### Longer Term
 
-- Textures
-- High score php
+- Implement a logging system
+    -- #define debug mode && cerr will work fine
+    -- alternatively we can pass in a param on the command line
 
-- lock screen size so it cant be altered?
 
 [//]: # "Laser Sound Effects"
 [//]: # "https://www.youtube.com/watch?v=FDCnMhouCB8"

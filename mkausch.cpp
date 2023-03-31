@@ -393,8 +393,10 @@ Sound::Sound()
     alBuffers[10] = alutCreateBufferFromFile(build_song_path(sound_names[10]).c_str());
     alBuffers[11] = alutCreateBufferFromFile(build_song_path(sound_names[11]).c_str());
     alBuffers[12] = alutCreateBufferFromFile(build_song_path(sound_names[12]).c_str());
-   alBuffers[13] = alutCreateBufferFromFile(build_song_path(sound_names[13]).c_str());
+    alBuffers[13] = alutCreateBufferFromFile(build_song_path(sound_names[13]).c_str());
     alBuffers[14] = alutCreateBufferFromFile(build_song_path(sound_names[14]).c_str());
+    alBuffers[15] = alutCreateBufferFromFile(build_song_path(sound_names[15]).c_str());
+
 
     // songBuffers[0] = alBuffers[3];
     buffersDone = buffersQueued = 0;
@@ -485,6 +487,11 @@ Sound::Sound()
     alSourcef(alSources[14], AL_PITCH, 1.0f);
     alSourcei(alSources[14], AL_LOOPING, AL_FALSE);
 
+    alSourcei(alSources[15], AL_BUFFER, alBuffers[15]); // zap2 - noloop
+    alSourcef(alSources[15], AL_GAIN, g.sfx_vol);
+    alSourcef(alSources[15], AL_PITCH, 1.0f);
+    alSourcei(alSources[15], AL_LOOPING, AL_FALSE);
+
 
     // //Generate a source, and store it in a buffer.
     // // set sfx/songs to not loop
@@ -510,6 +517,8 @@ Sound::Sound()
     if (alGetError() != AL_NO_ERROR) {
         throw "ERROR: setting source\n";
     }
+    cout << "does it reach here???" << endl;
+
 }
 
 Sound::~Sound()
@@ -651,7 +660,8 @@ void Sound::exploSFX()
 
 void Sound::playZap2()
 {
-    int index = 7; // index of zap2 for blocky crashes, 2nd gun
+    int index = 15; // index of zap2 (non-loop version) 
+                    // for blocky crashes, 2nd gun
     alSourcePlay(alSources[index]);
 }
 
@@ -778,6 +788,14 @@ void Sound::updateSFXVol()
     for (int i = 0; i < n_sfx; i++) {
         alSourcef(alSources[sfx_indices[i]], AL_GAIN, g.sfx_vol);
     }
+}
+
+
+void Sound::bombExplosion()
+{
+    int bomb_index = 13;
+
+    alSourcePlay(alSources[bomb_index]);
 }
 
 #endif
@@ -966,6 +984,7 @@ Blocky::Blocky(char type)
     // assignes itself and it's mirror image (i+4 in this case)
     int angle = 80;
     float angle_offset = (angle*2/SUB_BLOCK_N);
+    angle = 70;
     int rvel = 8;
     float deg_to_rad = (PI / 180.0f);
     for (int i = 0; i < SUB_BLOCK_N; i++) {
@@ -1136,9 +1155,9 @@ void Blocky::reset()
         if (lives > 0) {
             hp = starting_hp;   // give back full health
         }
-        was_hit = false;
 
     }
+    was_hit = false;
 
     setVel(0.0f, -4.0f, 0.0f);
     set_rand_position();    // put at a new random position
@@ -1190,6 +1209,9 @@ bool Blocky::subBoxCollision(Item & itm)
         if (sub_boxes[i].collision(itm)){
             return true;
         }
+        // if (itm.collision(sub_boxes[i])){
+        //     return true;
+        // }
     }
     return false;
 }
@@ -1204,13 +1226,28 @@ bool Blocky::subBoxCollision(Entity & ent)
     return false;
 }
 
+// bool Blocky::subBoxCollision(Bomb & b)
+// {
+//     for (int i = 0; i < SUB_BLOCK_N; i++) {
+//         if (b.collision(sub_boxes[i])) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
+
+
 
 void Item::hpDamage(Blocky & bf)
 {
     // cerr << "blocky's hpDamage called" << endl;
     if (!bf.was_hit) {
-        hp = hp - bf.damage;
-        bf.was_hit = true;
+        if (item_type == 0) {   // toaster collision
+            hp = hp - bf.damage;
+            bf.was_hit = true;
+        } else {
+            hp = hp - bf.damage;
+        }
         // cerr << "blocky hit something" << endl;
     }
 }
@@ -1253,6 +1290,7 @@ void check_sound(void)
 	static int prev_btype = 1;
     static int exploded = 0;
     static int bhit_occured = 0;
+    static bool bomb_playing = false;
 
 
     // Main menu / music SFX loop check
@@ -1319,6 +1357,16 @@ void check_sound(void)
             blocky->was_hit = false;
         } else if (blocky->was_hit == false && bhit_occured == 1) {
             bhit_occured = false;
+        }
+
+        // bomb explosion noise
+        if (bomb.is_thrown && !bomb_playing) {
+            sounds.bombExplosion();
+            bomb_playing = true;
+        } else if (!bomb.is_thrown && 
+                    !bomb.is_exploding && 
+                        bomb_playing) {
+            bomb_playing = false;
         }
 
     } else {
@@ -1916,6 +1964,291 @@ void SoundBar::move_slider_up()
         slider_position = get_slider_position();
         slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
     }
+}
 
 
+Bomb::Bomb()
+{
+    curr_radius = start_radius = 6;
+    stop_radius = 450;
+    pos[0] = g.xres/2.0;
+    pos[1] = g.yres/2.0;
+    pos[2] = 0;
+    setPos(g.xres/2.0f, g.yres/2.0f, 0);
+    setColor(color, 255, 91, 20);
+    setColor(launch_color, 255, 255, 255);
+    // is_gone = false;
+    is_thrown = false;
+    is_exploding = false;
+    num_bombs = 99;
+    w = 6;
+    h = 6;
+}
+
+Bomb::~Bomb()
+{
+    // destructor
+    if (bomb_timer) {
+        delete bomb_timer;
+        bomb_timer = nullptr;
+    }
+}
+
+void Bomb::draw()
+{
+    if (is_thrown && !is_exploding) {
+        glColor3ubv(launch_color);
+        glPushMatrix();
+        glTranslatef(pos[0], pos[1], pos[2]);
+        glBegin(GL_QUADS);
+            glVertex2f(-6, -6);
+            glVertex2f(-6,  6);
+            glVertex2f( 6,  6);
+            glVertex2f( 6, -6);
+        glEnd();
+        glPopMatrix();
+    } else if (is_exploding) {
+        float angle1 = (2 * PI * 1)/100;
+        float angle2 = (2 * PI * 2)/100;
+        float vert1[2] = {cos(angle1) * curr_radius, sin(angle1) * curr_radius};
+        float vert2[2] = {cos(angle2) * curr_radius, sin(angle2) * curr_radius};
+        float center[3] = {pos[0], pos[1], pos[2]};
+
+        // cerr << "center: " << pos[0] << "," << pos[1] << "," << pos[2] << endl; 
+
+        glPushMatrix();
+        glTranslatef(center[0], center[1], center[2]);
+        glBegin(GL_TRIANGLE_FAN);
+        glColor3ub(204, 204, 0);
+        glVertex2f(0,0);
+        for (int i = 0; i < 103; i++) {
+            glColor3ubv(color);
+            glVertex2f(vert1[0], vert1[1]);
+            // cerr << "vert1: " << vert1[0] << "," << vert1[1] << endl; 
+
+            glVertex2f(vert2[0], vert2[1]);
+            // cerr << "vert2: " << vert2[0] << "," << vert2[1] << endl; 
+
+            glColor3ub(0, 0, 0);
+            glVertex2f(0, 0);
+
+            // move vert2 to vert1 vertices
+            vert1[0] = vert2[0];
+            vert1[1] = vert2[1];
+
+            // calc new vert for vert2
+            angle2 = (2 * PI * i)/100;
+            vert2[0] = cos(angle2) * curr_radius;
+            vert2[1] = sin(angle2) * curr_radius;
+        }
+        glEnd();
+        glPopMatrix();
+    }
+}
+
+void Bomb::setColor(unsigned char * col, int r, int g, int b)
+{
+    col[0] = (char)r;
+    col[1] = (char)g;
+    col[2] = (char)b;
+}
+
+void Bomb::setPos(float x, float y, float z)
+{
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
+}
+
+void Bomb::explode()
+{
+    if (bomb_timer) {
+        delete bomb_timer;
+        bomb_timer = nullptr;
+    }
+
+    if (curr_radius >= stop_radius) {
+        // is_gone = true;
+        is_exploding = false;
+        // cerr << "is_exploding to false" << endl;
+        is_thrown = false;
+        curr_radius = start_radius;
+
+    } else {
+        // cerr << "is_exploding to true" << endl;
+        is_exploding = true;
+        // is_gone = false;
+        curr_radius += 12;
+        updateHitbox();
+    }
+}
+
+void Bomb::move()
+{
+    if (bomb_timer && !(bomb_timer->isDone())) {
+        pos[0] += 7;
+    } else if (bomb_timer && bomb_timer->isDone()) {
+        explode();
+    } else if (is_exploding) {
+        explode();
+    }
+}
+
+void Bomb::launch()
+{
+    // if (!is_thrown && num_bombs > 0) {
+    if (!is_thrown && (tos.energy > 20)) {
+        is_thrown = true;
+        tos.energy -= 20;
+        setPos(tos.pos[0],tos.pos[1],tos.pos[2]);
+        bomb_timer = new Timer(0.7);
+#ifdef USE_OPENAL_SOUND
+        sounds.bombExplosion();
+#endif
+        // num_bombs--;
+    } else {
+        // cerr << "no bombs or one already active" << endl;
+    }
+}
+
+void Bomb::updateHitbox()
+{
+    w = h = 2*curr_radius;
+}
+
+// hitbox collision with item class
+// check this first before checking resultant to bomb center from vertices
+bool Bomb::hitboxCollision(Item & itm)
+{
+    bool x = (((pos[0]+w)-(itm.pos[0]-itm.w))*((pos[0]-w)-(itm.pos[0]+itm.w))) < 0;
+  	bool y = (((pos[1]+h)-(itm.pos[1]-itm.h))*((pos[1]-h)-(itm.pos[1]+itm.h))) < 0;
+  	
+    return x&&y;
+}
+
+// hitbox collision with ent class
+// check this first before checking resultant to bomb center from vertices
+bool Bomb::hitboxCollision(Entity & ent)
+{
+    bool x = (((pos[0]+w)-(ent.pos[0]-ent.dim[0]))*((pos[0]-w)-(ent.pos[0]+ent.dim[0]))) < 0;
+  	bool y = (((pos[1]+h)-(ent.pos[1]-ent.dim[1]))*((pos[1]-h)-(ent.pos[1]+ent.dim[0]))) < 0;
+  	
+    return x&&y;
+}
+
+// tests collision with hitbox first then itm's corners 
+bool Bomb::collision(Item & itm)
+{
+    // cerr << "checking bomb collision with " << &itm << endl;
+    if (!hitboxCollision(itm)) {
+        // cerr << "not a hitbox collision on " << &itm << endl;
+        return false;
+    }
+
+    // cerr << "hitbox collision on " << endl;
+/*
+    This would be for center of the box:
+
+    double xvec = itm.pos[0]-pos[0];
+    double yvec = itm.pos[1]-pos[1];
+
+    We're going to calculate it for the 4 corners though so we need to
+    do +/- the width and height
+
+        0               3
+        *---------------*
+        |               |
+        |               |
+        |               |
+        *---------------*
+        1               2
+
+*/
+
+    // double xvec[4] = { itm.pos[0] - (itm.w/2.0f) - pos[0],
+    //                     itm.pos[0] - (itm.w/2.0f) - pos[0],
+    //                     (itm.pos[0] + (itm.w/2.0f)) - pos[0],
+    //                     (itm.pos[0] + (itm.w/2.0f)) - pos[0] }
+
+    double xvec[4] = { itm.pos[0] - (itm.w/2.0f) - pos[0],
+                        xvec[0],
+                        xvec[0]+itm.w,
+                        xvec[2]};
+
+    // double yvec[4] = { itm.pos[1] + (itm.h/2.0f) - pos[1],
+    //                     itm.pos[1] - (itm.h/2.0f) - pos[1],
+    //                     (itm.pos[1] - (itm.h/2.0f)) - pos[1],
+    //                     (itm.pos[1] + (itm.h/2.0f)) - pos[1] };
+
+    double yvec[4] = { itm.pos[1] + (itm.h/2.0f) - pos[1],
+                    yvec[0] - itm.h,
+                    yvec[1],
+                    yvec[0]};
+
+    double resultant;
+
+    for (int i = 0; i < 4; i++) {
+        resultant = sqrt(pow(xvec[i],2) + pow(yvec[i],2));
+        if (resultant <= curr_radius)
+            return true;
+    }
+
+    return false;
+}
+
+// tests collision with hitbox first then ent's corners 
+bool Bomb::collision(Entity & ent)
+{
+    if (!hitboxCollision(ent)) {
+        return false;
+    }
+
+/*
+    This would be for center of the box:
+
+    double xvec = itm.pos[0]-pos[0];
+    double yvec = itm.pos[1]-pos[1];
+
+    We're going to calculate it for the 4 corners though so we need to
+    do +/- the width and height
+
+        0               3
+        *---------------*
+        |               |
+        |               |
+        |               |
+        *---------------*
+        1               2
+
+*/
+
+    // double xvec[4] = { itm.pos[0] - (itm.w/2.0f) - pos[0],
+    //                     itm.pos[0] - (itm.w/2.0f) - pos[0],
+    //                     (itm.pos[0] + (itm.w/2.0f)) - pos[0],
+    //                     (itm.pos[0] + (itm.w/2.0f)) - pos[0] }
+
+    double xvec[4] = { ent.pos[0] - (ent.dim[0]/2.0f) - pos[0],
+                        xvec[0],
+                        xvec[0]+ent.dim[0],
+                        xvec[2]};
+
+    // double yvec[4] = { itm.pos[1] + (itm.h/2.0f) - pos[1],
+    //                     itm.pos[1] - (itm.h/2.0f) - pos[1],
+    //                     (itm.pos[1] - (itm.h/2.0f)) - pos[1],
+    //                     (itm.pos[1] + (itm.h/2.0f)) - pos[1] };
+
+    double yvec[4] = { ent.pos[1] + (ent.dim[1]/2.0f) - pos[1],
+                    yvec[0] - ent.dim[1],
+                    yvec[1],
+                    yvec[0]};
+
+    double resultant;
+
+    for (int i = 0; i < 4; i++) {
+        resultant = sqrt(pow(xvec[i],2) + pow(yvec[i],2));
+        if (resultant <= curr_radius)
+            return true;
+    }
+
+    return false;
 }
