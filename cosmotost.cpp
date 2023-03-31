@@ -589,10 +589,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Escape key was pressed
 					return 1;
 				case XK_y:
-					// if (tos.energy > 20) {
-					// bomb.launch();
-						// tos.energy -= 20;
-					// }
+					// test key
 					
 					return 0;
 			}
@@ -757,7 +754,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					}
 					return 0;
 
-				case XK_y:
+				case XK_q:
 					bomb.launch();
 					return 0;
 
@@ -1224,15 +1221,6 @@ void physics()
 						}
 					}
 				}
-
-
-				// if (bomb.is_exploding &&
-				// 		bomb.collision(*blocky)) {
-
-				// 		blocky->hp = 0;	// wipe out all health
-				// 		tos.score += blocky->point;
-				// 		blocky->reset();
-				// }
 			}
 
 
@@ -1323,7 +1311,7 @@ void physics()
 
 				if (bomb.is_exploding && 
 						(bomb.collision(bread[i]))) {
-						bread[i].hp -= bread[i].hp;
+						bread[i].hp = 0;
 						tos.score += bread[i].point;
 						bread[i] = bread[--g.n_Bread];
 				}
