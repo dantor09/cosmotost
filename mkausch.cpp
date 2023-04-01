@@ -1983,6 +1983,8 @@ Bomb::Bomb()
     num_bombs = 99;
     w = 6;
     h = 6;
+    tex = &g.bomb_texture;
+
 }
 
 Bomb::~Bomb()
@@ -1997,7 +1999,34 @@ Bomb::~Bomb()
 void Bomb::draw()
 {
     if (is_thrown && !is_exploding) {
+
+        int size = 50;
+
+	glPushMatrix();
+	glBindTexture(GL_TEXTURE_2D, *(bomb.tex));
+  	// glColor3ub(color[0], color[1], color[2]);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  	glTranslatef(pos[0], pos[1], pos[2]);
+  	glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 0.0f);
+  			glVertex2f(0,0);
+			glTexCoord2f(0.0f, 1.0f);
+  			glVertex2f(0, size);
+			glTexCoord2f(1.0f, 1.0f);
+  			glVertex2f(size, size);
+			glTexCoord2f(1.0f, 0.0f);
+  			glVertex2f(size, 0);
+  	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_ALPHA_TEST);
+  	glPopMatrix();
+
+    /*
         glColor3ubv(launch_color);
+
+
         glPushMatrix();
         glTranslatef(pos[0], pos[1], pos[2]);
         glBegin(GL_QUADS);
@@ -2007,6 +2036,7 @@ void Bomb::draw()
             glVertex2f( 6, -6);
         glEnd();
         glPopMatrix();
+    */
     } else if (is_exploding) {
         float angle1 = (2 * PI * 1)/100;
         float angle2 = (2 * PI * 2)/100;
@@ -2044,6 +2074,7 @@ void Bomb::draw()
         glEnd();
         glPopMatrix();
     }
+
 }
 
 void Bomb::setColor(unsigned char * col, int r, int g, int b)

@@ -964,6 +964,17 @@ void init_opengl(void)
 	free(silhouetteData);
 
 
+    w = bomb_img.width;
+    h = bomb_img.height;
+	glGenTextures(1, &g.bomb_texture);
+	glBindTexture(GL_TEXTURE_2D, g.bomb_texture);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&bomb_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
 
 	cerr << "finished initializing opengl" << endl;
 }
@@ -1157,6 +1168,7 @@ void physics()
 						if (bread[i].hpCheck()) {
 							bread[i] = bread[--g.n_Bread];
 							// tos.score += bread[i].point;
+                            tos.score += bread[i].point;
 
 #ifdef USE_OPENAL_SOUND
 							sounds.playZap2();
@@ -1173,6 +1185,7 @@ void physics()
 						if(entity[i].hpCheck()) {
 							// tos.score += entity[i].point;
 							entity[i] = entity[--e.num_ent];
+                            tos.score += entity[i].point;
 #ifdef USE_OPENAL_SOUND
 							sounds.playZap2();
 #endif

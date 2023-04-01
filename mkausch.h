@@ -284,6 +284,7 @@ public:
     bool is_exploding;
     int num_bombs;
     // bool is_gone;
+    GLuint * tex;
     
 
     // constructors
