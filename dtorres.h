@@ -13,11 +13,16 @@ class InfoBoard : public Box
 
 class FreezeBlock : public Item 
 {
+    private:
+    
+    float getVelocityConsideringArea(float);
     public:
     
     bool position_set;
     int min_block_dimension;
     int max_block_dimension;
+    float max_velocity;
+    float minimum_velocity;
     Timer * ptimer;
 
     FreezeBlock();

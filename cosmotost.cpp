@@ -1518,13 +1518,13 @@ void render()
 			(g.state == GAME || g.state == PAUSE)) {
 			srand(time(NULL));
 
-			// Follow the first bread to randomize the freeze block path 
+			// Follow the item passed into followPlayer() 
 			// Freeze block could be set to follow any Item object
-			freeze_block.followPlayer(bread[0]);
+			freeze_block.followPlayer(tos);
 			// Make freeze block if it does not exist and timer is NULL
 			if(!freeze_block.position_set && freeze_block.ptimer == NULL) {
 				freeze_block.setColor(162,210,223); // sky blue
-				freeze_block.setMinMaxBlockDimensions(2, 80); // set min and max freeze block dimensions
+				freeze_block.setMinMaxBlockDimensions(40, 80); // set min and max freeze block dimensions
 				freeze_block.w = freeze_block.randomDimension(); // random width
 				freeze_block.h = freeze_block.randomDimension(); // random height
 

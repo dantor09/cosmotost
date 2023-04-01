@@ -21,11 +21,24 @@ void InfoBoard::draw()
 	glPopMatrix();
 }
 
+float FreezeBlock::getVelocityConsideringArea(float area) 
+{
+	float minimum_area = min_block_dimension * min_block_dimension;
+	float maximum_area = max_block_dimension * max_block_dimension;
+	float numerator = area - minimum_area;
+	float denominator = maximum_area - minimum_area;
+	float velocity = max_velocity - (((numerator) / (denominator)) * (max_velocity - minimum_velocity));
+	
+	// Normalize the velocity according to the area
+	return max_velocity - (((numerator) / (denominator)) * (max_velocity - minimum_velocity));
+}
 FreezeBlock::FreezeBlock() {
 	position_set = false;
 	ptimer = NULL;
 	min_block_dimension = 1;
 	max_block_dimension = 30;
+	max_velocity = 2.5;
+	minimum_velocity = 0.05;
 }
 int FreezeBlock::randomDimension()
 {
@@ -50,41 +63,33 @@ FreezeBlock::~FreezeBlock()
 void FreezeBlock::followPlayer(Item & player)
 {
 	if (player.pos[0] < pos[0] && player.pos[1] < pos[1]) {
-		setVel(-1, -1, 0);
-		pos[0] += vel[0];
-		pos[1] += vel[1];
+		setVel(-getVelocityConsideringArea(w * h), -getVelocityConsideringArea(w * h), 0);
 	}
 	else if (player.pos[0] > pos[0] && player.pos[1] > pos[1]) {
-		setVel(1, 1, 0);
-		pos[0] += vel[0];
-		pos[1] += vel[1];
+		setVel(getVelocityConsideringArea(w * h), getVelocityConsideringArea(w * h), 0);
 	}
 	else if (player.pos[0] < pos[0] && player.pos[1] > pos[1]) {
-		setVel(-1, 1, 0);
-		pos[0] += vel[0];
-		pos[1] += vel[1];
+		setVel(-getVelocityConsideringArea(w * h), getVelocityConsideringArea(w * h), 0);
 	}
 	else if(player.pos[0] > pos[0] && player.pos[1] < pos[1]) {
-		setVel(1, -1, 0);
-		pos[0] += vel[0];
-		pos[1] += vel[1];
+		setVel(getVelocityConsideringArea(w * h), -getVelocityConsideringArea(w * h), 0);
 	}
 	else if (player.pos[0] == pos[0] && player.pos[1] < pos[1]) {
-		setVel(0, -1, 0);
-		pos[1] += vel[1];
+		setVel(0, -getVelocityConsideringArea(w * h), 0);
 	}
 	else if (player.pos[0] == pos[0] && player.pos[1] > pos[1]) {
-		setVel(0, 1, 0);
-		pos[1] += vel[1];
+		setVel(0, getVelocityConsideringArea(w * h), 0);
 	}
 	else if (player.pos[0] < pos[0] && player.pos[1] == pos[1]) {
-		setVel(-1, 0, 0);
-		pos[0] += vel[0];
+		setVel(-getVelocityConsideringArea(w * h), 0, 0);
 	}
 	else if (player.pos[0] > pos[0] && player.pos[1] == pos[1]) {
-		setVel(1, 0, 0);
-		pos[0] += vel[0];
+		setVel(getVelocityConsideringArea(w * h), 0, 0);
 	}
+	
+	pos[0] += vel[0];
+	pos[1] += vel[1];
+
 }
 void FreezeBlock::draw()
 {
