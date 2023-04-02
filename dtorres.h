@@ -23,6 +23,7 @@ class FreezeBlock : public Item
     int max_block_dimension;
     float max_velocity;
     float minimum_velocity;
+    float melting_rate;
     Timer * ptimer;
 
     FreezeBlock();

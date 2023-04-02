@@ -39,6 +39,7 @@ FreezeBlock::FreezeBlock() {
 	max_block_dimension = 30;
 	max_velocity = 2.5;
 	minimum_velocity = 0.05;
+	melting_rate = 0.1;
 }
 int FreezeBlock::randomDimension()
 {
@@ -62,6 +63,9 @@ FreezeBlock::~FreezeBlock()
 
 void FreezeBlock::followPlayer(Item & player)
 {
+	h -= melting_rate;
+	w -= melting_rate;
+	
 	if (player.pos[0] < pos[0] && player.pos[1] < pos[1]) {
 		setVel(-getVelocityConsideringArea(w * h), -getVelocityConsideringArea(w * h), 0);
 	}
