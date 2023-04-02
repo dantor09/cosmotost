@@ -1548,7 +1548,9 @@ void render()
 				freeze_block->setTimer(1);
 			}
 			// Unfreeze the toaster after timer is done or freeze block melted away
-			if(tos.disable_keys && freeze_block->ptimer->isDone() || freeze_block -> h <= 0) {
+			if(tos.disable_keys && freeze_block->ptimer->isDone() 
+			   || freeze_block -> h <= 0
+			   || freeze_block -> w <= 0 ) {
 				tos.disable_keys = false;
 				delete freeze_block->ptimer;
 				freeze_block->ptimer = NULL;
