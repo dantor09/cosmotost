@@ -1515,49 +1515,55 @@ void render()
 
 		// if(g.substate == DTORRES) {
 		if(g.dtorres_active == true &&
-			(g.state == GAME || g.state == PAUSE)) {
+		   (g.state == GAME || g.state == PAUSE)) {
 
-			if (freeze_block == NULL) {
-				freeze_block = new FreezeBlock();
+			if (pfreeze_block == NULL) {
+				try {
+					pfreeze_block = new FreezeBlock;
+					pfreeze_block->setColor(162, 210, 223); // Sky blue
+					pfreeze_block->setMinMaxBlockDimensions(40, 80); // set min and max freeze block dimensions
+					pfreeze_block->w = pfreeze_block->randomDimension(); // random width
+					pfreeze_block->h = pfreeze_block->randomDimension(); // random height
+
+					// set position of freeze block to random location on screen
+					// ensure freeze block is within screen bounds
+					pfreeze_block->setPos(pfreeze_block->w + (rand() % (int)(g.xres - pfreeze_block->w)), 
+										  (pfreeze_block->h + (info_board_1.h * 2)) + (rand() % (int)(g.yres - pfreeze_block->h)), 0);
+					pfreeze_block->position_set = true;
+				} 
+				catch (bad_alloc) {
+					cerr << "Freeze Block Bad Allocation" << endl;
+					exit(EXIT_FAILURE);
+				}
 			}
-			
-			srand(time(NULL));
 
-			// Follow the item passed into followPlayer() 
+			// Follow the item passed into followItem() 
 			// Freeze block could be set to follow any Item object
-			freeze_block->followPlayer(tos);
-			// Make freeze block if it does not exist and timer is NULL
-			if(!freeze_block->position_set && freeze_block->ptimer == NULL) {
-				freeze_block->setColor(162,210,223); // sky blue
-				freeze_block->setMinMaxBlockDimensions(40, 80); // set min and max freeze block dimensions
-				freeze_block->w = freeze_block->randomDimension(); // random width
-				freeze_block->h = freeze_block->randomDimension(); // random height
+			if(pfreeze_block->position_set && tos.disable_keys == false) {	
+				pfreeze_block->followItem(tos);
+				pfreeze_block->melt(0.25);
+				pfreeze_block->draw();
+			}
 
-				// Spawn freeze block within the screen bounds;
-				freeze_block->pos[0] = freeze_block->w + (rand() % (int)(g.xres - freeze_block->w)); // spawn position x is within screen bounds
-				freeze_block->pos[1] = (freeze_block->h + (info_board_1.h * 2)) + (rand() % (int)(g.yres - freeze_block->h)); // spawn position y is withing screen bounds
-				freeze_block->position_set = true;
-			}
-			if(freeze_block->position_set && tos.disable_keys == false) {
-				freeze_block->draw();
-			}
-			// Freeze the toaster as soon as collision is detected and freeze for 3 seconds
-			if(freeze_block->collision(tos) && !tos.disable_keys) {
+			// Freeze the toster as soon as collision is detected and freeze for 
+			// pre-determined amount of seconds
+			if(pfreeze_block->collision(tos) && !tos.disable_keys) {
 				tos.disable_keys = true;
-				freeze_block->position_set = false;
-				freeze_block->setTimer(1);
-			}
-			// Unfreeze the toaster after timer is done or freeze block melted away
-			if(tos.disable_keys && freeze_block->ptimer->isDone() 
-			   || freeze_block -> h <= 0
-			   || freeze_block -> w <= 0 ) {
-				tos.disable_keys = false;
-				delete freeze_block->ptimer;
-				freeze_block->ptimer = NULL;
-				delete freeze_block;
-				freeze_block = NULL;
+				pfreeze_block->position_set = false;
+				pfreeze_block->setFreezeTimer(2);
 			}
 
+			// Unfreeze the toaster after timer is done or freeze block melted away
+			if(tos.disable_keys && pfreeze_block->ptimer->isDone() 
+			   || pfreeze_block -> h <= 0
+			   || pfreeze_block -> w <= 0 ) {
+
+				delete pfreeze_block->ptimer;
+				pfreeze_block->ptimer = NULL;
+				delete pfreeze_block;
+				pfreeze_block = NULL;
+				tos.disable_keys = false;
+			}
 		}
 
 		bomb.draw();
