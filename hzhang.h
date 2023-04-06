@@ -45,7 +45,7 @@ class Item: public Box
 {
   public:
     GLuint * tex;
-    Box * plive;
+    Box * plives;
     //item_type show what kind of item it is
     int item_type;
     bool trace = false;

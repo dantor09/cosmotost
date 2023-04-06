@@ -295,15 +295,15 @@ Toaster::Toaster()
 		setHP(starting_hp);
 		setDamage(100);
 		lives = 3;
-		plive = new Box[lives];
+		plives = new Box[lives];
 		int offset_x = -125;
 		for(int i = 0; i < lives; i++) {
-			plive[i].setColor(255, 255, 255);
-			plive[i].w = 5;
-			plive[i].h = 10;
+			plives[i].setColor(255, 255, 255);
+			plives[i].w = 5;
+			plives[i].h = 10;
 			
 			// Position to the left of the health bar
-			plive[i].setPos(info_board_1.pos[0] + offset_x, 40, 0);
+			plives[i].setPos(info_board_1.pos[0] + offset_x, 40, 0);
 			offset_x += 20;
 		}
 		setVertex();
@@ -316,7 +316,7 @@ Toaster::Toaster()
 
 Toaster::~Toaster()
 {
-	delete [] plive;
+	delete [] plives;
 }
 
 bool Toaster::laserCollision(Item a){
@@ -446,14 +446,14 @@ void Toaster::tdraw(){
 
 	//D.T Draw the lives boxes on the information board
 	for(int i = 0; i < lives; i++) {
-		glColor3ubv(plive[i].color);
+		glColor3ubv(plives[i].color);
 		glPushMatrix();
-		glTranslatef(plive[i].pos[0], plive[i].pos[1], plive[i].pos[2]);
+		glTranslatef(plives[i].pos[0], plives[i].pos[1], plives[i].pos[2]);
 		glBegin(GL_QUADS);
-				glVertex2f(-plive[i].w, -plive[i].h);
-				glVertex2f(-plive[i].w,  plive[i].h);
-				glVertex2f( plive[i].w,  plive[i].h);
-				glVertex2f( plive[i].w, -plive[i].h);
+				glVertex2f(-plives[i].w, -plives[i].h);
+				glVertex2f(-plives[i].w,  plives[i].h);
+				glVertex2f( plives[i].w,  plives[i].h);
+				glVertex2f( plives[i].w, -plives[i].h);
 		glEnd();
 		glPopMatrix();
 	}

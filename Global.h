@@ -84,7 +84,7 @@ inline PowerBar * blocky_health;
 inline SoundBar vol_slider(&g.m_vol, g.xres*(1.0f/3.0f), g.yres/2.0f, "Music Volume");
 inline SoundBar sfx_slider(&g.sfx_vol, g.xres*(2.0f/3.0f), g.yres/2.0f, "SFX Volume");
 inline InfoBoard info_board_1;
-inline FreezeBlock freeze_block;
+inline FreezeBlock * pfreeze_block;
 inline Bomb bomb;
 
 /*******************************
