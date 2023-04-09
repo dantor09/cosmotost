@@ -216,9 +216,9 @@ int X11_wrapper::check_mouse(XEvent *e)
 				}
 
 				// check and see if the user clicked on the Menu
-				selection = mm.check_t_box(savex, g.yres - savey);
+				selection = mm.checkTBox(savex, g.yres - savey);
 				if (selection && (mm.words[selection->id] == "Start Game")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					g.state = GAME;
 					g.gameTimer.reset();	// start the game timer
 					selection = nullptr;
@@ -229,13 +229,13 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 					return 0;
 				} else if (selection && (mm.words[selection->id] == "Debug Mode")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					g.state = GAME;
 					g.substate = DEBUG;
 					g.gameTimer.reset();
 					selection = nullptr;
 				} else if (selection && (mm.words[selection->id] == "High Scores")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					g.substate = HIGH_SCORES;
 					selection = nullptr;
 
@@ -245,7 +245,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 					return 0;
 				} else if (selection && (mm.words[selection->id] == "Settings")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					g.substate = SETTINGS;
 					selection = nullptr;
 
@@ -255,7 +255,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 					return 0;
 				} else if (selection && (mm.words[selection->id] == "Quit")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
@@ -283,13 +283,13 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 				// need to send in flipped y coord because window and
 				// mouse coords have different origins
-				selection = mm.check_t_box(savex, g.yres - savey);
+				selection = mm.checkTBox(savex, g.yres - savey);
 
 				if (selection) {
 
 					
-					mm.set_orig_color();
-					mm.set_highlight(selection);
+					mm.setOrigColor();
+					mm.setHighlight(selection);
 
 #ifdef USE_OPENAL_SOUND
 					sounds.beep();
@@ -436,9 +436,9 @@ int X11_wrapper::check_mouse(XEvent *e)
 					savey = e->xbutton.y;
 				}
 
-				selection = pause_menu.check_t_box(savex, g.yres - savey);
+				selection = pause_menu.checkTBox(savex, g.yres - savey);
 				if (selection && (pause_menu.words[selection->id] == "Main Menu")) {
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 					g.state = MAINMENU;
 					g.gameTimer.pause();
 					selection = nullptr;
@@ -449,7 +449,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Start Over")) {
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 					g.state = MAINMENU;
 					g.gameReset();
 					g.state = GAME;
@@ -467,7 +467,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Back to Game")) {
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 					g.state = GAME;
 					if (g.gameTimer.isPaused()) {
 						g.gameTimer.unPause();	// unpause the game
@@ -483,7 +483,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Quit Game")) {
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 					cerr << "g.state was changed to should be quitting..." <<
 							endl;
 
@@ -519,11 +519,11 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 				// need to send in flipped y coord because window and
 				// mouse coords have different origins
-				selection = pause_menu.check_t_box(savex, g.yres - savey);
+				selection = pause_menu.checkTBox(savex, g.yres - savey);
 
 				if (selection) {
-						pause_menu.set_orig_color();
-						pause_menu.set_highlight(selection);
+						pause_menu.setOrigColor();
+						pause_menu.setHighlight(selection);
 						// selection = nullptr; // reset selection ptr
 #ifdef USE_OPENAL_SOUND
 					sounds.beep();
@@ -532,7 +532,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					// }
 				} else {
 					// was previously on something and now it's not
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 
 				}
 			}

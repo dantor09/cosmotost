@@ -74,8 +74,8 @@ public:
     void setBcolor(int r, int g, int b);   // sets boarder color
     void setColor(int r, int g, int b);   // sets mainbox color
     void setPos(float x, float y, float z);
-    void set_highlight(Box * b);
-    void set_orig_color();
+    void setHighlight(Box * b);
+    void setOrigColor();
 
     // getters
     // unsigned char * get_tcolor();
@@ -83,7 +83,7 @@ public:
 
     // other
     void draw();
-    Box* check_t_box(int x, int y);
+    Box* checkTBox(int x, int y);
 
 
 
@@ -143,7 +143,7 @@ private:
     bool user_pause;
     int current_track;
 
-    void init_openal();
+    void initOpenal();
     void close_openal();
     string build_song_path(string s);
 

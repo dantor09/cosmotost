@@ -73,36 +73,20 @@ Menu::Menu(unsigned int _n_texts,
             t_boxs[i].pos[0] = mainbox.pos[0];
             t_boxs[i].pos[1] = (pos[1]+mainbox.h)-((i+1)*spacing);
             t_boxs[i].setColor(61, 90, 115);
-            t_boxs[i].id=i; // set box id for words array check
-            // std::cout << "t_box[" << i << "].pos[1]: "
-            //             << t_boxs[i].pos[1] << std::endl;
+            t_boxs[i].id=i; 
 
             words[i] = _words[i];
-            // t_boxs[i].set_text(_words[i]);
 
-            // Leaving this here for the next poor soul that
-            // comes accross this issue:
-
-            // apparently you need to set their position every single time
-            // you print them or they fall off the screen for some stupid reason
-            // so this code will now be found below in the draw() function
-
-            // texts[i].bot = mainbox.pos[1]-(i*20);
-            // texts[i].left = t_boxs[i].pos[0];
-            // texts[i].center = 1;
         }
 
     } catch (std::bad_alloc& ba) {
         // if one was allocated and not the other than delete the one that
         if (texts) delete [] texts;
         if (t_boxs) delete [] t_boxs;
-        // if (words) delete [] words;
-        // print to screen for now until we have logging set up
         std::cerr << "Error allocating rectangles in Menu call\n"
                 << ba.what() << '\n';
         texts = nullptr;
         t_boxs = nullptr;
-        // words = nullptr;
     }
 }
 
@@ -119,6 +103,7 @@ Menu::~Menu()
 
 }
 
+// draws all sub boxes and text 
 void Menu::draw()
 {
     // draw boarder
@@ -166,14 +151,6 @@ void Menu::draw()
 
     }
 
-    // draw texts - need to pass in texts still; this is only for testing
-
-    // for(int i = 0; i < n_texts; i++) {
-    //     ggprint8b((texts+i), 16, 0x00FFFFFF, "c0sm0t0asT");
-    //     // std::cout << "tests[" << i << "].pos[1]: " << texts[i].pos[1] << std::endl;
-    // }
-
-
     for(int i = 0; i < n_texts; i++) {
         texts[i].bot = t_boxs[i].pos[1] - 5;
         if (!centering)
@@ -182,21 +159,14 @@ void Menu::draw()
             texts[i].left = t_boxs[i].pos[0];
         texts[i].center = centering;
 
-
-        // r[i].bot = t_boxs[i].pos[1] - 5;
-        // r[i].left = t_boxs[i].pos[0];
-        // //g.r[i].center = box[i].pos[0];
-
-        // r[i].center = 1;
-
-        ggprint8b(texts+i, 16, 0x00ffffff, words[i].c_str());
+        ggprint8b(texts+i, 0, 0x00ffffff, words[i].c_str());
     }
 
 }
 
 // pass in mouse coords to check and see if they are within the bounds
 // of the menu's text boxes
-Box* Menu::check_t_box(int x, int y)
+Box* Menu::checkTBox(int x, int y)
 {
     Box * box_ptr = nullptr;
     size_t i;
@@ -213,18 +183,17 @@ Box* Menu::check_t_box(int x, int y)
         }
     }
 
-    // std::cout << "match for " << box_ptr << " aka " << t_boxs+i << std::endl;
-
     return box_ptr;
 }
 
-void Menu::set_highlight(Box * b)
+// sets the highlight color of a sub_box
+void Menu::setHighlight(Box * b)
 {
     b->setColor(33,136,171);
 }
 
-
-void Menu::set_orig_color()
+// sets all sub boxes to the original color
+void Menu::setOrigColor()
 {
     for (size_t i = 0; i < n_texts; i++) {
         t_boxs[i].setColor(61,90,115);
@@ -285,7 +254,7 @@ Timer::Timer(double sec) : duration(sec), pause_duration(0.00),
 Timer::~Timer()
 {
     cerr << "in Timer destructor\n";
-    if (pause_timer){
+    if (pause_timer) {
         cerr << "deleting pause timer\n";
         delete pause_timer;
         pause_timer = nullptr;
@@ -369,7 +338,8 @@ void Timer::unPause()
 Sound::Sound()
 {
     //Buffer holds the sound information.
-    init_openal();
+    initOpenal
+    ();
     current_track = -1;  // starting track number at splash screen
     is_music_paused = false;
     user_pause = false;
@@ -492,27 +462,6 @@ Sound::Sound()
     alSourcef(alSources[15], AL_PITCH, 1.0f);
     alSourcei(alSources[15], AL_LOOPING, AL_FALSE);
 
-
-    // //Generate a source, and store it in a buffer.
-    // // set sfx/songs to not loop
-    // int non_looping_sounds = 4;
-    // for (int i = 0; i < non_looping_sounds; i++) {
-    //     alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
-    //     alSourcef(alSources[i], AL_GAIN, 1.0f);
-    //     alSourcef(alSources[i], AL_PITCH, 1.0f);
-    //     alSourcei(alSources[i], AL_LOOPING, AL_FALSE);
-    // }
-
-    // // make all songs to loop
-    // for (int i = non_looping_sounds; i < NUM_SOUNDS; i++) {
-    //     alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
-    //     alSourcef(alSources[i], AL_GAIN, 0.25f);
-    //     alSourcef(alSources[i], AL_PITCH, 1.0f);
-    //     alSourcei(alSources[i], AL_LOOPING, AL_TRUE);
-    // }
-    //   [[------- END OLD -----------]]
-
-
     // check for errors after setting sources
     if (alGetError() != AL_NO_ERROR) {
         throw "ERROR: setting source\n";
@@ -536,7 +485,8 @@ Sound::~Sound()
 
 }
 
-void Sound::init_openal()
+void Sound::initOpenal
+()
 {
 	alutInit(0, NULL);
 	if (alGetError() != AL_NO_ERROR) {
