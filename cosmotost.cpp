@@ -753,6 +753,16 @@ int X11_wrapper::check_keys(XEvent *e)
 						cerr << "g.mike_active set to false\n";
 					}
 					return 0;
+				case XK_b: // t was pressed - toggle Dan's Feature Mode
+					// if (g.substate == NONE) {
+					if (g.donut_active == false) {
+						g.donut_active = true;
+						cerr << "g.donut_active set to true\n";
+					} else if (g.donut_active == true) {
+						g.donut_active = false;
+						cerr << "g.donut_active set to false\n";
+					}
+					return 0;
 
 				case XK_q:
 					bomb.launch();
@@ -1227,16 +1237,57 @@ void physics()
 
 		}
 		if (g.huaiyu_active == true) {
-				for (int i=0; i < g.n_Bread; i++) {
-						if(bread[i].trace) {
-								bread[i].cd--;
-								if(0 == bread[i].cd)
-										bread[i].trace = false;
+				for (int i=0; i < g.n_Spear; i++) {
+						if(spear[i].trace) {
+								spear[i].cd--;
+								if(0 == spear[i].cd)
+										spear[i].trace = false;
 						}
+						if(tos.collision(spear[i])) {
+							tos.hpDamage(spear[i]);
+							spear[i]=spear[--g.n_Spear];
+						}
+						spear[i].moveSpear();
 				}
 				if (g.BreadCD == 0 && (int)rand()%3 == 0)
-						makeBread(g.xres-60.0,(((float)rand()) / (float)RAND_MAX)*g.yres,0.0,3,1);
+						makeSpear(g.xres-60.0,(((float)rand()) / (float)RAND_MAX)*g.yres,0.0,1);
+				
 		}
+//======================BOSS+====================================		
+		if (g.donut_active == true) {
+			if (donut.collision(tos)) {
+				tos.hpDamage(1000);
+			}
+			for (int i = 0; i < g.n_Bullet; i++) {
+				if (donut.collision(bul[i])) {
+					donut.hpDemageDonut(bul[i]);
+					bul[i] = bul[--g.n_Bullet];
+				}
+			}
+			donut.moveDonut();
+			for (int i=0; i < g.n_donut_bullet; i++) {
+				do_bul[i].moveBullet();
+				if(do_bul[i].collision(tos)) {
+					tos.hpDamage(do_bul[i]);
+					if(tos.hpCheck() && (tos.lives - 1 > 0)) {
+						tos.lives--;
+						tos.setHP(80);
+					}
+					else if(tos.hpCheck()) {
+						g.state = GAMEOVER;
+					}
+					do_bul[i] = do_bul[--g.n_donut_bullet];
+				}
+				if (do_bul[i].screenOut()){
+					cerr << "clear dobullet" << endl;
+					do_bul[i] = do_bul[--g.n_donut_bullet];
+				}
+			}
+
+			// cerr << donut.hp << endl;
+			
+		}
+//================================================================
 		// cout << tos.pos[0] << endl;
 		// move of toaster
 		tos.moveToster();
@@ -1512,7 +1563,15 @@ void render()
 		if (g.state == PAUSE) {
 			pause_menu.draw();
 		}
-
+		if(g.huaiyu_active == true &&
+			(g.state == GAME || g.state == PAUSE)) {
+				for (int i = 0; i < g.n_Spear; i++) {
+					if(!spear[i].trace)
+						spear[i].draw();
+					else
+						spear[i].draw(tos);
+				}
+		}
 		// if(g.substate == DTORRES) {
 		if(g.dtorres_active == true &&
 			(g.state == GAME || g.state == PAUSE)) {
@@ -1558,6 +1617,17 @@ void render()
 				freeze_block = NULL;
 			}
 
+		}
+//================================Boss===================================
+		if(g.donut_active == true &&
+			(g.state == GAME || g.state == PAUSE)) {
+				donut.draw();
+				for (int i=0; i < g.n_donut_bullet; i++) {
+//						cerr << "draw bullet" << endl;
+						do_bul[i].draw();
+				}
+		
+		
 		}
 
 		bomb.draw();
