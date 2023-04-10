@@ -68,7 +68,8 @@ void FreezeBlock::melt(float melting_rate)
 	w -= melting_rate;
 }
 
-void FreezeBlock::setFreezeTimer(int seconds) {
+void FreezeBlock::setFreezeTimer(int seconds) 
+{
 	ptimer = new Timer(seconds);
 }
 
