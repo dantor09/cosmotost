@@ -45,7 +45,7 @@ class Item: public Box
 {
   public:
     GLuint * tex;
-    Box * plives;
+    Box * plive;
     //item_type show what kind of item it is
     int item_type;
     bool trace = false;
@@ -186,16 +186,20 @@ class Donut
     float out_radius;
     float inner_radius;
     float deamage_radius;
+    float shelled_radius;
     float hp;
     int cd;     // CD between Donets weapon
     int count_down; // CD count_down
     bool up_down; // 0 up, 1 down
     bool weapon; // if weapon is true then donut attecking
                  // if weapon is false then countdown cd 
+    bool shelled_on;
     int weapon_id;
     bool shelled; // have shelled or not
     float pos[3];
     float vel[3];
+    int numlazerx;
+    int numlazery;
     int donut_count;
     int weapon_outer_count;
     int weapon_inner_count;
@@ -213,3 +217,7 @@ class Donut
 };
 //=======================================================================
 
+class LaserBox: public Item 
+{
+
+};
