@@ -349,22 +349,38 @@ Sound::Sound()
 
 
     // make individual buffers of all sounds
-    alBuffers[0] = alutCreateBufferFromFile(buildSongPath(sound_names[0]).c_str());
-    alBuffers[1] = alutCreateBufferFromFile(buildSongPath(sound_names[1]).c_str());
-    alBuffers[2] = alutCreateBufferFromFile(buildSongPath(sound_names[2]).c_str());
-    alBuffers[3] = alutCreateBufferFromFile(buildSongPath(sound_names[3]).c_str());
-    alBuffers[4] = alutCreateBufferFromFile(buildSongPath(sound_names[4]).c_str());
-    alBuffers[5] = alutCreateBufferFromFile(buildSongPath(sound_names[5]).c_str());
-    alBuffers[6] = alutCreateBufferFromFile(buildSongPath(sound_names[6]).c_str());
-    alBuffers[7] = alutCreateBufferFromFile(buildSongPath(sound_names[7]).c_str());
-    alBuffers[8] = alutCreateBufferFromFile(buildSongPath(sound_names[8]).c_str());
-    alBuffers[9] = alutCreateBufferFromFile(buildSongPath(sound_names[9]).c_str());
-    alBuffers[10] = alutCreateBufferFromFile(buildSongPath(sound_names[10]).c_str());
-    alBuffers[11] = alutCreateBufferFromFile(buildSongPath(sound_names[11]).c_str());
-    alBuffers[12] = alutCreateBufferFromFile(buildSongPath(sound_names[12]).c_str());
-    alBuffers[13] = alutCreateBufferFromFile(buildSongPath(sound_names[13]).c_str());
-    alBuffers[14] = alutCreateBufferFromFile(buildSongPath(sound_names[14]).c_str());
-    alBuffers[15] = alutCreateBufferFromFile(buildSongPath(sound_names[15]).c_str());
+    alBuffers[0] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[0]).c_str());
+    alBuffers[1] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[1]).c_str());
+    alBuffers[2] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[2]).c_str());
+    alBuffers[3] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[3]).c_str());
+    alBuffers[4] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[4]).c_str());
+    alBuffers[5] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[5]).c_str());
+    alBuffers[6] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[6]).c_str());
+    alBuffers[7] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[7]).c_str());
+    alBuffers[8] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[8]).c_str());
+    alBuffers[9] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[9]).c_str());
+    alBuffers[10] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[10]).c_str());
+    alBuffers[11] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[11]).c_str());
+    alBuffers[12] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[12]).c_str());
+    alBuffers[13] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[13]).c_str());
+    alBuffers[14] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[14]).c_str());
+    alBuffers[15] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[15]).c_str());
 
 
     // songBuffers[0] = alBuffers[3];
@@ -618,7 +634,6 @@ bool Sound::checkIntroBufferDone()
 {
     resetBufferDone();
     alGetSourcei(menuQueueSource, AL_BUFFERS_PROCESSED, &buffersDone);
-    // cerr << "checking intro buffer done, buffers is: " << buffersDone << endl;
     return (buffersDone == 1);
 }
 
@@ -833,8 +848,8 @@ void PowerBar::draw()
         glBegin(GL_QUADS);
             glVertex2f(0, -health.h);
             glVertex2f(0,  health.h);
-            glVertex2f( (((float)(itm->hp))/(float)(itm->starting_hp))*2.0f*health.w,  health.h);
-            glVertex2f( (((float)(itm->hp))/(float)(itm->starting_hp))*2.0f*health.w, -health.h);
+            glVertex2f((((float)(itm->hp))/(float)(itm->starting_hp))*2.0f*health.w,  health.h);
+            glVertex2f((((float)(itm->hp))/(float)(itm->starting_hp))*2.0f*health.w, -health.h);
             
         glEnd();
         glPopMatrix();
