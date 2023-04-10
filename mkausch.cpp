@@ -338,8 +338,7 @@ void Timer::unPause()
 Sound::Sound()
 {
     //Buffer holds the sound information.
-    initOpenal
-    ();
+    initOpenal();
     current_track = -1;  // starting track number at splash screen
     is_music_paused = false;
     user_pause = false;
@@ -350,22 +349,22 @@ Sound::Sound()
 
 
     // make individual buffers of all sounds
-    alBuffers[0] = alutCreateBufferFromFile(build_song_path(sound_names[0]).c_str());
-    alBuffers[1] = alutCreateBufferFromFile(build_song_path(sound_names[1]).c_str());
-    alBuffers[2] = alutCreateBufferFromFile(build_song_path(sound_names[2]).c_str());
-    alBuffers[3] = alutCreateBufferFromFile(build_song_path(sound_names[3]).c_str());
-    alBuffers[4] = alutCreateBufferFromFile(build_song_path(sound_names[4]).c_str());
-    alBuffers[5] = alutCreateBufferFromFile(build_song_path(sound_names[5]).c_str());
-    alBuffers[6] = alutCreateBufferFromFile(build_song_path(sound_names[6]).c_str());
-    alBuffers[7] = alutCreateBufferFromFile(build_song_path(sound_names[7]).c_str());
-    alBuffers[8] = alutCreateBufferFromFile(build_song_path(sound_names[8]).c_str());
-    alBuffers[9] = alutCreateBufferFromFile(build_song_path(sound_names[9]).c_str());
-    alBuffers[10] = alutCreateBufferFromFile(build_song_path(sound_names[10]).c_str());
-    alBuffers[11] = alutCreateBufferFromFile(build_song_path(sound_names[11]).c_str());
-    alBuffers[12] = alutCreateBufferFromFile(build_song_path(sound_names[12]).c_str());
-    alBuffers[13] = alutCreateBufferFromFile(build_song_path(sound_names[13]).c_str());
-    alBuffers[14] = alutCreateBufferFromFile(build_song_path(sound_names[14]).c_str());
-    alBuffers[15] = alutCreateBufferFromFile(build_song_path(sound_names[15]).c_str());
+    alBuffers[0] = alutCreateBufferFromFile(buildSongPath(sound_names[0]).c_str());
+    alBuffers[1] = alutCreateBufferFromFile(buildSongPath(sound_names[1]).c_str());
+    alBuffers[2] = alutCreateBufferFromFile(buildSongPath(sound_names[2]).c_str());
+    alBuffers[3] = alutCreateBufferFromFile(buildSongPath(sound_names[3]).c_str());
+    alBuffers[4] = alutCreateBufferFromFile(buildSongPath(sound_names[4]).c_str());
+    alBuffers[5] = alutCreateBufferFromFile(buildSongPath(sound_names[5]).c_str());
+    alBuffers[6] = alutCreateBufferFromFile(buildSongPath(sound_names[6]).c_str());
+    alBuffers[7] = alutCreateBufferFromFile(buildSongPath(sound_names[7]).c_str());
+    alBuffers[8] = alutCreateBufferFromFile(buildSongPath(sound_names[8]).c_str());
+    alBuffers[9] = alutCreateBufferFromFile(buildSongPath(sound_names[9]).c_str());
+    alBuffers[10] = alutCreateBufferFromFile(buildSongPath(sound_names[10]).c_str());
+    alBuffers[11] = alutCreateBufferFromFile(buildSongPath(sound_names[11]).c_str());
+    alBuffers[12] = alutCreateBufferFromFile(buildSongPath(sound_names[12]).c_str());
+    alBuffers[13] = alutCreateBufferFromFile(buildSongPath(sound_names[13]).c_str());
+    alBuffers[14] = alutCreateBufferFromFile(buildSongPath(sound_names[14]).c_str());
+    alBuffers[15] = alutCreateBufferFromFile(buildSongPath(sound_names[15]).c_str());
 
 
     // songBuffers[0] = alBuffers[3];
@@ -481,7 +480,7 @@ Sound::~Sound()
 
     alDeleteSources(1, &menuQueueSource);
 
-    close_openal();
+    closeOpenal();
 
 }
 
@@ -506,7 +505,7 @@ void Sound::initOpenal
 	alListenerf(AL_GAIN, 1.0f);
 }
 
-void Sound::close_openal()
+void Sound::closeOpenal()
 {
 	//Close out OpenAL itself.
 	//Get active context.
@@ -521,14 +520,14 @@ void Sound::close_openal()
 	alcCloseDevice(Device);
 }
 
-void Sound::rewind_game_music()
+void Sound::rewindGameMusic()
 {
     alSourceStop(alSources[5]);
     alSourceRewind(alSources[5]);
     alSourcePlay(alSources[5]);
 }
 
-string Sound::build_song_path(string s)
+string Sound::buildSongPath(string s)
 {
     // format of the song
     // ./Songs/Edzes-64TheMagicNumber16kHz.wav"
@@ -542,7 +541,7 @@ string Sound::build_song_path(string s)
 
 }
 
-void Sound::gun_play(int btype)
+void Sound::gunPlay(int btype)
 {
     // static int gun_start = 6;
 
@@ -562,7 +561,7 @@ void Sound::gun_play(int btype)
     }
 }
 
-void Sound::gun_stop()
+void Sound::gunStop()
 {
     static int gun_start = 6;
     static int num_guns = 4;
@@ -615,23 +614,23 @@ void Sound::playZap2()
     alSourcePlay(alSources[index]);
 }
 
-bool Sound::check_intro_buffer_done()
+bool Sound::checkIntroBufferDone()
 {
-    reset_buffer_done();
+    resetBufferDone();
     alGetSourcei(menuQueueSource, AL_BUFFERS_PROCESSED, &buffersDone);
     // cerr << "checking intro buffer done, buffers is: " << buffersDone << endl;
     return (buffersDone == 1);
 }
 
 // resets buffers_done variable for further checks
-void Sound::reset_buffer_done()
+void Sound::resetBufferDone()
 {
     buffersDone = 0;
 }
 
 // unqueue's intro beat so that only loop track is in the buffer queue
 // loops buffer queue at this point
-void Sound::loop_intro()
+void Sound::loopIntro()
 {
 
     alSourceStop(menuQueueSource);
@@ -639,7 +638,7 @@ void Sound::loop_intro()
     alSourcePlay(alSources[4]);
 }
 
-void Sound::setup_game_mode()
+void Sound::setupGameMode()
 {
     // change bools for music state
     is_intro = false; is_game = true;
@@ -654,7 +653,7 @@ void Sound::setup_game_mode()
     alSourcePlay(alSources[5]);
 }
 
-void Sound::play_start_track()
+void Sound::playStartTrack()
 {
     // stop game music if it's playing
     if (is_game == true) {
@@ -669,7 +668,7 @@ void Sound::play_start_track()
 }
 
 // returns song names, only 2 songs for now
-string Sound::get_song_name()
+string Sound::getSongName()
 {
     string name;
     if (is_intro) {
@@ -702,7 +701,7 @@ void Sound::unpause()
 }
 
 // separate pause state for when user explicity mutes music
-void Sound::toggle_user_pause()
+void Sound::toggleUserPause()
 {
     user_pause = (user_pause == true) ? false : true;
     if (user_pause)
@@ -712,7 +711,7 @@ void Sound::toggle_user_pause()
 }
 
 // getter to return the pause state
-bool Sound::get_pause()
+bool Sound::getPause()
 {
     return is_music_paused;
 }
@@ -918,8 +917,8 @@ Blocky::Blocky(char type)
     } else if (type == 'h') {
         setDim(100.0f, 25.0f);
     }
-    set_rand_color(*this);
-    set_rand_position();
+    setRandColor(*this);
+    setRandPosition();
     setAcc(0.0f,-0.25f,0.0f);
     setVel(0.0f, -4.0f, 0.0f);
     setDamage(20);
@@ -966,7 +965,7 @@ Blocky::Blocky(char type)
     }
 
 
-    init_rotation_vel();
+    initRotationVel();
 }
 
 Blocky::~Blocky()
@@ -974,7 +973,7 @@ Blocky::~Blocky()
 
 }
 
-void Blocky::init_rotation_vel()
+void Blocky::initRotationVel()
 {
     // 0 the starting angle and assign random change in rotation angle
     for (int i = 0; i < SUB_BLOCK_N; i++) {
@@ -983,7 +982,7 @@ void Blocky::init_rotation_vel()
     }
 }
 
-void Blocky::set_rand_position()
+void Blocky::setRandPosition()
 {
     static int pm_dir = 1;
     float curr_player_xpos = tos.pos[0];
@@ -1000,7 +999,7 @@ void Blocky::set_rand_position()
 
 }
 
-void set_rand_color(Item & it)
+void setRandColor(Item & it)
 {
     // colors based on color scheme defined at the bottom
     // int color[5][3] = {{61, 89, 114},
@@ -1019,7 +1018,7 @@ void set_rand_color(Item & it)
     index = (index + 1) % 5;
 }
 
-bool Blocky::sub_ScreenIn()
+bool Blocky::subScreenIn()
 {
     bool subs_onscreen = false;
 
@@ -1041,12 +1040,12 @@ void Blocky::draw()
         // reset blocky if he's out of screen
 
     // draw big blocky
-    if (is_alive() && explode_done) {
+    if (isAlive() && explode_done) {
         if (screenOut()) {
             reset();
         }
 
-        set_rand_color(*this);
+        setRandColor(*this);
         glPushMatrix();
         glColor3ub(color[0], color[1], color[2]);
         glTranslatef(pos[0], pos[1], pos[2]);
@@ -1061,10 +1060,10 @@ void Blocky::draw()
 
     } else {    // draw little blockies
         // cerr << "checking if sub boxes are in the screen...\n";
-        if (sub_ScreenIn()) {
+        if (subScreenIn()) {
 
             for (int i = 0; i < SUB_BLOCK_N; i++) {
-                set_rand_color(sub_boxes[i]);
+                setRandColor(sub_boxes[i]);
                 glPushMatrix();
                 glColor3ub(sub_boxes[i].color[0],
                             sub_boxes[i].color[1],
@@ -1083,7 +1082,7 @@ void Blocky::draw()
             }
         } else {
             // rot_angle = 0;
-            init_rotation_vel();
+            initRotationVel();
             explode_done = true;
             // reset_sub_boxes();
         }
@@ -1110,7 +1109,7 @@ void Blocky::reset()
     was_hit = false;
 
     setVel(0.0f, -4.0f, 0.0f);
-    set_rand_position();    // put at a new random position
+    setRandPosition();    // put at a new random position
     // was_hit = false;
     // cerr << "was_hit set to " << boolalpha << was_hit << endl;
 }
@@ -1120,11 +1119,11 @@ void Blocky::gamereset()
     lives = 2;
     hp = starting_hp;
     setVel(0.0f, -4.0f, 0.0f);
-    set_rand_position();    // put at a new random position
+    setRandPosition();    // put at a new random position
     was_hit = false;
 }
 
-bool Blocky::did_damage()
+bool Blocky::didDamage()
 {
     return was_hit;
 }
@@ -1132,7 +1131,7 @@ bool Blocky::did_damage()
 void Blocky::move()
 {
         // move main blocky
-    if (is_alive() && explode_done) {
+    if (isAlive() && explode_done) {
         pos[0] += vel[0];
         pos[1] += vel[1];
         pos[2] += vel[2];
@@ -1140,7 +1139,7 @@ void Blocky::move()
         vel[1] += acc[1];
         vel[2] += acc[2];
     } else if (!explode_done) { // move sub boxes until they fall off screen
-        if (sub_ScreenIn()) {
+        if (subScreenIn()) {
             for (int i = 0; i < SUB_BLOCK_N; i++) {
                 sub_boxes[i].pos[0] += sub_boxes[i].vel[0];
                 sub_boxes[i].pos[1] += sub_boxes[i].vel[1];
@@ -1176,18 +1175,6 @@ bool Blocky::subBoxCollision(Entity & ent)
     return false;
 }
 
-// bool Blocky::subBoxCollision(Bomb & b)
-// {
-//     for (int i = 0; i < SUB_BLOCK_N; i++) {
-//         if (b.collision(sub_boxes[i])) {
-//             return true;
-//         }
-//     }
-//     return false;
-// }
-
-
-
 void Item::hpDamage(Blocky & bf)
 {
     // cerr << "blocky's hpDamage called" << endl;
@@ -1202,12 +1189,12 @@ void Item::hpDamage(Blocky & bf)
     }
 }
 
-bool Blocky::is_alive()
+bool Blocky::isAlive()
 {
     return (lives > 0);
 }
 
-void Blocky::set_hit()
+void Blocky::setHit()
 {
     was_hit = true;
     // cerr << "setting hit in blocky" << endl;
@@ -1232,7 +1219,7 @@ void Blocky::explode()
 
 #ifdef USE_OPENAL_SOUND
 
-void check_sound(void)
+void checkSound(void)
 {
 	static bool initial_play = false;
 	static bool loop_set = false;
@@ -1248,23 +1235,23 @@ void check_sound(void)
 		// init_game_setup will unque intro buffers and queue game songs
 		initial_game_setup = false;	// switch to false if it was prev true
 		if (initial_play == false) {
-			// cerr << "calling play_start_track()" << endl;
-			sounds.play_start_track();	// queues intro songs and plays
+			// cerr << "calling playStartTrack()" << endl;
+			sounds.playStartTrack();	// queues intro songs and plays
 			initial_play = true;
 		}
-		if (sounds.check_intro_buffer_done() && !loop_set) {
-			// sounds.reset_buffer_done();
+		if (sounds.checkIntroBufferDone() && !loop_set) {
+			// sounds.resetBufferDone();
 			// cerr << "sounds.checkintobuffer == true" << endl;
-			// cerr << "calling loop_intro()" << endl;
-			sounds.loop_intro();
+			// cerr << "calling loopIntro()" << endl;
+			sounds.loopIntro();
 			loop_set = true;
 		}
 	} else if (g.state == GAME && initial_game_setup == false) {
 			// reset initial play so that intro plays
 		initial_play = loop_set = false;
 		initial_game_setup = true;
-		// cerr << "calling setup_game_mode()" << endl;
-		sounds.setup_game_mode();
+		// cerr << "calling setupGameMode()" << endl;
+		sounds.setupGameMode();
 
 	}
 
@@ -1277,18 +1264,18 @@ void check_sound(void)
         
         // start playing new sound if leveled up gun
         if ((tos.bullet_type_prime != prev_btype) && (sounds.gun_shooting)) {
-            sounds.gun_stop();
-            sounds.gun_play(tos.bullet_type_prime);
+            sounds.gunStop();
+            sounds.gunPlay(tos.bullet_type_prime);
             prev_btype = tos.bullet_type_prime;
         }
         // if space bar is pressed down and gun not already shooting
         if ((g.keys[XK_space] == 1) && (!sounds.gun_shooting)) {
             cerr << "tos.bullet_type_prime: " << tos.bullet_type_prime << endl;
-            sounds.gun_play(tos.bullet_type_prime);
+            sounds.gunPlay(tos.bullet_type_prime);
             sounds.gun_shooting = true;
             // if spacebar not pressed down and gun noise currently set to shoot
         } else if (g.keys[XK_space] == 0 && (sounds.gun_shooting)) {
-            sounds.gun_stop();
+            sounds.gunStop();
             sounds.gun_shooting = false;
         }
 
@@ -1321,7 +1308,7 @@ void check_sound(void)
 
     } else {
         if (sounds.gun_shooting == true) {
-            sounds.gun_stop();
+            sounds.gunStop();
             sounds.gun_shooting = false;
         }
     }
@@ -1332,7 +1319,7 @@ void check_sound(void)
 
 // directs enemies to be present during specified states
 // also changes enemy settings if it's relevent
-void check_level()
+void checkLevel()
 {
     static bool lvl_change = false;
 
@@ -1413,6 +1400,7 @@ void check_level()
                 case LEVEL8:
                     // Level9: Boss
                     g.level = LEVEL9;
+                    g.entity_active = true;
                     // unleash bossman randy savage
                     g.huaiyu_active = true;
 
@@ -1725,7 +1713,7 @@ SoundBar::SoundBar(float * _val, float _x, float _y, std::string _bn_)
 
     slider.setDim(button_box_width, 30);
             //    (beginnning of line ) + (proportion of volume to full vol)
-    slider_position = get_slider_position();
+    slider_position = getSliderPosition();
     slider.setPos(slider_position,pos[1],0); 
     slider.setColor(69,85,89);
 
@@ -1842,7 +1830,7 @@ void SoundBar::draw()
 
 }
 
-float SoundBar::get_slider_position()
+float SoundBar::getSliderPosition()
 {
     return (slider_left_stop_pos + ((*value)*(slider_right_stop_pos-
                                                         slider_left_stop_pos)));
@@ -1876,42 +1864,42 @@ Box* SoundBar::checkButtons(float x, float y)
     return box_ptr;
 }
 
-void SoundBar::set_orig_color()
+void SoundBar::setOrigColor()
 {
     leftb.setColor(61, 90, 115);
     rightb.setColor(61, 90, 115);
 }
 
-void SoundBar::set_highlight(Box * b)
+void SoundBar::setHighlight(Box * b)
 {
     b->setColor(33,136,171);
 }
 
-void SoundBar::move_slider_down()
+void SoundBar::moveSliderDown()
 {
     // if (slider_position > slider_left_stop_pos) {
     if (*value >= 0.18) {
         *value -= 0.1f;
-        slider_position = get_slider_position();
+        slider_position = getSliderPosition();
         slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
     } else {
         *value = 0;
-        slider_position = get_slider_position();
+        slider_position = getSliderPosition();
         slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
     }
 }
 
-void SoundBar::move_slider_up()
+void SoundBar::moveSliderUp()
 {
 
     // if (slider_position < slider_right_stop_pos) {
     if (*value < 0.82f) {
         *value += 0.1f;
-        slider_position = get_slider_position();
+        slider_position = getSliderPosition();
         slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
     } else {
         *value = 1;
-        slider_position = get_slider_position();
+        slider_position = getSliderPosition();
         slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
     }
 }
