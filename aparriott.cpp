@@ -63,6 +63,7 @@ void EntitySpawn::makeEntity(float pos_x, float pos_y, float init_vel_x, float i
 		entity[e.num_ent].color[2] = e.randNum(200, 255);
         entity[e.num_ent].curve[0] = curve_x;
         entity[e.num_ent].curve[1] = curve_y;
+		entity[e.num_ent].setHP(2);
 		e.num_ent++;
 	}	
 }

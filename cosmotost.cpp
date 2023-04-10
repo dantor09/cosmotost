@@ -60,7 +60,7 @@ void physics(void);
 void render(void);
 
 // #ifdef USE_OPENAL_SOUND
-// void check_sound(void);
+// void checkSound(void);
 // #endif
 
 //=====================================
@@ -82,11 +82,11 @@ int main()
 				break;
 			}
 		}
-		check_level();
+		checkLevel();
 		physics();
 		render();
 #ifdef USE_OPENAL_SOUND
-		check_sound();
+		checkSound();
 #endif
 		x11.swapBuffers();
 		usleep(2000);
@@ -216,9 +216,9 @@ int X11_wrapper::check_mouse(XEvent *e)
 				}
 
 				// check and see if the user clicked on the Menu
-				selection = mm.check_t_box(savex, g.yres - savey);
+				selection = mm.checkTBox(savex, g.yres - savey);
 				if (selection && (mm.words[selection->id] == "Start Game")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					g.state = GAME;
 					g.gameTimer.reset();	// start the game timer
 					selection = nullptr;
@@ -229,13 +229,13 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 					return 0;
 				} else if (selection && (mm.words[selection->id] == "Debug Mode")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					g.state = GAME;
 					g.substate = DEBUG;
 					g.gameTimer.reset();
 					selection = nullptr;
 				} else if (selection && (mm.words[selection->id] == "High Scores")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					g.substate = HIGH_SCORES;
 					selection = nullptr;
 
@@ -245,7 +245,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 					return 0;
 				} else if (selection && (mm.words[selection->id] == "Settings")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					g.substate = SETTINGS;
 					selection = nullptr;
 
@@ -255,7 +255,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 					return 0;
 				} else if (selection && (mm.words[selection->id] == "Quit")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
@@ -283,13 +283,13 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 				// need to send in flipped y coord because window and
 				// mouse coords have different origins
-				selection = mm.check_t_box(savex, g.yres - savey);
+				selection = mm.checkTBox(savex, g.yres - savey);
 
 				if (selection) {
 
 					
-					mm.set_orig_color();
-					mm.set_highlight(selection);
+					mm.setOrigColor();
+					mm.setHighlight(selection);
 
 #ifdef USE_OPENAL_SOUND
 					sounds.beep();
@@ -323,7 +323,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					// check and see if the user clicked on slider buttons
 					selection = vol_slider.checkButtons(savex, g.yres - savey);
 					if (selection && (vol_slider.words[selection->id] == "<")) {
-						vol_slider.move_slider_down();
+						vol_slider.moveSliderDown();
 
 #ifdef USE_OPENAL_SOUND
 						sounds.updateMusicVol();
@@ -334,7 +334,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 						return 0;
 					} else if (selection && (vol_slider.words[selection->id] == ">")) {
-						vol_slider.move_slider_up();
+						vol_slider.moveSliderUp();
 
 #ifdef USE_OPENAL_SOUND
 						sounds.updateMusicVol();
@@ -348,7 +348,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 					selection = sfx_slider.checkButtons(savex, g.yres - savey);
 					if (selection && (sfx_slider.words[selection->id] == "<")) {
-						sfx_slider.move_slider_down();
+						sfx_slider.moveSliderDown();
 
 #ifdef USE_OPENAL_SOUND
 						sounds.updateSFXVol();
@@ -359,7 +359,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 						return 0;
 					} else if (selection && (sfx_slider.words[selection->id] == ">")) {
-						sfx_slider.move_slider_up();
+						sfx_slider.moveSliderUp();
 
 #ifdef USE_OPENAL_SOUND
 						sounds.updateSFXVol();
@@ -386,28 +386,28 @@ int X11_wrapper::check_mouse(XEvent *e)
 					// mouse coords have different origins
 					selection = vol_slider.checkButtons(savex, g.yres - savey);
 					if (selection) {
-						vol_slider.set_orig_color();
-						vol_slider.set_highlight(selection);
+						vol_slider.setOrigColor();
+						vol_slider.setHighlight(selection);
 
 #ifdef USE_OPENAL_SOUND
 						sounds.beep();
 #endif
 
 					} else {
-						vol_slider.set_orig_color();
+						vol_slider.setOrigColor();
 					}
 
 					selection = sfx_slider.checkButtons(savex, g.yres - savey);
 					if (selection) {
-						sfx_slider.set_orig_color();
-						sfx_slider.set_highlight(selection);
+						sfx_slider.setOrigColor();
+						sfx_slider.setHighlight(selection);
 
 #ifdef USE_OPENAL_SOUND
 						sounds.beep();
 #endif
 
 					} else {
-						sfx_slider.set_orig_color();
+						sfx_slider.setOrigColor();
 					}
 
 				}
@@ -436,9 +436,9 @@ int X11_wrapper::check_mouse(XEvent *e)
 					savey = e->xbutton.y;
 				}
 
-				selection = pause_menu.check_t_box(savex, g.yres - savey);
+				selection = pause_menu.checkTBox(savex, g.yres - savey);
 				if (selection && (pause_menu.words[selection->id] == "Main Menu")) {
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 					g.state = MAINMENU;
 					g.gameTimer.pause();
 					selection = nullptr;
@@ -449,7 +449,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Start Over")) {
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 					g.state = MAINMENU;
 					g.gameReset();
 					g.state = GAME;
@@ -460,14 +460,14 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
-					sounds.rewind_game_music();
-					cerr << "rewinding song " << sounds.get_song_name() << endl;
+					sounds.rewindGameMusic();
+					cerr << "rewinding song " << sounds.getSongName() << endl;
 #endif
 
 					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Back to Game")) {
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 					g.state = GAME;
 					if (g.gameTimer.isPaused()) {
 						g.gameTimer.unPause();	// unpause the game
@@ -478,12 +478,12 @@ int X11_wrapper::check_mouse(XEvent *e)
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
 					sounds.unpause();
-					cerr << "unpausing song " << sounds.get_song_name() << endl;
+					cerr << "unpausing song " << sounds.getSongName() << endl;
 #endif
 					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Quit Game")) {
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 					cerr << "g.state was changed to should be quitting..." <<
 							endl;
 
@@ -519,11 +519,11 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 				// need to send in flipped y coord because window and
 				// mouse coords have different origins
-				selection = pause_menu.check_t_box(savex, g.yres - savey);
+				selection = pause_menu.checkTBox(savex, g.yres - savey);
 
 				if (selection) {
-						pause_menu.set_orig_color();
-						pause_menu.set_highlight(selection);
+						pause_menu.setOrigColor();
+						pause_menu.setHighlight(selection);
 						// selection = nullptr; // reset selection ptr
 #ifdef USE_OPENAL_SOUND
 					sounds.beep();
@@ -532,7 +532,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					// }
 				} else {
 					// was previously on something and now it's not
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 
 				}
 			}
@@ -554,7 +554,7 @@ int X11_wrapper::check_keys(XEvent *e)
 
 #ifdef USE_OPENAL_SOUND
 		// if (key1 == XK_space) {
-		// 	sounds.gun_stop();
+		// 	sounds.gunStop();
 		// 	sounds.gun_shooting = false;
 		// }
 
@@ -614,45 +614,45 @@ int X11_wrapper::check_keys(XEvent *e)
 
 				case XK_7:
 
-					vol_slider.move_slider_down();
+					vol_slider.moveSliderDown();
 
 #ifdef USE_OPENAL_SOUND
 					sounds.updateMusicVol();
 #endif
 					// cerr << "sound turned down to: " << g.m_vol << endl;
 
-					// sfx_slider.move_slider_down();
+					// sfx_slider.moveSliderDown();
 					return 0;
 				case XK_8:
-					vol_slider.move_slider_up();
+					vol_slider.moveSliderUp();
 
 #ifdef USE_OPENAL_SOUND
 					sounds.updateMusicVol();
 #endif
 					// cerr << "sound turned up to: " << g.m_vol << endl;
-					// sfx_slider.move_slider_up();
+					// sfx_slider.moveSliderUp();
 					return 0;
 
 
 				case XK_9:
 
-					sfx_slider.move_slider_down();
+					sfx_slider.moveSliderDown();
 
 #ifdef USE_OPENAL_SOUND
 					sounds.updateSFXVol();
 #endif
 					// cerr << "sfx turned down to: " << g.sfx_vol << endl;
 
-					// sfx_slider.move_slider_down();
+					// sfx_slider.moveSliderDown();
 					return 0;
 				case XK_0:
-					sfx_slider.move_slider_up();
+					sfx_slider.moveSliderUp();
 
 #ifdef USE_OPENAL_SOUND
 					sounds.updateSFXVol();
 #endif
 					// cerr << "sfx turned up to: " << g.sfx_vol << endl;
-					// sfx_slider.move_slider_up();
+					// sfx_slider.moveSliderUp();
 					return 0;
 
 
@@ -660,7 +660,7 @@ int X11_wrapper::check_keys(XEvent *e)
 // 				case XK_u:	// go back to main menu
 // 					//Escape key was pressed
 // 					//Enter Pause State
-// 					sounds.toggle_user_pause();
+// 					sounds.toggleUserPause();
 // 					cerr << "toggling pause"  << endl;
 // 					return 0;
 // #endif
@@ -778,7 +778,7 @@ int X11_wrapper::check_keys(XEvent *e)
 #ifdef USE_OPENAL_SOUND
 
 					sounds.pause();
-					cerr << "pausing song " << sounds.get_song_name() << endl;
+					cerr << "pausing song " << sounds.getSongName() << endl;
 #endif
 
 					return 0;
@@ -795,7 +795,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				case XK_u:	// go back to main menu
 					//Escape key was pressed
 					//Enter Pause State
-					sounds.toggle_user_pause();
+					sounds.toggleUserPause();
 					cerr << "toggling pause"  << endl;
 					return 0;
 #endif
@@ -819,7 +819,7 @@ int X11_wrapper::check_keys(XEvent *e)
 
 #ifdef USE_OPENAL_SOUND
 					sounds.unpause();
-					cerr << "unpausing song " << sounds.get_song_name() << endl;
+					cerr << "unpausing song " << sounds.getSongName() << endl;
 #endif
 
 					return 0;
@@ -881,7 +881,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				g.state = MAINMENU;
 				g.substate = NONE;
 				record.makeMenu();
-				// record.hs_menu->set_orig_color();
+				// record.hs_menu->setOrigColor();
 				cerr << "g.state was changed to MAINMENU" << endl;
 				return 0;
 			}
@@ -1040,6 +1040,8 @@ void physics()
 				}
 				e.makeEntity(e.spawn_x, e.spawn_y, e.spawn_vel_x, e.spawn_vel_y,
 							e.curve_rand_x, e.curve_rand_y);
+				cerr << "makeEntity called" << endl;
+							
 				e.chain_len--;
 			}
 			e.spawn_speed--;
@@ -1055,7 +1057,7 @@ void physics()
 				entity[i].vel[1] += entity[i].curve[1] / 32;
 
 				
-				if (blocky->is_alive() && blocky->explode_done)  {
+				if (blocky->isAlive() && blocky->explode_done)  {
 					if (entity[i].collision(*blocky)) {
 						entity[i].hpDamage(*blocky);
 						if (entity[i].hpCheck()) {
@@ -1067,6 +1069,7 @@ void physics()
 						entity[i].hpDamage(*blocky);
 						if (entity[i].hpCheck()) {
 							entity[i] = entity[--e.num_ent];
+							tos.score += entity[i].point;
 						} 
 					}
 				}
@@ -1101,6 +1104,11 @@ void physics()
 				for (int j=0; j < g.n_Bullet; j++) {
 					if (entity[i].collision(bul[j])) {
 							entity[i].hpDamage(bul[j]);
+							if (entity[i].hpCheck()) {
+								tos.score += entity[i].point;
+								entity[i] = entity[--e.num_ent];
+							}
+							
 							bul[j].hpDamage(entity[i]);
 							bul[j] = bul[--g.n_Bullet];
 					}
@@ -1169,7 +1177,7 @@ void physics()
 			}
 
 			// check for blocky's (and sub blockies) collision with enemies
-			if (blocky->is_alive() && blocky->explode_done) {
+			if (blocky->isAlive() && blocky->explode_done) {
 				// blocky's collision with bread
 				for (int i = 0; i < g.n_Bread; i++) {
 					
@@ -1564,10 +1572,10 @@ void render()
 		}
 
 		// if ((g.substate == MIKE || g.state == PAUSE) &&
-		// 	(blocky.is_alive() || !blocky.explode_done)) {
+		// 	(blocky.isAlive() || !blocky.explode_done)) {
 		if ((g.mike_active == true &&
 			(g.state == GAME || g.state == PAUSE)) &&
-			(blocky->is_alive() || !blocky->explode_done)) {
+			(blocky->isAlive() || !blocky->explode_done)) {
 
 			blocky->draw();
 			blocky_health->draw();
@@ -1714,7 +1722,7 @@ void render()
 
 	if (g.show_help_menu == false) {
 
-		Rect help_msg, score, g_time, bullets, lvl;
+		Rect help_msg, score, g_time, debug, lvl;
 
 #ifdef USE_OPENAL_SOUND
 		Rect s_name;
@@ -1740,12 +1748,12 @@ void render()
 		g_time.left = score.left;
 		g_time.center = 0;
 
-		bullets.bot = score.bot;
-		bullets.left = score.left-80;
-		bullets.center = 0;
+		debug.bot = score.bot;
+		debug.left = score.left-80;
+		debug.center = 0;
 
-		lvl.bot = bullets.bot-20;
-		lvl.left = bullets.left;
+		lvl.bot = debug.bot-20;
+		lvl.left = debug.left;
 		lvl.center = 0;
 
 
@@ -1755,12 +1763,12 @@ void render()
 			ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 			ggprint8b(&lvl, 0, 0x00DC143C, "Level %i", g.level);
-			// ggprint8b(&bullets, 0, 0x00DC143C, "Active bullets : %i",g.n_Bullet);	// debug output
+			ggprint8b(&debug, 0, 0x00DC143C, "num_ent: %i",e.num_ent);	// debug output
 
 #ifdef USE_OPENAL_SOUND
 
 			if (g.state == GAME)
-				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.getSongName().c_str());
 			else
 				ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
 #endif
@@ -1769,7 +1777,7 @@ void render()
 
 	} else if (g.show_help_menu == true) {
 		const unsigned int KEY_MESSAGES = 13;
-		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time, s_name, bullets, lvl;
+		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time, s_name, debug, lvl;
 
 		// ***********Locations of all the text rectangles******************
 		// 					Top Left side of the screen					//
@@ -1795,12 +1803,12 @@ void render()
 		g_time.left = score.left;
 		g_time.center = 0;
 
-		bullets.bot = g_time.bot-20;
-		bullets.left = g_time.left-80;
-		bullets.center = 0;
+		debug.bot = g_time.bot-20;
+		debug.left = g_time.left-80;
+		debug.center = 0;
 
-		lvl.bot = bullets.bot-20;
-		lvl.left = bullets.left;
+		lvl.bot = debug.bot-20;
+		lvl.left = debug.left;
 		lvl.center = 0;
 
 		// bottom right of the screen
@@ -1825,7 +1833,7 @@ void render()
 				ggprint8b(&key_msg[1], 0, 0x00ffff00,
 												"<ENTER> - GO TO MAIN MENU");
 #ifdef USE_OPENAL_SOUND
-				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.getSongName().c_str());
 #endif
 				break;
 			case MAINMENU:
@@ -1833,7 +1841,7 @@ void render()
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 														"STATE - MAIN MENU");
 #ifdef USE_OPENAL_SOUND
-					ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+					ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.getSongName().c_str());
 #endif
 				} else if (g.substate == SETTINGS) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
@@ -1921,8 +1929,8 @@ void render()
 				ggprint8b(&g_time, 0, 0x00DC143C,
 											"Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 #ifdef USE_OPENAL_SOUND
-				if (!sounds.get_pause()) {
-					ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+				if (!sounds.getPause()) {
+					ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.getSongName().c_str());
 				} else {
 					ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
 				}
