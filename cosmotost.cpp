@@ -875,7 +875,7 @@ int X11_wrapper::check_keys(XEvent *e)
 		int key = XLookupKeysym(&e->xkey, 0);
 		if (e->type == KeyPress) {
 			// cout << key << endl;
-			if(key == XK_Return) {
+			if (key == XK_Return) {
 				// g.state = MAINMENU;
 				g.gameReset();
 				g.state = MAINMENU;
@@ -1040,7 +1040,7 @@ void physics()
 				}
 				e.makeEntity(e.spawn_x, e.spawn_y, e.spawn_vel_x, e.spawn_vel_y,
 							e.curve_rand_x, e.curve_rand_y);
-				cerr << "makeEntity called" << endl;
+				// cerr << "makeEntity called" << endl;
 							
 				e.chain_len--;
 			}
@@ -1516,7 +1516,9 @@ void render()
 
 		} else if (g.substate == HIGH_SCORES) {
 
-			record.hs_menu->draw();
+			if (record.hs_menu) {
+				record.hs_menu->draw();
+			}
 
 		}
 
@@ -1696,13 +1698,15 @@ void render()
 
 	} else if (g.state == GAMEOVER && g.substate == HIGH_SCORES) {
 	
-
-		record.hs_menu->draw();
+		if (record.hs_menu) {
+			record.hs_menu->draw();
+		}
 
 	} else if (g.state == GAMEOVER && g.substate == DEBUG) {
 	
-
-		record.hs_menu->draw();
+		if (record.hs_menu) {
+			record.hs_menu->draw();
+		}
 
 	}
 

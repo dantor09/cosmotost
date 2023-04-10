@@ -839,7 +839,7 @@ void PowerBar::draw()
         glEnd();
         glPopMatrix();
 
-        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", (int)(itm->hp), itm->starting_hp, itm->lives);
+        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", (int)(itm->hp), (int)itm->starting_hp, itm->lives);
     } else if (type == COOLDOWN) {
 
         glColor3ubv(total.color);
@@ -1550,14 +1550,17 @@ void Gamerecord::submitRecord(int s)
 		user_score = new HighScore(string(gamer), s);
 	}
 
-    cerr << user_score->uname << "'s score is " << user_score->score << endl;
+    if (user_score) {
+        cerr << user_score->uname << "'s score is " << user_score->score << endl;
 
-    cerr << "adding to records..." << endl;
-	addRecord(*user_score);
-    for (int i = 0; i < scores.size(); i++) {
-        if ((scores[i].score == user_score->score) && 
-                (scores[i].uname == user_score->uname))
-            place = i;
+        cerr << "adding to records..." << endl;
+        addRecord(*user_score);
+        for (int i = 0; i < scores.size(); i++) {
+            if ((scores[i].score == user_score->score) && 
+                    (scores[i].uname == user_score->uname))
+                place = i;
+        }
+
     }
 
     
