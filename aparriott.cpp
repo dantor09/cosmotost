@@ -67,67 +67,67 @@ void EntitySpawn::makeEntity(float pos_x, float pos_y, float init_vel_x, float i
 	}	
 }
 
-// void Entity::entityPhysics() {
-//     // makeEntity(int pos_x, int pos_y,  int init_vel_x, int init_vel_y) 
-// 
-//     // Spawnspeed determines how many ticks until spawning another entity
-//     if (e.spawnSpeed == 0) {
-//         e.spawnSpeed = 6;
-//         if (e.chain_len == 0) {
-//             e.chain_len = e.randNum(4, 12);
-//             e.curveRandX = e.randNum(-4, 0);
-//             e.curveRandY = e.randNum(-4, 4);
-// 
-//             e.enterloc = e.randNum(0, 3);
-//             if (e.enterloc == 0) {
-//                 // makeEntity SPAWN FROM TOP, MOVES LEFT DOWNWARD
-//                 e.spawnX = e.randNum(g.xres / 2, g.xres);
-//                 e.spawnY = g.yres - 5;
-//                 e.spawnVelX = e.randNum(-8, -4);
-//                 e.spawnVelY = e.randNum(-8, 0);
-//             } else if (e.enterloc <= 2) {
-//                 // makeEntity SPAWN FROM RIGHT, MOVES LEFT, RANDUM UP AND DOWN
-//                 e.spawnX = g.xres;
-//                 e.spawnY = e.randNum(0, g.yres);
-//                 e.spawnVelX = e.randNum(-8, -4);
-//                 e.spawnVelY = e.randNum(-8, 8);
-//             } else if (e.enterloc == 3) {
-//                 // makeEntity SPAWN FROM BOTTOM, MOVES LEFT AND UP
-//                 e.spawnX = e.randNum(g.xres / 2, g.xres);
-//                 e.spawnY = 5;
-//                 e.spawnVelX = e.randNum(-8, -4);
-//                 e.spawnVelY = e.randNum(0, 8);
-//             }
-//         }
-//         e.makeEntity(e.spawnX, e.spawnY, e.spawnVelX, e.spawnVelY, e.curveRandX, 
-//                     e.curveRandY);
-// 
-//         e.chain_len--;
-//     }
-//     e.spawnSpeed--;
-// 
-// 	for (int i = 0; i < e.num_ent; i++) {
-//         entity[i].pos[0] += entity[i].vel[0]/2;
-// 		entity[i].pos[1] += entity[i].vel[1]/2;
-// 
-//         entity[i].vel[0] += entity[i].curve[0] / 32;
-//         entity[i].vel[1] += entity[i].curve[1] / 32;
-// 
-//         // DESPAWN
-//         if (entity[i].pos[1] < -4 || 
-//                 entity[i].pos[1] > g.yres + 4 ||
-//                 entity[i].pos[0] < -4) {	
-//             entity[i] = entity[--e.num_ent];
-//         }
-// 
-//         // BOUNCE
-// 		if (entity[i].pos[1] <= 4 ||
-// 				entity[i].pos[1] >= g.yres - 4) {			
-// 			entity[i].vel[1] = -entity[i].vel[1];
-//         }
-//     }
-// 
-// }
+void Entity::entityPhysics() {
+    // makeEntity(int pos_x, int pos_y,  int init_vel_x, int init_vel_y) 
+
+    // Spawn_speed determines how many ticks until spawning another entity
+    if (e.spawn_speed == 0) {
+        e.spawn_speed = 6;
+        if (e.chain_len == 0) {
+            e.chain_len = e.randNum(4, 12);
+            e.curve_rand_x = e.randNum(-4, 0);
+            e.curve_rand_y = e.randNum(-4, 4);
+
+            e.enter_loc = e.randNum(0, 3);
+            if (e.enter_loc == 0) {
+                // makeEntity SPAWN FROM TOP, MOVES LEFT DOWNWARD
+                e.spawn_x = e.randNum(g.xres / 2, g.xres);
+                e.spawn_y = g.yres - 5;
+                e.spawn_vel_x = e.randNum(-8, -4);
+                e.spawn_vel_y = e.randNum(-8, 0);
+            } else if (e.enter_loc <= 2) {
+                // makeEntity SPAWN FROM RIGHT, MOVES LEFT, RANDUM UP AND DOWN
+                e.spawn_x = g.xres;
+                e.spawn_y = e.randNum(0, g.yres);
+                e.spawn_vel_x = e.randNum(-8, -4);
+                e.spawn_vel_y = e.randNum(-8, 8);
+            } else if (e.enter_loc == 3) {
+                // makeEntity SPAWN FROM BOTTOM, MOVES LEFT AND UP
+                e.spawn_x = e.randNum(g.xres / 2, g.xres);
+                e.spawn_y = 5;
+                e.spawn_vel_x = e.randNum(-8, -4);
+                e.spawn_vel_y = e.randNum(0, 8);
+            }
+        }
+        e.makeEntity(e.spawn_x, e.spawn_y, e.spawn_vel_x, e.spawn_vel_y, e.curve_rand_x, 
+                    e.curve_rand_y);
+
+        e.chain_len--;
+    }
+    e.spawn_speed--;
+
+	 for (int i = 0; i < e.num_ent; i++) {
+        entity[i].pos[0] += entity[i].vel[0]/2;
+		entity[i].pos[1] += entity[i].vel[1]/2;
+
+        entity[i].vel[0] += entity[i].curve[0] / 32;
+        entity[i].vel[1] += entity[i].curve[1] / 32;
+
+        // DESPAWN
+        if (entity[i].pos[1] < -4 || 
+                entity[i].pos[1] > g.yres + 4 ||
+                entity[i].pos[0] < -4) {	
+            entity[i] = entity[--e.num_ent];
+        }
+
+        // BOUNCE
+		if (entity[i].pos[1] <= 4 ||
+				entity[i].pos[1] >= g.yres - 4) {			
+			entity[i].vel[1] = -entity[i].vel[1];
+        }
+    }
+ 
+ }
 
 // void Entity::entityRender() {
 // 	//Draw entity.
@@ -152,6 +152,28 @@ EntitySpawn::EntitySpawn() {
     curve_rand_y = 0;
 }
 
+// FILE WRITE GOES HERE
 
+// writes top ten records to disk
+/*
+void Gamerecord::writeRecord()
+{
+	ofstream fout("Highscore.txt");
+
+	if (!fout) {
+		throw "could not write to highscore file";
+	}
+
+	// only write top 10 scores
+	for (int i = 0; i < scores.size(); i++) {
+		fout << scores[i].uname << "\t" << scores[i].score;
+        if (i != (scores.size() - 1)){
+            fout << endl;
+        }
+	}
+
+	cerr << "Highscore.txt written successfully...\n";
+}
+*/
 
 
