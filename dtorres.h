@@ -13,19 +13,24 @@ class InfoBoard : public Box
 
 class FreezeBlock : public Item 
 {
+    private:
+        float getVelocityConsideringArea(float);
+
     public:
-    
-    bool position_set;
-    int min_block_dimension;
-    int max_block_dimension;
-    Timer * ptimer;
+        bool position_set;
+        int min_block_dimension;
+        int max_block_dimension;
+        float max_velocity;
+        float minimum_velocity;
+        float melting_rate;
+        Timer * ptimer;
 
-    FreezeBlock();
-    ~FreezeBlock();
-    int randomDimension();
-    void followPlayer(Item & player);
-    void setTimer(int);
-    void setMinMaxBlockDimensions(int, int);
-
-    void draw();
+        FreezeBlock();
+        ~FreezeBlock();
+        void draw();
+        void melt(float);
+        void setFreezeTimer(int);
+        int randomDimension();
+        void followItem(Item & );
+        void setMinMaxBlockDimensions(int, int);
 };

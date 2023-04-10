@@ -25,10 +25,11 @@
 #include "fonts.h"
 #include "hzhang.h"
 
+#define SUB_BLOCK_N 150
 
 using namespace std;
 
-inline const int NUM_SOUNDS = 15;
+inline const int NUM_SOUNDS = 16;
 // inline const int NUM_SONGS = 1;
 
 enum PBType {HEALTH, COOLDOWN};
@@ -73,8 +74,8 @@ public:
     void setBcolor(int r, int g, int b);   // sets boarder color
     void setColor(int r, int g, int b);   // sets mainbox color
     void setPos(float x, float y, float z);
-    void set_highlight(Box * b);
-    void set_orig_color();
+    void setHighlight(Box * b);
+    void setOrigColor();
 
     // getters
     // unsigned char * get_tcolor();
@@ -82,7 +83,7 @@ public:
 
     // other
     void draw();
-    Box* check_t_box(int x, int y);
+    Box* checkTBox(int x, int y);
 
 
 
@@ -142,9 +143,9 @@ private:
     bool user_pause;
     int current_track;
 
-    void init_openal();
-    void close_openal();
-    string build_song_path(string s);
+    void initOpenal();
+    void closeOpenal();
+    string buildSongPath(string s);
 
     string sound_names[NUM_SOUNDS] = {
                     "bullet_fire.wav",
@@ -161,7 +162,8 @@ private:
                     "doosh.wav",
                     "doosh2.wav",
                     "explo3.wav",
-                    "explo4.wav"};
+                    "explo4.wav",
+                    "zap2.wav"};
 
 
 public:
@@ -172,19 +174,19 @@ public:
 
 	Sound();
 	~Sound();
-    void play_start_track();
-    bool check_intro_buffer_done();
-    void reset_buffer_done();
-    void loop_intro();
-    void setup_game_mode();
-    string get_song_name();
+    void playStartTrack();
+    bool checkIntroBufferDone();
+    void resetBufferDone();
+    void loopIntro();
+    void setupGameMode();
+    string getSongName();
     void pause();
     void unpause();
-    void toggle_user_pause();
-    bool get_pause();
-    void rewind_game_music();
-    void gun_play(int btype);
-    void gun_stop();
+    void toggleUserPause();
+    bool getPause();
+    void rewindGameMusic();
+    void gunPlay(int btype);
+    void gunStop();
     void doosh(int i = 0);
     void shieldSFX();
     void exploSFX();
@@ -192,6 +194,8 @@ public:
     void boop();
     void updateMusicVol();
     void updateSFXVol();
+    void playZap2();
+    void bombExplosion();
 
 };
 
@@ -219,14 +223,14 @@ public:
 class Blocky : public Item
 {
     private:
-    // void set_rand_color();
-    void set_rand_position();
-    void init_rotation_vel();
+    // void setRandColor();
+    void setRandPosition();
+    void initRotationVel();
                         // so it doesn't continuously damage it
-    Item sub_boxes[8];
-    int sb_angles[8];
-    int rot_speed[8];
-    int rot_angle[8];
+    Item sub_boxes[SUB_BLOCK_N];
+    int sb_angles[SUB_BLOCK_N];
+    int rot_speed[SUB_BLOCK_N];
+    int rot_angle[SUB_BLOCK_N];
 
     public:
     bool was_hit; // set when the block strikes the toaster that fall
@@ -237,13 +241,15 @@ class Blocky : public Item
     void reset(); // tests to see if the player killed poor forky
     void draw();    // overload function to include redraw
     void move();
-    bool is_alive();
-    bool did_damage();
-    void set_hit();
+    bool isAlive();
+    bool didDamage();
+    void setHit();
     void explode();
     bool explode_done;
-    bool sub_ScreenIn();
+    bool subScreenIn();
     void gamereset();
+    bool subBoxCollision(Item & itm);
+    bool subBoxCollision(Entity & ent);
 
 
     // inherited void Item::draw()
@@ -253,39 +259,55 @@ class Blocky : public Item
 
 };
 
-void set_rand_color(Item & it);
-void check_sound(void);
+void setRandColor(Item & it);
+void checkSound(void);
 
-class Shield : public Box
+class Bomb
 {
 
 public:
 
     // vars
-    float radius;
+    // float radius;
+    float start_radius;
+    float curr_radius;
+    float stop_radius;
     // float angle;
     float pos[3];
+    float w, h;
+    float hitbox_dim[3];
+    Timer * bomb_timer;
+    // Item * shards;
     unsigned char color[3];
+    unsigned char launch_color[3];
+    bool is_thrown;
+    bool is_exploding;
+    int num_bombs;
+    // bool is_gone;
+    GLuint * tex;
+    
 
     // constructors
-    Shield();
-    Shield(float _w, float _h, float _x, float _y);
+    Bomb();
+    ~Bomb();
 
     // setters
-    void setColor(int r, int g, int b);
+    void setColor(unsigned char * col, int r, int g, int b);
     void setPos(float x, float y, float z);
-    void setRad(float _r);
-    void draw();
+    // void setRad(float _r);
+    void launch();
     void move();
-    // void set_text(std::string t);
-
-    unsigned char * getColor();
-
-    // debug
-    std::string getInfo();
+    void draw();
+    void explode();
+    void updateHitbox();
+    bool hitboxCollision(Item & itm);
+    bool hitboxCollision(Entity & ent);
+    bool collision(Item & itm);
+    bool collision(Entity & ent);
+    // bool onScreen();
 };
 
-void check_level();
+void checkLevel();
 
 struct HighScore
 {
@@ -306,7 +328,6 @@ private:
 
     void genFakeNames();
     
-
 public:
     
     int n = 0;  // letter input index
@@ -366,9 +387,9 @@ public:           // ______________________________
     std::string words[2];    
     float slider_position;
     float * value;
-    float get_slider_position();
-    void move_slider_down();
-    void move_slider_up();
+    float getSliderPosition();
+    void moveSliderDown();
+    void moveSliderUp();
     std::string bar_name;
 
 
@@ -379,7 +400,7 @@ public:           // ______________________________
     void draw();
     Box* checkButtons(float x, float y);
     // void setColor(int r, int g, int b);
-    void set_orig_color();
-    void set_highlight(Box * b);
+    void setOrigColor();
+    void setHighlight(Box * b);
     // void move(float y
 };

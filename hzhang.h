@@ -23,13 +23,13 @@ class Blocky;  // forward declaration
 struct HighScore; // forward declaration
 
 //make a bullet need the pos of where this bullet creat
-//bool(tb) is means this bullet from toster or not
 //type is id of Bullet_type
-void makeBullet(float x, float y,float z, bool tb, int bullet_type);
+void makeBullet(float x, float y,float z, int bullet_type);
 //make a bread need the pos of where this bread creat
 //int Bread_t is the type of bread
 //type is id of Bullet_type this bread carrying
 void makeBread(float x, float y,float z, int Bread_t, int type);
+void makeSpear(float x, float y,float z, int type);
 
 float crossX(float x0,float y0,float xa,float ya,float xb,float yb);
 float maxRadius(float *arr,int n);
@@ -45,7 +45,7 @@ class Item: public Box
 {
   public:
     GLuint * tex;
-    Box * plive;
+    Box * plives;
     //item_type show what kind of item it is
     int item_type;
     bool trace = false;
@@ -60,7 +60,7 @@ class Item: public Box
     // all item should have hp
     // when two object touch, use HP - damage
     // by check HP we can tell if we need delete that object
-    int starting_hp;
+    float starting_hp;
     float hp;
     int lives;
     float damage;
@@ -87,6 +87,7 @@ class Item: public Box
     // to check
     bool collision(Item a);
     //change HP after Collison
+    void hpDamage(float);
     void hpDamage(Item a);
     void hpDamage(Entity & e);  // defined in mkausch.cpp for entity collision
     void hpDamage(Blocky & b); // defined in mkausch.cpp for BF collision
@@ -119,8 +120,11 @@ class Toaster: public Item
       ~Toaster();
       void posReset();
       bool laserCollision(Item a);
+      bool laserCollision(Entity a);
       void setDistance(float val);
       void laserDamage(Item &a);
+      void laserDamage(Entity &a);
+
       // getters
       // unsigned char * get_tcolor();
 
@@ -144,7 +148,7 @@ class Bullet: public Item
      // tb to check if from Toaster or Bread
      // type is id of what type of bullet
      // different bullet may have different damage hp or velocitys
-     void setBullet(float x, float y,float z, bool tb, int type);
+     void setBullet(float x, float y,float z, int type);
      void moveBullet();
 };
 
@@ -164,6 +168,48 @@ class Bread: public Item
     // different bullet may have different damage hp or velocitys
     void setBread(float x, float y,float z, int Bread_t, int type);
     void moveBread();
+};
+class Spear: public Item
+{
+  public:
+    Spear();
+    ~Spear();
+    void setSpear(float x, float y,float z, int spear_type);
+    void moveSpear();
+
+};
+
+class Donut
+{
+  public:
+  // Boss
+    float out_radius;
+    float inner_radius;
+    float deamage_radius;
+    float hp;
+    int cd;     // CD between Donets weapon
+    int count_down; // CD count_down
+    bool up_down; // 0 up, 1 down
+    bool weapon; // if weapon is true then donut attecking
+                 // if weapon is false then countdown cd 
+    int weapon_id;
+    bool shelled; // have shelled or not
+    float pos[3];
+    float vel[3];
+    int donut_count;
+    int weapon_outer_count;
+    int weapon_inner_count;
+   
+  //========================================
+    Donut();
+    ~Donut();
+    void moveDonut();
+    void setCD();
+    bool hpCheck();
+    bool collision(Item);
+    void hpDemageDonut(Item);
+    void draw();
+    void atteckMove(int num);
 };
 //=======================================================================
 

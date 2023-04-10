@@ -25,9 +25,9 @@ Box::Box(float _w, float _h, float _x, float _y)
 
 void Box::setColor(int r, int g, int b)
 {
-    color[0] = (char)r;
-    color[1] = (char)g;
-    color[2] = (char)b;
+    color[0] = (unsigned char)r;
+    color[1] = (unsigned char)g;
+    color[2] = (unsigned char)b;
 }
 
 void Box::setPos(float x, float y, float z)

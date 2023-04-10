@@ -73,36 +73,20 @@ Menu::Menu(unsigned int _n_texts,
             t_boxs[i].pos[0] = mainbox.pos[0];
             t_boxs[i].pos[1] = (pos[1]+mainbox.h)-((i+1)*spacing);
             t_boxs[i].setColor(61, 90, 115);
-            t_boxs[i].id=i; // set box id for words array check
-            // std::cout << "t_box[" << i << "].pos[1]: "
-            //             << t_boxs[i].pos[1] << std::endl;
+            t_boxs[i].id=i; 
 
             words[i] = _words[i];
-            // t_boxs[i].set_text(_words[i]);
 
-            // Leaving this here for the next poor soul that
-            // comes accross this issue:
-
-            // apparently you need to set their position every single time
-            // you print them or they fall off the screen for some stupid reason
-            // so this code will now be found below in the draw() function
-
-            // texts[i].bot = mainbox.pos[1]-(i*20);
-            // texts[i].left = t_boxs[i].pos[0];
-            // texts[i].center = 1;
         }
 
     } catch (std::bad_alloc& ba) {
         // if one was allocated and not the other than delete the one that
         if (texts) delete [] texts;
         if (t_boxs) delete [] t_boxs;
-        // if (words) delete [] words;
-        // print to screen for now until we have logging set up
         std::cerr << "Error allocating rectangles in Menu call\n"
                 << ba.what() << '\n';
         texts = nullptr;
         t_boxs = nullptr;
-        // words = nullptr;
     }
 }
 
@@ -119,6 +103,7 @@ Menu::~Menu()
 
 }
 
+// draws all sub boxes and text 
 void Menu::draw()
 {
     // draw boarder
@@ -166,14 +151,6 @@ void Menu::draw()
 
     }
 
-    // draw texts - need to pass in texts still; this is only for testing
-
-    // for(int i = 0; i < n_texts; i++) {
-    //     ggprint8b((texts+i), 16, 0x00FFFFFF, "c0sm0t0asT");
-    //     // std::cout << "tests[" << i << "].pos[1]: " << texts[i].pos[1] << std::endl;
-    // }
-
-
     for(int i = 0; i < n_texts; i++) {
         texts[i].bot = t_boxs[i].pos[1] - 5;
         if (!centering)
@@ -182,21 +159,14 @@ void Menu::draw()
             texts[i].left = t_boxs[i].pos[0];
         texts[i].center = centering;
 
-
-        // r[i].bot = t_boxs[i].pos[1] - 5;
-        // r[i].left = t_boxs[i].pos[0];
-        // //g.r[i].center = box[i].pos[0];
-
-        // r[i].center = 1;
-
-        ggprint8b(texts+i, 16, 0x00ffffff, words[i].c_str());
+        ggprint8b(texts+i, 0, 0x00ffffff, words[i].c_str());
     }
 
 }
 
 // pass in mouse coords to check and see if they are within the bounds
 // of the menu's text boxes
-Box* Menu::check_t_box(int x, int y)
+Box* Menu::checkTBox(int x, int y)
 {
     Box * box_ptr = nullptr;
     size_t i;
@@ -213,18 +183,17 @@ Box* Menu::check_t_box(int x, int y)
         }
     }
 
-    // std::cout << "match for " << box_ptr << " aka " << t_boxs+i << std::endl;
-
     return box_ptr;
 }
 
-void Menu::set_highlight(Box * b)
+// sets the highlight color of a sub_box
+void Menu::setHighlight(Box * b)
 {
     b->setColor(33,136,171);
 }
 
-
-void Menu::set_orig_color()
+// sets all sub boxes to the original color
+void Menu::setOrigColor()
 {
     for (size_t i = 0; i < n_texts; i++) {
         t_boxs[i].setColor(61,90,115);
@@ -285,7 +254,7 @@ Timer::Timer(double sec) : duration(sec), pause_duration(0.00),
 Timer::~Timer()
 {
     cerr << "in Timer destructor\n";
-    if (pause_timer){
+    if (pause_timer) {
         cerr << "deleting pause timer\n";
         delete pause_timer;
         pause_timer = nullptr;
@@ -369,7 +338,7 @@ void Timer::unPause()
 Sound::Sound()
 {
     //Buffer holds the sound information.
-    init_openal();
+    initOpenal();
     current_track = -1;  // starting track number at splash screen
     is_music_paused = false;
     user_pause = false;
@@ -380,21 +349,23 @@ Sound::Sound()
 
 
     // make individual buffers of all sounds
-    alBuffers[0] = alutCreateBufferFromFile(build_song_path(sound_names[0]).c_str());
-    alBuffers[1] = alutCreateBufferFromFile(build_song_path(sound_names[1]).c_str());
-    alBuffers[2] = alutCreateBufferFromFile(build_song_path(sound_names[2]).c_str());
-    alBuffers[3] = alutCreateBufferFromFile(build_song_path(sound_names[3]).c_str());
-    alBuffers[4] = alutCreateBufferFromFile(build_song_path(sound_names[4]).c_str());
-    alBuffers[5] = alutCreateBufferFromFile(build_song_path(sound_names[5]).c_str());
-    alBuffers[6] = alutCreateBufferFromFile(build_song_path(sound_names[6]).c_str());
-    alBuffers[7] = alutCreateBufferFromFile(build_song_path(sound_names[7]).c_str());
-    alBuffers[8] = alutCreateBufferFromFile(build_song_path(sound_names[8]).c_str());
-    alBuffers[9] = alutCreateBufferFromFile(build_song_path(sound_names[9]).c_str());
-    alBuffers[10] = alutCreateBufferFromFile(build_song_path(sound_names[10]).c_str());
-    alBuffers[11] = alutCreateBufferFromFile(build_song_path(sound_names[11]).c_str());
-    alBuffers[12] = alutCreateBufferFromFile(build_song_path(sound_names[12]).c_str());
-   alBuffers[13] = alutCreateBufferFromFile(build_song_path(sound_names[13]).c_str());
-    alBuffers[14] = alutCreateBufferFromFile(build_song_path(sound_names[14]).c_str());
+    alBuffers[0] = alutCreateBufferFromFile(buildSongPath(sound_names[0]).c_str());
+    alBuffers[1] = alutCreateBufferFromFile(buildSongPath(sound_names[1]).c_str());
+    alBuffers[2] = alutCreateBufferFromFile(buildSongPath(sound_names[2]).c_str());
+    alBuffers[3] = alutCreateBufferFromFile(buildSongPath(sound_names[3]).c_str());
+    alBuffers[4] = alutCreateBufferFromFile(buildSongPath(sound_names[4]).c_str());
+    alBuffers[5] = alutCreateBufferFromFile(buildSongPath(sound_names[5]).c_str());
+    alBuffers[6] = alutCreateBufferFromFile(buildSongPath(sound_names[6]).c_str());
+    alBuffers[7] = alutCreateBufferFromFile(buildSongPath(sound_names[7]).c_str());
+    alBuffers[8] = alutCreateBufferFromFile(buildSongPath(sound_names[8]).c_str());
+    alBuffers[9] = alutCreateBufferFromFile(buildSongPath(sound_names[9]).c_str());
+    alBuffers[10] = alutCreateBufferFromFile(buildSongPath(sound_names[10]).c_str());
+    alBuffers[11] = alutCreateBufferFromFile(buildSongPath(sound_names[11]).c_str());
+    alBuffers[12] = alutCreateBufferFromFile(buildSongPath(sound_names[12]).c_str());
+    alBuffers[13] = alutCreateBufferFromFile(buildSongPath(sound_names[13]).c_str());
+    alBuffers[14] = alutCreateBufferFromFile(buildSongPath(sound_names[14]).c_str());
+    alBuffers[15] = alutCreateBufferFromFile(buildSongPath(sound_names[15]).c_str());
+
 
     // songBuffers[0] = alBuffers[3];
     buffersDone = buffersQueued = 0;
@@ -485,31 +456,17 @@ Sound::Sound()
     alSourcef(alSources[14], AL_PITCH, 1.0f);
     alSourcei(alSources[14], AL_LOOPING, AL_FALSE);
 
-
-    // //Generate a source, and store it in a buffer.
-    // // set sfx/songs to not loop
-    // int non_looping_sounds = 4;
-    // for (int i = 0; i < non_looping_sounds; i++) {
-    //     alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
-    //     alSourcef(alSources[i], AL_GAIN, 1.0f);
-    //     alSourcef(alSources[i], AL_PITCH, 1.0f);
-    //     alSourcei(alSources[i], AL_LOOPING, AL_FALSE);
-    // }
-
-    // // make all songs to loop
-    // for (int i = non_looping_sounds; i < NUM_SOUNDS; i++) {
-    //     alSourcei(alSources[i], AL_BUFFER, alBuffers[i]);
-    //     alSourcef(alSources[i], AL_GAIN, 0.25f);
-    //     alSourcef(alSources[i], AL_PITCH, 1.0f);
-    //     alSourcei(alSources[i], AL_LOOPING, AL_TRUE);
-    // }
-    //   [[------- END OLD -----------]]
-
+    alSourcei(alSources[15], AL_BUFFER, alBuffers[15]); // zap2 - noloop
+    alSourcef(alSources[15], AL_GAIN, g.sfx_vol);
+    alSourcef(alSources[15], AL_PITCH, 1.0f);
+    alSourcei(alSources[15], AL_LOOPING, AL_FALSE);
 
     // check for errors after setting sources
     if (alGetError() != AL_NO_ERROR) {
         throw "ERROR: setting source\n";
     }
+    cout << "does it reach here???" << endl;
+
 }
 
 Sound::~Sound()
@@ -523,11 +480,12 @@ Sound::~Sound()
 
     alDeleteSources(1, &menuQueueSource);
 
-    close_openal();
+    closeOpenal();
 
 }
 
-void Sound::init_openal()
+void Sound::initOpenal
+()
 {
 	alutInit(0, NULL);
 	if (alGetError() != AL_NO_ERROR) {
@@ -547,7 +505,7 @@ void Sound::init_openal()
 	alListenerf(AL_GAIN, 1.0f);
 }
 
-void Sound::close_openal()
+void Sound::closeOpenal()
 {
 	//Close out OpenAL itself.
 	//Get active context.
@@ -562,14 +520,14 @@ void Sound::close_openal()
 	alcCloseDevice(Device);
 }
 
-void Sound::rewind_game_music()
+void Sound::rewindGameMusic()
 {
     alSourceStop(alSources[5]);
     alSourceRewind(alSources[5]);
     alSourcePlay(alSources[5]);
 }
 
-string Sound::build_song_path(string s)
+string Sound::buildSongPath(string s)
 {
     // format of the song
     // ./Songs/Edzes-64TheMagicNumber16kHz.wav"
@@ -583,7 +541,7 @@ string Sound::build_song_path(string s)
 
 }
 
-void Sound::gun_play(int btype)
+void Sound::gunPlay(int btype)
 {
     // static int gun_start = 6;
 
@@ -603,7 +561,7 @@ void Sound::gun_play(int btype)
     }
 }
 
-void Sound::gun_stop()
+void Sound::gunStop()
 {
     static int gun_start = 6;
     static int num_guns = 4;
@@ -649,23 +607,30 @@ void Sound::exploSFX()
     alSourcePlay(alSources[index]);
 }
 
-bool Sound::check_intro_buffer_done()
+void Sound::playZap2()
 {
-    reset_buffer_done();
+    int index = 15; // index of zap2 (non-loop version) 
+                    // for blocky crashes, 2nd gun
+    alSourcePlay(alSources[index]);
+}
+
+bool Sound::checkIntroBufferDone()
+{
+    resetBufferDone();
     alGetSourcei(menuQueueSource, AL_BUFFERS_PROCESSED, &buffersDone);
     // cerr << "checking intro buffer done, buffers is: " << buffersDone << endl;
     return (buffersDone == 1);
 }
 
 // resets buffers_done variable for further checks
-void Sound::reset_buffer_done()
+void Sound::resetBufferDone()
 {
     buffersDone = 0;
 }
 
 // unqueue's intro beat so that only loop track is in the buffer queue
 // loops buffer queue at this point
-void Sound::loop_intro()
+void Sound::loopIntro()
 {
 
     alSourceStop(menuQueueSource);
@@ -673,7 +638,7 @@ void Sound::loop_intro()
     alSourcePlay(alSources[4]);
 }
 
-void Sound::setup_game_mode()
+void Sound::setupGameMode()
 {
     // change bools for music state
     is_intro = false; is_game = true;
@@ -688,7 +653,7 @@ void Sound::setup_game_mode()
     alSourcePlay(alSources[5]);
 }
 
-void Sound::play_start_track()
+void Sound::playStartTrack()
 {
     // stop game music if it's playing
     if (is_game == true) {
@@ -703,7 +668,7 @@ void Sound::play_start_track()
 }
 
 // returns song names, only 2 songs for now
-string Sound::get_song_name()
+string Sound::getSongName()
 {
     string name;
     if (is_intro) {
@@ -736,7 +701,7 @@ void Sound::unpause()
 }
 
 // separate pause state for when user explicity mutes music
-void Sound::toggle_user_pause()
+void Sound::toggleUserPause()
 {
     user_pause = (user_pause == true) ? false : true;
     if (user_pause)
@@ -746,7 +711,7 @@ void Sound::toggle_user_pause()
 }
 
 // getter to return the pause state
-bool Sound::get_pause()
+bool Sound::getPause()
 {
     return is_music_paused;
 }
@@ -772,6 +737,14 @@ void Sound::updateSFXVol()
     for (int i = 0; i < n_sfx; i++) {
         alSourcef(alSources[sfx_indices[i]], AL_GAIN, g.sfx_vol);
     }
+}
+
+
+void Sound::bombExplosion()
+{
+    int bomb_index = 13;
+
+    alSourcePlay(alSources[bomb_index]);
 }
 
 #endif
@@ -866,7 +839,7 @@ void PowerBar::draw()
         glEnd();
         glPopMatrix();
 
-        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", (int)(itm->hp), itm->starting_hp, itm->lives);
+        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", (int)(itm->hp), (int)itm->starting_hp, itm->lives);
     } else if (type == COOLDOWN) {
 
         glColor3ubv(total.color);
@@ -927,7 +900,7 @@ void Entity::hpDamage(Item & a) {
 
 bool Entity::hpCheck()
 {
-    return (hp <= 0);
+    return (hp < 0.01);
 }
 
 void Item::hpDamage(Entity & e)
@@ -938,13 +911,14 @@ void Item::hpDamage(Entity & e)
 Blocky::Blocky(char type)
 {
     srand(time(NULL));
+    float sub_blocky_size = sqrt((25.0*100.0)/SUB_BLOCK_N);
     if (type == 'v') {
         setDim(25.0f, 100.0f);
     } else if (type == 'h') {
         setDim(100.0f, 25.0f);
     }
-    set_rand_color(*this);
-    set_rand_position();
+    setRandColor(*this);
+    setRandPosition();
     setAcc(0.0f,-0.25f,0.0f);
     setVel(0.0f, -4.0f, 0.0f);
     setDamage(20);
@@ -958,37 +932,40 @@ Blocky::Blocky(char type)
     // sub box assignment
     // assignes itself and it's mirror image (i+4 in this case)
     int angle = 80;
+    float angle_offset = (angle*2/SUB_BLOCK_N);
+    angle = 70;
     int rvel = 8;
     float deg_to_rad = (PI / 180.0f);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < SUB_BLOCK_N; i++) {
         // set dim
-        sub_boxes[i].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
-        sub_boxes[i+4].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
-
+        // sub_boxes[i].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
+        // sub_boxes[i+4].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
+        sub_boxes[i].setDim(sub_blocky_size, sub_blocky_size);
+        // sub_boxes[i+4].setDim(15, 15);
         // set color
         sub_boxes[i].setColor(255,0,0);    // make them red for now
-        sub_boxes[i+4].setColor(255,0,0);    // make them red for now
+        // sub_boxes[i+4].setColor(255,0,0);    // make them red for now
 
         // set accel
         // sub_boxes[i].set_acc(0, -0.25, 0);
         // sub_boxes[i+4].set_acc(0, -0.25, 0);
         sub_boxes[i].setAcc(0, 0, 0);
-        sub_boxes[i+4].setAcc(0, 0, 0);
+        // sub_boxes[i+4].setAcc(0, 0, 0);
 
         // set angle first so we can calc vel vectors
         sb_angles[i] = angle;
-        sb_angles[i+4] = -sb_angles[i];
-        angle -= 20;
+        // sb_angles[i+4] = -sb_angles[i];
+        angle -= angle_offset;
 
         // set velocity of x and y components based on above angle
         sub_boxes[i].setVel((rvel*cos(deg_to_rad * sb_angles[i])),
                                     (rvel*sin(deg_to_rad * sb_angles[i])), 0);
-        sub_boxes[i+4].setVel((rvel*cos(deg_to_rad * sb_angles[i+4])),
-                                    (rvel*sin(deg_to_rad * sb_angles[i+4])), 0);
+        // sub_boxes[i+4].setVel((rvel*cos(deg_to_rad * sb_angles[i+4])),
+        //                             (rvel*sin(deg_to_rad * sb_angles[i+4])), 0);
     }
 
 
-    init_rotation_vel();
+    initRotationVel();
 }
 
 Blocky::~Blocky()
@@ -996,16 +973,16 @@ Blocky::~Blocky()
 
 }
 
-void Blocky::init_rotation_vel()
+void Blocky::initRotationVel()
 {
     // 0 the starting angle and assign random change in rotation angle
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < SUB_BLOCK_N; i++) {
         rot_angle[i] = 0;
         rot_speed[i] = -40 + (rand() % 41);
     }
 }
 
-void Blocky::set_rand_position()
+void Blocky::setRandPosition()
 {
     static int pm_dir = 1;
     float curr_player_xpos = tos.pos[0];
@@ -1022,7 +999,7 @@ void Blocky::set_rand_position()
 
 }
 
-void set_rand_color(Item & it)
+void setRandColor(Item & it)
 {
     // colors based on color scheme defined at the bottom
     // int color[5][3] = {{61, 89, 114},
@@ -1041,12 +1018,12 @@ void set_rand_color(Item & it)
     index = (index + 1) % 5;
 }
 
-bool Blocky::sub_ScreenIn()
+bool Blocky::subScreenIn()
 {
     bool subs_onscreen = false;
 
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < SUB_BLOCK_N; i++) {
         subs_onscreen = sub_boxes[i].screenIn();
         if (subs_onscreen)
             break;
@@ -1063,12 +1040,12 @@ void Blocky::draw()
         // reset blocky if he's out of screen
 
     // draw big blocky
-    if (is_alive() && explode_done) {
+    if (isAlive() && explode_done) {
         if (screenOut()) {
             reset();
         }
 
-        set_rand_color(*this);
+        setRandColor(*this);
         glPushMatrix();
         glColor3ub(color[0], color[1], color[2]);
         glTranslatef(pos[0], pos[1], pos[2]);
@@ -1083,10 +1060,10 @@ void Blocky::draw()
 
     } else {    // draw little blockies
         // cerr << "checking if sub boxes are in the screen...\n";
-        if (sub_ScreenIn()) {
+        if (subScreenIn()) {
 
-            for (int i = 0; i < 8; i++) {
-                set_rand_color(sub_boxes[i]);
+            for (int i = 0; i < SUB_BLOCK_N; i++) {
+                setRandColor(sub_boxes[i]);
                 glPushMatrix();
                 glColor3ub(sub_boxes[i].color[0],
                             sub_boxes[i].color[1],
@@ -1105,7 +1082,7 @@ void Blocky::draw()
             }
         } else {
             // rot_angle = 0;
-            init_rotation_vel();
+            initRotationVel();
             explode_done = true;
             // reset_sub_boxes();
         }
@@ -1127,12 +1104,12 @@ void Blocky::reset()
         if (lives > 0) {
             hp = starting_hp;   // give back full health
         }
-        was_hit = false;
 
     }
+    was_hit = false;
 
     setVel(0.0f, -4.0f, 0.0f);
-    set_rand_position();    // put at a new random position
+    setRandPosition();    // put at a new random position
     // was_hit = false;
     // cerr << "was_hit set to " << boolalpha << was_hit << endl;
 }
@@ -1142,11 +1119,11 @@ void Blocky::gamereset()
     lives = 2;
     hp = starting_hp;
     setVel(0.0f, -4.0f, 0.0f);
-    set_rand_position();    // put at a new random position
+    setRandPosition();    // put at a new random position
     was_hit = false;
 }
 
-bool Blocky::did_damage()
+bool Blocky::didDamage()
 {
     return was_hit;
 }
@@ -1154,7 +1131,7 @@ bool Blocky::did_damage()
 void Blocky::move()
 {
         // move main blocky
-    if (is_alive() && explode_done) {
+    if (isAlive() && explode_done) {
         pos[0] += vel[0];
         pos[1] += vel[1];
         pos[2] += vel[2];
@@ -1162,8 +1139,8 @@ void Blocky::move()
         vel[1] += acc[1];
         vel[2] += acc[2];
     } else if (!explode_done) { // move sub boxes until they fall off screen
-        if (sub_ScreenIn()) {
-            for (int i = 0; i < 8; i++) {
+        if (subScreenIn()) {
+            for (int i = 0; i < SUB_BLOCK_N; i++) {
                 sub_boxes[i].pos[0] += sub_boxes[i].vel[0];
                 sub_boxes[i].pos[1] += sub_boxes[i].vel[1];
                 sub_boxes[i].pos[2] += sub_boxes[i].vel[2];
@@ -1175,22 +1152,49 @@ void Blocky::move()
     }
 }
 
+bool Blocky::subBoxCollision(Item & itm)
+{
+    for (int i = 0; i < SUB_BLOCK_N; i++) {
+        if (sub_boxes[i].collision(itm)){
+            return true;
+        }
+        // if (itm.collision(sub_boxes[i])){
+        //     return true;
+        // }
+    }
+    return false;
+}
+
+bool Blocky::subBoxCollision(Entity & ent)
+{
+    for (int i = 0; i < SUB_BLOCK_N; i++) {
+        if (ent.collision(sub_boxes[i])){
+            return true;
+        }
+    }
+    return false;
+}
+
 void Item::hpDamage(Blocky & bf)
 {
     // cerr << "blocky's hpDamage called" << endl;
     if (!bf.was_hit) {
-        hp = hp - bf.damage;
-        bf.was_hit = true;
+        if (item_type == 0) {   // toaster collision
+            hp = hp - bf.damage;
+            bf.was_hit = true;
+        } else {
+            hp = hp - bf.damage;
+        }
         // cerr << "blocky hit something" << endl;
     }
 }
 
-bool Blocky::is_alive()
+bool Blocky::isAlive()
 {
     return (lives > 0);
 }
 
-void Blocky::set_hit()
+void Blocky::setHit()
 {
     was_hit = true;
     // cerr << "setting hit in blocky" << endl;
@@ -1205,7 +1209,7 @@ void Blocky::explode()
     int ycoord = pos[1] - pixel_offset;
     int rand_offset;    // pixel_offset pixel offset randomly from center of blocky
 
-    for (int i = 0; i < pixel_offset; i++) {
+    for (int i = 0; i < SUB_BLOCK_N; i++) {
         rand_offset = rand() % (pixel_offset * 2);
         sub_boxes[i].setPos(pos[0]+rand_offset, pos[1]+rand_offset, 0);
         sub_boxes[i].setVel((rvel*cos(deg_to_rad * sb_angles[i])),
@@ -1215,7 +1219,7 @@ void Blocky::explode()
 
 #ifdef USE_OPENAL_SOUND
 
-void check_sound(void)
+void checkSound(void)
 {
 	static bool initial_play = false;
 	static bool loop_set = false;
@@ -1223,6 +1227,7 @@ void check_sound(void)
 	static int prev_btype = 1;
     static int exploded = 0;
     static int bhit_occured = 0;
+    static bool bomb_playing = false;
 
 
     // Main menu / music SFX loop check
@@ -1230,23 +1235,23 @@ void check_sound(void)
 		// init_game_setup will unque intro buffers and queue game songs
 		initial_game_setup = false;	// switch to false if it was prev true
 		if (initial_play == false) {
-			// cerr << "calling play_start_track()" << endl;
-			sounds.play_start_track();	// queues intro songs and plays
+			// cerr << "calling playStartTrack()" << endl;
+			sounds.playStartTrack();	// queues intro songs and plays
 			initial_play = true;
 		}
-		if (sounds.check_intro_buffer_done() && !loop_set) {
-			// sounds.reset_buffer_done();
+		if (sounds.checkIntroBufferDone() && !loop_set) {
+			// sounds.resetBufferDone();
 			// cerr << "sounds.checkintobuffer == true" << endl;
-			// cerr << "calling loop_intro()" << endl;
-			sounds.loop_intro();
+			// cerr << "calling loopIntro()" << endl;
+			sounds.loopIntro();
 			loop_set = true;
 		}
 	} else if (g.state == GAME && initial_game_setup == false) {
 			// reset initial play so that intro plays
 		initial_play = loop_set = false;
 		initial_game_setup = true;
-		// cerr << "calling setup_game_mode()" << endl;
-		sounds.setup_game_mode();
+		// cerr << "calling setupGameMode()" << endl;
+		sounds.setupGameMode();
 
 	}
 
@@ -1259,18 +1264,18 @@ void check_sound(void)
         
         // start playing new sound if leveled up gun
         if ((tos.bullet_type_prime != prev_btype) && (sounds.gun_shooting)) {
-            sounds.gun_stop();
-            sounds.gun_play(tos.bullet_type_prime);
+            sounds.gunStop();
+            sounds.gunPlay(tos.bullet_type_prime);
             prev_btype = tos.bullet_type_prime;
         }
         // if space bar is pressed down and gun not already shooting
         if ((g.keys[XK_space] == 1) && (!sounds.gun_shooting)) {
             cerr << "tos.bullet_type_prime: " << tos.bullet_type_prime << endl;
-            sounds.gun_play(tos.bullet_type_prime);
+            sounds.gunPlay(tos.bullet_type_prime);
             sounds.gun_shooting = true;
             // if spacebar not pressed down and gun noise currently set to shoot
         } else if (g.keys[XK_space] == 0 && (sounds.gun_shooting)) {
-            sounds.gun_stop();
+            sounds.gunStop();
             sounds.gun_shooting = false;
         }
 
@@ -1291,9 +1296,19 @@ void check_sound(void)
             bhit_occured = false;
         }
 
+        // bomb explosion noise
+        if (bomb.is_thrown && !bomb_playing) {
+            sounds.bombExplosion();
+            bomb_playing = true;
+        } else if (!bomb.is_thrown && 
+                    !bomb.is_exploding && 
+                        bomb_playing) {
+            bomb_playing = false;
+        }
+
     } else {
         if (sounds.gun_shooting == true) {
-            sounds.gun_stop();
+            sounds.gunStop();
             sounds.gun_shooting = false;
         }
     }
@@ -1304,7 +1319,7 @@ void check_sound(void)
 
 // directs enemies to be present during specified states
 // also changes enemy settings if it's relevent
-void check_level()
+void checkLevel()
 {
     static bool lvl_change = false;
 
@@ -1385,6 +1400,7 @@ void check_level()
                 case LEVEL8:
                     // Level9: Boss
                     g.level = LEVEL9;
+                    g.entity_active = true;
                     // unleash bossman randy savage
                     g.huaiyu_active = true;
 
@@ -1534,14 +1550,17 @@ void Gamerecord::submitRecord(int s)
 		user_score = new HighScore(string(gamer), s);
 	}
 
-    cerr << user_score->uname << "'s score is " << user_score->score << endl;
+    if (user_score) {
+        cerr << user_score->uname << "'s score is " << user_score->score << endl;
 
-    cerr << "adding to records..." << endl;
-	addRecord(*user_score);
-    for (int i = 0; i < scores.size(); i++) {
-        if ((scores[i].score == user_score->score) && 
-                (scores[i].uname == user_score->uname))
-            place = i;
+        cerr << "adding to records..." << endl;
+        addRecord(*user_score);
+        for (int i = 0; i < scores.size(); i++) {
+            if ((scores[i].score == user_score->score) && 
+                    (scores[i].uname == user_score->uname))
+                place = i;
+        }
+
     }
 
     
@@ -1697,7 +1716,7 @@ SoundBar::SoundBar(float * _val, float _x, float _y, std::string _bn_)
 
     slider.setDim(button_box_width, 30);
             //    (beginnning of line ) + (proportion of volume to full vol)
-    slider_position = get_slider_position();
+    slider_position = getSliderPosition();
     slider.setPos(slider_position,pos[1],0); 
     slider.setColor(69,85,89);
 
@@ -1814,7 +1833,7 @@ void SoundBar::draw()
 
 }
 
-float SoundBar::get_slider_position()
+float SoundBar::getSliderPosition()
 {
     return (slider_left_stop_pos + ((*value)*(slider_right_stop_pos-
                                                         slider_left_stop_pos)));
@@ -1848,44 +1867,360 @@ Box* SoundBar::checkButtons(float x, float y)
     return box_ptr;
 }
 
-void SoundBar::set_orig_color()
+void SoundBar::setOrigColor()
 {
     leftb.setColor(61, 90, 115);
     rightb.setColor(61, 90, 115);
 }
 
-void SoundBar::set_highlight(Box * b)
+void SoundBar::setHighlight(Box * b)
 {
     b->setColor(33,136,171);
 }
 
-void SoundBar::move_slider_down()
+void SoundBar::moveSliderDown()
 {
     // if (slider_position > slider_left_stop_pos) {
     if (*value >= 0.18) {
         *value -= 0.1f;
-        slider_position = get_slider_position();
+        slider_position = getSliderPosition();
         slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
     } else {
         *value = 0;
-        slider_position = get_slider_position();
+        slider_position = getSliderPosition();
         slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
     }
 }
 
-void SoundBar::move_slider_up()
+void SoundBar::moveSliderUp()
 {
 
     // if (slider_position < slider_right_stop_pos) {
     if (*value < 0.82f) {
         *value += 0.1f;
-        slider_position = get_slider_position();
+        slider_position = getSliderPosition();
         slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
     } else {
         *value = 1;
-        slider_position = get_slider_position();
+        slider_position = getSliderPosition();
         slider.setPos(slider_position, slider.pos[1], slider.pos[2]);
     }
+}
 
 
+Bomb::Bomb()
+{
+    curr_radius = start_radius = 6;
+    stop_radius = 450;
+    pos[0] = g.xres/2.0;
+    pos[1] = g.yres/2.0;
+    pos[2] = 0;
+    setPos(g.xres/2.0f, g.yres/2.0f, 0);
+    setColor(color, 255, 91, 20);
+    setColor(launch_color, 255, 255, 255);
+    // is_gone = false;
+    is_thrown = false;
+    is_exploding = false;
+    num_bombs = 99;
+    w = 6;
+    h = 6;
+    tex = &g.bomb_texture;
+
+}
+
+Bomb::~Bomb()
+{
+    // destructor
+    if (bomb_timer) {
+        delete bomb_timer;
+        bomb_timer = nullptr;
+    }
+}
+
+void Bomb::draw()
+{
+    if (is_thrown && !is_exploding) {
+
+        int size = 50;
+
+	glPushMatrix();
+	glBindTexture(GL_TEXTURE_2D, *(bomb.tex));
+  	// glColor3ub(color[0], color[1], color[2]);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  	glTranslatef(pos[0], pos[1], pos[2]);
+  	glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 0.0f);
+  			glVertex2f(0,0);
+			glTexCoord2f(0.0f, 1.0f);
+  			glVertex2f(0, size);
+			glTexCoord2f(1.0f, 1.0f);
+  			glVertex2f(size, size);
+			glTexCoord2f(1.0f, 0.0f);
+  			glVertex2f(size, 0);
+  	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_ALPHA_TEST);
+  	glPopMatrix();
+
+    /*
+        glColor3ubv(launch_color);
+
+
+        glPushMatrix();
+        glTranslatef(pos[0], pos[1], pos[2]);
+        glBegin(GL_QUADS);
+            glVertex2f(-6, -6);
+            glVertex2f(-6,  6);
+            glVertex2f( 6,  6);
+            glVertex2f( 6, -6);
+        glEnd();
+        glPopMatrix();
+    */
+    } else if (is_exploding) {
+        float angle1 = (2 * PI * 1)/100;
+        float angle2 = (2 * PI * 2)/100;
+        float vert1[2] = {cos(angle1) * curr_radius, sin(angle1) * curr_radius};
+        float vert2[2] = {cos(angle2) * curr_radius, sin(angle2) * curr_radius};
+        float center[3] = {pos[0], pos[1], pos[2]};
+
+        // cerr << "center: " << pos[0] << "," << pos[1] << "," << pos[2] << endl; 
+
+        glPushMatrix();
+        glTranslatef(center[0], center[1], center[2]);
+        glBegin(GL_TRIANGLE_FAN);
+        glColor3ub(204, 204, 0);
+        glVertex2f(0,0);
+        for (int i = 0; i < 103; i++) {
+            glColor3ubv(color);
+            glVertex2f(vert1[0], vert1[1]);
+            // cerr << "vert1: " << vert1[0] << "," << vert1[1] << endl; 
+
+            glVertex2f(vert2[0], vert2[1]);
+            // cerr << "vert2: " << vert2[0] << "," << vert2[1] << endl; 
+
+            glColor3ub(0, 0, 0);
+            glVertex2f(0, 0);
+
+            // move vert2 to vert1 vertices
+            vert1[0] = vert2[0];
+            vert1[1] = vert2[1];
+
+            // calc new vert for vert2
+            angle2 = (2 * PI * i)/100;
+            vert2[0] = cos(angle2) * curr_radius;
+            vert2[1] = sin(angle2) * curr_radius;
+        }
+        glEnd();
+        glPopMatrix();
+    }
+
+}
+
+void Bomb::setColor(unsigned char * col, int r, int g, int b)
+{
+    col[0] = (char)r;
+    col[1] = (char)g;
+    col[2] = (char)b;
+}
+
+void Bomb::setPos(float x, float y, float z)
+{
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
+}
+
+void Bomb::explode()
+{
+    if (bomb_timer) {
+        delete bomb_timer;
+        bomb_timer = nullptr;
+    }
+
+    if (curr_radius >= stop_radius) {
+        // is_gone = true;
+        is_exploding = false;
+        // cerr << "is_exploding to false" << endl;
+        is_thrown = false;
+        curr_radius = start_radius;
+
+    } else {
+        // cerr << "is_exploding to true" << endl;
+        is_exploding = true;
+        // is_gone = false;
+        curr_radius += 12;
+        updateHitbox();
+    }
+}
+
+void Bomb::move()
+{
+    if (bomb_timer && !(bomb_timer->isDone())) {
+        pos[0] += 7;
+    } else if (bomb_timer && bomb_timer->isDone()) {
+        explode();
+    } else if (is_exploding) {
+        explode();
+    }
+}
+
+void Bomb::launch()
+{
+    // if (!is_thrown && num_bombs > 0) {
+    if (!is_thrown && (tos.energy > 20)) {
+        is_thrown = true;
+        tos.energy -= 20;
+        setPos(tos.pos[0],tos.pos[1],tos.pos[2]);
+        bomb_timer = new Timer(0.7);
+#ifdef USE_OPENAL_SOUND
+        sounds.bombExplosion();
+#endif
+        // num_bombs--;
+    } else {
+        // cerr << "no bombs or one already active" << endl;
+    }
+}
+
+void Bomb::updateHitbox()
+{
+    w = h = 2*curr_radius;
+}
+
+// hitbox collision with item class
+// check this first before checking resultant to bomb center from vertices
+bool Bomb::hitboxCollision(Item & itm)
+{
+    bool x = (((pos[0]+w)-(itm.pos[0]-itm.w))*((pos[0]-w)-(itm.pos[0]+itm.w))) < 0;
+  	bool y = (((pos[1]+h)-(itm.pos[1]-itm.h))*((pos[1]-h)-(itm.pos[1]+itm.h))) < 0;
+  	
+    return x&&y;
+}
+
+// hitbox collision with ent class
+// check this first before checking resultant to bomb center from vertices
+bool Bomb::hitboxCollision(Entity & ent)
+{
+    bool x = (((pos[0]+w)-(ent.pos[0]-ent.dim[0]))*((pos[0]-w)-(ent.pos[0]+ent.dim[0]))) < 0;
+  	bool y = (((pos[1]+h)-(ent.pos[1]-ent.dim[1]))*((pos[1]-h)-(ent.pos[1]+ent.dim[0]))) < 0;
+  	
+    return x&&y;
+}
+
+// tests collision with hitbox first then itm's corners 
+bool Bomb::collision(Item & itm)
+{
+    // cerr << "checking bomb collision with " << &itm << endl;
+    if (!hitboxCollision(itm)) {
+        // cerr << "not a hitbox collision on " << &itm << endl;
+        return false;
+    }
+
+    // cerr << "hitbox collision on " << endl;
+/*
+    This would be for center of the box:
+
+    double xvec = itm.pos[0]-pos[0];
+    double yvec = itm.pos[1]-pos[1];
+
+    We're going to calculate it for the 4 corners though so we need to
+    do +/- the width and height
+
+        0               3
+        *---------------*
+        |               |
+        |               |
+        |               |
+        *---------------*
+        1               2
+
+*/
+
+    // double xvec[4] = { itm.pos[0] - (itm.w/2.0f) - pos[0],
+    //                     itm.pos[0] - (itm.w/2.0f) - pos[0],
+    //                     (itm.pos[0] + (itm.w/2.0f)) - pos[0],
+    //                     (itm.pos[0] + (itm.w/2.0f)) - pos[0] }
+
+    double xvec[4] = { itm.pos[0] - (itm.w/2.0f) - pos[0],
+                        xvec[0],
+                        xvec[0]+itm.w,
+                        xvec[2]};
+
+    // double yvec[4] = { itm.pos[1] + (itm.h/2.0f) - pos[1],
+    //                     itm.pos[1] - (itm.h/2.0f) - pos[1],
+    //                     (itm.pos[1] - (itm.h/2.0f)) - pos[1],
+    //                     (itm.pos[1] + (itm.h/2.0f)) - pos[1] };
+
+    double yvec[4] = { itm.pos[1] + (itm.h/2.0f) - pos[1],
+                    yvec[0] - itm.h,
+                    yvec[1],
+                    yvec[0]};
+
+    double resultant;
+
+    for (int i = 0; i < 4; i++) {
+        resultant = sqrt(pow(xvec[i],2) + pow(yvec[i],2));
+        if (resultant <= curr_radius)
+            return true;
+    }
+
+    return false;
+}
+
+// tests collision with hitbox first then ent's corners 
+bool Bomb::collision(Entity & ent)
+{
+    if (!hitboxCollision(ent)) {
+        return false;
+    }
+
+/*
+    This would be for center of the box:
+
+    double xvec = itm.pos[0]-pos[0];
+    double yvec = itm.pos[1]-pos[1];
+
+    We're going to calculate it for the 4 corners though so we need to
+    do +/- the width and height
+
+        0               3
+        *---------------*
+        |               |
+        |               |
+        |               |
+        *---------------*
+        1               2
+
+*/
+
+    // double xvec[4] = { itm.pos[0] - (itm.w/2.0f) - pos[0],
+    //                     itm.pos[0] - (itm.w/2.0f) - pos[0],
+    //                     (itm.pos[0] + (itm.w/2.0f)) - pos[0],
+    //                     (itm.pos[0] + (itm.w/2.0f)) - pos[0] }
+
+    double xvec[4] = { ent.pos[0] - (ent.dim[0]/2.0f) - pos[0],
+                        xvec[0],
+                        xvec[0]+ent.dim[0],
+                        xvec[2]};
+
+    // double yvec[4] = { itm.pos[1] + (itm.h/2.0f) - pos[1],
+    //                     itm.pos[1] - (itm.h/2.0f) - pos[1],
+    //                     (itm.pos[1] - (itm.h/2.0f)) - pos[1],
+    //                     (itm.pos[1] + (itm.h/2.0f)) - pos[1] };
+
+    double yvec[4] = { ent.pos[1] + (ent.dim[1]/2.0f) - pos[1],
+                    yvec[0] - ent.dim[1],
+                    yvec[1],
+                    yvec[0]};
+
+    double resultant;
+
+    for (int i = 0; i < 4; i++) {
+        resultant = sqrt(pow(xvec[i],2) + pow(yvec[i],2));
+        if (resultant <= curr_radius)
+            return true;
+    }
+
+    return false;
 }

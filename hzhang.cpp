@@ -7,6 +7,7 @@
 #include "hzhang.h"
 #include "Global.h"
 #include "mkausch.h"
+#include "aparriott.h"
 #include "fonts.h"
 #include <new>
 #include <algorithm>
@@ -14,82 +15,89 @@
 
 using namespace std;
 
-void makeBullet(float x, float y,float z, bool tb, int bullet_type) {
+void makeBullet(float x, float y,float z, int bullet_type) {
 		switch(bullet_type){
 			case 1:
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].setBullet(x, y, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y, z, 1);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 					}
 				break;
 			case 2:
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].setBullet(x, y+5, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y+5, z, 1);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 					}
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].setBullet(x, y-5, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y-5, z, 1);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 					}
 				break;
 			case 3:
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].setBullet(x, y, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y, z, 1);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].setBullet(x, y+5, z, tb, 2);
+						bul[g.n_Bullet].setBullet(x, y+5, z, 2);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].setBullet(x, y-5, z, tb, 3);
+						bul[g.n_Bullet].setBullet(x, y-5, z, 3);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				break;
 			case 4:
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].setBullet(x, y-5, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y-5, z, 1);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].setBullet(x, y+5, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y+5, z, 1);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].setBullet(x, y+8, z, tb, 2);
+						bul[g.n_Bullet].setBullet(x, y+8, z, 2);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].setBullet(x, y-8, z, tb, 3);
+						bul[g.n_Bullet].setBullet(x, y-8, z, 3);
 						++g.n_Bullet;
 						// cout<<"make bullet"<<endl;
 				}
 				break;
 			case 5:
 				if (g.n_Bullet < MAX_bullet){
-						bul[g.n_Bullet].setBullet(x, y, z, tb, 1);
+						bul[g.n_Bullet].setBullet(x, y, z, 1);
 						++g.n_Bullet;
 				}
 		}
 
 }
 void makeBread(float x, float y,float z, int Bread_t, int type) {
-  if (g.n_Bread < MAX_bread){
-      bread[g.n_Bread].setBread(x, y, z, Bread_t, type);
-      ++g.n_Bread;
-      // cout<<"make Bread!!!"<<endl;
+  	if (g.n_Bread < MAX_bread){
+		bread[g.n_Bread].setBread(x, y, z, Bread_t, type);
+		++g.n_Bread;
+		// cout<<"make Bread!!!"<<endl;
     }
 }
 
+void makeSpear(float x, float y,float z, int type) {
+	cerr << "a spear make" << endl;
+	if(g.n_Spear < 10) {
+		spear[g.n_Spear].setSpear(x,y,z,1);
+		++g.n_Spear;
+	}
+}
 
 //==================================================================================
 Item::Item(){
@@ -200,6 +208,9 @@ bool Item::collision(Item a) {
 // 		return delta;
 // 	}
 // }
+void Item::hpDamage(float val) {
+	hp -= val;
+}
 void Item::hpDamage(Item a) {
     // std::cout << "hp 1 :" << hp << "Damage :" << a.damage<< std::endl;
     hp = hp - a.damage;
@@ -294,15 +305,15 @@ Toaster::Toaster()
 		setHP(starting_hp);
 		setDamage(100);
 		lives = 3;
-		plive = new Box[lives];
+		plives = new Box[lives];
 		int offset_x = -125;
 		for(int i = 0; i < lives; i++) {
-			plive[i].setColor(255, 255, 255);
-			plive[i].w = 5;
-			plive[i].h = 10;
+			plives[i].setColor(255, 255, 255);
+			plives[i].w = 5;
+			plives[i].h = 10;
 			
 			// Position to the left of the health bar
-			plive[i].setPos(info_board_1.pos[0] + offset_x, 40, 0);
+			plives[i].setPos(info_board_1.pos[0] + offset_x, 40, 0);
 			offset_x += 20;
 		}
 		setVertex();
@@ -315,16 +326,25 @@ Toaster::Toaster()
 
 Toaster::~Toaster()
 {
-	delete [] plive;
+	delete [] plives;
 }
 
 bool Toaster::laserCollision(Item a){
 		return (pos[1] > a.pos[1]-a.h && pos[1] < a.pos[1]+a.h && pos[0] < a.pos[0] - a.w - w);
 }
+bool Toaster::laserCollision(Entity a){
+		return (pos[1] > a.pos[1]-a.dim[1] && pos[1] < a.pos[1]+a.dim[1] && pos[0] < a.pos[0] - a.dim[0] - w);
+}
 void Toaster::setDistance(float val){
 		distance = val;
 }
 void Toaster::laserDamage(Item& a){
+		cerr << " a.HP " << a.hp <<endl;
+		a.hp = a.hp - laser_damage[bullet_type_prime-5];
+		cerr << "make damage " << laser_damage[bullet_type_prime-5] << " a.HP " << a.hp <<endl;
+}
+
+void Toaster::laserDamage(Entity& a){
 		cerr << " a.HP " << a.hp <<endl;
 		a.hp = a.hp - laser_damage[bullet_type_prime-5];
 		cerr << "make damage " << laser_damage[bullet_type_prime-5] << " a.HP " << a.hp <<endl;
@@ -370,7 +390,7 @@ void Toaster::moveToster()
   if (g.keys[XK_space] && bullet_type_prime <= 4) {
       //shoot bullet if not in CD
 		if (bullet_type_prime < 5 && g.BulletCD==5) {
-				makeBullet(pos[0]+w,pos[1],pos[2],1,bullet_type_prime);
+				makeBullet(pos[0]+w,pos[1],pos[2],bullet_type_prime);
 				// std::cout << "shoot"<<std::endl;
 		}
   }
@@ -405,9 +425,9 @@ void Toaster::tdraw(){
 					glVertex2f(0,laser_h[bullet_type_prime - 5]);
 					glColor3ub(20,0,0);
 					glVertex2f(0,-laser_h[bullet_type_prime - 5]);
-					glColor3ub(255, 0, 100);
+					glColor3ub(rand()%200 + 55, 0, 50);
 					glVertex2f(distance,-laser_h[bullet_type_prime - 5]);
-					glColor3ub(255, 100, 0);
+					glColor3ub(rand()%200 + 55, 0, 50);
 					glVertex2f(distance,laser_h[bullet_type_prime - 5]);
 			glEnd();
 			glPopMatrix();
@@ -436,14 +456,14 @@ void Toaster::tdraw(){
 
 	//D.T Draw the lives boxes on the information board
 	for(int i = 0; i < lives; i++) {
-		glColor3ubv(plive[i].color);
+		glColor3ubv(plives[i].color);
 		glPushMatrix();
-		glTranslatef(plive[i].pos[0], plive[i].pos[1], plive[i].pos[2]);
+		glTranslatef(plives[i].pos[0], plives[i].pos[1], plives[i].pos[2]);
 		glBegin(GL_QUADS);
-				glVertex2f(-plive[i].w, -plive[i].h);
-				glVertex2f(-plive[i].w,  plive[i].h);
-				glVertex2f( plive[i].w,  plive[i].h);
-				glVertex2f( plive[i].w, -plive[i].h);
+				glVertex2f(-plives[i].w, -plives[i].h);
+				glVertex2f(-plives[i].w,  plives[i].h);
+				glVertex2f( plives[i].w,  plives[i].h);
+				glVertex2f( plives[i].w, -plives[i].h);
 		glEnd();
 		glPopMatrix();
 	}
@@ -460,9 +480,8 @@ Bullet::Bullet() {
 }
 Bullet::~Bullet() {}
 
-void Bullet::setBullet(float x, float y, float z, bool tb, int type) {
+void Bullet::setBullet(float x, float y, float z, int type) {
     setPos (x,y,z);
-    if (tb) {
       //Toaster bullet
         switch (type) {
           case 1:
@@ -496,40 +515,8 @@ void Bullet::setBullet(float x, float y, float z, bool tb, int type) {
             setHP(1);
 						item_type = 43;
             break;
-
-        }
-    }
-    else {
-      //Bread bullet
-        switch (type) {
-          case 1:
-            // bullet type 1
-            // straight line
-            setVel (-6.0,0.0,0.0);
-            setDim (4.0,4.0);
-            break;
-          case 2:
-            // bullet type 2
-            // up 10degree
-            setVel (-6.0,1.05,0.0);
-            setDim (4.0,4.0);
-            break;
-          case 3:
-            // bullet type 3
-            // down 10degree
-            setVel (-6.0,-1.05,0.0);
-            setDim (4.0,4.0);
-            break;
-          case 4:
-            // bullet type 4
-            // track the origen point of Toaster
-            setDim (4.0,4.0);
-            setVel (-6.0,0.0,0.0);
-            float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
-            setAcc (0.0,ya,0.0);
-        }
-    }
-		setVertex();
+    	}
+	setVertex();
 }
 
 void Bullet::moveBullet() {
@@ -551,18 +538,20 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
 		float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
     switch (Bread_t) {
      	case 1:
-          setDim(15.0,10.0);
-          setVel(-4.0, 0.0, 0.0);
-          setAcc (0.0,-ya,0.0);
-          setColor(100,240,100);
-          setDamage(10);
-          setHP(2);
-					trace = false;
-					item_type = 11;
-          bullet_type_prime = 1;
-          point = 10;
-          break;
+			// trace green box
+			setDim(15.0,10.0);
+			setVel(-4.0, 0.0, 0.0);
+			setAcc (0.0,-ya,0.0);
+			setColor(100,240,100);
+			setDamage(10);
+			setHP(2);
+			trace = false;
+			item_type = 11;
+			bullet_type_prime = 1;
+			point = 10;
+			break;
 		case 2:
+			// level up box
 			setDim(15.0,10.0);
 			setVel(-4.0, 0.0, 0.0);
 			setAcc(0.0,-ya,0.0);
@@ -575,6 +564,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
 			point = 0;
 			break;
 		case 3:
+			// forky
 			setDim(50.0,5.0);
 			setVel(-50.0,0.0,0.0);
 			setAcc(0.0,0.0,0.0);
@@ -588,6 +578,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type) {
     	    point = 0;
 			break;
 		case 4:
+			// normal green box
 			setDim(15.0,10.0);
 			setVel(-4.0, 0.0, 0.0);
 			setAcc (0.0, 0.0, 0.0);
@@ -612,7 +603,266 @@ void Bread::moveBread() {
     vel[1] += acc[1];
     vel[2] += acc[2];
 }
+
+Spear::Spear(){}
+Spear::~Spear(){}
+
+void Spear::setSpear(float x, float y,float z, int spear_type) {
+	setPos(x,y,z);
+	setDim(50.0,5.0);
+	setVel(-50.0,0.0,0.0);
+	setAcc(0.0,0.0,0.0);
+	setColor(250, 238, 2);
+	setDamage(50);
+	setHP(100);
+	setCD(100);
+	trace = true;
+	item_type = 13;
+}
+
+void Spear::moveSpear(){
+	if(!trace) {
+		pos[0] += vel[0];
+		pos[1] += vel[1];
+		pos[2] += vel[2];
+		vel[0] += acc[0];
+		vel[1] += acc[1];
+		vel[2] += acc[2];
+	}
+}
+
+Donut::Donut() {
+	pos[0] = g.xres * 0.8;
+	pos[1] = g.yres / 2;
+	pos[2] = 0;
+	out_radius = 200.0;
+	hp = 10000;
+	cd = 200;
+	count_down = cd;
+	weapon = false;
+	setCD();
+}
+Donut::~Donut() {}
+void Donut::moveDonut() {
+	// cerr << weapon << "  " << count_down << endl;
+	int val = rand()%4 +1;
+	// val = 4;
+	if(!weapon) {
+		if(count_down == 0) {
+			atteckMove(val);
+		} else {
+			count_down--;
+		}
+	} else {
+		atteckMove(val);
+	}
+}
+void Donut::setCD(){
+		int temp = 10000 - (int)hp;
+		temp = temp / 1000;
+		cd = 200 - temp*20;
+}
+bool Donut::hpCheck() {
+		if (hp < 0) {
+				return true;
+		}
+		setCD();
+		return false;
+}
+
+bool Donut::collision(Item itm) {
+	float dx = pos[0] - itm.pos[0] - itm.w;
+	if (dx > out_radius)
+		return false;
+	float dy;
+	if ((pos[1] - itm.pos[1] - itm.h) > 0) {
+		dy = pos[1] - itm.pos[1] - itm.h;
+	}
+	else if ((pos[1] - itm.pos[1] + itm.h) < 0) {
+		dy = itm.pos[1] - itm.h - pos[1];
+	}
+	else {
+		dy = 0;
+	}
+	float distance = sqrt((dx*dx)+(dy*dy));
+	return out_radius > distance;
+}
+
+void Donut::hpDemageDonut(Item itm) {
+	hp -= itm.damage;
+}
+
+void Donut::draw() {
+	int n = 20;
+	float anglein = 3.141592 / n;
+	float x0,x1,y0,y1;
+	glPushMatrix();
+	for(int i = 0; i < n; i++) {
+		x0= pos[0]+ out_radius*cos(i*anglein);
+		y0= pos[1]+ out_radius*sin(i*anglein);
+		x1= pos[0]+ out_radius*cos((i+1)*anglein);
+		y1= pos[1]+ out_radius*sin((i+1)*anglein);
+		glBegin(GL_TRIANGLES);
+		glColor4ub(100, 100, 255, 1);
+		glVertex3f(pos[0],pos[1],0);
+		glColor4ub(100, 100, 255, 1);
+		glVertex3f(x0,y0,0);
+		glVertex3f(x1,y1,0);
+		glEnd();
+		x0= pos[0]+ out_radius*cos(-i*anglein);
+		y0= pos[1]+ out_radius*sin(-i*anglein);
+		x1= pos[0]+ out_radius*cos(-(i+1)*anglein);
+		y1= pos[1]+ out_radius*sin(-(i+1)*anglein);
+		glBegin(GL_TRIANGLES);
+		glColor4ub(100, 100, 255, 1);
+		glVertex3f(pos[0],pos[1],0);
+		glColor4ub(100, 100, 255, 1);
+		glVertex3f(x0,y0,0);
+		glVertex3f(x1,y1,0);
+		glEnd();
+	}
+}
+
+ void Donut::atteckMove(int num) {
+    // cerr << weapon << "  " << count_down << endl;
+	if(!weapon) {
+		weapon_id = num;
+		if (num == 1 || num == 2){
+			weapon_outer_count = 10;
+			weapon_inner_count = 20;
+		}
+		if (num == 3) {
+			weapon_outer_count = 30;
+			weapon_inner_count = 2;
+		} 
+		if (num == 4) {
+			weapon_outer_count = 15;
+			weapon_inner_count = 4;
+		}
+		weapon = true;
+	} else {
+		if(weapon_outer_count == 0) {
+			weapon = false;
+			count_down = cd;
+			return;
+		}
+		else if (weapon_inner_count == 0) {
+			float randangle;
+			int rand_pos_neg;
+			float accangle;
+			float dx;
+			float dy;
+			float ya;
+			int one = 1;
+			int negone = -1;
+			rand_pos_neg = (rand()%2) * 2 - 1; 			
+			switch (weapon_id) {
+				case 1:
+					accangle = 3.1415926/9;
+					for (int i = 0; i < 9; i++) {
+						dx = out_radius * cos(1.57 + (i * accangle));
+						dy = out_radius * sin(1.57 + (i * accangle));
+						do_bul[g.n_donut_bullet].setPos(pos[0]+dx,pos[1]+dy,0);
+						do_bul[g.n_donut_bullet].setDim(4.0,4.0);
+						do_bul[g.n_donut_bullet].setVel(-5.0, 0.0, 0.0);
+						do_bul[g.n_donut_bullet].setAcc (0.0, 0.0, 0.0);
+						do_bul[g.n_donut_bullet].setColor(255,240,255);
+						do_bul[g.n_donut_bullet].setDamage(10);
+						do_bul[g.n_donut_bullet].trace = false;
+						do_bul[g.n_donut_bullet].item_type = 16;
+						do_bul[g.n_donut_bullet].setVertex();
+						g.n_donut_bullet++;
+					}
+					break;
+				case 2:
+					accangle = 3.1415926/20;
+					for (int i = 0; i < 20; i++) {
+						dx = cos(1.57 + (i * accangle));
+						dy = sin(1.57 + (i * accangle));
+						do_bul[g.n_donut_bullet].setPos(pos[0]+(out_radius * dx),pos[1]+(out_radius * dy),0);
+						do_bul[g.n_donut_bullet].setDim(4.0,4.0);
+						do_bul[g.n_donut_bullet].setVel(5.0 * dx, 5 * dy, 0.0);
+						do_bul[g.n_donut_bullet].setAcc (0.0, 0.0, 0.0);
+						do_bul[g.n_donut_bullet].setColor(255,240,255);
+						do_bul[g.n_donut_bullet].setDamage(10);
+						do_bul[g.n_donut_bullet].trace = false;
+						do_bul[g.n_donut_bullet].item_type = 16;
+						do_bul[g.n_donut_bullet].setVertex();
+						g.n_donut_bullet++;
+					}
+					break;	
+				case 3:
+					randangle =(((float)rand()) / (float)RAND_MAX);
+					for (int i = 0; i < 2; i++) {
+						dx = out_radius * cos(one * (1.57 + 0.5*randangle));
+						dy = out_radius * sin(one * (1.57 + 0.5*randangle));
+						do_bul[g.n_donut_bullet].setPos(pos[0]+dx,pos[1]+dy,0);
+						do_bul[g.n_donut_bullet].setDim(4.0,4.0);
+						do_bul[g.n_donut_bullet].setVel(-5.0 , 0.0, 0.0);
+						ya = (2*(do_bul[g.n_donut_bullet].pos[1]-tos.pos[1])*(do_bul[g.n_donut_bullet].vel[0])*(do_bul[g.n_donut_bullet].vel[0]))/((do_bul[g.n_donut_bullet].pos[0]-tos.pos[0])*(do_bul[g.n_donut_bullet].pos[0]-tos.pos[0]));
+						do_bul[g.n_donut_bullet].setAcc (0.0, -ya, 0.0);
+						do_bul[g.n_donut_bullet].setColor(255,240,255);
+						do_bul[g.n_donut_bullet].setDamage(10);
+						do_bul[g.n_donut_bullet].trace = false;
+						do_bul[g.n_donut_bullet].item_type = 16;
+						do_bul[g.n_donut_bullet].setVertex();
+						g.n_donut_bullet++;
+						one *= negone;
+					}
+					break;
+				case 4:
+					accangle = 3.1415926/20;
+					for (int i = 1; i < 3; i++) {
+						dx = out_radius * cos(3.14 - i*accangle);
+						dy = out_radius * sin(3.14 - i*accangle);
+						do_bul[g.n_donut_bullet].setPos(pos[0]+dx,pos[1]+dy,0);
+						do_bul[g.n_donut_bullet].setDim(4.0,4.0);
+						do_bul[g.n_donut_bullet].setVel(-5.0 - i, 0.0, 0.0);
+						ya = (2*(do_bul[g.n_donut_bullet].pos[1]-tos.pos[1])*(do_bul[g.n_donut_bullet].vel[0])*(do_bul[g.n_donut_bullet].vel[0]))/((do_bul[g.n_donut_bullet].pos[0]-tos.pos[0])*(do_bul[g.n_donut_bullet].pos[0]-tos.pos[0]));
+						do_bul[g.n_donut_bullet].setAcc (0.0, -ya, 0.0);
+						do_bul[g.n_donut_bullet].setColor(255,240,255);
+						do_bul[g.n_donut_bullet].setDamage(10);
+						do_bul[g.n_donut_bullet].trace = false;
+						do_bul[g.n_donut_bullet].item_type = 16;
+						do_bul[g.n_donut_bullet].setVertex();
+						g.n_donut_bullet++;
+						dx = out_radius * cos(3.14 + i*accangle);
+						dy = out_radius * sin(3.14 + i*accangle);
+						do_bul[g.n_donut_bullet].setPos(pos[0]+dx,pos[1]+dy,0);
+						do_bul[g.n_donut_bullet].setDim(4.0,4.0);
+						do_bul[g.n_donut_bullet].setVel(-5.0 - i, 0.0, 0.0);
+						ya = (2*(do_bul[g.n_donut_bullet].pos[1]-tos.pos[1])*(do_bul[g.n_donut_bullet].vel[0])*(do_bul[g.n_donut_bullet].vel[0]))/((do_bul[g.n_donut_bullet].pos[0]-tos.pos[0])*(do_bul[g.n_donut_bullet].pos[0]-tos.pos[0]));
+						do_bul[g.n_donut_bullet].setAcc (0.0, -ya, 0.0);
+						do_bul[g.n_donut_bullet].setColor(255,240,255);
+						do_bul[g.n_donut_bullet].setDamage(10);
+						do_bul[g.n_donut_bullet].trace = false;
+						do_bul[g.n_donut_bullet].item_type = 16;
+						do_bul[g.n_donut_bullet].setVertex();
+						g.n_donut_bullet++;
+					}
+					break;
+			}
+			weapon_outer_count--;
+			weapon_inner_count = 20;
+		} else {
+			weapon_inner_count--;
+		}
+	}
+}
 //=========================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

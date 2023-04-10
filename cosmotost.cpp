@@ -60,7 +60,7 @@ void physics(void);
 void render(void);
 
 // #ifdef USE_OPENAL_SOUND
-// void check_sound(void);
+// void checkSound(void);
 // #endif
 
 //=====================================
@@ -82,11 +82,11 @@ int main()
 				break;
 			}
 		}
-		check_level();
+		checkLevel();
 		physics();
 		render();
 #ifdef USE_OPENAL_SOUND
-		check_sound();
+		checkSound();
 #endif
 		x11.swapBuffers();
 		usleep(2000);
@@ -216,9 +216,9 @@ int X11_wrapper::check_mouse(XEvent *e)
 				}
 
 				// check and see if the user clicked on the Menu
-				selection = mm.check_t_box(savex, g.yres - savey);
+				selection = mm.checkTBox(savex, g.yres - savey);
 				if (selection && (mm.words[selection->id] == "Start Game")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					g.state = GAME;
 					g.gameTimer.reset();	// start the game timer
 					selection = nullptr;
@@ -229,13 +229,13 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 					return 0;
 				} else if (selection && (mm.words[selection->id] == "Debug Mode")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					g.state = GAME;
 					g.substate = DEBUG;
 					g.gameTimer.reset();
 					selection = nullptr;
 				} else if (selection && (mm.words[selection->id] == "High Scores")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					g.substate = HIGH_SCORES;
 					selection = nullptr;
 
@@ -245,7 +245,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 					return 0;
 				} else if (selection && (mm.words[selection->id] == "Settings")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					g.substate = SETTINGS;
 					selection = nullptr;
 
@@ -255,7 +255,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 					return 0;
 				} else if (selection && (mm.words[selection->id] == "Quit")) {
-					mm.set_orig_color();
+					mm.setOrigColor();
 					selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
@@ -283,13 +283,13 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 				// need to send in flipped y coord because window and
 				// mouse coords have different origins
-				selection = mm.check_t_box(savex, g.yres - savey);
+				selection = mm.checkTBox(savex, g.yres - savey);
 
 				if (selection) {
 
 					
-					mm.set_orig_color();
-					mm.set_highlight(selection);
+					mm.setOrigColor();
+					mm.setHighlight(selection);
 
 #ifdef USE_OPENAL_SOUND
 					sounds.beep();
@@ -323,7 +323,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					// check and see if the user clicked on slider buttons
 					selection = vol_slider.checkButtons(savex, g.yres - savey);
 					if (selection && (vol_slider.words[selection->id] == "<")) {
-						vol_slider.move_slider_down();
+						vol_slider.moveSliderDown();
 
 #ifdef USE_OPENAL_SOUND
 						sounds.updateMusicVol();
@@ -334,7 +334,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 						return 0;
 					} else if (selection && (vol_slider.words[selection->id] == ">")) {
-						vol_slider.move_slider_up();
+						vol_slider.moveSliderUp();
 
 #ifdef USE_OPENAL_SOUND
 						sounds.updateMusicVol();
@@ -348,7 +348,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 					selection = sfx_slider.checkButtons(savex, g.yres - savey);
 					if (selection && (sfx_slider.words[selection->id] == "<")) {
-						sfx_slider.move_slider_down();
+						sfx_slider.moveSliderDown();
 
 #ifdef USE_OPENAL_SOUND
 						sounds.updateSFXVol();
@@ -359,7 +359,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 						return 0;
 					} else if (selection && (sfx_slider.words[selection->id] == ">")) {
-						sfx_slider.move_slider_up();
+						sfx_slider.moveSliderUp();
 
 #ifdef USE_OPENAL_SOUND
 						sounds.updateSFXVol();
@@ -386,28 +386,28 @@ int X11_wrapper::check_mouse(XEvent *e)
 					// mouse coords have different origins
 					selection = vol_slider.checkButtons(savex, g.yres - savey);
 					if (selection) {
-						vol_slider.set_orig_color();
-						vol_slider.set_highlight(selection);
+						vol_slider.setOrigColor();
+						vol_slider.setHighlight(selection);
 
 #ifdef USE_OPENAL_SOUND
 						sounds.beep();
 #endif
 
 					} else {
-						vol_slider.set_orig_color();
+						vol_slider.setOrigColor();
 					}
 
 					selection = sfx_slider.checkButtons(savex, g.yres - savey);
 					if (selection) {
-						sfx_slider.set_orig_color();
-						sfx_slider.set_highlight(selection);
+						sfx_slider.setOrigColor();
+						sfx_slider.setHighlight(selection);
 
 #ifdef USE_OPENAL_SOUND
 						sounds.beep();
 #endif
 
 					} else {
-						sfx_slider.set_orig_color();
+						sfx_slider.setOrigColor();
 					}
 
 				}
@@ -436,9 +436,9 @@ int X11_wrapper::check_mouse(XEvent *e)
 					savey = e->xbutton.y;
 				}
 
-				selection = pause_menu.check_t_box(savex, g.yres - savey);
+				selection = pause_menu.checkTBox(savex, g.yres - savey);
 				if (selection && (pause_menu.words[selection->id] == "Main Menu")) {
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 					g.state = MAINMENU;
 					g.gameTimer.pause();
 					selection = nullptr;
@@ -449,7 +449,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Start Over")) {
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 					g.state = MAINMENU;
 					g.gameReset();
 					g.state = GAME;
@@ -460,14 +460,14 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
-					sounds.rewind_game_music();
-					cerr << "rewinding song " << sounds.get_song_name() << endl;
+					sounds.rewindGameMusic();
+					cerr << "rewinding song " << sounds.getSongName() << endl;
 #endif
 
 					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Back to Game")) {
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 					g.state = GAME;
 					if (g.gameTimer.isPaused()) {
 						g.gameTimer.unPause();	// unpause the game
@@ -478,12 +478,12 @@ int X11_wrapper::check_mouse(XEvent *e)
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
 					sounds.unpause();
-					cerr << "unpausing song " << sounds.get_song_name() << endl;
+					cerr << "unpausing song " << sounds.getSongName() << endl;
 #endif
 					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == "Quit Game")) {
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 					cerr << "g.state was changed to should be quitting..." <<
 							endl;
 
@@ -519,11 +519,11 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 				// need to send in flipped y coord because window and
 				// mouse coords have different origins
-				selection = pause_menu.check_t_box(savex, g.yres - savey);
+				selection = pause_menu.checkTBox(savex, g.yres - savey);
 
 				if (selection) {
-						pause_menu.set_orig_color();
-						pause_menu.set_highlight(selection);
+						pause_menu.setOrigColor();
+						pause_menu.setHighlight(selection);
 						// selection = nullptr; // reset selection ptr
 #ifdef USE_OPENAL_SOUND
 					sounds.beep();
@@ -532,7 +532,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					// }
 				} else {
 					// was previously on something and now it's not
-					pause_menu.set_orig_color();
+					pause_menu.setOrigColor();
 
 				}
 			}
@@ -554,7 +554,7 @@ int X11_wrapper::check_keys(XEvent *e)
 
 #ifdef USE_OPENAL_SOUND
 		// if (key1 == XK_space) {
-		// 	sounds.gun_stop();
+		// 	sounds.gunStop();
 		// 	sounds.gun_shooting = false;
 		// }
 
@@ -588,6 +588,10 @@ int X11_wrapper::check_keys(XEvent *e)
 				case XK_Escape:
 					//Escape key was pressed
 					return 1;
+				case XK_y:
+					// test key
+					
+					return 0;
 			}
 		}
 		// Game State
@@ -610,45 +614,45 @@ int X11_wrapper::check_keys(XEvent *e)
 
 				case XK_7:
 
-					vol_slider.move_slider_down();
+					vol_slider.moveSliderDown();
 
 #ifdef USE_OPENAL_SOUND
 					sounds.updateMusicVol();
 #endif
 					// cerr << "sound turned down to: " << g.m_vol << endl;
 
-					// sfx_slider.move_slider_down();
+					// sfx_slider.moveSliderDown();
 					return 0;
 				case XK_8:
-					vol_slider.move_slider_up();
+					vol_slider.moveSliderUp();
 
 #ifdef USE_OPENAL_SOUND
 					sounds.updateMusicVol();
 #endif
 					// cerr << "sound turned up to: " << g.m_vol << endl;
-					// sfx_slider.move_slider_up();
+					// sfx_slider.moveSliderUp();
 					return 0;
 
 
 				case XK_9:
 
-					sfx_slider.move_slider_down();
+					sfx_slider.moveSliderDown();
 
 #ifdef USE_OPENAL_SOUND
 					sounds.updateSFXVol();
 #endif
 					// cerr << "sfx turned down to: " << g.sfx_vol << endl;
 
-					// sfx_slider.move_slider_down();
+					// sfx_slider.moveSliderDown();
 					return 0;
 				case XK_0:
-					sfx_slider.move_slider_up();
+					sfx_slider.moveSliderUp();
 
 #ifdef USE_OPENAL_SOUND
 					sounds.updateSFXVol();
 #endif
 					// cerr << "sfx turned up to: " << g.sfx_vol << endl;
-					// sfx_slider.move_slider_up();
+					// sfx_slider.moveSliderUp();
 					return 0;
 
 
@@ -656,7 +660,7 @@ int X11_wrapper::check_keys(XEvent *e)
 // 				case XK_u:	// go back to main menu
 // 					//Escape key was pressed
 // 					//Enter Pause State
-// 					sounds.toggle_user_pause();
+// 					sounds.toggleUserPause();
 // 					cerr << "toggling pause"  << endl;
 // 					return 0;
 // #endif
@@ -749,6 +753,20 @@ int X11_wrapper::check_keys(XEvent *e)
 						cerr << "g.mike_active set to false\n";
 					}
 					return 0;
+				case XK_b: // t was pressed - toggle Dan's Feature Mode
+					// if (g.substate == NONE) {
+					if (g.donut_active == false) {
+						g.donut_active = true;
+						cerr << "g.donut_active set to true\n";
+					} else if (g.donut_active == true) {
+						g.donut_active = false;
+						cerr << "g.donut_active set to false\n";
+					}
+					return 0;
+
+				case XK_q:
+					bomb.launch();
+					return 0;
 
 				case XK_Escape:	// pause the game
 					//Escape key was pressed
@@ -760,7 +778,7 @@ int X11_wrapper::check_keys(XEvent *e)
 #ifdef USE_OPENAL_SOUND
 
 					sounds.pause();
-					cerr << "pausing song " << sounds.get_song_name() << endl;
+					cerr << "pausing song " << sounds.getSongName() << endl;
 #endif
 
 					return 0;
@@ -777,7 +795,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				case XK_u:	// go back to main menu
 					//Escape key was pressed
 					//Enter Pause State
-					sounds.toggle_user_pause();
+					sounds.toggleUserPause();
 					cerr << "toggling pause"  << endl;
 					return 0;
 #endif
@@ -801,7 +819,7 @@ int X11_wrapper::check_keys(XEvent *e)
 
 #ifdef USE_OPENAL_SOUND
 					sounds.unpause();
-					cerr << "unpausing song " << sounds.get_song_name() << endl;
+					cerr << "unpausing song " << sounds.getSongName() << endl;
 #endif
 
 					return 0;
@@ -857,13 +875,13 @@ int X11_wrapper::check_keys(XEvent *e)
 		int key = XLookupKeysym(&e->xkey, 0);
 		if (e->type == KeyPress) {
 			// cout << key << endl;
-			if(key == XK_Return) {
+			if (key == XK_Return) {
 				// g.state = MAINMENU;
 				g.gameReset();
 				g.state = MAINMENU;
 				g.substate = NONE;
 				record.makeMenu();
-				// record.hs_menu->set_orig_color();
+				// record.hs_menu->setOrigColor();
 				cerr << "g.state was changed to MAINMENU" << endl;
 				return 0;
 			}
@@ -956,6 +974,17 @@ void init_opengl(void)
 	free(silhouetteData);
 
 
+    w = bomb_img.width;
+    h = bomb_img.height;
+	glGenTextures(1, &g.bomb_texture);
+	glBindTexture(GL_TEXTURE_2D, g.bomb_texture);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&bomb_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
 
 	cerr << "finished initializing opengl" << endl;
 }
@@ -963,8 +992,21 @@ void init_opengl(void)
 
 void physics()
 {
+	if (g.state == SPLASH) {
+
+
+	}
+
 	if (g.state == GAME) {
+		int distanceBread = g.xres;
+		int whichBread = -1;
+		bool entity_or_tos = true;
 		// ENTITY PHYSICS
+
+		if (bomb.is_thrown) {
+			bomb.move();
+		}
+
 		if (g.entity_active == true) {
 			// spawn_speed determines how many ticks until spawning another
 			// entity
@@ -998,29 +1040,80 @@ void physics()
 				}
 				e.makeEntity(e.spawn_x, e.spawn_y, e.spawn_vel_x, e.spawn_vel_y,
 							e.curve_rand_x, e.curve_rand_y);
+				// cerr << "makeEntity called" << endl;
+							
 				e.chain_len--;
 			}
 			e.spawn_speed--;
 
 			for (int i = 0; i < e.num_ent; i++) {
+				if (entity[i].hpCheck()) {
+					tos.score += entity[i].point;
+					entity[i] = entity[--e.num_ent];
+				}
 				entity[i].pos[0] += entity[i].vel[0]/2;
 				entity[i].pos[1] += entity[i].vel[1]/2;
 				entity[i].vel[0] += entity[i].curve[0] / 32;
 				entity[i].vel[1] += entity[i].curve[1] / 32;
 
-				if (entity[i].collision(tos)) g.state = GAMEOVER;
+				
+				if (blocky->isAlive() && blocky->explode_done)  {
+					if (entity[i].collision(*blocky)) {
+						entity[i].hpDamage(*blocky);
+						if (entity[i].hpCheck()) {
+							entity[i] = entity[--e.num_ent];
+						} 
+					}
+				} else if (!blocky->explode_done) {
+					if (blocky->subBoxCollision(entity[i])) {
+						entity[i].hpDamage(*blocky);
+						if (entity[i].hpCheck()) {
+							entity[i] = entity[--e.num_ent];
+							tos.score += entity[i].point;
+						} 
+					}
+				}
+
+				if (entity[i].collision(tos)) {
+					entity[i].hpDamage(tos);
+					tos.hpDamage(entity[i]);
+					if (entity[i].hpCheck()) {
+						tos.score += entity[i].point;
+						entity[i] = entity[--e.num_ent];
+					}
+
+					if (tos.hpCheck() && (tos.lives - 1 > 0)) {
+						tos.lives--;
+						tos.setHP(80);
+					} else if (tos.hpCheck()) {
+						g.state = GAMEOVER;
+					}
+
+				}
+
+				if (bomb.is_exploding &&
+						bomb.collision(entity[i])) {
+
+						entity[i].hp -= entity[i].hp;	// wipe out all health
+						tos.score += entity[i].point;
+						entity[i] = entity[--e.num_ent];
+					
+				}
+
 
 				for (int j=0; j < g.n_Bullet; j++) {
 					if (entity[i].collision(bul[j])) {
 							entity[i].hpDamage(bul[j]);
-							bul[j].hpDamage(entity[i]);
-							if(entity[i].hpCheck()) {
+							if (entity[i].hpCheck()) {
 								tos.score += entity[i].point;
 								entity[i] = entity[--e.num_ent];
 							}
+							
+							bul[j].hpDamage(entity[i]);
 							bul[j] = bul[--g.n_Bullet];
 					}
 				}
+
 
 				// DESPAWN
 				if (entity[i].pos[1] < -4 ||
@@ -1033,10 +1126,14 @@ void physics()
 						entity[i].pos[1] >= g.yres - 4) {
 					entity[i].vel[1] = -entity[i].vel[1];
 				}
+				if (tos.laserCollision(entity[i])) {
+						if((entity[i].pos[0] - tos.pos[0] - entity[i].dim[0] - tos.w) < distanceBread) {
+								distanceBread = entity[i].pos[0] - tos.pos[0] - entity[i].dim[0] - tos.w;
+								whichBread = i;
+						}
+				}
 			}
 		}
-		int distanceBread = g.xres;
-		int whichBread = -1;
 		if (g.mike_active == true) {
 			blocky->move();
 			if (tos.laserCollision(*blocky)){
@@ -1051,19 +1148,26 @@ void physics()
 				// cerr << "resetting blocky..." << endl;
 				blocky->reset();
 
-				if (blocky->hpCheck()) {
-					blocky->reset();
-				}
-				if (tos.hpCheck()) {
+				// if (blocky->hpCheck()) {
+				// 	blocky->reset();
+				// }
+
+				if (tos.hpCheck() && (tos.lives - 1 > 0)) {
+					tos.lives--;
+					tos.setHP(80);
+				} else if (tos.hpCheck()) {
 					g.state = GAMEOVER;
 				}
+
+
 			}
+
 
 			// check blocky's collision with bullets
 			for (int j=0; j < g.n_Bullet; j++) {
 				if (blocky->collision(bul[j])) {
 						blocky->hpDamage(bul[j]);
-						bul[j].hpDamage(vblocky);
+						bul[j].hpDamage(*blocky);
 						if(blocky->hpCheck()) {
 							tos.score += blocky->point;
 							blocky->reset();
@@ -1072,19 +1176,139 @@ void physics()
 				}
 			}
 
+			// check for blocky's (and sub blockies) collision with enemies
+			if (blocky->isAlive() && blocky->explode_done) {
+				// blocky's collision with bread
+				for (int i = 0; i < g.n_Bread; i++) {
+					
+					if (bread[i].collision(*blocky)) {
+						bread[i].hpDamage(*blocky);
+						if (bread[i].hpCheck()) {
+							bread[i] = bread[--g.n_Bread];
+							// tos.score += bread[i].point;
+                            tos.score += bread[i].point;
+
+#ifdef USE_OPENAL_SOUND
+							sounds.playZap2();
+#endif
+
+						}
+					}
+				}
+
+				// blocky's collision with entities
+				for (int i = 0; i < e.num_ent; i++) {
+					if (entity[i].collision(*blocky)) {
+						entity[i].hpDamage(*blocky);
+						if(entity[i].hpCheck()) {
+							// tos.score += entity[i].point;
+							entity[i] = entity[--e.num_ent];
+                            tos.score += entity[i].point;
+#ifdef USE_OPENAL_SOUND
+							sounds.playZap2();
+#endif
+						}
+					}
+				}
+
+				if (bomb.is_exploding &&
+						bomb.collision(*blocky)) {
+
+						blocky->hp = 0;	// wipe out all health
+						tos.score += blocky->point;
+						blocky->reset();
+				}
+
+				
+
+			} else if (!blocky->explode_done) {
+				// sub-blocky's collision with bread
+				for (int i = 0; i < g.n_Bread; i++) {
+					if (blocky->subBoxCollision(bread[i])) {
+						bread[i].hpDamage(*blocky);
+						if (bread[i].hpCheck()) {
+							bread[i] = bread[--g.n_Bread];
+							tos.score += bread[i].point;
+
+#ifdef USE_OPENAL_SOUND
+							sounds.playZap2();
+#endif
+						}
+					}
+				}
+
+				// blocky's collision with entities
+				for (int i = 0; i < e.num_ent; i++) {
+					if (blocky->subBoxCollision(entity[i])) {
+					// if (entity[i].collision(*blocky)) {
+						entity[i].hpDamage(*blocky);
+						if(entity[i].hpCheck()) {
+							tos.score += entity[i].point;
+							entity[i] = entity[--e.num_ent];
+
+#ifdef USE_OPENAL_SOUND
+							sounds.playZap2();
+#endif
+						}
+					}
+				}
+			}
+
+
 
 		}
 		if (g.huaiyu_active == true) {
-				for (int i=0; i < g.n_Bread; i++) {
-						if(bread[i].trace) {
-								bread[i].cd--;
-								if(0 == bread[i].cd)
-										bread[i].trace = false;
+				for (int i=0; i < g.n_Spear; i++) {
+						if(spear[i].trace) {
+								spear[i].cd--;
+								if(0 == spear[i].cd)
+										spear[i].trace = false;
 						}
+						if(tos.collision(spear[i])) {
+							tos.hpDamage(spear[i]);
+							spear[i]=spear[--g.n_Spear];
+						}
+						spear[i].moveSpear();
 				}
 				if (g.BreadCD == 0 && (int)rand()%3 == 0)
-						makeBread(g.xres-60.0,(((float)rand()) / (float)RAND_MAX)*g.yres,0.0,3,1);
+						makeSpear(g.xres-60.0,(((float)rand()) / (float)RAND_MAX)*g.yres,0.0,1);
+				
 		}
+//======================BOSS+====================================		
+		if (g.donut_active == true) {
+			if (donut.collision(tos)) {
+				tos.hpDamage(1000);
+			}
+			for (int i = 0; i < g.n_Bullet; i++) {
+				if (donut.collision(bul[i])) {
+					donut.hpDemageDonut(bul[i]);
+					bul[i] = bul[--g.n_Bullet];
+				}
+			}
+			donut.moveDonut();
+			for (int i=0; i < g.n_donut_bullet; i++) {
+				do_bul[i].moveBullet();
+				if(do_bul[i].collision(tos)) {
+					tos.hpDamage(do_bul[i]);
+					if(tos.hpCheck() && (tos.lives - 1 > 0)) {
+						tos.lives--;
+						tos.setHP(80);
+					}
+					else if(tos.hpCheck()) {
+						g.state = GAMEOVER;
+					}
+					do_bul[i] = do_bul[--g.n_donut_bullet];
+				}
+				if (do_bul[i].screenOut()){
+					cerr << "clear dobullet" << endl;
+					do_bul[i] = do_bul[--g.n_donut_bullet];
+				}
+			}
+
+			// cerr << donut.hp << endl;
+			
+		}
+//================================================================
 		// cout << tos.pos[0] << endl;
 		// move of toaster
 		tos.moveToster();
@@ -1111,8 +1335,13 @@ void physics()
 			}
 		//move of all bread and check collision with bullet and Toaster
 		for (int i=0; i < g.n_Bread; i++) {
-				if (bread[i].screenOut()||bread[i].hpCheck()) {
+				if (bread[i].screenOut()) {
 					bread[i] = bread[--g.n_Bread];
+				}
+				if (bread[i].hpCheck()) {
+					tos.score += bread[i].point;
+					bread[i] = bread[--g.n_Bread];
+
 				}
 				// ckeak if collision with toaster
 				if (bread[i].collision(tos)) {
@@ -1139,22 +1368,34 @@ void physics()
 				}
 				// ckeak if collision with bullet
 				for (int j=0; j < g.n_Bullet; j++) {
-						if (bread[i].collision(bul[j])&&(bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)) {
-								bread[i].hpDamage(bul[j]);
-								bul[j].hpDamage(bread[i]);
-								bul[j] = bul[--g.n_Bullet];
-								if(bread[i].hpCheck()) {
-									tos.score += bread[i].point;
-									bread[i] = bread[--g.n_Bread];
-								}
+					if (bread[i].collision(bul[j])&&(bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)) {
+						bread[i].hpDamage(bul[j]);
+						bul[j].hpDamage(bread[i]);
+						bul[j] = bul[--g.n_Bullet];
+						if(bread[i].hpCheck()) {
+							tos.score += bread[i].point;
+							bread[i] = bread[--g.n_Bread];
 						}
+					}
+
 				}
+
+
+				if (bomb.is_exploding && 
+						(bomb.collision(bread[i]))) {
+						bread[i].hp = 0;
+						tos.score += bread[i].point;
+						bread[i] = bread[--g.n_Bread];
+				}
+
+
 				if(!bread[i].trace)
 						bread[i].moveBread();
 				if(tos.laserCollision(bread[i])&& !bread[i].hpCheck()) {
 						if((bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w) < distanceBread) {
 								distanceBread = bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w;
 								whichBread = i;
+								entity_or_tos = false;
 						}
 				}
 		// time stuff/ change when timer finish
@@ -1163,16 +1404,19 @@ void physics()
 		tos.setDistance(distanceBread);
 		if(tos.laserOn)  {
 			if (whichBread == -2) {
-					tos.laserDamage(vblocky);
+					tos.laserDamage(*blocky);
 					cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
 			} 
-			else if (whichBread != -1) {
+			else if (whichBread != -1 && entity_or_tos) {
+					tos.laserDamage(entity[whichBread]);
+        			cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
+			}
+			else if (whichBread != -1 && !entity_or_tos) {
 					tos.laserDamage(bread[whichBread]);
         			cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
 			}
 
 		}
-
 	}
 }
 
@@ -1197,6 +1441,7 @@ void render()
     glEnd();
 
     glBindTexture(GL_TEXTURE_2D, 0);
+
 
 
 	if (g.state == SPLASH) {
@@ -1271,11 +1516,16 @@ void render()
 
 		} else if (g.substate == HIGH_SCORES) {
 
-			record.hs_menu->draw();
+			if (record.hs_menu) {
+				record.hs_menu->draw();
+			}
 
 		}
 
 	} else if (g.state == GAME || g.state == PAUSE ) {
+
+		
+
 		// State Message
 
 		// Set up and display Information board on bottom of screen.
@@ -1285,6 +1535,9 @@ void render()
 		info_board_1.setDim(g.xres/2, g.yres/20);
 		info_board_1.setPos(g.xres/2, g.yres/40, 0);
 		info_board_1.draw();
+
+		
+		
 
 
 		// draw Toaster bullet and bread
@@ -1321,10 +1574,10 @@ void render()
 		}
 
 		// if ((g.substate == MIKE || g.state == PAUSE) &&
-		// 	(blocky.is_alive() || !blocky.explode_done)) {
+		// 	(blocky.isAlive() || !blocky.explode_done)) {
 		if ((g.mike_active == true &&
 			(g.state == GAME || g.state == PAUSE)) &&
-			(blocky->is_alive() || !blocky->explode_done)) {
+			(blocky->isAlive() || !blocky->explode_done)) {
 
 			blocky->draw();
 			blocky_health->draw();
@@ -1333,44 +1586,81 @@ void render()
 		if (g.state == PAUSE) {
 			pause_menu.draw();
 		}
-
+		if(g.huaiyu_active == true &&
+			(g.state == GAME || g.state == PAUSE)) {
+				for (int i = 0; i < g.n_Spear; i++) {
+					if(!spear[i].trace)
+						spear[i].draw();
+					else
+						spear[i].draw(tos);
+				}
+		}
 		// if(g.substate == DTORRES) {
 		if(g.dtorres_active == true &&
-			(g.state == GAME || g.state == PAUSE)) {
-			srand(time(NULL));
+		   (g.state == GAME || g.state == PAUSE)) {
 
-			// Follow the first bread to randomize the freeze block path 
+			if (pfreeze_block == NULL) {
+				try {
+					pfreeze_block = new FreezeBlock;
+					pfreeze_block->setColor(162, 210, 223); // Sky blue
+					pfreeze_block->setMinMaxBlockDimensions(40, 80); // set min and max freeze block dimensions
+					pfreeze_block->w = pfreeze_block->randomDimension(); // random width
+					pfreeze_block->h = pfreeze_block->randomDimension(); // random height
+
+					// set position of freeze block to random location on screen
+					// ensure freeze block is within screen bounds
+					pfreeze_block->setPos(pfreeze_block->w + (rand() % (int)(g.xres - pfreeze_block->w)), 
+										  (pfreeze_block->h + (info_board_1.h * 2)) + (rand() % (int)(g.yres - pfreeze_block->h)), 0);
+					pfreeze_block->position_set = true;
+				} 
+				catch (bad_alloc) {
+					cerr << "Freeze Block Bad Allocation" << endl;
+					exit(EXIT_FAILURE);
+				}
+			}
+
+			// Follow the item passed into followItem() 
 			// Freeze block could be set to follow any Item object
-			freeze_block.followPlayer(bread[0]);
-			// Make freeze block if it does not exist and timer is NULL
-			if(!freeze_block.position_set && freeze_block.ptimer == NULL) {
-				freeze_block.setColor(162,210,223); // sky blue
-				freeze_block.setMinMaxBlockDimensions(2, 80); // set min and max freeze block dimensions
-				freeze_block.w = freeze_block.randomDimension(); // random width
-				freeze_block.h = freeze_block.randomDimension(); // random height
+			if(pfreeze_block->position_set && tos.disable_keys == false) {	
+				pfreeze_block->followItem(tos);
+				pfreeze_block->melt(0.25);
+				pfreeze_block->draw();
+			}
 
-				// Spawn freeze block within the screen bounds;
-				freeze_block.pos[0] = freeze_block.w + (rand() % (int)(g.xres - freeze_block.w)); // spawn position x is within screen bounds
-				freeze_block.pos[1] = (freeze_block.h + (info_board_1.h * 2)) + (rand() % (int)(g.yres - freeze_block.h)); // spawn position y is withing screen bounds
-				freeze_block.position_set = true;
-			}
-			if(freeze_block.position_set && tos.disable_keys == false) {
-				freeze_block.draw();
-			}
-			// Freeze the toaster as soon as collision is detected and freeze for 3 seconds
-			if(freeze_block.collision(tos) && !tos.disable_keys ) {
+			// Freeze the toster as soon as collision is detected and freeze for 
+			// pre-determined amount of seconds
+			if(pfreeze_block->collision(tos) && !tos.disable_keys) {
 				tos.disable_keys = true;
-				freeze_block.position_set = false;
-				freeze_block.setTimer(1);
-			}
-			// Unfreeze the toaster after timer is done.
-			if(tos.disable_keys && freeze_block.ptimer->isDone()) {
-				tos.disable_keys = false;
-				delete freeze_block.ptimer;
-				freeze_block.ptimer = NULL;
+				pfreeze_block->position_set = false;
+				pfreeze_block->setFreezeTimer(2);
 			}
 
+			// Unfreeze the toaster after timer is done or freeze block melted away
+			if(tos.disable_keys && pfreeze_block->ptimer->isDone() 
+			   || pfreeze_block -> h <= 0
+			   || pfreeze_block -> w <= 0 ) {
+
+				delete pfreeze_block->ptimer;
+				pfreeze_block->ptimer = NULL;
+				delete pfreeze_block;
+				pfreeze_block = NULL;
+				tos.disable_keys = false;
+			}
 		}
+//================================Boss===================================
+		if(g.donut_active == true &&
+			(g.state == GAME || g.state == PAUSE)) {
+				donut.draw();
+				for (int i=0; i < g.n_donut_bullet; i++) {
+//						cerr << "draw bullet" << endl;
+						do_bul[i].draw();
+				}
+		
+		
+		}
+
+		bomb.draw();
+
 
 	} else if (g.state == GAMEOVER && g.substate == NONE) {
 
@@ -1408,13 +1698,15 @@ void render()
 
 	} else if (g.state == GAMEOVER && g.substate == HIGH_SCORES) {
 	
-
-		record.hs_menu->draw();
+		if (record.hs_menu) {
+			record.hs_menu->draw();
+		}
 
 	} else if (g.state == GAMEOVER && g.substate == DEBUG) {
 	
-
-		record.hs_menu->draw();
+		if (record.hs_menu) {
+			record.hs_menu->draw();
+		}
 
 	}
 
@@ -1434,7 +1726,7 @@ void render()
 
 	if (g.show_help_menu == false) {
 
-		Rect help_msg, score, g_time, bullets, lvl;
+		Rect help_msg, score, g_time, debug, lvl;
 
 #ifdef USE_OPENAL_SOUND
 		Rect s_name;
@@ -1460,12 +1752,12 @@ void render()
 		g_time.left = score.left;
 		g_time.center = 0;
 
-		bullets.bot = score.bot;
-		bullets.left = score.left-80;
-		bullets.center = 0;
+		debug.bot = score.bot;
+		debug.left = score.left-80;
+		debug.center = 0;
 
-		lvl.bot = bullets.bot-20;
-		lvl.left = bullets.left;
+		lvl.bot = debug.bot-20;
+		lvl.left = debug.left;
 		lvl.center = 0;
 
 
@@ -1475,12 +1767,12 @@ void render()
 			ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 			ggprint8b(&lvl, 0, 0x00DC143C, "Level %i", g.level);
-			// ggprint8b(&bullets, 0, 0x00DC143C, "Active bullets : %i",g.n_Bullet);	// debug output
+			ggprint8b(&debug, 0, 0x00DC143C, "num_ent: %i",e.num_ent);	// debug output
 
 #ifdef USE_OPENAL_SOUND
 
 			if (g.state == GAME)
-				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.getSongName().c_str());
 			else
 				ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
 #endif
@@ -1489,7 +1781,7 @@ void render()
 
 	} else if (g.show_help_menu == true) {
 		const unsigned int KEY_MESSAGES = 13;
-		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time, s_name, bullets, lvl;
+		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time, s_name, debug, lvl;
 
 		// ***********Locations of all the text rectangles******************
 		// 					Top Left side of the screen					//
@@ -1515,12 +1807,12 @@ void render()
 		g_time.left = score.left;
 		g_time.center = 0;
 
-		bullets.bot = g_time.bot-20;
-		bullets.left = g_time.left-80;
-		bullets.center = 0;
+		debug.bot = g_time.bot-20;
+		debug.left = g_time.left-80;
+		debug.center = 0;
 
-		lvl.bot = bullets.bot-20;
-		lvl.left = bullets.left;
+		lvl.bot = debug.bot-20;
+		lvl.left = debug.left;
 		lvl.center = 0;
 
 		// bottom right of the screen
@@ -1545,7 +1837,7 @@ void render()
 				ggprint8b(&key_msg[1], 0, 0x00ffff00,
 												"<ENTER> - GO TO MAIN MENU");
 #ifdef USE_OPENAL_SOUND
-				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.getSongName().c_str());
 #endif
 				break;
 			case MAINMENU:
@@ -1553,7 +1845,7 @@ void render()
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 														"STATE - MAIN MENU");
 #ifdef USE_OPENAL_SOUND
-					ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+					ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.getSongName().c_str());
 #endif
 				} else if (g.substate == SETTINGS) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
@@ -1641,8 +1933,8 @@ void render()
 				ggprint8b(&g_time, 0, 0x00DC143C,
 											"Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
 #ifdef USE_OPENAL_SOUND
-				if (!sounds.get_pause()) {
-					ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.get_song_name().c_str());
+				if (!sounds.getPause()) {
+					ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.getSongName().c_str());
 				} else {
 					ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
 				}
@@ -1676,5 +1968,7 @@ void render()
 		}
 
 	}
+
+	
 
 }
