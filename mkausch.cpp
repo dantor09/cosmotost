@@ -67,7 +67,7 @@ Menu::Menu(unsigned int _n_texts,
         float spacing = (2*h)/(n_texts+1);
         std::cout << "spacing: " << spacing << std::endl;
 
-        for(int i = 0; i < n_texts; i++) {
+        for (int i = 0; i < n_texts; i++) {
             t_boxs[i].w = mainbox.w - PADDING;
             t_boxs[i].h = (spacing/2.0) - BSIZE;
             t_boxs[i].pos[0] = mainbox.pos[0];
@@ -81,8 +81,10 @@ Menu::Menu(unsigned int _n_texts,
 
     } catch (std::bad_alloc& ba) {
         // if one was allocated and not the other than delete the one that
-        if (texts) delete [] texts;
-        if (t_boxs) delete [] t_boxs;
+        if (texts) 
+            delete [] texts;
+        if (t_boxs) 
+            delete [] t_boxs;
         std::cerr << "Error allocating rectangles in Menu call\n"
                 << ba.what() << '\n';
         texts = nullptr;
@@ -136,7 +138,7 @@ void Menu::draw()
 
     // draw all t_boxes
 
-    for(size_t i = 0; i < n_texts; i++) {
+    for (size_t i = 0; i < n_texts; i++) {
         glColor3ubv(t_boxs[i].color);
 
         glPushMatrix();
@@ -151,7 +153,7 @@ void Menu::draw()
 
     }
 
-    for(int i = 0; i < n_texts; i++) {
+    for (int i = 0; i < n_texts; i++) {
         texts[i].bot = t_boxs[i].pos[1] - 5;
         if (!centering)
             texts[i].left = t_boxs[i].pos[0]-t_boxs[i].w + 100;
@@ -226,7 +228,7 @@ void Menu::setPos(float x, float y, float z)
 std::string Menu::getInfo()
 {
     std::ostringstream temp;
-    temp <<             std::endl;
+    temp << std::endl;
 
     return temp.str();
 }
@@ -331,7 +333,6 @@ void Timer::unPause()
         delete pause_timer;
         pause_timer = nullptr;
     }
-
 }
 
 #ifdef USE_OPENAL_SOUND
@@ -500,8 +501,7 @@ Sound::~Sound()
 
 }
 
-void Sound::initOpenal
-()
+void Sound::initOpenal()
 {
 	alutInit(0, NULL);
 	if (alGetError() != AL_NO_ERROR) {
@@ -554,7 +554,6 @@ string Sound::buildSongPath(string s)
     path << "./" << song_dir << "/" << s;
 
     return path.str();
-
 }
 
 void Sound::gunPlay(int btype)
@@ -885,7 +884,6 @@ void PowerBar::draw()
         ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, max_energy);
         // cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
     }
-
 }
 
 // modified from hzhang's file by mkausch
@@ -909,7 +907,8 @@ void Entity::setDamage(float x)
     damage = x;
 }
 
-void Entity::hpDamage(Item & a) {
+void Entity::hpDamage(Item & a) 
+{
     hp = hp - a.damage;
 }
 
@@ -979,7 +978,6 @@ Blocky::Blocky(char type)
         //                             (rvel*sin(deg_to_rad * sb_angles[i+4])), 0);
     }
 
-
     initRotationVel();
 }
 
@@ -1011,7 +1009,6 @@ void Blocky::setRandPosition()
     // if this block was generated in front of the player then
     // next time make it randomly behind the player (it'll keep switching)
     pm_dir *= -1;
-
 }
 
 void setRandColor(Item & it)
@@ -1036,7 +1033,6 @@ void setRandColor(Item & it)
 bool Blocky::subScreenIn()
 {
     bool subs_onscreen = false;
-
 
     for (int i = 0; i < SUB_BLOCK_N; i++) {
         subs_onscreen = sub_boxes[i].screenIn();
@@ -1071,7 +1067,6 @@ void Blocky::draw()
                 glVertex2f( w, -h);
         glEnd();
         glPopMatrix();
-
 
     } else {    // draw little blockies
         // cerr << "checking if sub boxes are in the screen...\n";
@@ -1170,10 +1165,10 @@ void Blocky::move()
 bool Blocky::subBoxCollision(Item & itm)
 {
     for (int i = 0; i < SUB_BLOCK_N; i++) {
-        if (sub_boxes[i].collision(itm)){
+        if (sub_boxes[i].collision(itm)) {
             return true;
         }
-        // if (itm.collision(sub_boxes[i])){
+        // if (itm.collision(sub_boxes[i])) {
         //     return true;
         // }
     }
@@ -1183,7 +1178,7 @@ bool Blocky::subBoxCollision(Item & itm)
 bool Blocky::subBoxCollision(Entity & ent)
 {
     for (int i = 0; i < SUB_BLOCK_N; i++) {
-        if (ent.collision(sub_boxes[i])){
+        if (ent.collision(sub_boxes[i])) {
             return true;
         }
     }
@@ -1249,11 +1244,13 @@ void checkSound(void)
 	if (g.state == SPLASH || g.state == MAINMENU || g.state == GAMEOVER) {
 		// init_game_setup will unque intro buffers and queue game songs
 		initial_game_setup = false;	// switch to false if it was prev true
+
 		if (initial_play == false) {
 			// cerr << "calling playStartTrack()" << endl;
 			sounds.playStartTrack();	// queues intro songs and plays
 			initial_play = true;
 		}
+
 		if (sounds.checkIntroBufferDone() && !loop_set) {
 			// sounds.resetBufferDone();
 			// cerr << "sounds.checkintobuffer == true" << endl;
@@ -1270,13 +1267,9 @@ void checkSound(void)
 
 	}
 
-
-
-
 	// *******     SFX NOISES      **********//
 
     if (g.state == GAME) {
-        
         // start playing new sound if leveled up gun
         if ((tos.bullet_type_prime != prev_btype) && (sounds.gun_shooting)) {
             sounds.gunStop();
@@ -1293,7 +1286,6 @@ void checkSound(void)
             sounds.gunStop();
             sounds.gun_shooting = false;
         }
-
 
         if (blocky->explode_done == false && exploded == 0) {
             sounds.exploSFX();
@@ -1327,8 +1319,6 @@ void checkSound(void)
             sounds.gun_shooting = false;
         }
     }
-
-
 }
 #endif
 
@@ -1338,20 +1328,16 @@ void checkLevel()
 {
     static bool lvl_change = false;
 
-
     if (g.substate != DEBUG) {
         int level_duration = 10; // 20 second levels at the moment
         int level_time = g.gameTimer.getTime('n');
         
-
         static int lvl_change_time;
-
 
         // wait until the next clock tick
         if (lvl_change && lvl_change_time != level_time) {
             lvl_change = false;
             cerr << "lvl_change toggled to false\n";
-            
         }
 
         if (g.state == GAME && 
@@ -1532,7 +1518,6 @@ bool Gamerecord::getRecord()
 	}
 
 	return true;
-
 }
 
 // writes top ten records to disk
@@ -1547,7 +1532,7 @@ void Gamerecord::writeRecord()
 	// only write top 10 scores
 	for (int i = 0; i < scores.size(); i++) {
 		fout << scores[i].uname << "\t" << scores[i].score;
-        if (i != (scores.size() - 1)){
+        if (i != (scores.size() - 1)) {
             fout << endl;
         }
 	}
@@ -1575,10 +1560,8 @@ void Gamerecord::submitRecord(int s)
                     (scores[i].uname == user_score->uname))
                 place = i;
         }
-
     }
 
-    
     if (isHighScore()) {
         highscore = s;
     }
@@ -1613,8 +1596,7 @@ bool Gamerecord::isHighScore()
     if (place == -1)
         return false;
     
-    return (place == 0);
-        
+    return (place == 0);     
 }
 
 bool Gamerecord::isTopTen()
@@ -1647,7 +1629,6 @@ void Gamerecord::makeMenu()
 {
     ostringstream temp;
     string name_list[scores.size()];
-
 
     for (int i = 0; i < scores.size(); i++) {
         temp << left << setw(12) << scores[i].uname 
@@ -1797,7 +1778,6 @@ void SoundBar::draw()
     glEnd();
     glPopMatrix();
 
-
     // draw leftb
 
     glColor3ubv(leftb.color);
@@ -1811,7 +1791,6 @@ void SoundBar::draw()
         glVertex2f( leftb.w, -leftb.h);
     glEnd();
     glPopMatrix();
-
 
     // draw rightb
 
@@ -1841,11 +1820,9 @@ void SoundBar::draw()
     glEnd();
     glPopMatrix();
 
-
-        ggprint8b(&texts[0], 0, 0x00ffffff, words[0].c_str());
-        ggprint8b(&texts[1], 0, 0x00ffffff, words[1].c_str());
-        ggprint12(&texts[2], 0, 0x00ffffff, bar_name.c_str());
-
+    ggprint8b(&texts[0], 0, 0x00ffffff, words[0].c_str());
+    ggprint8b(&texts[1], 0, 0x00ffffff, words[1].c_str());
+    ggprint12(&texts[2], 0, 0x00ffffff, bar_name.c_str());
 }
 
 float SoundBar::getSliderPosition()
@@ -1876,8 +1853,6 @@ Box* SoundBar::checkButtons(float x, float y)
             
             box_ptr = &rightb;
         }
-
-    // std::cout << "match for " << box_ptr << " aka " << t_boxs+i << std::endl;
 
     return box_ptr;
 }
@@ -1940,7 +1915,6 @@ Bomb::Bomb()
     w = 6;
     h = 6;
     tex = &g.bomb_texture;
-
 }
 
 Bomb::~Bomb()
@@ -1958,41 +1932,41 @@ void Bomb::draw()
 
         int size = 50;
 
-	glPushMatrix();
-	glBindTexture(GL_TEXTURE_2D, *(bomb.tex));
-  	// glColor3ub(color[0], color[1], color[2]);
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.0f);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-  	glTranslatef(pos[0], pos[1], pos[2]);
-  	glBegin(GL_QUADS);
-			glTexCoord2f(0.0f, 0.0f);
-  			glVertex2f(0,0);
-			glTexCoord2f(0.0f, 1.0f);
-  			glVertex2f(0, size);
-			glTexCoord2f(1.0f, 1.0f);
-  			glVertex2f(size, size);
-			glTexCoord2f(1.0f, 0.0f);
-  			glVertex2f(size, 0);
-  	glEnd();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_ALPHA_TEST);
-  	glPopMatrix();
-
-    /*
-        glColor3ubv(launch_color);
-
-
         glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D, *(bomb.tex));
+        // glColor3ub(color[0], color[1], color[2]);
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.0f);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         glTranslatef(pos[0], pos[1], pos[2]);
         glBegin(GL_QUADS);
-            glVertex2f(-6, -6);
-            glVertex2f(-6,  6);
-            glVertex2f( 6,  6);
-            glVertex2f( 6, -6);
+                glTexCoord2f(0.0f, 0.0f);
+                glVertex2f(0,0);
+                glTexCoord2f(0.0f, 1.0f);
+                glVertex2f(0, size);
+                glTexCoord2f(1.0f, 1.0f);
+                glVertex2f(size, size);
+                glTexCoord2f(1.0f, 0.0f);
+                glVertex2f(size, 0);
         glEnd();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_ALPHA_TEST);
         glPopMatrix();
-    */
+
+        /*
+            glColor3ubv(launch_color);
+
+
+            glPushMatrix();
+            glTranslatef(pos[0], pos[1], pos[2]);
+            glBegin(GL_QUADS);
+                glVertex2f(-6, -6);
+                glVertex2f(-6,  6);
+                glVertex2f( 6,  6);
+                glVertex2f( 6, -6);
+            glEnd();
+            glPopMatrix();
+        */
     } else if (is_exploding) {
         float angle1 = (2 * PI * 1)/100;
         float angle2 = (2 * PI * 2)/100;

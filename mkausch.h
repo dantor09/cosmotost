@@ -19,8 +19,6 @@
 #include <chrono>
 #include <time.h>
 #include <cstdlib>
-
-
 #include "Box.h"
 #include "fonts.h"
 #include "hzhang.h"
@@ -84,9 +82,6 @@ public:
     // other
     void draw();
     Box* checkTBox(int x, int y);
-
-
-
 } ;
 
 class Timer
@@ -222,7 +217,7 @@ public:
 
 class Blocky : public Item
 {
-    private:
+private:
     // void setRandColor();
     void setRandPosition();
     void initRotationVel();
@@ -325,7 +320,6 @@ class Gamerecord
 {
 
 private:
-
     void genFakeNames();
     
 public:
@@ -391,8 +385,6 @@ public:           // ______________________________
     void moveSliderDown();
     void moveSliderUp();
     std::string bar_name;
-
-
 
     SoundBar(float * _val, float _x, float _y, std::string _bn_);
     // ~SoundBar();
