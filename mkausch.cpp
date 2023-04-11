@@ -6,10 +6,85 @@
 ***********************************************************************/
 
 /***************************************************************************
-*       Classes: Menu
+*       Classes: 
+**********************************************************************
+*
+*               Menu
+*
 *       Uses:
 *           Creates a menu object based on num text params, size and position
+*
+*               Timer
+*       Uses:
+*           Creates a timer that will return when its done or you can use it to
+*           just count upwards
+*
+*
+*               Sound
+*       Uses:
+*           encapsulates all sound and soundfx for the game
+*
+*              
+*               PowerBar
+*       Uses:
+*           draws powerbars for health / energy
+*
+*      
+*               Blocky
+*
+*       Uses:
+*           creates either a horizontal or vertical blocky type enemy
+*
+*               Bomb
+*       
+*       Uses:
+*           creates a bomb weapon that explodes and kills all enemeies 
+*               in the affected area
+*
+*               
+*               Gamerecord
+*
+*       Uses:
+*           manages i/o of highscore / record data
+*           creates and draws highscore leaderboard
+*
+*
+*               SoundBar
+*
+*       Uses:
+*           creates clickable soundbars for music and sound effects
+*           
+**********************************************************************
+*       Structs:
+**********************************************************************
+*         
+*               HighScore
+*
+*       Uses:
+*           encapsulates a highscore datum
+*
+*
+*
+**********************************************************************
+*       Functions:
+**********************************************************************
+*
+*           checkLevel()
+*
+*       Uses:
+*           - monitors gametime and changes the game level state as needed
+*           - enables / disables enemy types depending on the game state
+*
+*
+*           setRandColor()
+*       Uses:
+*           - sets a random color to the passed in item
+*
+*           checkSound()
+*       Uses:
+*           - manages sound / sound effects for the game
 ******************************************************************************/
+
 
 //                 		INCLUDES
 
