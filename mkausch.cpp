@@ -853,7 +853,8 @@ void PowerBar::draw()
         glEnd();
         glPopMatrix();
 
-        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", (int)(itm->hp), (int)itm->starting_hp, itm->lives);
+        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", 
+                            (int)(itm->hp), (int)itm->starting_hp, itm->lives);
     } else if (type == COOLDOWN) {
 
         glColor3ubv(total.color);
@@ -951,31 +952,13 @@ Blocky::Blocky(char type)
     int rvel = 8;
     float deg_to_rad = (PI / 180.0f);
     for (int i = 0; i < SUB_BLOCK_N; i++) {
-        // set dim
-        // sub_boxes[i].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
-        // sub_boxes[i+4].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
         sub_boxes[i].setDim(sub_blocky_size, sub_blocky_size);
-        // sub_boxes[i+4].setDim(15, 15);
-        // set color
         sub_boxes[i].setColor(255,0,0);    // make them red for now
-        // sub_boxes[i+4].setColor(255,0,0);    // make them red for now
-
-        // set accel
-        // sub_boxes[i].set_acc(0, -0.25, 0);
-        // sub_boxes[i+4].set_acc(0, -0.25, 0);
         sub_boxes[i].setAcc(0, 0, 0);
-        // sub_boxes[i+4].setAcc(0, 0, 0);
-
-        // set angle first so we can calc vel vectors
         sb_angles[i] = angle;
-        // sb_angles[i+4] = -sb_angles[i];
         angle -= angle_offset;
-
-        // set velocity of x and y components based on above angle
         sub_boxes[i].setVel((rvel*cos(deg_to_rad * sb_angles[i])),
                                     (rvel*sin(deg_to_rad * sb_angles[i])), 0);
-        // sub_boxes[i+4].setVel((rvel*cos(deg_to_rad * sb_angles[i+4])),
-        //                             (rvel*sin(deg_to_rad * sb_angles[i+4])), 0);
     }
 
     initRotationVel();
@@ -1217,7 +1200,7 @@ void Blocky::explode()
     int pixel_offset = 8;   // sets origin of offset to be 8 left and 8 down
     int xcoord = pos[0] - pixel_offset;
     int ycoord = pos[1] - pixel_offset;
-    int rand_offset;    // pixel_offset pixel offset randomly from center of blocky
+    int rand_offset; // pixel_offset pixel offset randomly from center of blocky
 
     for (int i = 0; i < SUB_BLOCK_N; i++) {
         rand_offset = rand() % (pixel_offset * 2);
@@ -1462,8 +1445,10 @@ Gamerecord::Gamerecord()
 	
 	// make new blank record with fake names
 	if (!read_success) {
-		genFakeNames();	// generate and load fake scores into file so that there's always 10
-		writeRecord();	// write file to disk so that it now exists for the future
+        // generate and load fake scores into file so that there's always 10
+		genFakeNames();			
+        // write file to disk so that it now exists for the future
+        writeRecord();	
 	}
 
 	memset(gamer,' ',9); gamer[9] = '\0';
@@ -1495,7 +1480,7 @@ Gamerecord::~Gamerecord()
 bool Gamerecord::getRecord()
 {
 	// ****--------------------------[[ TODO: ]]---------------------------****
-	// replace this line of code with the query to odin to retrieve the high scores
+	// replace this code with the query to odin to retrieve high scores
 	ifstream fin("Highscore.txt");
 
 	if (!fin) {
@@ -1551,7 +1536,8 @@ void Gamerecord::submitRecord(int s)
 	}
 
     if (user_score) {
-        cerr << user_score->uname << "'s score is " << user_score->score << endl;
+        cerr << user_score->uname << "'s score is " 
+                << user_score->score << endl;
 
         cerr << "adding to records..." << endl;
         addRecord(*user_score);
