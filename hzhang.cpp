@@ -14,7 +14,7 @@
 #include <cstring>
 
 using namespace std;
-
+// x,y,z are pos[]. bullet_type is connect with bullet_type_prime
 void makeBullet(float x, float y,float z, int bullet_type) 
 {
 	switch(bullet_type){
@@ -195,7 +195,10 @@ bool Item::screenIn()
     bool a = (pos[0] <= g.xres-w+1);
     bool b = (pos[0] >= w-1);
     bool c = (pos[1] <= g.yres-h+1);
-	bool d = (pos[1] >= ((3*g.yres/40)+h-1));
+	bool d = (pos[1] >= ((3 * g.yres / 40) + h - 1));
+	if(g.donut_active) {
+		a = (pos[0] <= 0.7 * g.xres - w + 1);
+	}
     return a&&b&&c&&d;
 }
 
@@ -269,17 +272,26 @@ Toaster::Toaster()
 {
 	// To set item_type 0
 	// the origen bullet type will be 1
+	// set player score t0 0
 	score = 0;
+	// prime is the corrent weapon, minor is a int store another weapon
+	// 1~4 are bullet,   5~8 are laser
 	bullet_type_prime = 1;
 	bullet_type_minor = 5;
+	// for database
 	item_type = 0;
+	// start pos for toaster
 	setPos(g.xres/4, g.yres/2, 0.0);
 	setColor(188, 226, 232);
 	setDim(30,25);
+	// set hp
 	starting_hp = 80;
 	setHP(starting_hp);
+	// dont have to have this
 	setDamage(100);
+	// how many live toaster have
 	lives = 3;
+	// for live bar
 	plive = new Box[lives];
 	int offset_x = -125;
 	for(int i = 0; i < lives; i++) {
@@ -290,10 +302,14 @@ Toaster::Toaster()
 		plive[i].setPos(info_board_1.pos[0] + offset_x, 40, 0);
 		offset_x += 20;
 	}
+	// turn dim and pos to Vertex
 	setVertex();
+	// energy bar and recover speed
 	energy = 100.0f;
 	energy_recover = 0.1f;
+	// for freeze block
 	disable_keys = false;
+	// laser off 
 	laserOn = false;
 	tex = &g.toaster_silhouette;
 }
@@ -303,6 +319,7 @@ Toaster::~Toaster()
 	delete [] plive;
 }
 
+// laserCollison is a function test are object and toaster at same area on yres
 bool Toaster::laserCollision(Item a)
 {
 	return (pos[1] > a.pos[1]-a.h && pos[1] < a.pos[1]+a.h && pos[0] < a.pos[0] - a.w - w);
@@ -311,10 +328,12 @@ bool Toaster::laserCollision(Entity a)
 {
 	return (pos[1] > a.pos[1]-a.dim[1] && pos[1] < a.pos[1]+a.dim[1] && pos[0] < a.pos[0] - a.dim[0] - w);
 }
+
 void Toaster::setDistance(float val)
 {
 	distance = val;
 }
+
 void Toaster::laserDamage(Item& a)
 {
 	cerr << " a.HP " << a.hp <<endl;
@@ -335,6 +354,7 @@ void Toaster::posReset()
 	score = 0;
 	setHP(starting_hp);
 	bullet_type_prime = 1;
+	bullet_type_minor = 5;
 	energy = 100.0f;
 }
 void Toaster::moveToster()
@@ -357,10 +377,16 @@ void Toaster::moveToster()
 	}
 	else {
 		// to keep toaster in the screen
-		if(pos[0] > g.xres-w+1) pos[0] = g.xres-w+1;
-		if(pos[0] < w-1) pos[0] = w-1;
-		if(pos[1] > g.yres-h+1) pos[1] = g.yres-h+1;
-		if(pos[1] < (3*g.yres/40) + h - 1) pos[1] = (3*g.yres/40) + h-1;
+		if(pos[0] > g.xres-w+1) 
+			pos[0] = g.xres-w+1;
+		if(g.donut_active && pos[0] > (0.7*g.xres)-w+1) 
+			pos[0] = (0.7*g.xres)-w-1;
+		if(pos[0] < w-1) 
+			pos[0] = w-1;
+		if(pos[1] > g.yres-h+1) 
+			pos[1] = g.yres-h+1;
+		if(pos[1] < (3*g.yres/40) + h - 1) 
+			pos[1] = (3*g.yres/40) + h-1;
 	}
 	if (g.keys[XK_space] && bullet_type_prime <= 4) {
 		//shoot bullet if not in CD
@@ -886,8 +912,101 @@ void Donut::draw()
 }
 //=========================================================================
 
+DonutLaser::DonutLaser(){
 
+}
 
+DonutLaser::~DonutLaser(){
+
+}
+
+void DonutLaser::setDonutLaser(float pos, float speed, char hor_or_ver){
+	switch (hor_or_ver)
+	{
+	case 'h':
+		laser_type = 1;
+		coor_one[0] = 0;
+		coor_two[0] = g.xres;
+		coor_one[1] = pos;
+		coor_two[1] = pos;
+		vel_one[0] = 0;
+		vel_two[0] = 0;
+		vel_one[1] = speed;
+		vel_two[1] = speed;
+		break;
+	
+	case 'v':
+		laser_type = 2;
+		coor_one[0] = pos;
+		coor_two[0] = pos;
+		coor_one[1] = g.yres_start;
+		coor_two[1] = g.yres;
+		vel_one[0] = speed;
+		vel_two[0] = speed;
+		vel_one[1] = 0;
+		vel_two[1] = 0;
+		break;
+	}
+}
+void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_ver){
+	switch (hor_or_ver)
+	{
+	case 'h':
+		laser_type = 3;
+		coor_one[0] = pos;
+		coor_two[0] = pos + ((g.yres - g.yres_start) * tan(angle));
+		coor_one[1] = g.yres_start;
+		coor_two[1] = g.yres;
+		vel_one[0] = speed;
+		vel_two[0] = speed;
+		vel_one[1] = 0;
+		vel_two[1] = 0;
+		break;
+	
+	case 'v':
+		laser_type = 4;
+		coor_one[0] = 0;
+		coor_two[0] = g.xres;
+		coor_one[1] = pos;
+		coor_two[1] = pos + (g.xres * tan(angle));
+		vel_one[0] = 0;
+		vel_two[0] = 0;
+		vel_one[1] = speed;
+		vel_two[1] = speed;
+		break;
+	}
+}
+void DonutLaser::setDonutLaser(float xcenter, float ycenter, float xstart , float ystart, float angle, char up_or_down){
+
+}
+
+ChargeBread::ChargeBread()
+{
+	charge_on = true;
+	charge_dim[0] = 0;
+	charge_dim[1] = 0;
+	charge_dim_acc[0] = 0;
+	charge_dim_acc[1] = 0;
+    charge_need = 0;
+    charge_num_now = 0;
+	
+}
+
+ChargeBread::~ChargeBread() 
+{
+}
+
+void ChargeBread::setDimAcc()
+{
+
+}
+
+void ChargeBread::charge() {
+
+}
+void ChargeBread::moveChargeBread() {
+
+}
 
 
 

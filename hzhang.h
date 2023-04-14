@@ -217,7 +217,48 @@ class Donut
 };
 //=======================================================================
 
-class LaserBox: public Item 
+class DonutLaser
+{
+  public:
+    float coor_one[2];
+    float coor_two[2];
+    float vel_one[2];
+    float vel_two[2];
+    float center[2];
+    float angleacc;
+    bool charge_on;
+    int cd_charge;
+    int cd_lag;
+    int laser_type;
+
+    DonutLaser();
+    ~DonutLaser();
+    // horizental or vertical
+    void setDonutLaser(float, float, char);
+    // 
+    void setDonutLaser(float, float, float, char);
+    void setDonutLaser(float, float, float, float, float, char);
+
+
+};
+
+class ChargeBread: public Item
+{
+  public:
+    bool charge_on;
+    float charge_dim[2];
+    float charge_dim_acc[2];
+    int charge_need;
+    int charge_num_now;
+
+    ChargeBread();
+    ~ChargeBread();
+    void setDimAcc();
+    void charge();
+    void moveChargeBread();
+};
+
+class EffectBox: public Item
 {
 
 };

@@ -19,7 +19,7 @@ class Global {
 public:
 
 // vars
-int xres, yres;
+int xres, yres, yres_start;
 Gamestate state;
 Substate substate;
 int n_Bullet;
@@ -27,6 +27,8 @@ int n_Bullet;
 int n_Bread;
 int n_Spear;
 int n_donut_bullet;
+int n_effect;
+int n_laser;
 int BreadCD=30;
 int BulletCD=5;
 char keys[65536];
@@ -117,7 +119,8 @@ inline Bullet bul[MAX_bullet];
 inline Bread bread[MAX_bread];
 inline Spear spear[10];
 inline Bullet do_bul[MAX_bullet];
-inline Item effect_partical[MAX_partical];
+// inline EffectBox effect_partical[MAX_partical];
+// inline DonutLaser d_laser[5];
 inline Donut donut;
 
 // Huaiyu veribles================================
