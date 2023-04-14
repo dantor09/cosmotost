@@ -225,20 +225,28 @@ class DonutLaser
     float vel_one[2];
     float vel_two[2];
     float center[2];
+    float dim;
+    int alpha;
+    int alpha_inc;
     float angleacc;
     bool charge_on;
+    bool lag_on;
     int cd_charge;
     int cd_lag;
+    int cd_stay;
     int laser_type;
+    bool moveble;
+    bool hide;
 
     DonutLaser();
     ~DonutLaser();
     // horizental or vertical
+    void setCD(int, int, bool, bool);
     void setDonutLaser(float, float, char);
     // 
     void setDonutLaser(float, float, float, char);
     void setDonutLaser(float, float, float, float, float, char);
-
+    void moveLaser();
 
 };
 

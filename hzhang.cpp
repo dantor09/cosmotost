@@ -920,6 +920,28 @@ DonutLaser::~DonutLaser(){
 
 }
 
+// charge is cd_charge
+// lag is cd_lag
+// h is the laser hide or not in lag stage
+// s decide if Laser can move or not (moveble)
+void DonutLaser::setCD(int charge, int lag, bool h, bool s){
+	charge_on = true;
+	lag_on = false;
+	cd_charge = charge;
+	cd_lag = lag;
+	cd_stay = 100;
+	if(charge != 0){
+		alpha = 0;
+		alpha_inc = 255 / charge;
+	} else {
+		alpha = 255;
+		alpha_inc = 0;
+	}
+	hide = h;
+	moveble = s;
+}
+
+// horizental or vertical laser,  pos is x0 or y0
 void DonutLaser::setDonutLaser(float pos, float speed, char hor_or_ver){
 	switch (hor_or_ver)
 	{
@@ -948,6 +970,8 @@ void DonutLaser::setDonutLaser(float pos, float speed, char hor_or_ver){
 		break;
 	}
 }
+
+// slop laser, move horizental or vertical
 void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_ver){
 	switch (hor_or_ver)
 	{
@@ -976,8 +1000,44 @@ void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_
 		break;
 	}
 }
+
+// laser move by angle
 void DonutLaser::setDonutLaser(float xcenter, float ycenter, float xstart , float ystart, float angle, char up_or_down){
 
+}
+
+void DonutLaser::moveLaser() {
+	
+	if(charge_on){
+	// charge and change alpha
+		if(cd_charge > 0) {
+			cd_charge--;
+			alpha += alpha_inc;
+		} else {
+			charge_on = false;
+			lag_on = true;
+		}
+	} else if(lag_on) {
+	// when lag give play time to react 
+		if(cd_lag > 0) {
+			cd_lag--;
+		} else {
+			lag_on = false;
+		}
+	} else {
+	// move laser if is moveble 
+	// countdown if not moveble
+		if(moveble) {
+			coor_one[0] += vel_one[0];
+			coor_one[1] += vel_one[1];
+			coor_two[0] += vel_two[0];
+			coor_two[1] += vel_two[1];
+		} else {
+			if(cd_stay > 0) {
+				cd_stay--;
+			}
+		}
+	}
 }
 
 ChargeBread::ChargeBread()
