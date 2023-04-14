@@ -222,8 +222,10 @@ class DonutLaser
   public:
     float coor_one[2];
     float coor_two[2];
+    float vertex[8];
     float vel_one[2];
     float vel_two[2];
+    float slop;
     float center[2];
     float dim;
     int alpha;
@@ -240,6 +242,7 @@ class DonutLaser
 
     DonutLaser();
     ~DonutLaser();
+    void setVertex();
     // horizental or vertical
     void setCD(int, int, bool, bool);
     void setDonutLaser(float, float, char);
@@ -247,7 +250,8 @@ class DonutLaser
     void setDonutLaser(float, float, float, char);
     void setDonutLaser(float, float, float, float, float, char);
     void moveLaser();
-
+    bool collision(Item);
+    void draw();
 };
 
 class ChargeBread: public Item

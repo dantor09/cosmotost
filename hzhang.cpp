@@ -920,6 +920,28 @@ DonutLaser::~DonutLaser(){
 
 }
 
+void DonutLaser::setVertex(){
+	if(laser_type == 2 || laser_type == 3) {
+		vertex[0] = -dim;
+		vertex[1] = 0;
+		vertex[2] =	-(coor_one[0] - coor_two[0]) - dim;
+		vertex[3] = coor_two[1] - coor_one[1];
+		vertex[4] = -(coor_one[0] - coor_two[0]) + dim;
+		vertex[5] = coor_two[1] - coor_one[1];
+		vertex[6] = dim;
+		vertex[7] = 0;
+	}
+	else if(laser_type == 1 || laser_type == 4) {
+		vertex[0] = 0;
+		vertex[1] = dim;
+		vertex[2] =	coor_two[0] - coor_one[0];
+		vertex[3] = -(coor_one[1] - coor_two[1]) + dim;
+		vertex[4] = coor_two[0] - coor_one[0];
+		vertex[5] = -(coor_one[1] - coor_two[1]) - dim;
+		vertex[6] = 0;
+		vertex[7] = -dim;
+	}
+}
 // charge is cd_charge
 // lag is cd_lag
 // h is the laser hide or not in lag stage
@@ -973,6 +995,7 @@ void DonutLaser::setDonutLaser(float pos, float speed, char hor_or_ver){
 
 // slop laser, move horizental or vertical
 void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_ver){
+	slop = 1 / tan((2 * 3.1415926 * angle)/ 360);
 	switch (hor_or_ver)
 	{
 	case 'h':
@@ -1018,7 +1041,8 @@ void DonutLaser::moveLaser() {
 			lag_on = true;
 		}
 	} else if(lag_on) {
-	// when lag give play time to react 
+	// lag give player time to react 
+	// should not have collision test when lag
 		if(cd_lag > 0) {
 			cd_lag--;
 		} else {
@@ -1039,6 +1063,54 @@ void DonutLaser::moveLaser() {
 		}
 	}
 }
+
+bool DonutLaser::collision(Item itm){
+	if(laser_type == 1){
+		// horizental line move up or down
+		return ((coor_one[1] - dim - itm.h - itm.pos[1] > 0)||(itm.pos[1] - coor_one[1] - dim - itm.h > 0));
+	}
+	else if(laser_type == 2){
+		// horizental line move up or down
+		return ((coor_one[0] - dim - itm.w - itm.pos[0] > 0)||(itm.pos[0] - coor_one[0] - dim - itm.w > 0));
+	}
+	else if(laser_type == 3){
+		if(slop > 0) {
+			return !((itm.pos[1] - itm.h) > slop * (itm.pos[0] + itm.w - coor_one[0] + dim)
+					|| (itm.pos[1] + itm.h) < slop * (itm.pos[0] - itm.h - coor_one[1] - dim));
+		} else {
+			return !((itm.pos[0] + itm.w) < slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
+					|| (itm.pos[0] - itm.w) > slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
+		}
+	}
+	else if(laser_type == 4){
+		//slop and move up down
+		if(slop > 0) {
+			return !((itm.pos[0] + itm.w) < slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
+					|| (itm.pos[0] - itm.w) > slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
+		} else {
+			return !((itm.pos[0] + itm.w) > slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
+					|| (itm.pos[0] - itm.w) < slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
+		}
+	} else {
+		return false;
+	}
+}
+
+void DonutLaser::draw()
+{
+	glPushMatrix();
+	glAlphaFunc(GL_GREATER, 0.0f);
+	glColor4ub(20,0,0,alpha);
+	glTranslatef(coor_one[0], coor_one[1], 0);
+	glBegin(GL_QUADS);
+		glVertex2f(vertex[0],vertex[1]);
+		glVertex2f(vertex[2],vertex[3]);
+		glVertex2f(vertex[4],vertex[5]);
+		glVertex2f(vertex[6],vertex[7]);
+	glEnd();
+	glPopMatrix();
+}
+
 
 ChargeBread::ChargeBread()
 {
