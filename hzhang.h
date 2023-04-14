@@ -222,7 +222,7 @@ class DonutLaser
   public:
     float coor_one[2];
     float coor_two[2];
-    float vertex[8];
+    float vertex[10];
     float vel_one[2];
     float vel_two[2];
     float slop;
@@ -242,12 +242,20 @@ class DonutLaser
 
     DonutLaser();
     ~DonutLaser();
+
+    // set the vertexs for draw()
     void setVertex();
-    // horizental or vertical
+    
+    // chargeCD , lagCD, hide, moveble
     void setCD(int, int, bool, bool);
+    
+    // horizental or vertical
+    // coordinate, velocity, 'h' or 'v'
     void setDonutLaser(float, float, char);
-    // 
+    // laser with a slop
+    // coordinate, angle(in degree), velocity, 'h' or 'v'
     void setDonutLaser(float, float, float, char);
+
     void setDonutLaser(float, float, float, float, float, char);
     void moveLaser();
     bool collision(Item);

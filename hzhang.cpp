@@ -922,6 +922,7 @@ DonutLaser::~DonutLaser(){
 
 void DonutLaser::setVertex(){
 	if(laser_type == 2 || laser_type == 3) {
+	// vertical
 		vertex[0] = -dim;
 		vertex[1] = 0;
 		vertex[2] =	-(coor_one[0] - coor_two[0]) - dim;
@@ -930,8 +931,11 @@ void DonutLaser::setVertex(){
 		vertex[5] = coor_two[1] - coor_one[1];
 		vertex[6] = dim;
 		vertex[7] = 0;
+		vertex[8] = -(coor_one[0] - coor_two[0]);
+		vertex[9] = coor_two[1] - coor_one[1];;
 	}
 	else if(laser_type == 1 || laser_type == 4) {
+	// horizental
 		vertex[0] = 0;
 		vertex[1] = dim;
 		vertex[2] =	coor_two[0] - coor_one[0];
@@ -940,6 +944,8 @@ void DonutLaser::setVertex(){
 		vertex[5] = -(coor_one[1] - coor_two[1]) - dim;
 		vertex[6] = 0;
 		vertex[7] = -dim;
+		vertex[8] = coor_two[0] - coor_one[0];
+		vertex[9] = -(coor_one[1] - coor_two[1]);
 	}
 }
 // charge is cd_charge
@@ -1098,17 +1104,52 @@ bool DonutLaser::collision(Item itm){
 
 void DonutLaser::draw()
 {
-	glPushMatrix();
-	glAlphaFunc(GL_GREATER, 0.0f);
-	glColor4ub(20,0,0,alpha);
-	glTranslatef(coor_one[0], coor_one[1], 0);
-	glBegin(GL_QUADS);
-		glVertex2f(vertex[0],vertex[1]);
-		glVertex2f(vertex[2],vertex[3]);
-		glVertex2f(vertex[4],vertex[5]);
-		glVertex2f(vertex[6],vertex[7]);
-	glEnd();
-	glPopMatrix();
+	if(charge_on) {
+		glPushMatrix();
+		glAlphaFunc(GL_GREATER, 0.0f);
+		glColor4ub(20,0,0,alpha);
+		glTranslatef(coor_one[0], coor_one[1], 0);
+		glBegin(GL_QUADS);
+			glVertex2f(vertex[0],vertex[1]);
+			glVertex2f(vertex[2],vertex[3]);
+			glVertex2f(vertex[4],vertex[5]);
+			glVertex2f(vertex[6],vertex[7]);
+		glEnd();
+		glPopMatrix();
+	} else if (lag_on) {
+		if(!hide) {
+			glPushMatrix();
+			glAlphaFunc(GL_GREATER, 0.0f);
+			glColor4ub(20,0,0,alpha);
+			glTranslatef(coor_one[0], coor_one[1], 0);
+			glBegin(GL_QUADS);
+				glVertex2f(vertex[0],vertex[1]);
+				glVertex2f(vertex[2],vertex[3]);
+				glVertex2f(vertex[4],vertex[5]);
+				glVertex2f(vertex[6],vertex[7]);
+			glEnd();
+			glPopMatrix();
+		}
+	} else {
+		glPushMatrix();
+		glAlphaFunc(GL_GREATER, 0.0f);
+		glColor4ub(20,0,0,alpha);
+		glTranslatef(coor_one[0], coor_one[1], 0);
+		glBegin(GL_QUADS);
+			glVertex2f(vertex[0],vertex[1]);
+			glVertex2f(vertex[2],vertex[3]);
+			glVertex2f(vertex[8],vertex[9]);
+			glVertex2f(0,0);
+		glEnd();
+		glBegin(GL_QUADS);
+			glVertex2f(0,0);
+			glVertex2f(vertex[8],vertex[9]);
+			glVertex2f(vertex[4],vertex[5]);
+			glVertex2f(vertex[6],vertex[7]);
+		glEnd();		
+		glPopMatrix();
+
+	}
 }
 
 
