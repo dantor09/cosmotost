@@ -1436,6 +1436,7 @@ void checkLevel()
                     blocky->gamereset();
                     g.entity_active = true;
                     g.mike_active = true;
+                    g.dtorres_active = true;
                     // change blocky vars
                     break;
                 case LEVEL6:
@@ -1447,6 +1448,7 @@ void checkLevel()
                     // change blocky to horizontal
                     blocky->gamereset();
                     g.mike_active = true;
+                    g.dtorres_active = true;
                     break;
                 case LEVEL7:
                     // Level8: HBlocky(2) + Bread(2) + Entities(2)
@@ -1455,6 +1457,7 @@ void checkLevel()
                     // change HBlocky vars
                     blocky->gamereset();
                     g.mike_active = true;
+                    g.dtorres_active = true;
                     break;
                 case LEVEL8:
                     // Level9: Boss
