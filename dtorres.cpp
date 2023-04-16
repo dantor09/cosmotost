@@ -39,9 +39,10 @@ FreezeBlock::FreezeBlock()
 	ptimer = NULL;
 	min_block_dimension = 1;
 	max_block_dimension = 30;
-	max_velocity = 2.5;
-	minimum_velocity = 0.05;
+	max_velocity = 1.25;
+	minimum_velocity = 0.005;
 	melting_rate = 0.1;
+	texture = &g.icecube_texture;
 }
 
 FreezeBlock::~FreezeBlock()
@@ -50,16 +51,28 @@ FreezeBlock::~FreezeBlock()
 
 void FreezeBlock::draw()
 {
-	glColor3ubv(color);
 	glPushMatrix();
-	glTranslatef(pos[0], pos[1], pos[2]);
+	glBindTexture(GL_TEXTURE_2D, *(pfreeze_block->texture));
+  	// glColor3ub(color[0], color[1], color[2]);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+  	glTranslatef(pos[0], pos[1], pos[2]);
+
 	glBegin(GL_QUADS);
-	glVertex2f(-w, -h);
-	glVertex2f(-w,  h);
-	glVertex2f( w,  h);
-	glVertex2f( w, -h);
-	glEnd();
-	glPopMatrix();
+			glTexCoord2f(0.0f, 0.0f);
+  			glVertex2f(-0, -0);
+			glTexCoord2f(0.0f, 1.0f);
+  			glVertex2f(-0, w);
+			glTexCoord2f(1.0f, 1.0f);
+  			glVertex2f(h, w);
+			glTexCoord2f(1.0f, 0.0f);
+  			glVertex2f(h, 0);
+  	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_ALPHA_TEST);
+  	glPopMatrix();
+	//usleep(100000);
 }
 
 void FreezeBlock::melt(float melting_rate)

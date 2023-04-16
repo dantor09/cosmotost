@@ -50,6 +50,7 @@ GLuint bkg_texture;
 GLuint toaster_texture;
 GLuint toaster_silhouette;
 GLuint bomb_texture;
+GLuint icecube_texture;
 
 
 Global();
@@ -101,6 +102,8 @@ inline Bomb bomb;
 inline Image background("textures/background.jpg");
 inline Image toaster_img("textures/toaster.png");
 inline Image bomb_img("textures/firebullet.png");
+inline Image icecube_img("textures/iceSmallSpike.png");
+
 
 
 #ifdef USE_OPENAL_SOUND
