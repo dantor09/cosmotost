@@ -963,7 +963,17 @@ void init_opengl(void)
 								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
 	free(silhouetteData);
 
+	w = icecube_img.width;
+    h = icecube_img.height;
+	glGenTextures(1, &g.icecube_texture);
+	glBindTexture(GL_TEXTURE_2D, g.icecube_texture);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
+	    GL_RGB, GL_UNSIGNED_BYTE, icecube_img.data);
 
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 
 	cerr << "finished initializing opengl" << endl;
 }
@@ -1521,7 +1531,7 @@ void render()
 				try {
 					pfreeze_block = new FreezeBlock;
 					pfreeze_block->setColor(162, 210, 223); // Sky blue
-					pfreeze_block->setMinMaxBlockDimensions(40, 80); // set min and max freeze block dimensions
+					pfreeze_block->setMinMaxBlockDimensions(150, 175); // set min and max freeze block dimensions
 					pfreeze_block->w = pfreeze_block->randomDimension(); // random width
 					pfreeze_block->h = pfreeze_block->randomDimension(); // random height
 

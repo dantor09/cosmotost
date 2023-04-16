@@ -24,6 +24,7 @@ class FreezeBlock : public Item
         float minimum_velocity;
         float melting_rate;
         Timer * ptimer;
+        GLuint * texture;
 
         FreezeBlock();
         ~FreezeBlock();
