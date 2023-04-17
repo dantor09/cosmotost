@@ -19,11 +19,13 @@
 #include <chrono>
 #include <time.h>
 #include <cstdlib>
+#include <list>
 #include "Box.h"
 #include "fonts.h"
 #include "hzhang.h"
 
 #define SUB_BLOCK_N 150
+#define NUM_BLOCKY_BULLETS 5
 
 using namespace std;
 
@@ -226,12 +228,18 @@ private:
     int sb_angles[SUB_BLOCK_N];
     int rot_speed[SUB_BLOCK_N];
     int rot_angle[SUB_BLOCK_N];
+    list<Bullet> bullets;
+    double delay_t;
 
-    public:
+
+public:
     bool was_hit; // set when the block strikes the toaster that fall
     int point;
+    int bul_point;
+    bool gun_active;
+
     // int lives;
-    Blocky(char type);
+    Blocky(char type, bool gun_active);
     ~Blocky();
     void reset(); // tests to see if the player killed poor forky
     void draw();    // overload function to include redraw
@@ -245,12 +253,20 @@ private:
     void gamereset();
     bool subBoxCollision(Item & itm);
     bool subBoxCollision(Entity & ent);
-
+    void setBulletVectors();
+    bool allBulletsGone();
+    Timer * delay;
+    int getPlayerRelativeQuad(float xvec, float yvec);
+    bool did_shoot;
+    bool removeBullet(list<Bullet>::iterator bul);
+    list<Bullet>::iterator bulCollision(Item & a);
+    list<Bullet>::iterator getEndBullets();
+    bool delayBlocky();
 
     // inherited void Item::draw()
     // inherited bool Item::ScreenOut()
     // inherited bool Item::HP_check()
-    // inherited bool Item::Collison()
+
 
 };
 
@@ -396,3 +412,4 @@ public:           // ______________________________
     void setHighlight(Box * b);
     // void move(float y
 };
+

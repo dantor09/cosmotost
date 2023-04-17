@@ -1168,8 +1168,22 @@ void physics()
 				} else if (tos.hpCheck()) {
 					g.state = GAMEOVER;
 				}
+			}
 
+			list<Bullet>::iterator bulptr = blocky->getEndBullets();
+			if(blocky->gun_active) {
+				bulptr = blocky->bulCollision(tos);
+				if (bulptr != blocky->getEndBullets()) {
+					tos.hpDamage(*bulptr);
+					blocky->removeBullet(bulptr);
 
+					if (tos.hpCheck() && (tos.lives - 1 > 0)) {
+						tos.lives--;
+						tos.setHP(80);
+					} else if (tos.hpCheck()) {
+						g.state = GAMEOVER;
+					}
+				}
 			}
 
 
@@ -1183,6 +1197,14 @@ void physics()
 							blocky->reset();
 						}
 						bul[j] = bul[--g.n_Bullet];
+				}
+
+				if (blocky->gun_active) {
+					bulptr = blocky->bulCollision(bul[j]);
+					if (bulptr != blocky->getEndBullets()) {
+						tos.score += blocky->bul_point;
+						blocky->removeBullet(bulptr);
+					}
 				}
 			}
 

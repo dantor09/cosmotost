@@ -81,10 +81,14 @@ inline std::string p_text[] = {"Back to Game",
                                 "Quit Game"};
 inline Menu pause_menu(4, 225, 225, g.xres/2.0f, g.yres/2.0f, p_text);
 
-inline Blocky hblocky('h');
-inline Blocky vblocky('v');
+inline Blocky hblocky('h', false);      // gun off horizontal
+inline Blocky vblocky('v', false);      // gun off vertical
+inline Blocky h2blocky('h', true);      // gun on horizontal
+inline Blocky v2blocky('v', true);      // gun on vertical
 inline PowerBar vblocky_health(vblocky, HEALTH, g.xres/2.0f, 15.0f);
+inline PowerBar v2blocky_health(v2blocky, HEALTH, g.xres/2.0f, 15.0f);
 inline PowerBar hblocky_health(hblocky, HEALTH, g.xres/2.0f, 15.0f);
+inline PowerBar h2blocky_health(h2blocky, HEALTH, g.xres/2.0f, 15.0f);
 inline Blocky * blocky;
 inline PowerBar * blocky_health;
 inline SoundBar vol_slider(&g.m_vol, g.xres*(1.0f/3.0f), g.yres/2.0f, "Music Volume");
