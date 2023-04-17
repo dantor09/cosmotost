@@ -6,10 +6,85 @@
 ***********************************************************************/
 
 /***************************************************************************
-*       Classes: Menu
+*       Classes: 
+**********************************************************************
+*
+*               Menu
+*
 *       Uses:
 *           Creates a menu object based on num text params, size and position
+*
+*               Timer
+*       Uses:
+*           Creates a timer that will return when its done or you can use it to
+*           just count upwards
+*
+*
+*               Sound
+*       Uses:
+*           encapsulates all sound and soundfx for the game
+*
+*              
+*               PowerBar
+*       Uses:
+*           draws powerbars for health / energy
+*
+*      
+*               Blocky
+*
+*       Uses:
+*           creates either a horizontal or vertical blocky type enemy
+*
+*               Bomb
+*       
+*       Uses:
+*           creates a bomb weapon that explodes and kills all enemeies 
+*               in the affected area
+*
+*               
+*               Gamerecord
+*
+*       Uses:
+*           manages i/o of highscore / record data
+*           creates and draws highscore leaderboard
+*
+*
+*               SoundBar
+*
+*       Uses:
+*           creates clickable soundbars for music and sound effects
+*           
+**********************************************************************
+*       Structs:
+**********************************************************************
+*         
+*               HighScore
+*
+*       Uses:
+*           encapsulates a highscore datum
+*
+*
+*
+**********************************************************************
+*       Functions:
+**********************************************************************
+*
+*           checkLevel()
+*
+*       Uses:
+*           - monitors gametime and changes the game level state as needed
+*           - enables / disables enemy types depending on the game state
+*
+*
+*           setRandColor()
+*       Uses:
+*           - sets a random color to the passed in item
+*
+*           checkSound()
+*       Uses:
+*           - manages sound / sound effects for the game
 ******************************************************************************/
+
 
 //                 		INCLUDES
 
@@ -67,7 +142,7 @@ Menu::Menu(unsigned int _n_texts,
         float spacing = (2*h)/(n_texts+1);
         std::cout << "spacing: " << spacing << std::endl;
 
-        for(int i = 0; i < n_texts; i++) {
+        for (int i = 0; i < n_texts; i++) {
             t_boxs[i].w = mainbox.w - PADDING;
             t_boxs[i].h = (spacing/2.0) - BSIZE;
             t_boxs[i].pos[0] = mainbox.pos[0];
@@ -81,8 +156,10 @@ Menu::Menu(unsigned int _n_texts,
 
     } catch (std::bad_alloc& ba) {
         // if one was allocated and not the other than delete the one that
-        if (texts) delete [] texts;
-        if (t_boxs) delete [] t_boxs;
+        if (texts) 
+            delete [] texts;
+        if (t_boxs) 
+            delete [] t_boxs;
         std::cerr << "Error allocating rectangles in Menu call\n"
                 << ba.what() << '\n';
         texts = nullptr;
@@ -136,7 +213,7 @@ void Menu::draw()
 
     // draw all t_boxes
 
-    for(size_t i = 0; i < n_texts; i++) {
+    for (size_t i = 0; i < n_texts; i++) {
         glColor3ubv(t_boxs[i].color);
 
         glPushMatrix();
@@ -151,7 +228,7 @@ void Menu::draw()
 
     }
 
-    for(int i = 0; i < n_texts; i++) {
+    for (int i = 0; i < n_texts; i++) {
         texts[i].bot = t_boxs[i].pos[1] - 5;
         if (!centering)
             texts[i].left = t_boxs[i].pos[0]-t_boxs[i].w + 100;
@@ -226,7 +303,7 @@ void Menu::setPos(float x, float y, float z)
 std::string Menu::getInfo()
 {
     std::ostringstream temp;
-    temp <<             std::endl;
+    temp << std::endl;
 
     return temp.str();
 }
@@ -331,7 +408,6 @@ void Timer::unPause()
         delete pause_timer;
         pause_timer = nullptr;
     }
-
 }
 
 #ifdef USE_OPENAL_SOUND
@@ -349,22 +425,38 @@ Sound::Sound()
 
 
     // make individual buffers of all sounds
-    alBuffers[0] = alutCreateBufferFromFile(buildSongPath(sound_names[0]).c_str());
-    alBuffers[1] = alutCreateBufferFromFile(buildSongPath(sound_names[1]).c_str());
-    alBuffers[2] = alutCreateBufferFromFile(buildSongPath(sound_names[2]).c_str());
-    alBuffers[3] = alutCreateBufferFromFile(buildSongPath(sound_names[3]).c_str());
-    alBuffers[4] = alutCreateBufferFromFile(buildSongPath(sound_names[4]).c_str());
-    alBuffers[5] = alutCreateBufferFromFile(buildSongPath(sound_names[5]).c_str());
-    alBuffers[6] = alutCreateBufferFromFile(buildSongPath(sound_names[6]).c_str());
-    alBuffers[7] = alutCreateBufferFromFile(buildSongPath(sound_names[7]).c_str());
-    alBuffers[8] = alutCreateBufferFromFile(buildSongPath(sound_names[8]).c_str());
-    alBuffers[9] = alutCreateBufferFromFile(buildSongPath(sound_names[9]).c_str());
-    alBuffers[10] = alutCreateBufferFromFile(buildSongPath(sound_names[10]).c_str());
-    alBuffers[11] = alutCreateBufferFromFile(buildSongPath(sound_names[11]).c_str());
-    alBuffers[12] = alutCreateBufferFromFile(buildSongPath(sound_names[12]).c_str());
-    alBuffers[13] = alutCreateBufferFromFile(buildSongPath(sound_names[13]).c_str());
-    alBuffers[14] = alutCreateBufferFromFile(buildSongPath(sound_names[14]).c_str());
-    alBuffers[15] = alutCreateBufferFromFile(buildSongPath(sound_names[15]).c_str());
+    alBuffers[0] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[0]).c_str());
+    alBuffers[1] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[1]).c_str());
+    alBuffers[2] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[2]).c_str());
+    alBuffers[3] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[3]).c_str());
+    alBuffers[4] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[4]).c_str());
+    alBuffers[5] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[5]).c_str());
+    alBuffers[6] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[6]).c_str());
+    alBuffers[7] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[7]).c_str());
+    alBuffers[8] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[8]).c_str());
+    alBuffers[9] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[9]).c_str());
+    alBuffers[10] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[10]).c_str());
+    alBuffers[11] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[11]).c_str());
+    alBuffers[12] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[12]).c_str());
+    alBuffers[13] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[13]).c_str());
+    alBuffers[14] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[14]).c_str());
+    alBuffers[15] = 
+        alutCreateBufferFromFile(buildSongPath(sound_names[15]).c_str());
 
 
     // songBuffers[0] = alBuffers[3];
@@ -484,8 +576,7 @@ Sound::~Sound()
 
 }
 
-void Sound::initOpenal
-()
+void Sound::initOpenal()
 {
 	alutInit(0, NULL);
 	if (alGetError() != AL_NO_ERROR) {
@@ -538,7 +629,6 @@ string Sound::buildSongPath(string s)
     path << "./" << song_dir << "/" << s;
 
     return path.str();
-
 }
 
 void Sound::gunPlay(int btype)
@@ -618,7 +708,6 @@ bool Sound::checkIntroBufferDone()
 {
     resetBufferDone();
     alGetSourcei(menuQueueSource, AL_BUFFERS_PROCESSED, &buffersDone);
-    // cerr << "checking intro buffer done, buffers is: " << buffersDone << endl;
     return (buffersDone == 1);
 }
 
@@ -833,13 +922,14 @@ void PowerBar::draw()
         glBegin(GL_QUADS);
             glVertex2f(0, -health.h);
             glVertex2f(0,  health.h);
-            glVertex2f( (((float)(itm->hp))/(float)(itm->starting_hp))*2.0f*health.w,  health.h);
-            glVertex2f( (((float)(itm->hp))/(float)(itm->starting_hp))*2.0f*health.w, -health.h);
+            glVertex2f((((float)(itm->hp))/(float)(itm->starting_hp))*2.0f*health.w,  health.h);
+            glVertex2f((((float)(itm->hp))/(float)(itm->starting_hp))*2.0f*health.w, -health.h);
             
         glEnd();
         glPopMatrix();
 
-        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", (int)(itm->hp), (int)itm->starting_hp, itm->lives);
+        ggprint8b(&text, 0, 0x00000000, "%i/%i  Lives: %i", 
+                            (int)(itm->hp), (int)itm->starting_hp, itm->lives);
     } else if (type == COOLDOWN) {
 
         glColor3ubv(total.color);
@@ -870,7 +960,6 @@ void PowerBar::draw()
         ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, max_energy);
         // cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
     }
-
 }
 
 // modified from hzhang's file by mkausch
@@ -894,7 +983,8 @@ void Entity::setDamage(float x)
     damage = x;
 }
 
-void Entity::hpDamage(Item & a) {
+void Entity::hpDamage(Item & a) 
+{
     hp = hp - a.damage;
 }
 
@@ -908,7 +998,7 @@ void Item::hpDamage(Entity & e)
     hp = hp - e.damage;
 }
 
-Blocky::Blocky(char type)
+Blocky::Blocky(char type, bool g_act)
 {
     srand(time(NULL));
     float sub_blocky_size = sqrt((25.0*100.0)/SUB_BLOCK_N);
@@ -922,12 +1012,17 @@ Blocky::Blocky(char type)
     setAcc(0.0f,-0.25f,0.0f);
     setVel(0.0f, -4.0f, 0.0f);
     setDamage(20);
-    starting_hp = 10;
+    starting_hp = 25;
     setHP(starting_hp);
     point = starting_hp;
+    bul_point = 5;
     was_hit = false;
     lives = 2;
     explode_done = true;
+    did_shoot = false;
+    delay = nullptr;
+    delay_t = 0.5;
+    gun_active = g_act;
 
     // sub box assignment
     // assignes itself and it's mirror image (i+4 in this case)
@@ -937,40 +1032,24 @@ Blocky::Blocky(char type)
     int rvel = 8;
     float deg_to_rad = (PI / 180.0f);
     for (int i = 0; i < SUB_BLOCK_N; i++) {
-        // set dim
-        // sub_boxes[i].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
-        // sub_boxes[i+4].setDim(w/2.0f, h/4.0f);   // should create a box 1/8 size
         sub_boxes[i].setDim(sub_blocky_size, sub_blocky_size);
-        // sub_boxes[i+4].setDim(15, 15);
-        // set color
         sub_boxes[i].setColor(255,0,0);    // make them red for now
-        // sub_boxes[i+4].setColor(255,0,0);    // make them red for now
-
-        // set accel
-        // sub_boxes[i].set_acc(0, -0.25, 0);
-        // sub_boxes[i+4].set_acc(0, -0.25, 0);
         sub_boxes[i].setAcc(0, 0, 0);
-        // sub_boxes[i+4].setAcc(0, 0, 0);
-
-        // set angle first so we can calc vel vectors
         sb_angles[i] = angle;
-        // sb_angles[i+4] = -sb_angles[i];
         angle -= angle_offset;
-
-        // set velocity of x and y components based on above angle
         sub_boxes[i].setVel((rvel*cos(deg_to_rad * sb_angles[i])),
                                     (rvel*sin(deg_to_rad * sb_angles[i])), 0);
-        // sub_boxes[i+4].setVel((rvel*cos(deg_to_rad * sb_angles[i+4])),
-        //                             (rvel*sin(deg_to_rad * sb_angles[i+4])), 0);
     }
-
 
     initRotationVel();
 }
 
 Blocky::~Blocky()
 {
-
+    if (delay) {
+        delete delay;
+        delay = nullptr;
+    }
 }
 
 void Blocky::initRotationVel()
@@ -996,17 +1075,10 @@ void Blocky::setRandPosition()
     // if this block was generated in front of the player then
     // next time make it randomly behind the player (it'll keep switching)
     pm_dir *= -1;
-
 }
 
 void setRandColor(Item & it)
 {
-    // colors based on color scheme defined at the bottom
-    // int color[5][3] = {{61, 89, 114},
-    //                     {47, 61, 63},
-    //                     {68, 84, 89},
-    //                     {40, 63, 61},
-    //                     {24, 38, 36}};
 
     static int color[5][3] =   {{242, 4, 159},
                         {4, 177, 216},
@@ -1022,7 +1094,6 @@ bool Blocky::subScreenIn()
 {
     bool subs_onscreen = false;
 
-
     for (int i = 0; i < SUB_BLOCK_N; i++) {
         subs_onscreen = sub_boxes[i].screenIn();
         if (subs_onscreen)
@@ -1032,6 +1103,33 @@ bool Blocky::subScreenIn()
     return subs_onscreen;
 }
 
+bool Blocky::delayBlocky()
+{
+    if (delay == nullptr) {
+        delay = new Timer(delay_t);
+        cerr << "delaying Blocky" << endl;
+    } else if (delay->isDone()) {
+        reset();
+        delete delay;
+        delay = nullptr;
+        cerr << "blocky delay done" << endl;
+        return true;
+    } else if (!delay->isDone() && !delay->isPaused()) {
+        if (g.state == PAUSE) {
+            delay->pause();
+            cerr << "pausing blocky delay timer" << endl;
+        }
+    } else if (!delay->isDone() && delay->isPaused()) {
+        if (g.state == GAME) {
+            delay->unPause();
+            cerr << "unpausing blocky delay timer" << endl;
+
+        }
+    }
+    return false;
+}
+
+
 void Blocky::draw()
 {
     // static int rot_angle = 0;
@@ -1039,10 +1137,53 @@ void Blocky::draw()
 
         // reset blocky if he's out of screen
 
+    if (gun_active && isAlive() && did_shoot) {
+        // draw blocky's bullets if they've been shot
+
+        for (auto bul = bullets.begin(); bul != bullets.end(); bul++) {
+            if (g.state != PAUSE)
+                // cerr << "drawing bullet " << &(*bul) << endl;
+            
+            glPushMatrix();
+            glColor3ub(bul->color[0], bul->color[1], bul->color[2]);
+            if (g.state != PAUSE)
+                // cerr << "\tcurrent pos[x]: " << bul->pos[0] << endl;
+                // cerr << "\tcurrent pos[y]: " << bul->pos[1] << endl;
+            glTranslatef(bul->pos[0], bul->pos[1], bul->pos[2]);
+            glBegin(GL_QUADS);
+                    glVertex2f(-bul->w, -bul->h);
+                    glVertex2f(-bul->w,  bul->h);
+                    glVertex2f( bul->w,  bul->h);
+                    glVertex2f( bul->w, -bul->h);
+            glEnd();
+            glPopMatrix();
+        }
+    }
+    
     // draw big blocky
     if (isAlive() && explode_done) {
         if (screenOut()) {
-            reset();
+            if (delay == nullptr) {
+                delay = new Timer(delay_t);
+                cerr << "delaying Blocky" << endl;
+
+            } else if (delay->isDone()) {
+                reset();
+                delete delay;
+                delay = nullptr;
+                cerr << "blocky delay done" << endl;
+            } else if (!delay->isDone() && !delay->isPaused()) {
+                if (g.state == PAUSE) {
+                    delay->pause();
+                    cerr << "pausing blocky delay timer" << endl;
+                }
+            } else if (!delay->isDone() && delay->isPaused()) {
+                if (g.state == GAME) {
+                    delay->unPause();
+                    cerr << "unpausing blocky delay timer" << endl;
+
+                }
+            }
         }
 
         setRandColor(*this);
@@ -1056,7 +1197,6 @@ void Blocky::draw()
                 glVertex2f( w, -h);
         glEnd();
         glPopMatrix();
-
 
     } else {    // draw little blockies
         // cerr << "checking if sub boxes are in the screen...\n";
@@ -1087,6 +1227,7 @@ void Blocky::draw()
             // reset_sub_boxes();
         }
     }
+
 }
 
 // void Blocky::reset_sub_boxes()
@@ -1110,6 +1251,7 @@ void Blocky::reset()
 
     setVel(0.0f, -4.0f, 0.0f);
     setRandPosition();    // put at a new random position
+    did_shoot = false;
     // was_hit = false;
     // cerr << "was_hit set to " << boolalpha << was_hit << endl;
 }
@@ -1130,6 +1272,12 @@ bool Blocky::didDamage()
 
 void Blocky::move()
 {
+    // static float shoot_point = g.yres*(4/5.0f);
+    static float shoot_point = 100.0;   // distance away he shoots
+    float distance = abs(pos[1] - tos.pos[1]);
+
+
+
         // move main blocky
     if (isAlive() && explode_done) {
         pos[0] += vel[0];
@@ -1150,25 +1298,82 @@ void Blocky::move()
             }
         }
     }
+
+    // shoot at player once blocky gets past 1/2 screen distance
+    // cerr << "pos[1]: " << pos[1] << "\tshoot_point: " << shoot_point << endl;
+    // if (did_shoot == false && pos[1] <= shoot_point) {
+    
+    if (gun_active) {
+        if (did_shoot == false && distance <= shoot_point) {
+
+            did_shoot = true;
+            // cerr << "blocky below shootpoint" << endl;
+            setBulletVectors();
+        }
+
+        if (did_shoot) {
+
+            for (auto it = bullets.begin(); it != bullets.end(); it++) {
+                it->moveBullet();
+            }
+        }
+    }
+
 }
 
+list<Bullet>::iterator Blocky::bulCollision(Item & a) 
+{
+    for (auto it = bullets.begin(); it != bullets.end(); it++) {
+        if (it->collision(a)) {
+            return it;
+        }
+    }
+
+    return bullets.end();
+
+    /*******************************
+     * original collision function
+    ********************************/
+    // // for (x0,y0,x1,y1)and(x2,y2,x3,y3) squares
+    // // if collison -->(x0-x3)*(x1-x2)<0
+    // // same for y
+    // bool x = (((pos[0]+w)-(a.pos[0]-a.w))*((pos[0]-w)-(a.pos[0]+a.w))) < 0;
+  	// bool y = (((pos[1]+h)-(a.pos[1]-a.h))*((pos[1]-h)-(a.pos[1]+a.h))) < 0;
+  	// return x&&y;
+}
+
+// returns iterator to end of bullet list
+list<Bullet>::iterator Blocky::getEndBullets()
+{
+    return bullets.end();
+}
+
+// removes a bullet from the linked list
+bool Blocky::removeBullet(list<Bullet>::iterator bul)
+{
+    bullets.erase(bul);
+    return true;
+}
+
+// tests for collisions with Items on blocky's subBoxes
 bool Blocky::subBoxCollision(Item & itm)
 {
     for (int i = 0; i < SUB_BLOCK_N; i++) {
-        if (sub_boxes[i].collision(itm)){
+        if (sub_boxes[i].collision(itm)) {
             return true;
         }
-        // if (itm.collision(sub_boxes[i])){
+        // if (itm.collision(sub_boxes[i])) {
         //     return true;
         // }
     }
     return false;
 }
 
+// tests for collisions with Entitys on blocky's subBoxes
 bool Blocky::subBoxCollision(Entity & ent)
 {
     for (int i = 0; i < SUB_BLOCK_N; i++) {
-        if (ent.collision(sub_boxes[i])){
+        if (ent.collision(sub_boxes[i])) {
             return true;
         }
     }
@@ -1207,7 +1412,7 @@ void Blocky::explode()
     int pixel_offset = 8;   // sets origin of offset to be 8 left and 8 down
     int xcoord = pos[0] - pixel_offset;
     int ycoord = pos[1] - pixel_offset;
-    int rand_offset;    // pixel_offset pixel offset randomly from center of blocky
+    int rand_offset; // pixel_offset pixel offset randomly from center of blocky
 
     for (int i = 0; i < SUB_BLOCK_N; i++) {
         rand_offset = rand() % (pixel_offset * 2);
@@ -1216,6 +1421,86 @@ void Blocky::explode()
                                     (rvel*sin(deg_to_rad * sb_angles[i])), 0);
     }
 }
+
+// gets relative quadrant on cartesian plane of toaster with
+// respect to blocky
+int Blocky::getPlayerRelativeQuad(float xvec, float yvec)
+{
+    // cerr << "xvec: " << xvec << " yvec: " << yvec << endl;
+    if (xvec >= 0 && yvec >= 0) {
+        // cerr << "quad 1" << endl;
+        return 1;
+    }
+    else if (xvec >=0 && yvec < 0) {
+        // cerr << "quad 4" << endl;
+        return 4;
+    }
+    else if (xvec < 0 && yvec >= 0) {
+        // cerr << "quad 2" << endl;
+        return 2;
+    }
+    else if (xvec < 0 && yvec < 0) {
+        // cerr << "quad 3" << endl;
+        return 3;
+    }
+    else
+        throw "bad quad calc";
+}
+
+// initializes bullets 
+void Blocky::setBulletVectors()
+{
+    bullets.clear();
+    cerr << "setBulletVectors called" << endl;
+    float bullet_vel = 15.0;
+    // float spread = ((5*PI)/(180));
+    float spread = 4;
+    float vec[2] = {(tos.pos[0] - pos[0]), (tos.pos[1] - pos[1])};
+    int quad = getPlayerRelativeQuad(vec[0], vec[1]);
+    int quad_coeffs[2] = {(quad==1 || quad ==4)?1:-1, (quad<3?1:-1)};
+    float hyp = sqrt((pow(vec[0],2) + pow(vec[1],2)));
+    // float angle_rad = abs(atan(vec[1]/vec[0]));
+    float angle_rad = atan(vec[1]/vec[0]);
+    float angle_deg = abs(angle_rad*(180/PI));
+    // cerr << "quadrand: " << quad << endl;
+    // cerr << "quad_coeff[x]: " << quad_coeffs[0] << 
+    //         " quad_coeff[y]: " << quad_coeffs[1] << endl;
+    // cerr << "angle_deg: " << angle_rad*(180/PI) << endl;
+
+    // start from first angle and center bullet spread around angle_rad
+    float start_angle = angle_deg - (NUM_BLOCKY_BULLETS/2.0f)*spread;    
+
+    // make one incomplete bullet and modify this one when adding the
+    // different angles to the linked list
+    Bullet temp;
+    temp.setPos(pos[0], pos[1], pos[2]);
+    temp.setDim(4.0, 4.0);
+    temp.setColor(255, 0,0);
+    temp.setDamage(1);
+    temp.setHP(1);
+    temp.setAcc(0.0, 0.0, 0.0);
+    temp.item_type = 41; // just using this bullet type for now
+
+    for (int i = 0; i < NUM_BLOCKY_BULLETS; i++) {
+        // cerr << "start_angle: " << start_angle << endl;
+        temp.setVel(bullet_vel*cos(start_angle*(PI/180))*quad_coeffs[0], 
+                    bullet_vel*sin(start_angle*(PI/180))*quad_coeffs[1], 
+                                                            0.0);
+        // setRandColor(temp);
+        bullets.push_front(temp);
+        start_angle += spread;
+    }
+
+    // cerr << "pushed the following bullets to blocky's list:\n";
+    // for (auto it = bullets.begin(); it != bullets.end(); it++) {
+    //     cerr << "addr: " << &(*it) << endl;
+    //     cerr << "vel[x]: " << it->vel[0] << " vel[y]: " << it->vel[1] << endl;
+    //     cerr << it->getInfo() << endl;
+
+    // }
+
+}
+
 
 #ifdef USE_OPENAL_SOUND
 
@@ -1234,11 +1519,13 @@ void checkSound(void)
 	if (g.state == SPLASH || g.state == MAINMENU || g.state == GAMEOVER) {
 		// init_game_setup will unque intro buffers and queue game songs
 		initial_game_setup = false;	// switch to false if it was prev true
+
 		if (initial_play == false) {
 			// cerr << "calling playStartTrack()" << endl;
 			sounds.playStartTrack();	// queues intro songs and plays
 			initial_play = true;
 		}
+
 		if (sounds.checkIntroBufferDone() && !loop_set) {
 			// sounds.resetBufferDone();
 			// cerr << "sounds.checkintobuffer == true" << endl;
@@ -1255,13 +1542,9 @@ void checkSound(void)
 
 	}
 
-
-
-
 	// *******     SFX NOISES      **********//
 
     if (g.state == GAME) {
-        
         // start playing new sound if leveled up gun
         if ((tos.bullet_type_prime != prev_btype) && (sounds.gun_shooting)) {
             sounds.gunStop();
@@ -1278,7 +1561,6 @@ void checkSound(void)
             sounds.gunStop();
             sounds.gun_shooting = false;
         }
-
 
         if (blocky->explode_done == false && exploded == 0) {
             sounds.exploSFX();
@@ -1312,8 +1594,6 @@ void checkSound(void)
             sounds.gun_shooting = false;
         }
     }
-
-
 }
 #endif
 
@@ -1323,20 +1603,16 @@ void checkLevel()
 {
     static bool lvl_change = false;
 
-
     if (g.substate != DEBUG) {
-        int level_duration = 10; // 20 second levels at the moment
+        int level_duration = 20; // 20 second levels at the moment
         int level_time = g.gameTimer.getTime('n');
         
-
         static int lvl_change_time;
-
 
         // wait until the next clock tick
         if (lvl_change && lvl_change_time != level_time) {
             lvl_change = false;
             cerr << "lvl_change toggled to false\n";
-            
         }
 
         if (g.state == GAME && 
@@ -1370,32 +1646,48 @@ void checkLevel()
                     g.level = LEVEL5;
                     g.entity_active = true;
                     g.mike_active = true;
+                    blocky = &vblocky;
+                    blocky->gamereset();
+                    blocky_health = &vblocky_health;
                     break;
                 case LEVEL5:
                     // Level6: Blocky(2) + Bread(2) + Entities(2)
                     g.level = LEVEL6;
+
+                    blocky = &v2blocky;
                     blocky->gamereset();
-                    g.entity_active = true;
+                    blocky_health = &v2blocky_health;
                     g.mike_active = true;
+
+                    g.entity_active = true;
+                    g.dtorres_active = true;
                     // change blocky vars
                     break;
                 case LEVEL6:
                     // Level7: HBlocky(1) + Bread(2) + Entities(2)
                     g.level = LEVEL7;
-                    g.entity_active = true;
+
+                    // change blocky to horizontal
                     blocky = &hblocky;
                     blocky_health = &hblocky_health;
-                    // change blocky to horizontal
                     blocky->gamereset();
                     g.mike_active = true;
+
+                    g.entity_active = true;
+                    g.dtorres_active = true;
                     break;
                 case LEVEL7:
                     // Level8: HBlocky(2) + Bread(2) + Entities(2)
                     g.level = LEVEL8;
-                    g.entity_active = true;
+
                     // change HBlocky vars
+                    blocky = &h2blocky;
+                    blocky_health = &h2blocky_health;
                     blocky->gamereset();
                     g.mike_active = true;
+
+                    g.entity_active = true;
+                    g.dtorres_active = true;
                     break;
                 case LEVEL8:
                     // Level9: Boss
@@ -1461,8 +1753,10 @@ Gamerecord::Gamerecord()
 	
 	// make new blank record with fake names
 	if (!read_success) {
-		genFakeNames();	// generate and load fake scores into file so that there's always 10
-		writeRecord();	// write file to disk so that it now exists for the future
+        // generate and load fake scores into file so that there's always 10
+		genFakeNames();			
+        // write file to disk so that it now exists for the future
+        writeRecord();	
 	}
 
 	memset(gamer,' ',9); gamer[9] = '\0';
@@ -1494,7 +1788,7 @@ Gamerecord::~Gamerecord()
 bool Gamerecord::getRecord()
 {
 	// ****--------------------------[[ TODO: ]]---------------------------****
-	// replace this line of code with the query to odin to retrieve the high scores
+	// replace this code with the query to odin to retrieve high scores
 	ifstream fin("Highscore.txt");
 
 	if (!fin) {
@@ -1517,7 +1811,6 @@ bool Gamerecord::getRecord()
 	}
 
 	return true;
-
 }
 
 // writes top ten records to disk
@@ -1532,7 +1825,7 @@ void Gamerecord::writeRecord()
 	// only write top 10 scores
 	for (int i = 0; i < scores.size(); i++) {
 		fout << scores[i].uname << "\t" << scores[i].score;
-        if (i != (scores.size() - 1)){
+        if (i != (scores.size() - 1)) {
             fout << endl;
         }
 	}
@@ -1551,7 +1844,8 @@ void Gamerecord::submitRecord(int s)
 	}
 
     if (user_score) {
-        cerr << user_score->uname << "'s score is " << user_score->score << endl;
+        cerr << user_score->uname << "'s score is " 
+                << user_score->score << endl;
 
         cerr << "adding to records..." << endl;
         addRecord(*user_score);
@@ -1560,10 +1854,8 @@ void Gamerecord::submitRecord(int s)
                     (scores[i].uname == user_score->uname))
                 place = i;
         }
-
     }
 
-    
     if (isHighScore()) {
         highscore = s;
     }
@@ -1598,8 +1890,7 @@ bool Gamerecord::isHighScore()
     if (place == -1)
         return false;
     
-    return (place == 0);
-        
+    return (place == 0);     
 }
 
 bool Gamerecord::isTopTen()
@@ -1632,7 +1923,6 @@ void Gamerecord::makeMenu()
 {
     ostringstream temp;
     string name_list[scores.size()];
-
 
     for (int i = 0; i < scores.size(); i++) {
         temp << left << setw(12) << scores[i].uname 
@@ -1782,7 +2072,6 @@ void SoundBar::draw()
     glEnd();
     glPopMatrix();
 
-
     // draw leftb
 
     glColor3ubv(leftb.color);
@@ -1796,7 +2085,6 @@ void SoundBar::draw()
         glVertex2f( leftb.w, -leftb.h);
     glEnd();
     glPopMatrix();
-
 
     // draw rightb
 
@@ -1826,11 +2114,9 @@ void SoundBar::draw()
     glEnd();
     glPopMatrix();
 
-
-        ggprint8b(&texts[0], 0, 0x00ffffff, words[0].c_str());
-        ggprint8b(&texts[1], 0, 0x00ffffff, words[1].c_str());
-        ggprint12(&texts[2], 0, 0x00ffffff, bar_name.c_str());
-
+    ggprint8b(&texts[0], 0, 0x00ffffff, words[0].c_str());
+    ggprint8b(&texts[1], 0, 0x00ffffff, words[1].c_str());
+    ggprint12(&texts[2], 0, 0x00ffffff, bar_name.c_str());
 }
 
 float SoundBar::getSliderPosition()
@@ -1861,8 +2147,6 @@ Box* SoundBar::checkButtons(float x, float y)
             
             box_ptr = &rightb;
         }
-
-    // std::cout << "match for " << box_ptr << " aka " << t_boxs+i << std::endl;
 
     return box_ptr;
 }
@@ -1925,7 +2209,6 @@ Bomb::Bomb()
     w = 6;
     h = 6;
     tex = &g.bomb_texture;
-
 }
 
 Bomb::~Bomb()
@@ -1943,41 +2226,41 @@ void Bomb::draw()
 
         int size = 50;
 
-	glPushMatrix();
-	glBindTexture(GL_TEXTURE_2D, *(bomb.tex));
-  	// glColor3ub(color[0], color[1], color[2]);
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.0f);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-  	glTranslatef(pos[0], pos[1], pos[2]);
-  	glBegin(GL_QUADS);
-			glTexCoord2f(0.0f, 0.0f);
-  			glVertex2f(0,0);
-			glTexCoord2f(0.0f, 1.0f);
-  			glVertex2f(0, size);
-			glTexCoord2f(1.0f, 1.0f);
-  			glVertex2f(size, size);
-			glTexCoord2f(1.0f, 0.0f);
-  			glVertex2f(size, 0);
-  	glEnd();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_ALPHA_TEST);
-  	glPopMatrix();
-
-    /*
-        glColor3ubv(launch_color);
-
-
         glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D, *(bomb.tex));
+        // glColor3ub(color[0], color[1], color[2]);
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.0f);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         glTranslatef(pos[0], pos[1], pos[2]);
         glBegin(GL_QUADS);
-            glVertex2f(-6, -6);
-            glVertex2f(-6,  6);
-            glVertex2f( 6,  6);
-            glVertex2f( 6, -6);
+                glTexCoord2f(0.0f, 0.0f);
+                glVertex2f(0,0);
+                glTexCoord2f(0.0f, 1.0f);
+                glVertex2f(0, size);
+                glTexCoord2f(1.0f, 1.0f);
+                glVertex2f(size, size);
+                glTexCoord2f(1.0f, 0.0f);
+                glVertex2f(size, 0);
         glEnd();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_ALPHA_TEST);
         glPopMatrix();
-    */
+
+        /*
+            glColor3ubv(launch_color);
+
+
+            glPushMatrix();
+            glTranslatef(pos[0], pos[1], pos[2]);
+            glBegin(GL_QUADS);
+                glVertex2f(-6, -6);
+                glVertex2f(-6,  6);
+                glVertex2f( 6,  6);
+                glVertex2f( 6, -6);
+            glEnd();
+            glPopMatrix();
+        */
     } else if (is_exploding) {
         float angle1 = (2 * PI * 1)/100;
         float angle2 = (2 * PI * 2)/100;

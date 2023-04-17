@@ -7,6 +7,7 @@ Global::Global()
 {
 	xres = 1280;
 	yres = 720;
+	yres_start = 3*yres/40;
 	show_help_menu = false;
 	levelchance = 15;
 	sfx_vol = 1.0f;

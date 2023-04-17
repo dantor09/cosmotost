@@ -45,7 +45,7 @@ class Item: public Box
 {
   public:
     GLuint * tex;
-    Box * plives;
+    Box * plive;
     //item_type show what kind of item it is
     int item_type;
     bool trace = false;
@@ -186,16 +186,20 @@ class Donut
     float out_radius;
     float inner_radius;
     float deamage_radius;
+    float shelled_radius;
     float hp;
     int cd;     // CD between Donets weapon
     int count_down; // CD count_down
     bool up_down; // 0 up, 1 down
     bool weapon; // if weapon is true then donut attecking
                  // if weapon is false then countdown cd 
+    bool shelled_on;
     int weapon_id;
     bool shelled; // have shelled or not
     float pos[3];
     float vel[3];
+    int numlazerx;
+    int numlazery;
     int donut_count;
     int weapon_outer_count;
     int weapon_inner_count;
@@ -213,3 +217,68 @@ class Donut
 };
 //=======================================================================
 
+class DonutLaser
+{
+  public:
+    float coor_one[2];
+    float coor_two[2];
+    float vertex[10];
+    float vel_one[2];
+    float vel_two[2];
+    float slop;
+    float center[2];
+    float dim;
+    int alpha;
+    int alpha_inc;
+    float angleacc;
+    bool charge_on;
+    bool lag_on;
+    int cd_charge;
+    int cd_lag;
+    int cd_stay;
+    int laser_type;
+    bool moveble;
+    bool hide;
+
+    DonutLaser();
+    ~DonutLaser();
+
+    // set the vertexs for draw()
+    void setVertex();
+    
+    // chargeCD , lagCD, hide, moveble
+    void setCD(int, int, bool, bool);
+    
+    // horizental or vertical
+    // coordinate, velocity, 'h' or 'v'
+    void setDonutLaser(float, float, char);
+    // laser with a slop
+    // coordinate, angle(in degree), velocity, 'h' or 'v'
+    void setDonutLaser(float, float, float, char);
+
+    void setDonutLaser(float, float, float, float, float, char);
+    void moveLaser();
+    bool collision(Item);
+    void draw();
+};
+
+class ChargeBread: public Item
+{
+  public:
+    bool charge_on;
+    float charge_dim[2];
+    float charge_dim_acc[2];
+    int charge_need;
+    int charge_num_now;
+
+    ChargeBread();
+    ~ChargeBread();
+    void setDimAcc();
+    void charge();
+    void moveChargeBread();
+};
+
+class EffectBox: public Item
+{
+
+};

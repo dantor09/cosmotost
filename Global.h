@@ -19,7 +19,7 @@ class Global {
 public:
 
 // vars
-int xres, yres;
+int xres, yres, yres_start;
 Gamestate state;
 Substate substate;
 int n_Bullet;
@@ -27,6 +27,8 @@ int n_Bullet;
 int n_Bread;
 int n_Spear;
 int n_donut_bullet;
+int n_effect;
+int n_laser;
 int BreadCD=30;
 int BulletCD=5;
 char keys[65536];
@@ -48,6 +50,7 @@ GLuint bkg_texture;
 GLuint toaster_texture;
 GLuint toaster_silhouette;
 GLuint bomb_texture;
+GLuint icecube_texture;
 
 
 Global();
@@ -78,10 +81,14 @@ inline std::string p_text[] = {"Back to Game",
                                 "Quit Game"};
 inline Menu pause_menu(4, 225, 225, g.xres/2.0f, g.yres/2.0f, p_text);
 
-inline Blocky hblocky('h');
-inline Blocky vblocky('v');
+inline Blocky hblocky('h', false);      // gun off horizontal
+inline Blocky vblocky('v', false);      // gun off vertical
+inline Blocky h2blocky('h', true);      // gun on horizontal
+inline Blocky v2blocky('v', true);      // gun on vertical
 inline PowerBar vblocky_health(vblocky, HEALTH, g.xres/2.0f, 15.0f);
+inline PowerBar v2blocky_health(v2blocky, HEALTH, g.xres/2.0f, 15.0f);
 inline PowerBar hblocky_health(hblocky, HEALTH, g.xres/2.0f, 15.0f);
+inline PowerBar h2blocky_health(h2blocky, HEALTH, g.xres/2.0f, 15.0f);
 inline Blocky * blocky;
 inline PowerBar * blocky_health;
 inline SoundBar vol_slider(&g.m_vol, g.xres*(1.0f/3.0f), g.yres/2.0f, "Music Volume");
@@ -99,6 +106,8 @@ inline Bomb bomb;
 inline Image background("textures/background.jpg");
 inline Image toaster_img("textures/toaster.png");
 inline Image bomb_img("textures/firebullet.png");
+inline Image icecube_img("textures/iceSmallSpike.png");
+
 
 
 #ifdef USE_OPENAL_SOUND
@@ -117,7 +126,8 @@ inline Bullet bul[MAX_bullet];
 inline Bread bread[MAX_bread];
 inline Spear spear[10];
 inline Bullet do_bul[MAX_bullet];
-inline Item effect_partical[MAX_partical];
+// inline EffectBox effect_partical[MAX_partical];
+// inline DonutLaser d_laser[5];
 inline Donut donut;
 
 // Huaiyu veribles================================
