@@ -998,7 +998,7 @@ void Item::hpDamage(Entity & e)
     hp = hp - e.damage;
 }
 
-Blocky::Blocky(char type)
+Blocky::Blocky(char type, bool g_act)
 {
     srand(time(NULL));
     float sub_blocky_size = sqrt((25.0*100.0)/SUB_BLOCK_N);
@@ -1012,12 +1012,17 @@ Blocky::Blocky(char type)
     setAcc(0.0f,-0.25f,0.0f);
     setVel(0.0f, -4.0f, 0.0f);
     setDamage(20);
-    starting_hp = 10;
+    starting_hp = 25;
     setHP(starting_hp);
     point = starting_hp;
+    bul_point = 5;
     was_hit = false;
     lives = 2;
     explode_done = true;
+    did_shoot = false;
+    delay = nullptr;
+    delay_t = 0.5;
+    gun_active = g_act;
 
     // sub box assignment
     // assignes itself and it's mirror image (i+4 in this case)
@@ -1041,7 +1046,10 @@ Blocky::Blocky(char type)
 
 Blocky::~Blocky()
 {
-
+    if (delay) {
+        delete delay;
+        delay = nullptr;
+    }
 }
 
 void Blocky::initRotationVel()
@@ -1071,12 +1079,6 @@ void Blocky::setRandPosition()
 
 void setRandColor(Item & it)
 {
-    // colors based on color scheme defined at the bottom
-    // int color[5][3] = {{61, 89, 114},
-    //                     {47, 61, 63},
-    //                     {68, 84, 89},
-    //                     {40, 63, 61},
-    //                     {24, 38, 36}};
 
     static int color[5][3] =   {{242, 4, 159},
                         {4, 177, 216},
@@ -1101,6 +1103,33 @@ bool Blocky::subScreenIn()
     return subs_onscreen;
 }
 
+bool Blocky::delayBlocky()
+{
+    if (delay == nullptr) {
+        delay = new Timer(delay_t);
+        cerr << "delaying Blocky" << endl;
+    } else if (delay->isDone()) {
+        reset();
+        delete delay;
+        delay = nullptr;
+        cerr << "blocky delay done" << endl;
+        return true;
+    } else if (!delay->isDone() && !delay->isPaused()) {
+        if (g.state == PAUSE) {
+            delay->pause();
+            cerr << "pausing blocky delay timer" << endl;
+        }
+    } else if (!delay->isDone() && delay->isPaused()) {
+        if (g.state == GAME) {
+            delay->unPause();
+            cerr << "unpausing blocky delay timer" << endl;
+
+        }
+    }
+    return false;
+}
+
+
 void Blocky::draw()
 {
     // static int rot_angle = 0;
@@ -1108,10 +1137,53 @@ void Blocky::draw()
 
         // reset blocky if he's out of screen
 
+    if (gun_active && isAlive() && did_shoot) {
+        // draw blocky's bullets if they've been shot
+
+        for (auto bul = bullets.begin(); bul != bullets.end(); bul++) {
+            if (g.state != PAUSE)
+                // cerr << "drawing bullet " << &(*bul) << endl;
+            
+            glPushMatrix();
+            glColor3ub(bul->color[0], bul->color[1], bul->color[2]);
+            if (g.state != PAUSE)
+                // cerr << "\tcurrent pos[x]: " << bul->pos[0] << endl;
+                // cerr << "\tcurrent pos[y]: " << bul->pos[1] << endl;
+            glTranslatef(bul->pos[0], bul->pos[1], bul->pos[2]);
+            glBegin(GL_QUADS);
+                    glVertex2f(-bul->w, -bul->h);
+                    glVertex2f(-bul->w,  bul->h);
+                    glVertex2f( bul->w,  bul->h);
+                    glVertex2f( bul->w, -bul->h);
+            glEnd();
+            glPopMatrix();
+        }
+    }
+    
     // draw big blocky
     if (isAlive() && explode_done) {
         if (screenOut()) {
-            reset();
+            if (delay == nullptr) {
+                delay = new Timer(delay_t);
+                cerr << "delaying Blocky" << endl;
+
+            } else if (delay->isDone()) {
+                reset();
+                delete delay;
+                delay = nullptr;
+                cerr << "blocky delay done" << endl;
+            } else if (!delay->isDone() && !delay->isPaused()) {
+                if (g.state == PAUSE) {
+                    delay->pause();
+                    cerr << "pausing blocky delay timer" << endl;
+                }
+            } else if (!delay->isDone() && delay->isPaused()) {
+                if (g.state == GAME) {
+                    delay->unPause();
+                    cerr << "unpausing blocky delay timer" << endl;
+
+                }
+            }
         }
 
         setRandColor(*this);
@@ -1155,6 +1227,7 @@ void Blocky::draw()
             // reset_sub_boxes();
         }
     }
+
 }
 
 // void Blocky::reset_sub_boxes()
@@ -1178,6 +1251,7 @@ void Blocky::reset()
 
     setVel(0.0f, -4.0f, 0.0f);
     setRandPosition();    // put at a new random position
+    did_shoot = false;
     // was_hit = false;
     // cerr << "was_hit set to " << boolalpha << was_hit << endl;
 }
@@ -1198,6 +1272,12 @@ bool Blocky::didDamage()
 
 void Blocky::move()
 {
+    // static float shoot_point = g.yres*(4/5.0f);
+    static float shoot_point = 100.0;   // distance away he shoots
+    float distance = abs(pos[1] - tos.pos[1]);
+
+
+
         // move main blocky
     if (isAlive() && explode_done) {
         pos[0] += vel[0];
@@ -1218,8 +1298,64 @@ void Blocky::move()
             }
         }
     }
+
+    // shoot at player once blocky gets past 1/2 screen distance
+    // cerr << "pos[1]: " << pos[1] << "\tshoot_point: " << shoot_point << endl;
+    // if (did_shoot == false && pos[1] <= shoot_point) {
+    
+    if (gun_active) {
+        if (did_shoot == false && distance <= shoot_point) {
+
+            did_shoot = true;
+            // cerr << "blocky below shootpoint" << endl;
+            setBulletVectors();
+        }
+
+        if (did_shoot) {
+
+            for (auto it = bullets.begin(); it != bullets.end(); it++) {
+                it->moveBullet();
+            }
+        }
+    }
+
 }
 
+list<Bullet>::iterator Blocky::bulCollision(Item & a) 
+{
+    for (auto it = bullets.begin(); it != bullets.end(); it++) {
+        if (it->collision(a)) {
+            return it;
+        }
+    }
+
+    return bullets.end();
+
+    /*******************************
+     * original collision function
+    ********************************/
+    // // for (x0,y0,x1,y1)and(x2,y2,x3,y3) squares
+    // // if collison -->(x0-x3)*(x1-x2)<0
+    // // same for y
+    // bool x = (((pos[0]+w)-(a.pos[0]-a.w))*((pos[0]-w)-(a.pos[0]+a.w))) < 0;
+  	// bool y = (((pos[1]+h)-(a.pos[1]-a.h))*((pos[1]-h)-(a.pos[1]+a.h))) < 0;
+  	// return x&&y;
+}
+
+// returns iterator to end of bullet list
+list<Bullet>::iterator Blocky::getEndBullets()
+{
+    return bullets.end();
+}
+
+// removes a bullet from the linked list
+bool Blocky::removeBullet(list<Bullet>::iterator bul)
+{
+    bullets.erase(bul);
+    return true;
+}
+
+// tests for collisions with Items on blocky's subBoxes
 bool Blocky::subBoxCollision(Item & itm)
 {
     for (int i = 0; i < SUB_BLOCK_N; i++) {
@@ -1233,6 +1369,7 @@ bool Blocky::subBoxCollision(Item & itm)
     return false;
 }
 
+// tests for collisions with Entitys on blocky's subBoxes
 bool Blocky::subBoxCollision(Entity & ent)
 {
     for (int i = 0; i < SUB_BLOCK_N; i++) {
@@ -1284,6 +1421,86 @@ void Blocky::explode()
                                     (rvel*sin(deg_to_rad * sb_angles[i])), 0);
     }
 }
+
+// gets relative quadrant on cartesian plane of toaster with
+// respect to blocky
+int Blocky::getPlayerRelativeQuad(float xvec, float yvec)
+{
+    // cerr << "xvec: " << xvec << " yvec: " << yvec << endl;
+    if (xvec >= 0 && yvec >= 0) {
+        // cerr << "quad 1" << endl;
+        return 1;
+    }
+    else if (xvec >=0 && yvec < 0) {
+        // cerr << "quad 4" << endl;
+        return 4;
+    }
+    else if (xvec < 0 && yvec >= 0) {
+        // cerr << "quad 2" << endl;
+        return 2;
+    }
+    else if (xvec < 0 && yvec < 0) {
+        // cerr << "quad 3" << endl;
+        return 3;
+    }
+    else
+        throw "bad quad calc";
+}
+
+// initializes bullets 
+void Blocky::setBulletVectors()
+{
+    bullets.clear();
+    cerr << "setBulletVectors called" << endl;
+    float bullet_vel = 15.0;
+    // float spread = ((5*PI)/(180));
+    float spread = 4;
+    float vec[2] = {(tos.pos[0] - pos[0]), (tos.pos[1] - pos[1])};
+    int quad = getPlayerRelativeQuad(vec[0], vec[1]);
+    int quad_coeffs[2] = {(quad==1 || quad ==4)?1:-1, (quad<3?1:-1)};
+    float hyp = sqrt((pow(vec[0],2) + pow(vec[1],2)));
+    // float angle_rad = abs(atan(vec[1]/vec[0]));
+    float angle_rad = atan(vec[1]/vec[0]);
+    float angle_deg = abs(angle_rad*(180/PI));
+    // cerr << "quadrand: " << quad << endl;
+    // cerr << "quad_coeff[x]: " << quad_coeffs[0] << 
+    //         " quad_coeff[y]: " << quad_coeffs[1] << endl;
+    // cerr << "angle_deg: " << angle_rad*(180/PI) << endl;
+
+    // start from first angle and center bullet spread around angle_rad
+    float start_angle = angle_deg - (NUM_BLOCKY_BULLETS/2.0f)*spread;    
+
+    // make one incomplete bullet and modify this one when adding the
+    // different angles to the linked list
+    Bullet temp;
+    temp.setPos(pos[0], pos[1], pos[2]);
+    temp.setDim(4.0, 4.0);
+    temp.setColor(255, 0,0);
+    temp.setDamage(1);
+    temp.setHP(1);
+    temp.setAcc(0.0, 0.0, 0.0);
+    temp.item_type = 41; // just using this bullet type for now
+
+    for (int i = 0; i < NUM_BLOCKY_BULLETS; i++) {
+        // cerr << "start_angle: " << start_angle << endl;
+        temp.setVel(bullet_vel*cos(start_angle*(PI/180))*quad_coeffs[0], 
+                    bullet_vel*sin(start_angle*(PI/180))*quad_coeffs[1], 
+                                                            0.0);
+        // setRandColor(temp);
+        bullets.push_front(temp);
+        start_angle += spread;
+    }
+
+    // cerr << "pushed the following bullets to blocky's list:\n";
+    // for (auto it = bullets.begin(); it != bullets.end(); it++) {
+    //     cerr << "addr: " << &(*it) << endl;
+    //     cerr << "vel[x]: " << it->vel[0] << " vel[y]: " << it->vel[1] << endl;
+    //     cerr << it->getInfo() << endl;
+
+    // }
+
+}
+
 
 #ifdef USE_OPENAL_SOUND
 
@@ -1387,7 +1604,7 @@ void checkLevel()
     static bool lvl_change = false;
 
     if (g.substate != DEBUG) {
-        int level_duration = 10; // 20 second levels at the moment
+        int level_duration = 20; // 20 second levels at the moment
         int level_time = g.gameTimer.getTime('n');
         
         static int lvl_change_time;
@@ -1429,32 +1646,48 @@ void checkLevel()
                     g.level = LEVEL5;
                     g.entity_active = true;
                     g.mike_active = true;
+                    blocky = &vblocky;
+                    blocky->gamereset();
+                    blocky_health = &vblocky_health;
                     break;
                 case LEVEL5:
                     // Level6: Blocky(2) + Bread(2) + Entities(2)
                     g.level = LEVEL6;
+
+                    blocky = &v2blocky;
                     blocky->gamereset();
-                    g.entity_active = true;
+                    blocky_health = &v2blocky_health;
                     g.mike_active = true;
+
+                    g.entity_active = true;
+                    g.dtorres_active = true;
                     // change blocky vars
                     break;
                 case LEVEL6:
                     // Level7: HBlocky(1) + Bread(2) + Entities(2)
                     g.level = LEVEL7;
-                    g.entity_active = true;
+
+                    // change blocky to horizontal
                     blocky = &hblocky;
                     blocky_health = &hblocky_health;
-                    // change blocky to horizontal
                     blocky->gamereset();
                     g.mike_active = true;
+
+                    g.entity_active = true;
+                    g.dtorres_active = true;
                     break;
                 case LEVEL7:
                     // Level8: HBlocky(2) + Bread(2) + Entities(2)
                     g.level = LEVEL8;
-                    g.entity_active = true;
+
                     // change HBlocky vars
+                    blocky = &h2blocky;
+                    blocky_health = &h2blocky_health;
                     blocky->gamereset();
                     g.mike_active = true;
+
+                    g.entity_active = true;
+                    g.dtorres_active = true;
                     break;
                 case LEVEL8:
                     // Level9: Boss
