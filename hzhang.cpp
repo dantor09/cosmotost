@@ -912,47 +912,81 @@ void Donut::draw()
 }
 //=========================================================================
 
-DonutLaser::DonutLaser(){
-
+DonutLaser::DonutLaser()
+{
 }
 
-DonutLaser::~DonutLaser(){
-
+DonutLaser::~DonutLaser()
+{
 }
 
-void DonutLaser::setVertex(){
+void DonutLaser::setVertex()
+{
 	if(laser_type == 2 || laser_type == 3) {
 	// vertical
-		vertex[0] = -dim;
-		vertex[1] = 0;
-		vertex[2] =	-(coor_one[0] - coor_two[0]) - dim;
-		vertex[3] = coor_two[1] - coor_one[1];
-		vertex[4] = -(coor_one[0] - coor_two[0]) + dim;
-		vertex[5] = coor_two[1] - coor_one[1];
-		vertex[6] = dim;
-		vertex[7] = 0;
-		vertex[8] = -(coor_one[0] - coor_two[0]);
-		vertex[9] = coor_two[1] - coor_one[1];;
+		vertex[0] = coor_one[0] - dim;
+		vertex[1] = coor_one[1];
+		vertex[2] =	coor_two[0] - dim;
+		vertex[3] = coor_two[1];
+		vertex[4] = coor_two[0] + dim;
+		vertex[5] = coor_two[1];
+		vertex[6] = coor_one[0] + dim;
+		vertex[7] = coor_one[1];
 	}
 	else if(laser_type == 1 || laser_type == 4) {
 	// horizental
-		vertex[0] = 0;
-		vertex[1] = dim;
-		vertex[2] =	coor_two[0] - coor_one[0];
-		vertex[3] = -(coor_one[1] - coor_two[1]) + dim;
-		vertex[4] = coor_two[0] - coor_one[0];
-		vertex[5] = -(coor_one[1] - coor_two[1]) - dim;
-		vertex[6] = 0;
-		vertex[7] = -dim;
-		vertex[8] = coor_two[0] - coor_one[0];
-		vertex[9] = -(coor_one[1] - coor_two[1]);
+		vertex[0] = coor_one[0];
+		vertex[1] = coor_one[1] + dim;
+		vertex[2] =	coor_two[0];
+		vertex[3] = -coor_two[1] + dim;
+		vertex[4] = coor_two[0];
+		vertex[5] = coor_two[1] - dim;
+		vertex[6] = coor_one[0];;
+		vertex[7] = coor_one[1] -dim;
+	} 
+	else if (laser_type == 5) {
+		float s = sin(slop);
+		float c = cos(slop);
+		vertex[0] = coor_one[0] + dim * s;
+		vertex[1] = coor_one[1] -dim * c;
+		if (slop > limit_angle[0] && slop < limit_angle[1]) {
+			// up
+			vertex[2] = coor_two[0] + dim;
+			vertex[3] = coor_two[1];
+			vertex[4] = coor_two[0] - dim;
+			vertex[5] = coor_two[1];
+		}
+		else if (slop > limit_angle[1] && slop < limit_angle[2]) {
+			// left
+			vertex[2] = coor_two[0];
+			vertex[3] = coor_two[1] + dim;
+			vertex[4] = coor_two[0];
+			vertex[5] = coor_two[1] - dim;
+		}
+		else if (slop > limit_angle[2] && slop < limit_angle[3]) {
+			// down
+			vertex[2] = coor_two[0] - dim;
+			vertex[3] = coor_two[1];
+			vertex[4] = coor_two[0] + dim;
+			vertex[5] = coor_two[1];
+		}
+		else {
+			// right
+			vertex[2] = coor_two[0];
+			vertex[3] = coor_two[1] - dim;
+			vertex[4] = coor_two[0];
+			vertex[5] = coor_two[1] + dim;
+		}
+		vertex[6] = coor_one[0] - dim * s;
+		vertex[7] = coor_one[1] + dim * c;
 	}
 }
 // charge is cd_charge
 // lag is cd_lag
 // h is the laser hide or not in lag stage
 // s decide if Laser can move or not (moveble)
-void DonutLaser::setCD(int charge, int lag, bool h, bool s){
+void DonutLaser::setCD(int charge, int lag, bool h, bool s)
+{
 	charge_on = true;
 	lag_on = false;
 	cd_charge = charge;
@@ -970,7 +1004,8 @@ void DonutLaser::setCD(int charge, int lag, bool h, bool s){
 }
 
 // horizental or vertical laser,  pos is x0 or y0
-void DonutLaser::setDonutLaser(float pos, float speed, char hor_or_ver){
+void DonutLaser::setDonutLaser(float pos, float speed, char hor_or_ver)
+{
 	switch (hor_or_ver)
 	{
 	case 'h':
@@ -1001,13 +1036,14 @@ void DonutLaser::setDonutLaser(float pos, float speed, char hor_or_ver){
 
 // slop laser, move horizental or vertical
 void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_ver){
-	slop = 1 / tan((2 * 3.1415926 * angle)/ 360);
+	target_angle = (3.1415926 * angle)/ 180;
+	slop = 1 / tan(target_angle);
 	switch (hor_or_ver)
 	{
 	case 'h':
 		laser_type = 3;
 		coor_one[0] = pos;
-		coor_two[0] = pos + ((g.yres - g.yres_start) * tan(angle));
+		coor_two[0] = pos + ((g.yres - g.yres_start) * tan(target_angle));
 		coor_one[1] = g.yres_start;
 		coor_two[1] = g.yres;
 		vel_one[0] = speed;
@@ -1021,7 +1057,7 @@ void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_
 		coor_one[0] = 0;
 		coor_two[0] = g.xres;
 		coor_one[1] = pos;
-		coor_two[1] = pos + (g.xres * tan(angle));
+		coor_two[1] = pos + (g.xres * tan(target_angle));
 		vel_one[0] = 0;
 		vel_two[0] = 0;
 		vel_one[1] = speed;
@@ -1031,7 +1067,49 @@ void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_
 }
 
 // laser move by angle
-void DonutLaser::setDonutLaser(float xcenter, float ycenter, float xstart , float ystart, float angle, char up_or_down){
+// 						||
+// 						90	
+// 						||
+// ===============180=== =======0========
+// 						||
+// 						270
+// 						||
+// 						||
+void DonutLaser::setDonutLaser(float xcenter, float ycenter, float r, float anglestart, float angleend, float anglespeed){
+	laser_type = 5;
+	slop = anglestart * 3.1415926 / 180;
+	angleacc = anglespeed * 3.1415926 / 180;
+	target_angle = angleend * 3.1415926 / 180;
+	radius = r;
+	center[0] = xcenter;
+	center[1] = ycenter;
+	coor_one[0] = center[0] + (radius * cos(slop));
+	coor_one[1] = center[1] + (radius * sin(slop));
+	limit_angle[0] = atan( (g.yres - center[1]) / (g.xres - center[0]));
+	limit_angle[1] = atan( (g.yres - center[1]) / (0 - center[0])) + 3.1415926;
+	limit_angle[2] = atan( (g.yres_start - center[1]) / (0 - center[0])) + 3.1415926;
+	limit_angle[3] = atan( (g.yres - center[1]) / (g.xres - center[0])) + 6.2831853;
+	if (slop > limit_angle[0] && slop < limit_angle[1]) {
+		// up
+		coor_two[0] = center[0] + ((g.yres-center[1])/ tan(slop));
+		coor_two[1] = g.yres;
+	}
+	else if (slop > limit_angle[1] && slop < limit_angle[2]) {
+		// left
+		coor_two[0] = 0;
+		coor_two[1] = center[1] + ((-center[0]) * tan(slop));
+	}
+	else if (slop > limit_angle[2] && slop < limit_angle[3]) {
+		// down
+		coor_two[0] = center[0] - ((g.yres-center[1])/ tan(slop));
+		coor_two[1] = g.yres_start;
+	}
+	else {
+		// right
+		coor_two[0] = g.xres;
+		coor_two[1] = center[1] - ((-center[0]) * tan(slop));
+	}
+
 
 }
 
@@ -1058,10 +1136,37 @@ void DonutLaser::moveLaser() {
 	// move laser if is moveble 
 	// countdown if not moveble
 		if(moveble) {
+			if(laser_type != 5) {
 			coor_one[0] += vel_one[0];
 			coor_one[1] += vel_one[1];
 			coor_two[0] += vel_two[0];
 			coor_two[1] += vel_two[1];
+			} else {
+				slop += angleacc;
+				coor_one[0] = center[0] + (radius * cos(slop));
+				coor_one[1] = center[1] + (radius * sin(slop));
+				if (slop > limit_angle[0] && slop < limit_angle[1]) {
+					// up
+					coor_two[0] = center[0] + ((g.yres-center[1])/ tan(slop));
+					coor_two[1] = g.yres;
+				}
+				else if (slop > limit_angle[1] && slop < limit_angle[2]) {
+					// left
+					coor_two[0] = 0;
+					coor_two[1] = center[1] + ((-center[0]) * tan(slop));
+				}
+				else if (slop > limit_angle[2] && slop < limit_angle[3]) {
+					// down
+					coor_two[0] = center[0] - ((g.yres-center[1])/ tan(slop));
+					coor_two[1] = g.yres_start;
+				}
+				else {
+					// right
+					coor_two[0] = g.xres;
+					coor_two[1] = center[1] - ((-center[0]) * tan(slop));
+				}
+			}
+			setVertex();
 		} else {
 			if(cd_stay > 0) {
 				cd_stay--;
@@ -1102,13 +1207,44 @@ bool DonutLaser::collision(Item itm){
 	}
 }
 
+bool DonutLaser::deleteLaser() 
+{
+	if(moveble) {
+		if(laser_type == 1) {
+			return (coor_one[1] < g.yres_start || coor_one[1] > g.yres);
+		}
+		else if(laser_type == 2) {
+			return (coor_one[0] < 0 || coor_one[0] > g.xres);
+		}
+		else if(laser_type == 3) {
+			return ((coor_one[0] < 0 && coor_two[0] < 0)
+					|| (coor_one[0] > g.xres && coor_two[0] > g.xres));
+		}
+		else if(laser_type == 4) {
+			return ((coor_one[1] < g.yres_start && coor_two[1] < g.yres_start)
+					|| (coor_one[1] < g.yres && coor_two[1] < g.yres));
+		}
+		else if(laser_type == 5) {
+			if(angleacc > 0) {
+				return slop > target_angle;
+			} else {
+				return slop < target_angle;
+			}
+		}
+		
+	} else {
+		return cd_stay <= 0;
+	}
+
+	return false;
+}
+
 void DonutLaser::draw()
 {
 	if(charge_on) {
 		glPushMatrix();
 		glAlphaFunc(GL_GREATER, 0.0f);
 		glColor4ub(20,0,0,alpha);
-		glTranslatef(coor_one[0], coor_one[1], 0);
 		glBegin(GL_QUADS);
 			glVertex2f(vertex[0],vertex[1]);
 			glVertex2f(vertex[2],vertex[3]);
@@ -1121,7 +1257,6 @@ void DonutLaser::draw()
 			glPushMatrix();
 			glAlphaFunc(GL_GREATER, 0.0f);
 			glColor4ub(20,0,0,alpha);
-			glTranslatef(coor_one[0], coor_one[1], 0);
 			glBegin(GL_QUADS);
 				glVertex2f(vertex[0],vertex[1]);
 				glVertex2f(vertex[2],vertex[3]);
@@ -1131,24 +1266,25 @@ void DonutLaser::draw()
 			glPopMatrix();
 		}
 	} else {
+
 		glPushMatrix();
 		glAlphaFunc(GL_GREATER, 0.0f);
-		glColor4ub(20,0,0,alpha);
-		glTranslatef(coor_one[0], coor_one[1], 0);
+		glColor4ub(100,0,0,alpha);
 		glBegin(GL_QUADS);
 			glVertex2f(vertex[0],vertex[1]);
+		glColor4ub(255,100,100,255);
 			glVertex2f(vertex[2],vertex[3]);
-			glVertex2f(vertex[8],vertex[9]);
-			glVertex2f(0,0);
+			glVertex2f(coor_two[0],coor_two[1]);
+			glVertex2f(coor_one[0],coor_one[1]);
 		glEnd();
 		glBegin(GL_QUADS);
-			glVertex2f(0,0);
-			glVertex2f(vertex[8],vertex[9]);
+			glVertex2f(coor_one[0],coor_one[1]);
+			glVertex2f(coor_two[0],coor_two[1]);
+		glColor4ub(20,0,0,alpha);
 			glVertex2f(vertex[4],vertex[5]);
 			glVertex2f(vertex[6],vertex[7]);
 		glEnd();		
 		glPopMatrix();
-
 	}
 }
 
@@ -1266,6 +1402,12 @@ float minTan(float *arr,int n)
 	}
 	return result;
 }
+
+float getAngle(float x0, float y0, float x1, float y1)
+{
+	return atan((x1 - x0)/(y1 - y0));
+}
+
 // bool Item::collision(Item a) {
 // 	float arr[8];
 // 	float aArr[8];

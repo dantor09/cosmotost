@@ -37,6 +37,7 @@ float minRadius(float *arr,int n);
 float maxTan(float *arr,int n);
 float minTan(float *arr,int n);
 bool pointIn(float x0, float y0, float *arr, int n);
+float getAngle(float x0, float y0, float x1, float y1);
 
 
 // item class is the parent class for all the object might have HP in game
@@ -222,22 +223,46 @@ class DonutLaser
   public:
     float coor_one[2];
     float coor_two[2];
-    float vertex[10];
+    float vertex[8];
     float vel_one[2];
     float vel_two[2];
+    // for type 3 & 4
+    // in type 5 is angle
     float slop;
+    // for rotate type lazer
     float center[2];
+    // r from center
+    float radius;
+    // how wide lazer is
     float dim;
     int alpha;
     int alpha_inc;
+    // angle velocity
     float angleacc;
+    // where the lazer stop
+    float target_angle;
+    // which side the laser lay on
+    int which_res;
+    // pos to 4 vertex of screen and their angle
+    float limit_angle[4];
+    // on charge
     bool charge_on;
+    // on lage
     bool lag_on;
+    // how long charge
     int cd_charge;
+    // how long lag (stay there)
     int cd_lag;
+    // for unmove lazer
     int cd_stay;
+    
+    // 1,2 parallize
+    // 3,4 slop
+    // 5 rotate
     int laser_type;
+    // is that able to move?
     bool moveble;
+    // show itself when lag??
     bool hide;
 
     DonutLaser();
@@ -245,10 +270,11 @@ class DonutLaser
 
     // set the vertexs for draw()
     void setVertex();
-    
+    //==================================================================
+    // Always go together!!!!
+
     // chargeCD , lagCD, hide, moveble
     void setCD(int, int, bool, bool);
-    
     // horizental or vertical
     // coordinate, velocity, 'h' or 'v'
     void setDonutLaser(float, float, char);
@@ -256,9 +282,12 @@ class DonutLaser
     // coordinate, angle(in degree), velocity, 'h' or 'v'
     void setDonutLaser(float, float, float, char);
 
-    void setDonutLaser(float, float, float, float, float, char);
+    void setDonutLaser(float, float, float, float, float, float);
+    //===================================================================
+    
     void moveLaser();
     bool collision(Item);
+    bool deleteLaser();
     void draw();
 };
 
