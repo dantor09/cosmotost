@@ -1012,12 +1012,12 @@ Blocky::Blocky(char type, bool g_act)
     setAcc(0.0f,-0.25f,0.0f);
     setVel(0.0f, -4.0f, 0.0f);
     setDamage(20);
-    starting_hp = 25;
+    starting_hp = 30;
     setHP(starting_hp);
     point = starting_hp;
     bul_point = 5;
     was_hit = false;
-    lives = 2;
+    lives = 1;
     explode_done = true;
     did_shoot = false;
     delay = nullptr;

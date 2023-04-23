@@ -741,9 +741,22 @@ int X11_wrapper::check_keys(XEvent *e)
 					if (g.mike_active == false) {
 						// g.substate = MIKE;
 						g.mike_active = true;
-						blocky = (blocky == &vblocky) ? &hblocky : &vblocky;
-						blocky_health = (blocky_health == &vblocky_health) ? 
-															&hblocky_health : &hblocky_health;
+						// blocky = (blocky == &vblocky) ? &hblocky : &vblocky;
+						// blocky_health = (blocky_health == &vblocky_health) ? 
+						// 									&hblocky_health : &hblocky_health;
+						if (blocky == &vblocky) {
+							blocky = &v2blocky;
+							blocky_health = &v2blocky_health;
+						} else if (blocky == &v2blocky) {
+							blocky = &hblocky;
+							blocky_health = &hblocky_health;
+						} else if (blocky == &hblocky) {
+							blocky = &h2blocky;
+							blocky_health = &h2blocky_health;
+						} else {
+							blocky = &vblocky;
+							blocky_health = &vblocky_health;
+						}
 						cerr << "g.mike_active set to true\n";
 					// } else if (g.substate == MIKE) {
 					} else if (g.mike_active == true) {
@@ -1285,9 +1298,6 @@ void physics()
 					}
 				}
 			}
-
-
-
 		}
 		if (g.huaiyu_active == true) {
 				for (int i=0; i < g.n_Spear; i++) {
@@ -1437,6 +1447,10 @@ void physics()
 		if(tos.laserOn)  {
 			if (whichBread == -2) {
 					tos.laserDamage(*blocky);
+					if(blocky->hpCheck()) {
+						tos.score += blocky->point;
+						blocky->reset();
+					}
 					cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
 			} 
 			else if (whichBread != -1 && entity_or_tos) {
