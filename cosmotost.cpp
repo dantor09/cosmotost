@@ -1336,6 +1336,22 @@ void physics()
 					do_bul[i] = do_bul[--g.n_donut_bullet];
 				}
 			}
+			for (int i = 0; i < g.n_laser; i++) {
+				d_laser[i].moveLaser();
+				if (d_laser[i].collision(tos)) {
+					d_laser[i].hpDamage(tos);
+					if(tos.hpCheck() && (tos.lives - 1 > 0)) {
+						tos.lives--;
+						tos.setHP(80);
+					}
+					else if(tos.hpCheck()) {
+						g.state = GAMEOVER;
+					}
+				}
+				if (d_laser[i].deleteLaser()) {
+					d_laser[i] = d_laser[--g.n_laser];
+				}
+			}
 
 			// cerr << donut.hp << endl;
 			
@@ -1364,7 +1380,14 @@ void physics()
 			// testing to see if this fixes crash
 				if (bul[i].screenOut()) bul[i] = bul[--g.n_Bullet];
 				bul[i].moveBullet();
-			}
+				if(g.donut_active){
+					for (int i = 0; i < g.n_laser; i++) {
+						if(d_laser[i].collision(bul[i])) {
+							bul[i] = bul[--g.n_Bullet];
+						}
+					}
+				}
+		}
 		//move of all bread and check collision with bullet and Toaster
 		for (int i=0; i < g.n_Bread; i++) {
 				if (bread[i].screenOut()) {
@@ -1686,6 +1709,9 @@ void render()
 				for (int i=0; i < g.n_donut_bullet; i++) {
 //						cerr << "draw bullet" << endl;
 						do_bul[i].draw();
+				}
+				for (int i=0; i < g.n_laser; i++) {
+					d_laser[i].draw();
 				}
 		
 		

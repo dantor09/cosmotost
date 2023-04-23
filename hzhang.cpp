@@ -668,8 +668,8 @@ Donut::~Donut() {}
 void Donut::moveDonut() 
 {
 	// cerr << weapon << "  " << count_down << endl;
-	int val = rand()%4 +1;
-	// val = 4;
+	int val = rand()%7 +1;
+ 	val = 5;
 	if(!weapon) {
 		if(count_down == 0) {
 			atteckMove(val);
@@ -800,6 +800,10 @@ void Donut::draw()
 			weapon_outer_count = 15;
 			weapon_inner_count = 4;
 		}
+		if (num == 5) {
+			weapon_outer_count = 1;
+			weapon_inner_count = 20;
+		}
 		weapon = true;
 	} else {
 		if(weapon_outer_count == 0) {
@@ -902,6 +906,30 @@ void Donut::draw()
 					g.n_donut_bullet++;
 				}
 				break;
+			case 5:
+				d_laser[g.n_laser].setDonutLaser(donut.pos[0], donut.pos[1], donut.out_radius,135,225,0.5);
+				d_laser[g.n_laser].setCD(100,50,1,1);
+				g.n_laser++;
+				// d_laser[g.n_laser].setDonutLaser(0,10,6,'h');
+				// d_laser[g.n_laser].setCD(10,50,1,1);
+				// g.n_laser++;
+				break;
+
+			case 6:
+				cerr << "in case 6"<<endl;
+				d_laser[g.n_laser].setDonutLaser(g.yres_start,6,'h');
+				d_laser[g.n_laser].setCD(10,50,1,1);
+				g.n_laser++;
+				break;
+
+			case 7:
+				cerr << "in case 7" <<endl;
+				d_laser[g.n_laser].setDonutLaser(donut.pos[0],donut.pos[1], donut.out_radius,90,270,2);
+				d_laser[g.n_laser].setCD(100,50,1,1);
+				g.n_laser++;
+				break;
+			
+			
 			}
 			weapon_outer_count--;
 			weapon_inner_count = 20;
@@ -938,7 +966,7 @@ void DonutLaser::setVertex()
 		vertex[0] = coor_one[0];
 		vertex[1] = coor_one[1] + dim;
 		vertex[2] =	coor_two[0];
-		vertex[3] = -coor_two[1] + dim;
+		vertex[3] = coor_two[1] + dim;
 		vertex[4] = coor_two[0];
 		vertex[5] = coor_two[1] - dim;
 		vertex[6] = coor_one[0];;
@@ -987,6 +1015,7 @@ void DonutLaser::setVertex()
 // s decide if Laser can move or not (moveble)
 void DonutLaser::setCD(int charge, int lag, bool h, bool s)
 {
+	colli_tos = false;
 	charge_on = true;
 	lag_on = false;
 	cd_charge = charge;
@@ -1001,6 +1030,7 @@ void DonutLaser::setCD(int charge, int lag, bool h, bool s)
 	}
 	hide = h;
 	moveble = s;
+	dim = 4;
 }
 
 // horizental or vertical laser,  pos is x0 or y0
@@ -1037,7 +1067,7 @@ void DonutLaser::setDonutLaser(float pos, float speed, char hor_or_ver)
 // slop laser, move horizental or vertical
 void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_ver){
 	target_angle = (3.1415926 * angle)/ 180;
-	slop = 1 / tan(target_angle);
+	slop = tan(target_angle);
 	switch (hor_or_ver)
 	{
 	case 'h':
@@ -1076,6 +1106,7 @@ void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_
 // 						||
 // 						||
 void DonutLaser::setDonutLaser(float xcenter, float ycenter, float r, float anglestart, float angleend, float anglespeed){
+	cout << "make 5 laser" << endl;
 	laser_type = 5;
 	slop = anglestart * 3.1415926 / 180;
 	angleacc = anglespeed * 3.1415926 / 180;
@@ -1114,7 +1145,7 @@ void DonutLaser::setDonutLaser(float xcenter, float ycenter, float r, float angl
 }
 
 void DonutLaser::moveLaser() {
-	
+	cerr << slop << endl;
 	if(charge_on){
 	// charge and change alpha
 		if(cd_charge > 0) {
@@ -1136,12 +1167,15 @@ void DonutLaser::moveLaser() {
 	// move laser if is moveble 
 	// countdown if not moveble
 		if(moveble) {
+			// can move
 			if(laser_type != 5) {
-			coor_one[0] += vel_one[0];
-			coor_one[1] += vel_one[1];
-			coor_two[0] += vel_two[0];
-			coor_two[1] += vel_two[1];
+				// not rotate
+				coor_one[0] += vel_one[0];
+				coor_one[1] += vel_one[1];
+				coor_two[0] += vel_two[0];
+				coor_two[1] += vel_two[1];
 			} else {
+				// rotate laser
 				slop += angleacc;
 				coor_one[0] = center[0] + (radius * cos(slop));
 				coor_one[1] = center[1] + (radius * sin(slop));
@@ -1176,35 +1210,72 @@ void DonutLaser::moveLaser() {
 }
 
 bool DonutLaser::collision(Item itm){
-	if(laser_type == 1){
-		// horizental line move up or down
-		return ((coor_one[1] - dim - itm.h - itm.pos[1] > 0)||(itm.pos[1] - coor_one[1] - dim - itm.h > 0));
-	}
-	else if(laser_type == 2){
-		// horizental line move up or down
-		return ((coor_one[0] - dim - itm.w - itm.pos[0] > 0)||(itm.pos[0] - coor_one[0] - dim - itm.w > 0));
-	}
-	else if(laser_type == 3){
-		if(slop > 0) {
-			return !((itm.pos[1] - itm.h) > slop * (itm.pos[0] + itm.w - coor_one[0] + dim)
-					|| (itm.pos[1] + itm.h) < slop * (itm.pos[0] - itm.h - coor_one[1] - dim));
-		} else {
-			return !((itm.pos[0] + itm.w) < slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
-					|| (itm.pos[0] - itm.w) > slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
+	if(!(charge_on||lag_on)) {
+		if (laser_type == 1) {
+			// horizental line move up or down
+			return !((coor_one[1] - dim - itm.h - itm.pos[1] > 0)||(itm.pos[1] - coor_one[1] - dim - itm.h > 0));
 		}
-	}
-	else if(laser_type == 4){
-		//slop and move up down
-		if(slop > 0) {
-			return !((itm.pos[0] + itm.w) < slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
-					|| (itm.pos[0] - itm.w) > slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
+		else if (laser_type == 2) {
+			// horizental line move up or down
+			return !((coor_one[0] - dim - itm.w - itm.pos[0] > 0)||(itm.pos[0] - coor_one[0] - dim - itm.w > 0));
+		}
+		else if (laser_type == 3) {
+			if(slop > 0) {
+				return !((itm.pos[1] - itm.h) > slop * (itm.pos[0] + itm.w - coor_one[0] - dim)
+						|| (itm.pos[1] + itm.h) < slop * (itm.pos[0] - itm.h - coor_one[1] + dim));
+			} else {
+				return !((itm.pos[0] + itm.w) < slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
+						|| (itm.pos[0] - itm.w) > slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
+			}
+		}
+		else if (laser_type == 4) {
+			//slop and move up down
+			if (slop > 0) {
+				return !((itm.pos[0] + itm.w) < slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
+						|| (itm.pos[0] - itm.w) > slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
+			} else {
+				return !((itm.pos[0] + itm.w) > slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
+						|| (itm.pos[0] - itm.w) < slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
+			}
+		}
+		else if (laser_type == 5) {
+			if (slop > 0 && slop < 1.570796327) {
+				if((itm.pos[0] - itm.w) > coor_one[0] && (itm.pos[1] - itm.h) > coor_one[1]) {
+					return (((itm.pos[1] - itm.h - coor_one[1]) / (itm.pos[0] + itm.w - coor_one[0]) < tan(slop)) 
+						&& ((itm.pos[1] + itm.h - coor_one[1]) / (itm.pos[0] - itm.w - coor_one[0]) > tan(slop)));
+				}
+				return false;
+			}
+			else if (slop > 1.570796327 && slop < 3.1415927) {
+				if((itm.pos[0] + itm.w) < coor_one[0] && (itm.pos[1] - itm.h) > coor_one[1]) {
+					return (((itm.pos[1] - itm.h - coor_one[1]) / (coor_one[0] - itm.pos[0] + itm.w) < -tan(slop)) 
+						&& ((itm.pos[1] + itm.h - coor_one[1]) / (coor_one[0] - itm.pos[0] - itm.w) > -tan(slop)));
+				}
+				return false;			
+			}
+			else if (slop > 3.1415926 && slop < 4.71238898) {
+				if((itm.pos[0] + itm.w) < coor_one[0] && (itm.pos[1] + itm.h) < coor_one[1]) {
+					return (((coor_one[1] - itm.pos[1] - itm.h) / (coor_one[0] - itm.pos[0] + itm.w) < tan(slop)) 
+						&& ((coor_one[1] - itm.pos[1] + itm.h) / (coor_one[0] - itm.pos[0] - itm.w) > tan(slop)));
+				}
+				return false;	
+			}
 		} else {
-			return !((itm.pos[0] + itm.w) > slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
-					|| (itm.pos[0] - itm.w) < slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
+			if((itm.pos[0] - itm.w) > coor_one[0] && (itm.pos[1] + itm.h) < coor_one[1]) {
+				return (((itm.pos[1] - itm.h - coor_one[1]) / (coor_one[0] - itm.pos[0] + itm.w) < -tan(slop)) 
+					&& ((itm.pos[1] + itm.h - coor_one[1]) / (coor_one[0] - itm.pos[0] - itm.w) > -tan(slop)));
+			}
+			return false;			
 		}
 	} else {
 		return false;
 	}
+	return false;
+}
+
+void DonutLaser::hpDamage(Item &a) 
+{
+	a.hp -= damage;
 }
 
 bool DonutLaser::deleteLaser() 
@@ -1244,7 +1315,7 @@ void DonutLaser::draw()
 	if(charge_on) {
 		glPushMatrix();
 		glAlphaFunc(GL_GREATER, 0.0f);
-		glColor4ub(20,0,0,alpha);
+		glColor4ub(alpha,0,0,alpha);
 		glBegin(GL_QUADS);
 			glVertex2f(vertex[0],vertex[1]);
 			glVertex2f(vertex[2],vertex[3]);
@@ -1256,7 +1327,7 @@ void DonutLaser::draw()
 		if(!hide) {
 			glPushMatrix();
 			glAlphaFunc(GL_GREATER, 0.0f);
-			glColor4ub(20,0,0,alpha);
+			glColor4ub(alpha,0,0,alpha);
 			glBegin(GL_QUADS);
 				glVertex2f(vertex[0],vertex[1]);
 				glVertex2f(vertex[2],vertex[3]);

@@ -39,7 +39,7 @@ float minTan(float *arr,int n);
 bool pointIn(float x0, float y0, float *arr, int n);
 float getAngle(float x0, float y0, float x1, float y1);
 
-
+//===============================================================================
 // item class is the parent class for all the object might have HP in game
 // include toaster, bullets and breads
 class Item: public Box
@@ -101,7 +101,7 @@ class Item: public Box
     Item & operator = (const Item &);
 
 };
-
+//=============================================================================
 class Toaster: public Item
 {
   public:
@@ -138,7 +138,7 @@ class Toaster: public Item
       // string PrintScore();
 
 } ;
-
+//=====================================================================
 class Bullet: public Item
 {
   public:
@@ -152,7 +152,7 @@ class Bullet: public Item
      void setBullet(float x, float y,float z, int type);
      void moveBullet();
 };
-
+//=====================================================================
 class Bread: public Item
 {
   public:
@@ -170,6 +170,7 @@ class Bread: public Item
     void setBread(float x, float y,float z, int Bread_t, int type);
     void moveBread();
 };
+//=====================================================================
 class Spear: public Item
 {
   public:
@@ -180,6 +181,7 @@ class Spear: public Item
 
 };
 
+//======================================================================
 class Donut
 {
   public:
@@ -205,7 +207,7 @@ class Donut
     int weapon_outer_count;
     int weapon_inner_count;
    
-  //========================================
+  //-----------------------------------------------------
     Donut();
     ~Donut();
     void moveDonut();
@@ -226,6 +228,7 @@ class DonutLaser
     float vertex[8];
     float vel_one[2];
     float vel_two[2];
+    float damage = 5.0;
     // for type 3 & 4
     // in type 5 is angle
     float slop;
@@ -255,7 +258,7 @@ class DonutLaser
     int cd_lag;
     // for unmove lazer
     int cd_stay;
-    
+
     // 1,2 parallize
     // 3,4 slop
     // 5 rotate
@@ -265,12 +268,14 @@ class DonutLaser
     // show itself when lag??
     bool hide;
 
+    bool colli_tos;
+
     DonutLaser();
     ~DonutLaser();
 
     // set the vertexs for draw()
     void setVertex();
-    //==================================================================
+    //-------------------------------------------------------------------
     // Always go together!!!!
 
     // chargeCD , lagCD, hide, moveble
@@ -283,14 +288,15 @@ class DonutLaser
     void setDonutLaser(float, float, float, char);
 
     void setDonutLaser(float, float, float, float, float, float);
-    //===================================================================
+    //-------------------------------------------------------------------
     
     void moveLaser();
     bool collision(Item);
+    void hpDamage(Item &);
     bool deleteLaser();
     void draw();
 };
-
+//========================================================================
 class ChargeBread: public Item
 {
   public:
