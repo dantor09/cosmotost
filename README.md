@@ -19,11 +19,14 @@
 
 
 #### In Progress:
-- Bomb (mike)
 - ARTWORK... (ailand)
 - freeze enemy (dan)
 
 #### Done:
+- Bomb (mike)
+- full health powerup (mike)
+- partial health powerup (mike)
+- extra life powerup (mike)
 - implement volume change feature (mike)
 - implement sound effects (mike)
 - fix volume issues (mike)

@@ -899,7 +899,7 @@ PowerBar::PowerBar(const Toaster & _tos_, PBType _type_, float x, float y)
 
 void PowerBar::draw()
 {
-    static int max_energy = 100;
+    
     
     if (type == HEALTH) {
         glColor3ubv(total.color);
@@ -944,20 +944,19 @@ void PowerBar::draw()
         glPopMatrix();
 
 
-
         glColor3ubv(health.color);
         glPushMatrix();
         glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
         glBegin(GL_QUADS);
             glVertex2f(0, -health.h);
             glVertex2f(0,  health.h);
-            glVertex2f( (((tos->energy))/((float)(max_energy)))*2.0f*health.w,  health.h);
-            glVertex2f( (((tos->energy))/((float)(max_energy)))*2.0f*health.w, -health.h);
+            glVertex2f( (((tos->energy))/((float)(tos->max_energy)))*2.0f*health.w,  health.h);
+            glVertex2f( (((tos->energy))/((float)(tos->max_energy)))*2.0f*health.w, -health.h);
             
         glEnd();
         glPopMatrix();
 
-        ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, max_energy);
+        ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, tos->max_energy);
         // cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
     }
 }
@@ -1012,12 +1011,12 @@ Blocky::Blocky(char type, bool g_act)
     setAcc(0.0f,-0.25f,0.0f);
     setVel(0.0f, -4.0f, 0.0f);
     setDamage(20);
-    starting_hp = 25;
+    starting_hp = 30;
     setHP(starting_hp);
     point = starting_hp;
     bul_point = 5;
     was_hit = false;
-    lives = 2;
+    lives = 1;
     explode_done = true;
     did_shoot = false;
     delay = nullptr;
@@ -1258,7 +1257,7 @@ void Blocky::reset()
 
 void Blocky::gamereset()
 {
-    lives = 2;
+    lives = 1;
     hp = starting_hp;
     setVel(0.0f, -4.0f, 0.0f);
     setRandPosition();    // put at a new random position
@@ -1937,30 +1936,40 @@ void Gamerecord::makeMenu()
     // allocate mem for new menu
     if (!hs_menu) {
         // cerr << "menu set to null so far" << endl;
-        hs_menu = new Menu(scores.size(), 300.0, 300.0, 
-                            g.xres/2.0, g.yres/2.0, name_list, 1);
+        hs_menu = new Menu(scores.size(), 300.0f, 300.0f, 
+                            g.xres/2.0f, g.yres/2.0f, name_list, 1);
     } else if (hs_menu) {   // make a new menu
         // cerr << "deleting the prev menu" << endl;
         delete hs_menu;
         // cerr << "now making a new menu" << endl;
-        hs_menu = new Menu(scores.size(), 300.0, 300.0, 
-                            g.xres/2.0, g.yres/2.0, name_list, 1);
+        hs_menu = new Menu(scores.size(), 300.0f, 300.0f, 
+                            g.xres/2.0f, g.yres/2.0f, name_list, 1);
     }
 
     // cerr << "checking if high score" << endl;
     if (isHighScore()) {
         // cerr << "setting high score color" << endl;
-        (hs_menu->t_boxs[0]).setColor(124,10,2);
+        // (hs_menu->t_boxs[0]).setColor((int)124,(int)10,(int)2);
+        (hs_menu->t_boxs[0]).color[0] = (unsigned char)124;
+        (hs_menu->t_boxs[0]).color[1] = (unsigned char)10;
+        (hs_menu->t_boxs[0]).color[2] = (unsigned char)2;
+
+
     } else if (isTopTen()) {
         // cerr << "setting top ten color" << endl;
-        (hs_menu->t_boxs[place]).setColor(178,222,39);
+        // (hs_menu->t_boxs[place]).setColor((int)178,(int)222,(int)39);
+        (hs_menu->t_boxs[0]).color[0] = (unsigned char)178;
+        (hs_menu->t_boxs[0]).color[1] = (unsigned char)222;
+        (hs_menu->t_boxs[0]).color[2] = (unsigned char)39;
     }
 
     // set 11th element to yellow (will be deleted)
     // cerr << "setting 11th element color" << endl;
     if (scores.size() == 11)
-        (hs_menu->t_boxs[scores.size()-1]).setColor(189,195,199);
-
+        // (hs_menu->t_boxs[scores.size()-1]).setColor((int)189,(int)195,(int)199);
+        (hs_menu->t_boxs[0]).color[0] = (unsigned char)189;
+        (hs_menu->t_boxs[0]).color[1] = (unsigned char)195;
+        (hs_menu->t_boxs[0]).color[2] = (unsigned char)199;
     // cerr << "finished making menu...\n" << endl;
 }
 

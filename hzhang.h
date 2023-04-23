@@ -111,6 +111,7 @@ class Toaster: public Item
       int score;
       float energy;
       float energy_recover;
+      float max_energy;
       bool disable_keys;
       bool laserOn;
       float distance;
@@ -178,6 +179,7 @@ class Spear: public Item
     ~Spear();
     void setSpear(float x, float y,float z, int spear_type);
     void moveSpear();
+    int point;
 
 };
 

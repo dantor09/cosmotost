@@ -741,9 +741,22 @@ int X11_wrapper::check_keys(XEvent *e)
 					if (g.mike_active == false) {
 						// g.substate = MIKE;
 						g.mike_active = true;
-						blocky = (blocky == &vblocky) ? &hblocky : &vblocky;
-						blocky_health = (blocky_health == &vblocky_health) ? 
-															&hblocky_health : &hblocky_health;
+						// blocky = (blocky == &vblocky) ? &hblocky : &vblocky;
+						// blocky_health = (blocky_health == &vblocky_health) ? 
+						// 									&hblocky_health : &hblocky_health;
+						if (blocky == &vblocky) {
+							blocky = &v2blocky;
+							blocky_health = &v2blocky_health;
+						} else if (blocky == &v2blocky) {
+							blocky = &hblocky;
+							blocky_health = &hblocky_health;
+						} else if (blocky == &hblocky) {
+							blocky = &h2blocky;
+							blocky_health = &h2blocky_health;
+						} else {
+							blocky = &vblocky;
+							blocky_health = &vblocky_health;
+						}
 						cerr << "g.mike_active set to true\n";
 					// } else if (g.substate == MIKE) {
 					} else if (g.mike_active == true) {
@@ -1285,22 +1298,40 @@ void physics()
 					}
 				}
 			}
-
-
-
 		}
 		if (g.huaiyu_active == true) {
 				for (int i=0; i < g.n_Spear; i++) {
-						if(spear[i].trace) {
-								spear[i].cd--;
-								if(0 == spear[i].cd)
-										spear[i].trace = false;
+					spear[i].moveSpear();
+					if(spear[i].trace) {
+							spear[i].cd--;
+							if(0 == spear[i].cd)
+									spear[i].trace = false;
+					}
+					
+					if(tos.collision(spear[i])) {
+						tos.hpDamage(spear[i]);
+						spear[i]=spear[--g.n_Spear];
+
+						if(tos.hpCheck() && (tos.lives > 1)) {
+							// cerr << "should be dead from forky" << endl;
+							tos.lives--;
+							tos.setHP(tos.starting_hp);
+							// continue;
+						} else if(tos.hpCheck()) {
+							g.state = GAMEOVER;
+							break;
 						}
-						if(tos.collision(spear[i])) {
-							tos.hpDamage(spear[i]);
-							spear[i]=spear[--g.n_Spear];
-						}
-						spear[i].moveSpear();
+					}
+
+					if (bomb.is_exploding &&
+						bomb.collision(spear[i])) {
+						// cerr << "bomb & spear collision" << endl;
+						spear[i].hp = 0;	// wipe out all health
+						tos.score += spear[i].point;
+						spear[i]=spear[--g.n_Spear];
+						blocky->reset();
+					}
+
 				}
 				if (g.BreadCD == 0 && (int)rand()%3 == 0)
 						makeSpear(g.xres-60.0,(((float)rand()) / (float)RAND_MAX)*g.yres,0.0,1);
@@ -1373,6 +1404,15 @@ void physics()
 			else
 					makeBread(g.xres,alp*g.yres,0.0,4,1);
 			if(breadrand==0) makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1);
+
+			breadrand = (int)rand()%100;
+			if (breadrand == 0) {
+				makeBread(g.xres-10 ,0.25*g.yres,0.0,5,1);	// full power
+			} else if (breadrand == 1 || breadrand == 2) {
+				makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1);	// full health
+			} else if (breadrand == 3 || breadrand == 4) {
+				makeBread(g.xres-10 ,0.5*g.yres,0.0,7,1);	// extra life
+			}
 		}
 
 		// move of all bullet
@@ -1392,33 +1432,62 @@ void physics()
 		for (int i=0; i < g.n_Bread; i++) {
 				if (bread[i].screenOut()) {
 					bread[i] = bread[--g.n_Bread];
+					continue;
 				}
 				if (bread[i].hpCheck()) {
 					tos.score += bread[i].point;
 					bread[i] = bread[--g.n_Bread];
-
+					continue;
 				}
-				// ckeak if collision with toaster
+				// check if collision with toaster
 				if (bread[i].collision(tos)) {
 						if (bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)	{
 								bread[i].hpDamage(tos);
 								tos.hpDamage(bread[i]);
 								
 								// D.T Reset HP and decrease lives if toaster still has lives left
-								if(tos.hpCheck() && (tos.lives - 1 > 0)) {
+								if(tos.hpCheck() && (tos.lives > 1)) {
+									cerr << "should be dead from forky" << endl;
 									tos.lives--;
-									tos.setHP(80);
-								}
-								else if(tos.hpCheck()) {
+									tos.setHP(tos.starting_hp);
+									// continue;
+								} else if(tos.hpCheck()) {
 									g.state = GAMEOVER;
+									break;
 								}
-								if(bread[i].hpCheck())
-										bread[i] = bread[--g.n_Bread];
+								
+								if(bread[i].hpCheck()) {
+									bread[i] = bread[--g.n_Bread];
+									continue;
+								}
 						}
-						if (bread[i].item_type == 12) {
+
+						// powerup handling
+						if (bread[i].item_type == 12) {	// gun level up
 							if (tos.bullet_type_prime != 4	&&	tos.bullet_type_prime != 8) tos.bullet_type_prime++;
 							bread[i] = bread[--g.n_Bread];
+							continue;
+						} else if (bread[i].item_type == 15) {	// half health potion
+							tos.energy = tos.max_energy;
+							bread[i] = bread[--g.n_Bread];
+							continue;
+						} else if (bread[i].item_type == 18) { // full health potion
+							tos.hp = tos.starting_hp;
+							bread[i] = bread[--g.n_Bread];
+							continue;
+						} else if (bread[i].item_type == 17) { // extra life
+							tos.lives = (tos.lives < 3) ? tos.lives + 1 : 3;
+							bread[i] = bread[--g.n_Bread];
+							// cerr << "added 1 life" << endl;
+							// cerr << "item_type: " << bread[i].item_type << endl;
+							// cerr << bread[i].getInfo();
+							// cerr << "rgb: " 
+							// 		<< (int)bread[i].getColor()[0] << ", "
+							// 		<< (int)bread[i].getColor()[1] << ", "
+							// 		<< (int)bread[i].getColor()[2] << endl;
+							continue;
 						}
+
 						break;
 				}
 				// ckeak if collision with bullet
@@ -1434,7 +1503,6 @@ void physics()
 					}
 
 				}
-
 
 				if (bomb.is_exploding && 
 						(bomb.collision(bread[i]))) {
@@ -1460,6 +1528,10 @@ void physics()
 		if(tos.laserOn)  {
 			if (whichBread == -2) {
 					tos.laserDamage(*blocky);
+					if(blocky->hpCheck()) {
+						tos.score += blocky->point;
+						blocky->reset();
+					}
 					cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
 			} 
 			else if (whichBread != -1 && entity_or_tos) {

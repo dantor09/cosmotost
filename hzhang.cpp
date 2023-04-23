@@ -305,7 +305,8 @@ Toaster::Toaster()
 	// turn dim and pos to Vertex
 	setVertex();
 	// energy bar and recover speed
-	energy = 100.0f;
+	max_energy = 100.0f;
+	energy = max_energy;
 	energy_recover = 0.1f;
 	// for freeze block
 	disable_keys = false;
@@ -567,7 +568,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		point = 10;
 		break;
 	case 2:
-		// level up box
+		// gun level up box
 		setDim(15.0,10.0);
 		setVel(-4.0, 0.0, 0.0);
 		setAcc(0.0,-ya,0.0);
@@ -606,6 +607,45 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		bullet_type_prime = 1;
 		point = 10;
 		break;
+	case 5:
+		// full power potion 
+		setDim(15.0,10.0);
+		setVel(-4.0, 0.0, 0.0);
+		setAcc(0.0,-ya,0.0);
+		setColor(214,213,142);
+		setDamage(0);
+		setHP(1);
+		trace = false;
+		bullet_type_prime = 1;
+		item_type = 15;
+		point = 0;
+		break;
+	case 6:
+		// full health potion 
+		setDim(15.0,10.0);
+		setVel(-4.0, 0.0, 0.0);
+		setAcc(0.0,-ya,0.0);
+		setColor(125,249,255);
+		setDamage(0);
+		setHP(1);
+		trace = false;
+		bullet_type_prime = 1;
+		item_type = 18;
+		point = 0;
+		break;
+	case 7:
+		// extra life
+		setDim(15.0,10.0);
+		setVel(-4.0, 0.0, 0.0);
+		setAcc(0.0,-ya,0.0);
+		setColor(255,193,204);
+		setDamage(0);
+		setHP(1);
+		trace = false;
+		bullet_type_prime = 1;
+		item_type = 17;
+		point = 0;
+		break;
     }
 	setVertex();
 }
@@ -633,6 +673,7 @@ void Spear::setSpear(float x, float y,float z, int spear_type)
 	setDamage(50);
 	setHP(100);
 	setCD(100);
+	point = 30;
 	trace = true;
 	item_type = 13;
 }

@@ -28,6 +28,7 @@ void Global::gameReset()
 	n_donut_bullet = 0;
 	n_laser = 0;
 	e.num_ent = 0;
+	tos.lives = 3;
 	// record.getRecord();
 	// for(int i = 0; i <10; i++)
 	// 	record.gamer[i]=' ';
