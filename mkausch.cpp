@@ -100,6 +100,7 @@
 #include <chrono>
 #include <time.h>
 #include <cstdlib>
+#include <algorithm>
 
 #include "Global.h"
 #include "mkausch.h"
@@ -1783,63 +1784,156 @@ Gamerecord::~Gamerecord()
     cerr << "gamerecord constructor finishing..." << endl;
 }
 
+bool Gamerecord::testConnection()
+{
+    bool result;
+    string line;
+
+    // GET request header
+    system("curl -sI https://cs.csub.edu/~mkausch/3350/cosmo_connect.php?op_type=read > tempheader.txt"); 
+    ifstream hs_file("tempheader.txt");
+    getline(hs_file, line);
+    size_t found = line.find("200"); // return true of a 200 code was found
+    if (found != std::string::npos) {
+        // cout << "200 was found at position: " << found << endl;
+        result = true;
+    }
+    else {
+        // cout << "couldn't find 200" << endl;
+        result = false;
+    }
+
+    hs_file.close();
+    system("rm tempheader.txt");
+
+    return result;
+}
+
 // reads highscores from local file and loads them into the scores vector
 bool Gamerecord::getRecord()
 {
-	// ****--------------------------[[ TODO: ]]---------------------------****
-	// replace this code with the query to odin to retrieve high scores
-	ifstream fin("Highscore.txt");
+    ifstream fin;
+    bool result = true;
+
+    string filename;
+    if (testConnection()) {
+            // open remote highscore file
+        system("curl -s https://cs.csub.edu/~mkausch/3350/cosmo_connect.php?op_type=read > remote-Highscore.txt"); 
+        filename = "remote-Highscore.txt";
+        cerr << "using remote..." << endl;
+        // fin.open("remote-Highscore.txt");        
+    }
+
+    if (!fin){
+        cerr << "error, bad connection with remote" << endl;
+        cerr << "attempting to open local Highscore.txt file" << endl;
+        filename = "Highscore.txt";
+        // fin.open("Highscore.txt");
+    }
+    
+    fin.open(filename);
 
 	if (!fin) {
-		return false;
-	}
+        cerr << "error opening local Highscore file" << endl;
+		result = false;
+	} else {
+        string user;
+        int score;
+        int count = 0;
 
-	string user;
-	int score;
-	int count = 0;
+        while (fin >> user >> score) {
+            // cerr << user << " : " << score << endl;
+            HighScore entry = HighScore(user, score);
+            scores.push_back(entry);
+            count++;
+        }
 
-	while (fin >> user >> score) {
-        // cerr << user << " : " << score << endl;
-		HighScore entry = HighScore(user, score);
-		scores.push_back(entry);
-		count++;
-	}
+        if (count < 10) {
+            genFakeNames();
+        }
+    }
 
-	if (count < 10) {
-		genFakeNames();
-	}
+    sortRecord();
 
-	return true;
+    fin.close();
+    if (filename == "remote-Highscore.txt") {
+        system("rm remote-Highscore.txt");
+    }
+
+	return result;
 }
 
 // writes top ten records to disk
 void Gamerecord::writeRecord()
 {
+    ostringstream temp;
 	ofstream fout("Highscore.txt");
+    bool good_conn = testConnection();
 
 	if (!fout) {
-		throw "could not write to highscore file";
+		throw "could not write to local highscore file";
 	}
 
 	// only write top 10 scores
-	for (int i = 0; i < scores.size(); i++) {
+    /* example url:
+    * https://cs.csub.edu/~mkausch/3350/cosmo_connect.php?op_type=write&n1=11&t1=mike&n2=20&t2=mike&n3=30&t3=mike&n4=40&t4=mike&n5=50&t5=mike&n6=60&t6=mike&n7=70&t7=mike&n8=80&t8=mike&n9=90&t9=mike&n10=100&t10=mike
+    */
+    temp << "curl -s \"https://cs.csub.edu/~mkausch/3350/cosmo_connect.php?op_type=write";
+	
+    for (int i = 0; i < scores.size(); i++) {
 		fout << scores[i].uname << "\t" << scores[i].score;
         if (i != (scores.size() - 1)) {
             fout << endl;
         }
+        temp << "&t" << i+1 << "=" << scores[i].uname << "&n" << i+1 << "=" << scores[i].score;
 	}
 
+    temp << "\" > response.txt";
+    string tstr = temp.str();
+
+    cerr << "<<< URL  >>> " << endl;
+    cerr << temp.str() << endl;
+    
+    system(tstr.c_str());
+    ifstream fin("response.txt");
+    if (!fin) {
+        cerr << "error, no response" << endl;
+    } else {
+        string l;
+        getline(fin, l);
+        cerr << "line: " << l << endl;
+        size_t found = l.find("done");
+        if (found != std::string::npos) {
+            cerr << "transmitted successfully" << endl;
+        } else {
+            cerr << "error transmitting file, no response after write" << endl;
+        }
+
+        fin.close();
+        system("rm response.txt");
+    }
 	cerr << "Highscore.txt written successfully...\n";
 }
 
+string removeSpaces(string s)
+{
+    const string SPACE = " ";
+    size_t last = s.find_last_not_of(SPACE);
+    return (s.substr(0, last+1));
+}
 
 void Gamerecord::submitRecord(int s)
 {
+    cerr << "originally: |" << string(gamer) << "|" << endl;
+    string gamer_tag = removeSpaces(string(gamer));
+    cerr << "now: |" << gamer_tag << "|" << endl;
+
 	if (user_score == nullptr) {
-		user_score = new HighScore(string(gamer), s);
+		user_score = new HighScore(gamer_tag, s);
+        
 	} else {
         delete user_score;
-		user_score = new HighScore(string(gamer), s);
+		user_score = new HighScore(gamer_tag, s);
 	}
 
     if (user_score) {
