@@ -100,6 +100,7 @@
 #include <chrono>
 #include <time.h>
 #include <cstdlib>
+#include <algorithm>
 
 #include "Global.h"
 #include "mkausch.h"
@@ -899,7 +900,7 @@ PowerBar::PowerBar(const Toaster & _tos_, PBType _type_, float x, float y)
 
 void PowerBar::draw()
 {
-    static int max_energy = 100;
+    
     
     if (type == HEALTH) {
         glColor3ubv(total.color);
@@ -944,20 +945,19 @@ void PowerBar::draw()
         glPopMatrix();
 
 
-
         glColor3ubv(health.color);
         glPushMatrix();
         glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
         glBegin(GL_QUADS);
             glVertex2f(0, -health.h);
             glVertex2f(0,  health.h);
-            glVertex2f( (((tos->energy))/((float)(max_energy)))*2.0f*health.w,  health.h);
-            glVertex2f( (((tos->energy))/((float)(max_energy)))*2.0f*health.w, -health.h);
+            glVertex2f( (((tos->energy))/((float)(tos->max_energy)))*2.0f*health.w,  health.h);
+            glVertex2f( (((tos->energy))/((float)(tos->max_energy)))*2.0f*health.w, -health.h);
             
         glEnd();
         glPopMatrix();
 
-        ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, max_energy);
+        ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, tos->max_energy);
         // cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
     }
 }
@@ -1012,12 +1012,12 @@ Blocky::Blocky(char type, bool g_act)
     setAcc(0.0f,-0.25f,0.0f);
     setVel(0.0f, -4.0f, 0.0f);
     setDamage(20);
-    starting_hp = 25;
+    starting_hp = 30;
     setHP(starting_hp);
     point = starting_hp;
     bul_point = 5;
     was_hit = false;
-    lives = 2;
+    lives = 1;
     explode_done = true;
     did_shoot = false;
     delay = nullptr;
@@ -1258,7 +1258,7 @@ void Blocky::reset()
 
 void Blocky::gamereset()
 {
-    lives = 2;
+    lives = 1;
     hp = starting_hp;
     setVel(0.0f, -4.0f, 0.0f);
     setRandPosition();    // put at a new random position
@@ -1784,63 +1784,156 @@ Gamerecord::~Gamerecord()
     cerr << "gamerecord constructor finishing..." << endl;
 }
 
+bool Gamerecord::testConnection()
+{
+    bool result;
+    string line;
+
+    // GET request header
+    system("curl -sI https://cs.csub.edu/~mkausch/3350/cosmo_connect.php?op_type=read > tempheader.txt"); 
+    ifstream hs_file("tempheader.txt");
+    getline(hs_file, line);
+    size_t found = line.find("200"); // return true of a 200 code was found
+    if (found != std::string::npos) {
+        // cout << "200 was found at position: " << found << endl;
+        result = true;
+    }
+    else {
+        // cout << "couldn't find 200" << endl;
+        result = false;
+    }
+
+    hs_file.close();
+    system("rm tempheader.txt");
+
+    return result;
+}
+
 // reads highscores from local file and loads them into the scores vector
 bool Gamerecord::getRecord()
 {
-	// ****--------------------------[[ TODO: ]]---------------------------****
-	// replace this code with the query to odin to retrieve high scores
-	ifstream fin("Highscore.txt");
+    ifstream fin;
+    bool result = true;
+
+    string filename;
+    if (testConnection()) {
+            // open remote highscore file
+        system("curl -s https://cs.csub.edu/~mkausch/3350/cosmo_connect.php?op_type=read > remote-Highscore.txt"); 
+        filename = "remote-Highscore.txt";
+        cerr << "using remote..." << endl;
+        // fin.open("remote-Highscore.txt");        
+    }
+
+    if (!fin){
+        cerr << "error, bad connection with remote" << endl;
+        cerr << "attempting to open local Highscore.txt file" << endl;
+        filename = "Highscore.txt";
+        // fin.open("Highscore.txt");
+    }
+    
+    fin.open(filename);
 
 	if (!fin) {
-		return false;
-	}
+        cerr << "error opening local Highscore file" << endl;
+		result = false;
+	} else {
+        string user;
+        int score;
+        int count = 0;
 
-	string user;
-	int score;
-	int count = 0;
+        while (fin >> user >> score) {
+            // cerr << user << " : " << score << endl;
+            HighScore entry = HighScore(user, score);
+            scores.push_back(entry);
+            count++;
+        }
 
-	while (fin >> user >> score) {
-        // cerr << user << " : " << score << endl;
-		HighScore entry = HighScore(user, score);
-		scores.push_back(entry);
-		count++;
-	}
+        if (count < 10) {
+            genFakeNames();
+        }
+    }
 
-	if (count < 10) {
-		genFakeNames();
-	}
+    sortRecord();
 
-	return true;
+    fin.close();
+    if (filename == "remote-Highscore.txt") {
+        system("rm remote-Highscore.txt");
+    }
+
+	return result;
 }
 
 // writes top ten records to disk
 void Gamerecord::writeRecord()
 {
+    ostringstream temp;
 	ofstream fout("Highscore.txt");
+    bool good_conn = testConnection();
 
 	if (!fout) {
-		throw "could not write to highscore file";
+		throw "could not write to local highscore file";
 	}
 
 	// only write top 10 scores
-	for (int i = 0; i < scores.size(); i++) {
+    /* example url:
+    * https://cs.csub.edu/~mkausch/3350/cosmo_connect.php?op_type=write&n1=11&t1=mike&n2=20&t2=mike&n3=30&t3=mike&n4=40&t4=mike&n5=50&t5=mike&n6=60&t6=mike&n7=70&t7=mike&n8=80&t8=mike&n9=90&t9=mike&n10=100&t10=mike
+    */
+    temp << "curl -s \"https://cs.csub.edu/~mkausch/3350/cosmo_connect.php?op_type=write";
+	
+    for (int i = 0; i < scores.size(); i++) {
 		fout << scores[i].uname << "\t" << scores[i].score;
         if (i != (scores.size() - 1)) {
             fout << endl;
         }
+        temp << "&t" << i+1 << "=" << scores[i].uname << "&n" << i+1 << "=" << scores[i].score;
 	}
 
+    temp << "\" > response.txt";
+    string tstr = temp.str();
+
+    cerr << "<<< URL  >>> " << endl;
+    cerr << temp.str() << endl;
+    
+    system(tstr.c_str());
+    ifstream fin("response.txt");
+    if (!fin) {
+        cerr << "error, no response" << endl;
+    } else {
+        string l;
+        getline(fin, l);
+        cerr << "line: " << l << endl;
+        size_t found = l.find("done");
+        if (found != std::string::npos) {
+            cerr << "transmitted successfully" << endl;
+        } else {
+            cerr << "error transmitting file, no response after write" << endl;
+        }
+
+        fin.close();
+        system("rm response.txt");
+    }
 	cerr << "Highscore.txt written successfully...\n";
 }
 
+string removeSpaces(string s)
+{
+    const string SPACE = " ";
+    size_t last = s.find_last_not_of(SPACE);
+    return (s.substr(0, last+1));
+}
 
 void Gamerecord::submitRecord(int s)
 {
+    cerr << "originally: |" << string(gamer) << "|" << endl;
+    string gamer_tag = removeSpaces(string(gamer));
+    cerr << "now: |" << gamer_tag << "|" << endl;
+
 	if (user_score == nullptr) {
-		user_score = new HighScore(string(gamer), s);
+		user_score = new HighScore(gamer_tag, s);
+        
 	} else {
         delete user_score;
-		user_score = new HighScore(string(gamer), s);
+		user_score = new HighScore(gamer_tag, s);
 	}
 
     if (user_score) {
@@ -1937,30 +2030,40 @@ void Gamerecord::makeMenu()
     // allocate mem for new menu
     if (!hs_menu) {
         // cerr << "menu set to null so far" << endl;
-        hs_menu = new Menu(scores.size(), 300.0, 300.0, 
-                            g.xres/2.0, g.yres/2.0, name_list, 1);
+        hs_menu = new Menu(scores.size(), 300.0f, 300.0f, 
+                            g.xres/2.0f, g.yres/2.0f, name_list, 1);
     } else if (hs_menu) {   // make a new menu
         // cerr << "deleting the prev menu" << endl;
         delete hs_menu;
         // cerr << "now making a new menu" << endl;
-        hs_menu = new Menu(scores.size(), 300.0, 300.0, 
-                            g.xres/2.0, g.yres/2.0, name_list, 1);
+        hs_menu = new Menu(scores.size(), 300.0f, 300.0f, 
+                            g.xres/2.0f, g.yres/2.0f, name_list, 1);
     }
 
     // cerr << "checking if high score" << endl;
     if (isHighScore()) {
         // cerr << "setting high score color" << endl;
-        (hs_menu->t_boxs[0]).setColor(124,10,2);
+        // (hs_menu->t_boxs[0]).setColor((int)124,(int)10,(int)2);
+        (hs_menu->t_boxs[0]).color[0] = (unsigned char)124;
+        (hs_menu->t_boxs[0]).color[1] = (unsigned char)10;
+        (hs_menu->t_boxs[0]).color[2] = (unsigned char)2;
+
+
     } else if (isTopTen()) {
         // cerr << "setting top ten color" << endl;
-        (hs_menu->t_boxs[place]).setColor(178,222,39);
+        // (hs_menu->t_boxs[place]).setColor((int)178,(int)222,(int)39);
+        (hs_menu->t_boxs[0]).color[0] = (unsigned char)178;
+        (hs_menu->t_boxs[0]).color[1] = (unsigned char)222;
+        (hs_menu->t_boxs[0]).color[2] = (unsigned char)39;
     }
 
     // set 11th element to yellow (will be deleted)
     // cerr << "setting 11th element color" << endl;
     if (scores.size() == 11)
-        (hs_menu->t_boxs[scores.size()-1]).setColor(189,195,199);
-
+        // (hs_menu->t_boxs[scores.size()-1]).setColor((int)189,(int)195,(int)199);
+        (hs_menu->t_boxs[0]).color[0] = (unsigned char)189;
+        (hs_menu->t_boxs[0]).color[1] = (unsigned char)195;
+        (hs_menu->t_boxs[0]).color[2] = (unsigned char)199;
     // cerr << "finished making menu...\n" << endl;
 }
 

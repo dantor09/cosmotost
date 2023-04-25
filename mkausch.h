@@ -272,6 +272,7 @@ public:
 
 void setRandColor(Item & it);
 void checkSound(void);
+void checkLevel();
 
 class Bomb
 {
@@ -318,7 +319,6 @@ public:
     // bool onScreen();
 };
 
-void checkLevel();
 
 struct HighScore
 {
@@ -337,7 +337,7 @@ class Gamerecord
 
 private:
     void genFakeNames();
-    
+    bool testConnection();
 public:
     
     int n = 0;  // letter input index

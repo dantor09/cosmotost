@@ -3,6 +3,7 @@ OBJECTS = cosmotost.o Box.o Global.o libggfonts.a mkausch.o aparriott.o hzhang.o
 SOBJECTS = s_cosmotost.o Box.o Global.o libggfonts.a s_mkausch.o aparriott.o hzhang.o dtorres.o image.o
 
 FLAGS =  -Wall -lX11 -lGL -lGLU -lm
+SSHFLAGS = -Wall -lssl -lcrypto 
 COMP = g++ -std=c++17
 
 

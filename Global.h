@@ -127,7 +127,7 @@ inline Bread bread[MAX_bread];
 inline Spear spear[10];
 inline Bullet do_bul[MAX_bullet];
 // inline EffectBox effect_partical[MAX_partical];
-// inline DonutLaser d_laser[5];
+inline DonutLaser d_laser[10];
 inline Donut donut;
 
 // Huaiyu veribles================================
