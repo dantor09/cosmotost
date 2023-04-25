@@ -62,6 +62,7 @@ class EntitySpawn {
 	int randNum(int min, int max);
 	void makeEntity(float pos_x, float pos_y, float init_vel_x, float init_vel_y,
             float curve_x, float curve_y);
+	void ResetEntity();
 };
 
 inline Entity entity[MAX_ENTITIES];

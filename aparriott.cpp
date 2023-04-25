@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <GL/glx.h>
+#include <curl/curl.h>
 
 #include "Global.h"
 #include "aparriott.h"
@@ -49,8 +50,8 @@ int EntitySpawn::randNum(int min, int max) {
     return min + rand() % ((max + 1) - min);
 }
 
-void EntitySpawn::makeEntity(float pos_x, float pos_y, float init_vel_x, float init_vel_y, 
-                float curve_x, float curve_y) {
+void EntitySpawn::makeEntity(float pos_x, float pos_y, float init_vel_x, 
+        float init_vel_y, float curve_x, float curve_y) {
 	if (e.num_ent < MAX_ENTITIES) {
 		entity[e.num_ent].dim[0] = 8;
 		entity[e.num_ent].dim[1] = 8;
@@ -66,6 +67,12 @@ void EntitySpawn::makeEntity(float pos_x, float pos_y, float init_vel_x, float i
 		entity[e.num_ent].setHP(2);
 		e.num_ent++;
 	}	
+}
+
+void EntitySpawn::ResetEntity() {
+    while (e.num_ent != 0) {
+        entity[0] = entity[--e.num_ent];
+    }
 }
 
 void Entity::entityPhysics() {
@@ -100,8 +107,8 @@ void Entity::entityPhysics() {
                 e.spawn_vel_y = e.randNum(0, 8);
             }
         }
-        e.makeEntity(e.spawn_x, e.spawn_y, e.spawn_vel_x, e.spawn_vel_y, e.curve_rand_x, 
-                    e.curve_rand_y);
+        e.makeEntity(e.spawn_x, e.spawn_y, e.spawn_vel_x, e.spawn_vel_y, 
+                e.curve_rand_x, e.curve_rand_y);
 
         e.chain_len--;
     }
@@ -115,35 +122,18 @@ void Entity::entityPhysics() {
         entity[i].vel[1] += entity[i].curve[1] / 32;
 
         // DESPAWN
-        if (entity[i].pos[1] < -4 || 
-                entity[i].pos[1] > g.yres + 4 ||
+        if (entity[i].pos[1] < -4 || entity[i].pos[1] > g.yres + 4 ||
                 entity[i].pos[0] < -4) {	
             entity[i] = entity[--e.num_ent];
         }
 
         // BOUNCE
-		if (entity[i].pos[1] <= 4 ||
-				entity[i].pos[1] >= g.yres - 4) {			
+		if (entity[i].pos[1] <= 4 || entity[i].pos[1] >= g.yres - 4) {			
 			entity[i].vel[1] = -entity[i].vel[1];
         }
     }
  
  }
-
-// void Entity::entityRender() {
-// 	//Draw entity.
-// 	glPushMatrix();
-// 	glColor3ubv(entity[i].color);
-// 	glTranslatef(entity[i].pos[0], entity[i].pos[1], 0.0f);
-// 	glBegin(GL_QUADS);
-// 		glVertex2f(-entity[i].dim[0], -entity[i].dim[1]);
-// 		glVertex2f(-entity[i].dim[0],  entity[i].dim[1]);
-// 		glVertex2f( entity[i].dim[0],  entity[i].dim[1]);
-// 		glVertex2f( entity[i].dim[0], -entity[i].dim[1]);
-// 	glEnd();
-// 	glPopMatrix();
-// }
-
 
 //  ENTITYSPAWN CONSTRUCTOR
 EntitySpawn::EntitySpawn() {
@@ -152,29 +142,3 @@ EntitySpawn::EntitySpawn() {
     curve_rand_x = 0;
     curve_rand_y = 0;
 }
-
-// FILE WRITE GOES HERE
-
-// writes top ten records to disk
-/*
-void Gamerecord::writeRecord()
-{
-	ofstream fout("Highscore.txt");
-
-	if (!fout) {
-		throw "could not write to highscore file";
-	}
-
-	// only write top 10 scores
-	for (int i = 0; i < scores.size(); i++) {
-		fout << scores[i].uname << "\t" << scores[i].score;
-        if (i != (scores.size() - 1)){
-            fout << endl;
-        }
-	}
-
-	cerr << "Highscore.txt written successfully...\n";
-}
-*/
-
-
