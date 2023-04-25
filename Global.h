@@ -111,8 +111,6 @@ inline Image bomb_img("textures/firebullet.png");
 inline Image icecube_img("textures/iceSmallSpike.png");
 inline Image blocky_img("textures/blocky.png");
 
-
-
 #ifdef USE_OPENAL_SOUND
 inline Sound sounds;
 #endif
@@ -134,3 +132,7 @@ inline DonutLaser d_laser[10];
 inline Donut donut;
 
 // Huaiyu veribles================================
+
+// AILAND VARIABLES ============
+
+inline EntitySpawn EntySpwn;
