@@ -957,7 +957,7 @@ void PowerBar::draw()
         glEnd();
         glPopMatrix();
 
-        ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, tos->max_energy);
+        ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, (int)tos->max_energy);
         // cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
     }
 }
