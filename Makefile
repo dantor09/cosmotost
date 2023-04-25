@@ -7,7 +7,7 @@ SSHFLAGS = -Wall -lssl -lcrypto
 COMP = g++ -std=c++17
 
 
-all: cosmotost s_cosmotost cosmoconnect
+all: cosmotost s_cosmotost
 
 cosmotost: cosmotost.o Box.o Global.o mkausch.o aparriott.o dtorres.o hzhang.o image.o
 	$(COMP) -o cosmotost $(OBJECTS) $(FLAGS)
@@ -52,9 +52,6 @@ aparriott.o: aparriott.cpp aparriott.h Global.h mkausch.cpp
 # Empty files but development on bottom screen info soon
 dtorres.o: dtorres.cpp dtorres.h mkausch.cpp
 	$(COMP) -c dtorres.cpp
-
-cosmoconnect: cosmoconnect.cpp
-	$(COMP) cosmoconnect.cpp $(SSHFLAGS) -o cosmoconnect 
 
 clean:
 	rm -f cosmotost s_cosmotost *.o 2>/dev/null
