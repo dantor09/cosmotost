@@ -196,7 +196,7 @@ bool Item::screenIn()
     bool b = (pos[0] >= w-1);
     bool c = (pos[1] <= g.yres-h+1);
 	bool d = (pos[1] >= ((3 * g.yres / 40) + h - 1));
-	if(g.donut_active) {
+	if (g.donut_active) {
 		a = (pos[0] <= 0.7 * g.xres - w + 1);
 	}
     return a&&b&&c&&d;
@@ -294,7 +294,7 @@ Toaster::Toaster()
 	// for live bar
 	plive = new Box[lives];
 	int offset_x = -125;
-	for(int i = 0; i < lives; i++) {
+	for (int i = 0; i < lives; i++) {
 		plive[i].setColor(255, 255, 255);
 		plive[i].w = 5;
 		plive[i].h = 10;
@@ -361,7 +361,7 @@ void Toaster::posReset()
 void Toaster::moveToster()
 {
 // how toaster move by keys and shoot bullet
-	if(screenIn() && !disable_keys) {
+	if (screenIn() && !disable_keys) {
 		// if the toaster still in the screen then move
 		if (g.keys[XK_w]) {
 			pos[1] += 4;
@@ -375,18 +375,17 @@ void Toaster::moveToster()
 		if (g.keys[XK_d]) {
 			pos[0] += 4;
 		}
-	}
-	else {
+	} else {
 		// to keep toaster in the screen
-		if(pos[0] > g.xres-w+1) 
+		if (pos[0] > g.xres-w+1) 
 			pos[0] = g.xres-w+1;
-		if(g.donut_active && pos[0] > (0.7*g.xres)-w+1) 
+		if (g.donut_active && pos[0] > (0.7*g.xres)-w+1) 
 			pos[0] = (0.7*g.xres)-w-1;
-		if(pos[0] < w-1) 
+		if (pos[0] < w-1) 
 			pos[0] = w-1;
-		if(pos[1] > g.yres-h+1) 
+		if (pos[1] > g.yres-h+1) 
 			pos[1] = g.yres-h+1;
-		if(pos[1] < (3*g.yres/40) + h - 1) 
+		if (pos[1] < (3*g.yres/40) + h - 1) 
 			pos[1] = (3*g.yres/40) + h-1;
 	}
 	if (g.keys[XK_space] && bullet_type_prime <= 4) {
@@ -395,8 +394,8 @@ void Toaster::moveToster()
 			makeBullet(pos[0]+w,pos[1],pos[2],bullet_type_prime);
 		}
 	}
-	if(bullet_type_prime > 4 && bullet_type_prime <= 8) {
-		if(g.keys[XK_space] && energy > 5) {
+	if (bullet_type_prime > 4 && bullet_type_prime <= 8) {
+		if (g.keys[XK_space] && energy > 5) {
 			laserOn = true;
 			energy -= 0.2;
 
@@ -404,7 +403,7 @@ void Toaster::moveToster()
 			laserOn = false;
 		}
 	}
-	if(energy < 100) {
+	if (energy < 100) {
 		energy += energy_recover;
 	}
 }
@@ -419,7 +418,7 @@ void Toaster::bulletReload() {
 
 void Toaster::tdraw() {
 	int colorrand = rand()%200 + 55;
-	if(laserOn && energy > 5) {
+	if (laserOn && energy > 5) {
 		glPushMatrix();
 		glColor3ub(20,0,0);
 		glTranslatef(pos[0]+w, pos[1], pos[2]);
@@ -467,7 +466,7 @@ void Toaster::tdraw() {
   	glPopMatrix();
 
 	//D.T Draw the lives boxes on the information board
-	for(int i = 0; i < lives; i++) {
+	for (int i = 0; i < lives; i++) {
 		glColor3ubv(plive[i].color);
 		glPushMatrix();
 		glTranslatef(plive[i].pos[0], plive[i].pos[1], plive[i].pos[2]);
@@ -680,7 +679,7 @@ void Spear::setSpear(float x, float y,float z, int spear_type)
 
 void Spear::moveSpear()
 {
-	if(!trace) {
+	if (!trace) {
 		pos[0] += vel[0];
 		pos[1] += vel[1];
 		pos[2] += vel[2];
@@ -709,10 +708,10 @@ Donut::~Donut() {}
 void Donut::moveDonut() 
 {
 	// cerr << weapon << "  " << count_down << endl;
-	int val = rand()%7 +1;
+	int val = rand()%5 +1;
  	val = 5;
-	if(!weapon) {
-		if(count_down == 0) {
+	if (!weapon) {
+		if (count_down == 0) {
 			atteckMove(val);
 		} else {
 			count_down--;
@@ -724,18 +723,18 @@ void Donut::moveDonut()
 
 void Donut::setCD()
 {
-		int temp = 10000 - (int)hp;
-		temp = temp / 1000;
-		cd = 200 - temp*20;
+	int temp = 10000 - (int)hp;
+	temp = temp / 1000;
+	cd = 200 - temp*20;
 }
 
 bool Donut::hpCheck() 
 {
-		if (hp < 0) {
-				return true;
-		}
-		setCD();
-		return false;
+	if (hp < 0) {
+			return true;
+	}
+	setCD();
+	return false;
 }
 
 bool Donut::collision(Item itm) 
@@ -768,7 +767,7 @@ void Donut::draw()
 	float anglein = 3.141592 / n;
 	float x0,x1,y0,y1;
 	glPushMatrix();
-	for(int i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++) {
 		x0= pos[0]+ out_radius*cos(i*anglein);
 		y0= pos[1]+ out_radius*sin(i*anglein);
 		x1= pos[0]+ out_radius*cos((i+1)*anglein);
@@ -792,7 +791,7 @@ void Donut::draw()
 			glVertex3f(x1,y1,0);
 		glEnd();
 	}
-	if(shelled_on) {
+	if (shelled_on) {
 		float anglein = (2*3.1415926)/40;
 		float x0,x1,y0,y1;
 		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -827,7 +826,7 @@ void Donut::draw()
 
  void Donut::atteckMove(int num) 
  {
-	if(!weapon) {
+	if (!weapon) {
 		weapon_id = num;
 		if (num == 1 || num == 2){
 			weapon_outer_count = 10;
@@ -948,9 +947,16 @@ void Donut::draw()
 				}
 				break;
 			case 5:
-				d_laser[g.n_laser].setDonutLaser(donut.pos[0], donut.pos[1], donut.out_radius,135,225,0.5);
+				// d_laser[g.n_laser].setDonutLaser(donut.pos[0], donut.pos[1], donut.out_radius,135,225,0.5);
+				// d_laser[g.n_laser].setCD(100,50,1,1);
+				// g.n_laser++;
+				d_laser[g.n_laser].setDonutLaser(g.xres/2, g.yres_start, 1,90,180,0.5);
 				d_laser[g.n_laser].setCD(100,50,1,1);
 				g.n_laser++;
+				d_laser[g.n_laser].setDonutLaser(donut.pos[0], donut.pos[1], donut.out_radius,100,220,0.5);
+				d_laser[g.n_laser].setCD(100,50,1,1);
+				g.n_laser++;
+
 				// d_laser[g.n_laser].setDonutLaser(0,10,6,'h');
 				// d_laser[g.n_laser].setCD(10,50,1,1);
 				// g.n_laser++;
@@ -991,7 +997,7 @@ DonutLaser::~DonutLaser()
 
 void DonutLaser::setVertex()
 {
-	if(laser_type == 2 || laser_type == 3) {
+	if (laser_type == 2 || laser_type == 3) {
 	// vertical
 		vertex[0] = coor_one[0] - dim;
 		vertex[1] = coor_one[1];
@@ -1002,7 +1008,7 @@ void DonutLaser::setVertex()
 		vertex[6] = coor_one[0] + dim;
 		vertex[7] = coor_one[1];
 	}
-	else if(laser_type == 1 || laser_type == 4) {
+	else if (laser_type == 1 || laser_type == 4) {
 	// horizental
 		vertex[0] = coor_one[0];
 		vertex[1] = coor_one[1] + dim;
@@ -1062,7 +1068,7 @@ void DonutLaser::setCD(int charge, int lag, bool h, bool s)
 	cd_charge = charge;
 	cd_lag = lag;
 	cd_stay = 100;
-	if(charge != 0){
+	if (charge != 0) {
 		alpha = 0;
 		alpha_inc = 255 / charge;
 	} else {
@@ -1186,20 +1192,20 @@ void DonutLaser::setDonutLaser(float xcenter, float ycenter, float r, float angl
 }
 
 void DonutLaser::moveLaser() {
-	cerr << slop << endl;
-	if(charge_on){
-	// charge and change alpha
-		if(cd_charge > 0) {
+	// cerr << slop << endl;
+	if (charge_on) {
+	// charge and chclearange alpha
+		if (cd_charge > 0) {
 			cd_charge--;
 			alpha += alpha_inc;
 		} else {
 			charge_on = false;
 			lag_on = true;
 		}
-	} else if(lag_on) {
+	} else if (lag_on) {
 	// lag give player time to react 
 	// should not have collision test when lag
-		if(cd_lag > 0) {
+		if (cd_lag > 0) {
 			cd_lag--;
 		} else {
 			lag_on = false;
@@ -1207,9 +1213,9 @@ void DonutLaser::moveLaser() {
 	} else {
 	// move laser if is moveble 
 	// countdown if not moveble
-		if(moveble) {
+		if (moveble) {
 			// can move
-			if(laser_type != 5) {
+			if (laser_type != 5) {
 				// not rotate
 				coor_one[0] += vel_one[0];
 				coor_one[1] += vel_one[1];
@@ -1243,7 +1249,7 @@ void DonutLaser::moveLaser() {
 			}
 			setVertex();
 		} else {
-			if(cd_stay > 0) {
+			if (cd_stay > 0) {
 				cd_stay--;
 			}
 		}
@@ -1251,7 +1257,7 @@ void DonutLaser::moveLaser() {
 }
 
 bool DonutLaser::collision(Item itm){
-	if(!(charge_on||lag_on)) {
+	if (!(charge_on||lag_on)) {
 		if (laser_type == 1) {
 			// horizental line move up or down
 			return !((coor_one[1] - dim - itm.h - itm.pos[1] > 0)||(itm.pos[1] - coor_one[1] - dim - itm.h > 0));
@@ -1261,7 +1267,7 @@ bool DonutLaser::collision(Item itm){
 			return !((coor_one[0] - dim - itm.w - itm.pos[0] > 0)||(itm.pos[0] - coor_one[0] - dim - itm.w > 0));
 		}
 		else if (laser_type == 3) {
-			if(slop > 0) {
+			if (slop > 0) {
 				return !((itm.pos[1] - itm.h) > slop * (itm.pos[0] + itm.w - coor_one[0] - dim)
 						|| (itm.pos[1] + itm.h) < slop * (itm.pos[0] - itm.h - coor_one[1] + dim));
 			} else {
@@ -1321,23 +1327,23 @@ void DonutLaser::hpDamage(Item &a)
 
 bool DonutLaser::deleteLaser() 
 {
-	if(moveble) {
-		if(laser_type == 1) {
+	if (moveble) {
+		if (laser_type == 1) {
 			return (coor_one[1] < g.yres_start || coor_one[1] > g.yres);
 		}
-		else if(laser_type == 2) {
+		else if (laser_type == 2) {
 			return (coor_one[0] < 0 || coor_one[0] > g.xres);
 		}
-		else if(laser_type == 3) {
+		else if (laser_type == 3) {
 			return ((coor_one[0] < 0 && coor_two[0] < 0)
 					|| (coor_one[0] > g.xres && coor_two[0] > g.xres));
 		}
-		else if(laser_type == 4) {
+		else if (laser_type == 4) {
 			return ((coor_one[1] < g.yres_start && coor_two[1] < g.yres_start)
 					|| (coor_one[1] < g.yres && coor_two[1] < g.yres));
 		}
-		else if(laser_type == 5) {
-			if(angleacc > 0) {
+		else if (laser_type == 5) {
+			if (angleacc > 0) {
 				return slop > target_angle;
 			} else {
 				return slop < target_angle;
@@ -1353,7 +1359,7 @@ bool DonutLaser::deleteLaser()
 
 void DonutLaser::draw()
 {
-	if(charge_on) {
+	if (charge_on) {
 		glPushMatrix();
 		glAlphaFunc(GL_GREATER, 0.0f);
 		glColor4ub(alpha,0,0,alpha);
@@ -1365,7 +1371,7 @@ void DonutLaser::draw()
 		glEnd();
 		glPopMatrix();
 	} else if (lag_on) {
-		if(!hide) {
+		if (!hide) {
 			glPushMatrix();
 			glAlphaFunc(GL_GREATER, 0.0f);
 			glColor4ub(alpha,0,0,alpha);
@@ -1446,18 +1452,17 @@ void ChargeBread::moveChargeBread() {
 bool pointIn(float x0, float y0, float * arr, int n) 
 {
 	float point[n/2];
-	for(int i = 0; i < (n/2); i++)
-	{
+	for (int i = 0; i < (n/2); i++) {
 		point[i] = crossX(x0,y0,(arr[2*i]),(arr[2*i+1]),(arr[(2*i+2)%n]),(arr[(2*i+3)%n]));
 	}
 	float large=0;
 	float small=0;
-	for(int i = 0; i < (n/2); i++)
-	{
-		if(large < point[i])
+	for (int i = 0; i < (n/2); i++) {
+		if (large < point[i]) {
 			small = large;
 			large = point[i];
-		if(large > point[i] && small < point[i])
+		}
+		if (large > point[i] && small < point[i])
 			small = point[i];
 	}
 	cout << large << " " << small <<endl;
@@ -1470,7 +1475,7 @@ bool pointIn(float x0, float y0, float * arr, int n)
 float crossX(float x0,float y0,float xa,float ya,float xb,float yb) 
 {
 	float result = (ya-((ya-yb)*xa/(xa-xb)))/((y0/x0)-((ya-yb)/(xa-xb)));
-	if(result < fmin(xa,xb)|| result > fmax(xa,xb))
+	if (result < fmin(xa,xb)|| result > fmax(xa,xb))
 		return 0;
 	else
 		return result;
@@ -1479,8 +1484,8 @@ float crossX(float x0,float y0,float xa,float ya,float xb,float yb)
 float maxRadius(float *arr,int n) 
 {
 	float result = 0.0f;
-	for(int i = 0; i < (n/2); i++) {
-		if(result < ((arr[i*2]*arr[i*2])+(arr[i*2+1]*arr[i*2+1])))
+	for (int i = 0; i < (n/2); i++) {
+		if (result < ((arr[i*2]*arr[i*2])+(arr[i*2+1]*arr[i*2+1])))
 			result = ((arr[i*2]*arr[i*2])+(arr[i*2+1]*arr[i*2+1]));
 	}
 	return result;
@@ -1489,8 +1494,8 @@ float maxRadius(float *arr,int n)
 float minRadius(float *arr,int n) 
 {
 	float result = ((arr[0]*arr[0])+(arr[1]*arr[1]));
-	for(int i = 0; i < (n/2); i++) {
-		if(result > ((arr[i*2]*arr[i*2])+(arr[i*2+1]*arr[i*2+1])))
+	for (int i = 0; i < (n/2); i++) {
+		if (result > ((arr[i*2]*arr[i*2])+(arr[i*2+1]*arr[i*2+1])))
 			result = ((arr[i*2]*arr[i*2])+(arr[i*2+1]*arr[i*2+1]));
 	}
 	return result;
@@ -1499,7 +1504,7 @@ float minRadius(float *arr,int n)
 float maxTan(float *arr,int n) 
 {
 	float result = 0.0f;
-	for(int i = 0; i < (n/2); i++) {
+	for (int i = 0; i < (n/2); i++) {
 		if(result < (arr[2 * i] / arr[2 * i + 1]))
 			result = (arr[2 * i] / arr[2 * i + 1]);
 	}
@@ -1508,7 +1513,7 @@ float maxTan(float *arr,int n)
 float minTan(float *arr,int n) 
 {
 	float result = (arr[0] / arr[1]);
-	for(int i = 0; i < (n/2); i++) {
+	for (int i = 0; i < (n/2); i++) {
 		if(result > (arr[2 * i] / arr[2 * i + 1]))
 			result = (arr[2 * i] / arr[2 * i + 1]);
 	}
