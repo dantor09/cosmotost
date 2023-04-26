@@ -53,6 +53,7 @@ GLuint bomb_texture;
 GLuint icecube_texture;
 // GLuint blocky_texture;
 GLuint blocky_silhouette;
+GLuint ptm_silhouette;
 
 
 Global();
@@ -110,6 +111,7 @@ inline Image toaster_img("textures/toaster.png");
 inline Image bomb_img("textures/firebullet.png");
 inline Image icecube_img("textures/iceSmallSpike.png");
 inline Image blocky_img("textures/blocky.png");
+inline Image ptm_img("textures/ptm.png");
 
 #ifdef USE_OPENAL_SOUND
 inline Sound sounds;

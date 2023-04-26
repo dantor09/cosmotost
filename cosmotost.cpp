@@ -1028,6 +1028,24 @@ void init_opengl(void)
 								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
 	free(silhouetteData);
 
+	w = ptm_img.width;
+    h = ptm_img.height;
+	// glGenTextures(1, &g.toaster_texture);
+    // glBindTexture(GL_TEXTURE_2D, g.toaster_texture);
+	glGenTextures(1, &g.ptm_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.ptm_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&ptm_img);
+    // glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
+	//     GL_RGB, GL_UNSIGNED_BYTE, ptm_img.data);
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+	// 	GL_RGBA, GL_UNSIGNED_BYTE, ptm_img.data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
 	cerr << "finished initializing opengl" << endl;
 }
 
@@ -1035,7 +1053,7 @@ void init_opengl(void)
 void physics()
 {
 	if (g.state == SPLASH) {
-
+		// place for test code at start of game
 
 	}
 

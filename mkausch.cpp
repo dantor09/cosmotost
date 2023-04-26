@@ -1003,9 +1003,11 @@ Blocky::Blocky(char type, bool g_act)
     srand(time(NULL));
     float sub_blocky_size = sqrt((25.0*100.0)/SUB_BLOCK_N);
     if (type == 'v') {
-        setDim(50.0f, 100.0f);
+        setDim(75.0f, 100.0f);
+        tex = &g.blocky_silhouette;
     } else if (type == 'h') {
-        setDim(100.0f, 75.0f);
+        setDim(125.0f, 50.0f);
+        tex = &g.ptm_silhouette;
     }
     setRandColor(*this);
     setRandPosition();
@@ -1023,7 +1025,7 @@ Blocky::Blocky(char type, bool g_act)
     delay = nullptr;
     delay_t = 0.5;
     gun_active = g_act;
-    tex = &g.blocky_silhouette;
+    
 
     // sub box assignment
     // assignes itself and it's mirror image (i+4 in this case)
