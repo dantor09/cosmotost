@@ -699,14 +699,10 @@ int X11_wrapper::check_keys(XEvent *e)
 						tos.bulletReload();
 						return 0;
 				case XK_p: // p was pressed - toggle Ailand's Entity State
-					// if (g.substate == NONE) {
 					if (g.entity_active == false) {
-						// g.substate = ENTITY;
 						g.entity_active = true;
 						cerr << "g.entity_active set to true\n";
-					// } else if (g.substate == ENTITY) {
 					} else if (g.entity_active == true) {
-						// g.substate = NONE;
 						g.entity_active = false;
 						cerr << "g.entity_active set to false\n";
 					}
