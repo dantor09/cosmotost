@@ -1005,6 +1005,25 @@ void init_opengl(void)
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 
+
+	w = blocky_img.width;
+    h = blocky_img.height;
+	// glGenTextures(1, &g.toaster_texture);
+    // glBindTexture(GL_TEXTURE_2D, g.toaster_texture);
+	glGenTextures(1, &g.blocky_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.blocky_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&blocky_img);
+    // glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
+	//     GL_RGB, GL_UNSIGNED_BYTE, blocky_img.data);
+	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+	// 	GL_RGBA, GL_UNSIGNED_BYTE, blocky_img.data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
 	cerr << "finished initializing opengl" << endl;
 }
 

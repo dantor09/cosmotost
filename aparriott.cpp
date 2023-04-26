@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <GL/glx.h>
-#include <curl/curl.h>
+// #include <curl/curl.h>
 
 #include "Global.h"
 #include "aparriott.h"

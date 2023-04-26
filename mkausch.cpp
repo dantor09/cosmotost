@@ -957,7 +957,7 @@ void PowerBar::draw()
         glEnd();
         glPopMatrix();
 
-        ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, tos->max_energy);
+        ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, (int)tos->max_energy);
         // cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
     }
 }
@@ -1003,9 +1003,9 @@ Blocky::Blocky(char type, bool g_act)
     srand(time(NULL));
     float sub_blocky_size = sqrt((25.0*100.0)/SUB_BLOCK_N);
     if (type == 'v') {
-        setDim(25.0f, 100.0f);
+        setDim(50.0f, 100.0f);
     } else if (type == 'h') {
-        setDim(100.0f, 25.0f);
+        setDim(100.0f, 75.0f);
     }
     setRandColor(*this);
     setRandPosition();
@@ -1023,6 +1023,7 @@ Blocky::Blocky(char type, bool g_act)
     delay = nullptr;
     delay_t = 0.5;
     gun_active = g_act;
+    tex = &g.blocky_silhouette;
 
     // sub box assignment
     // assignes itself and it's mirror image (i+4 in this case)
@@ -1162,6 +1163,8 @@ void Blocky::draw()
     
     // draw big blocky
     if (isAlive() && explode_done) {
+
+        // delay blocky if he went out of screen
         if (screenOut()) {
             if (delay == nullptr) {
                 delay = new Timer(delay_t);
@@ -1186,17 +1189,42 @@ void Blocky::draw()
             }
         }
 
-        setRandColor(*this);
+        // setRandColor(*this);
         glPushMatrix();
-        glColor3ub(color[0], color[1], color[2]);
+        glBindTexture(GL_TEXTURE_2D, *(blocky->tex));
+        // glColor3ub(color[0], color[1], color[2]);
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.0f);
+        glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
         glTranslatef(pos[0], pos[1], pos[2]);
         glBegin(GL_QUADS);
-                glVertex2f(-w, -h);
-                glVertex2f(-w,  h);
-                glVertex2f( w,  h);
-                glVertex2f( w, -h);
+            glTexCoord2f(1.0f, 1.0f);
+            glVertex2f(-w, -h);
+            glTexCoord2f(1.0f, 0.0f);
+            glVertex2f(-w,  h);
+            glTexCoord2f(0.0f, 0.0f);
+            glVertex2f( w,  h);
+            glTexCoord2f(0.0f, 1.0f);
+            glVertex2f( w, -h);
         glEnd();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_ALPHA_TEST);
         glPopMatrix();
+
+
+
+
+        // setRandColor(*this);
+        // glPushMatrix();
+        // glColor3ub(color[0], color[1], color[2]);
+        // glTranslatef(pos[0], pos[1], pos[2]);
+        // glBegin(GL_QUADS);
+        //         glVertex2f(-w, -h);
+        //         glVertex2f(-w,  h);
+        //         glVertex2f( w,  h);
+        //         glVertex2f( w, -h);
+        // glEnd();
+        // glPopMatrix();
 
     } else {    // draw little blockies
         // cerr << "checking if sub boxes are in the screen...\n";
@@ -1218,6 +1246,35 @@ void Blocky::draw()
                         glVertex2f( sub_boxes[i].w, -sub_boxes[i].h);
                 glEnd();
                 glPopMatrix();
+
+
+
+                // // setRandColor(*this);
+                // glPushMatrix();
+                // glBindTexture(GL_TEXTURE_2D, *(blocky->tex));
+                // // glColor3ub(color[0], color[1], color[2]);
+                // glEnable(GL_ALPHA_TEST);
+                // glAlphaFunc(GL_GREATER, 0.0f);
+                // glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+                // glTranslatef(sub_boxes[i].pos[0], sub_boxes[i].pos[1], sub_boxes[i].pos[2]);
+                // glMatrixMode(GL_MODELVIEW);
+                // glRotatef(rot_angle[i], 0, 0, 1.0);
+                
+                // glBegin(GL_QUADS);
+                //     glTexCoord2f(1.0f, 1.0f);
+                //     glVertex2f(-sub_boxes[i].w, -sub_boxes[i].h);
+                //     glTexCoord2f(1.0f, 0.0f);
+                //     glVertex2f(-sub_boxes[i].w,  sub_boxes[i].h);
+                //     glTexCoord2f(0.0f, 0.0f);
+                //     glVertex2f( sub_boxes[i].w,  sub_boxes[i].h);
+                //     glTexCoord2f(0.0f, 1.0f);
+                //     glVertex2f( sub_boxes[i].w, -sub_boxes[i].h);
+                // glEnd();
+                // glBindTexture(GL_TEXTURE_2D, 0);
+                // glDisable(GL_ALPHA_TEST);
+                // glPopMatrix();
+
+
                 rot_angle[i] -= rot_speed[i];
             }
         } else {
