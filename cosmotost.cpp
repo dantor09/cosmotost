@@ -1059,6 +1059,7 @@ void init_opengl(void)
 								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
 	free(silhouetteData);
 
+
 	w = electbul_img.width;
     h = electbul_img.height;
 	glGenTextures(1, &g.elec_bul_silhouette);
@@ -1067,6 +1068,89 @@ void init_opengl(void)
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	silhouetteData = buildAlphaData(&electbul_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+
+	// GLuint whomp_silhouette;	 whomp_img
+	w = whomp_img.width;
+    h = whomp_img.height;
+	glGenTextures(1, &g.whomp_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.whomp_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&whomp_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+
+	
+	// GLuint bread2_silhouette; bread2_img
+
+	w = bread2_img.width;
+    h = bread2_img.height;
+	glGenTextures(1, &g.bread2_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.bread2_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&bread2_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint energy_silhouette; energy_img
+
+	w = energy_img.width;
+    h = energy_img.height;
+	glGenTextures(1, &g.energy_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.energy_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&energy_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint powerup_silhouette; powerup_img
+	w = powerup_img.width;
+    h = powerup_img.height;
+	glGenTextures(1, &g.powerup_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.powerup_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&powerup_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint health_silhouette; health_img
+	w = health_img.width;
+    h = health_img.height;
+	glGenTextures(1, &g.health_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.health_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&health_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint lives_silhouette; lives_img
+	w = lives_img.width;
+    h = lives_img.height;
+	glGenTextures(1, &g.lives_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.lives_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&lives_img);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
 	free(silhouetteData);
@@ -1470,11 +1554,11 @@ void physics()
 
 			breadrand = (int)rand()%100;
 			if (breadrand == 0) {
-				makeBread(g.xres-10 ,0.25*g.yres,0.0,5,1);	// full power
-			} else if (breadrand == 1 || breadrand == 2) {
+				makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1);	// extra life
+			} else if (breadrand == 2 || breadrand == 3) {
 				makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1);	// full health
-			} else if (breadrand == 3 || breadrand == 4) {
-				makeBread(g.xres-10 ,0.5*g.yres,0.0,7,1);	// extra life
+			} else if (breadrand == 4 || breadrand == 5) {
+				makeBread(g.xres-10 ,0.5*g.yres,0.0,5,1);	// full power
 			}
 		}
 

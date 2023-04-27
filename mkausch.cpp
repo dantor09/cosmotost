@@ -1003,12 +1003,14 @@ Blocky::Blocky(char type, bool g_act)
     srand(time(NULL));
     float sub_blocky_size = sqrt((25.0*100.0)/SUB_BLOCK_N);
     if (type == 'v') {
-        setDim(75.0f, 100.0f);
-        tex = &g.blocky_silhouette;
-    } else if (type == 'h') {
+        setDim(60.0f, 85.0f);
+        tex = (g_act == false) ? &g.blocky_silhouette : &g.whomp_silhouette;
+    } else {
         setDim(125.0f, 50.0f);
+        // tex = (g_act == false) ? &g.ptm_silhouette : &g.whomp_silhouette;
         tex = &g.ptm_silhouette;
     }
+
     setRandColor(*this);
     setRandPosition();
     setAcc(0.0f,-0.25f,0.0f);
@@ -1067,17 +1069,32 @@ void Blocky::initRotationVel()
 void Blocky::setRandPosition()
 {
     static int pm_dir = 1;
-    float curr_player_xpos = tos.pos[0];
-    int delta_from_xpos = rand() % 50;
-    float block_xpos = curr_player_xpos + (delta_from_xpos * pm_dir);
+    // float curr_player_xpos;
 
-    // set to be this new random position situated near the player char
-    // that is above the yres and out of view of the screen
-    setPos(block_xpos, g.yres+h,0);
+    // float curr_player_ypos = (tos.pos[1] > (g.xres - tos.h - 5)) ? g.xres / 2.0 : tos.pos[0];
+   
+    float curr_player_xpos = (tos.pos[0] < 10 ) ? g.xres / 2.0 : tos.pos[0];
+    float curr_player_ypos = tos.pos[1];
 
-    // if this block was generated in front of the player then
-    // next time make it randomly behind the player (it'll keep switching)
-    pm_dir *= -1;
+
+    // check and make sure toaster is not right up against the top of the screen
+    if ((g.yres - (tos.pos[1] + tos.h)) < 20) {
+        setPos(tos.pos[0], 0-h, 0);
+    } else {
+        
+        int delta_from_xpos = rand() % 50;
+        float block_xpos = curr_player_xpos + (delta_from_xpos * pm_dir);
+
+        // set to be this new random position situated near the player char
+        // that is above the yres and out of view of the screen
+        setPos(block_xpos, g.yres+h,0);
+
+        // if this block was generated in front of the player then
+        // next time make it randomly behind the player (it'll keep switching)
+        pm_dir *= -1;
+
+    }
+    
 }
 
 void setRandColor(Item & it)
@@ -1308,7 +1325,15 @@ void Blocky::reset()
     }
     was_hit = false;
 
-    setVel(0.0f, -4.0f, 0.0f);
+    if (tex == &g.ptm_silhouette) {
+        float xv = tos.vel[0]*0.75;
+        cerr << "setting xv: " << xv << endl;
+
+        setVel(xv, -4.0f, 0.0f);
+    } else {
+        setVel(0, -4.0f, 0.0f);
+    }
+
     setRandPosition();    // put at a new random position
     did_shoot = false;
     // was_hit = false;

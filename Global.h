@@ -42,12 +42,12 @@ bool entity_active,
         huaiyu_active,
         mike_active,
         donut_active;
-
+ 
 float sfx_vol;
 float m_vol;
 
 GLuint bkg_texture;
-GLuint toaster_texture;
+// GLuint toaster_texture;
 GLuint toaster_silhouette;
 GLuint bomb_texture;
 GLuint icecube_texture;
@@ -58,6 +58,12 @@ GLuint bread_silhouette;
 GLuint fork_silhouette;
 GLuint elec_bul_silhouette;
 
+GLuint whomp_silhouette;
+GLuint bread2_silhouette;
+GLuint energy_silhouette;
+GLuint powerup_silhouette;
+GLuint health_silhouette;
+GLuint lives_silhouette;
 
 Global();
 ~Global();
@@ -109,15 +115,22 @@ inline Bomb bomb;
  * 
 ********************************/
 
-inline Image background("textures/background.jpg");
-inline Image toaster_img("textures/toaster.png");
+inline Image background("textures/background.png");
+inline Image toaster_img("textures/toaster2.png");
 inline Image bomb_img("textures/firebullet.png");
 inline Image icecube_img("textures/iceSmallSpike.png");
-inline Image blocky_img("textures/blocky.png");
+inline Image whomp_img("textures/whomp.png");
 inline Image ptm_img("textures/ptm.png");
-inline Image bread_img("textures/bread.png");
+inline Image bread_img("textures/bread2.png");
 inline Image electbul_img("textures/electricbullet.png");
 inline Image fork_img("textures/fork.png");
+inline Image bread2_img("textures/bread.png");
+inline Image energy_img("textures/lightning.png");
+inline Image powerup_img("textures/jelly.png");
+inline Image blocky_img("textures/microwave.png");
+inline Image health_img("textures/oot_heart.png");
+inline Image lives_img("textures/toaster.png");
+
 
 #ifdef USE_OPENAL_SOUND
 inline Sound sounds;

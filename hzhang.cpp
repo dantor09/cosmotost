@@ -237,13 +237,13 @@ void Item::draw()
 		glTranslatef(pos[0], pos[1], pos[2]);
 		glBegin(GL_QUADS);
 
-			glTexCoord2f(0.0f, 1.0f);
-			glVertex2f(vertex[0],vertex[1]);
-			glTexCoord2f(1.0f, 1.0f);
-			glVertex2f(vertex[2],vertex[3]);
-			glTexCoord2f(1.0f, 0.0f);
-			glVertex2f(vertex[4],vertex[5]);
 			glTexCoord2f(0.0f, 0.0f);
+			glVertex2f(vertex[0],vertex[1]);
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex2f(vertex[2],vertex[3]);
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex2f(vertex[4],vertex[5]);
+			glTexCoord2f(0.0f, 1.0f);
 			glVertex2f(vertex[6],vertex[7]);
 
 		glEnd();
@@ -281,13 +281,13 @@ void Item::draw(Item tos)
 	glTranslatef(pos[0], pos[1], pos[2]);
 	glBegin(GL_QUADS);
 
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex2f(vertex[0],vertex[1]);
 		glTexCoord2f(1.0f, 1.0f);
+		glVertex2f(vertex[0],vertex[1]);
+		glTexCoord2f(0.0f, 1.0f);
 		glVertex2f(vertex[2],vertex[3]);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex2f(vertex[4],vertex[5]);
 		glTexCoord2f(0.0f, 0.0f);
+		glVertex2f(vertex[4],vertex[5]);
+		glTexCoord2f(1.0f, 0.0f);
 		glVertex2f(vertex[6],vertex[7]);
 
 	glEnd();
@@ -418,17 +418,29 @@ void Toaster::moveToster()
 	if (screenIn() && !disable_keys) {
 		// if the toaster still in the screen then move
 		if (g.keys[XK_w]) {
-			pos[1] += 4;
+			vel[1] = 4;
+			// pos[1] += 4;
+		} else if (g.keys[XK_s]) {
+			// pos[1] -= 4;
+			vel[1] = -4;
+		} else {
+			vel[1] = 0;
 		}
-		if (g.keys[XK_s]) {
-			pos[1] -= 4;
-		}
+		//if (g.keys[XK_s]) {
+
+		// }
 		if (g.keys[XK_a]) {
-			pos[0] -= 4;
+			vel[0] = -4;
+			// pos[0] -= 4;
+		} else if (g.keys[XK_d]) {
+			vel[0] = 4;
+		} else {
+			vel[0] = 0;
 		}
-		if (g.keys[XK_d]) {
-			pos[0] += 4;
-		}
+
+		pos[0] += vel[0];
+		pos[1] += vel[1];
+
 	} else {
 		// to keep toaster in the screen
 		if (pos[0] > g.xres-w+1) 
@@ -506,13 +518,13 @@ void Toaster::tdraw() {
 	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
   	glTranslatef(pos[0], pos[1], pos[2]);
   	glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex2f(vertex[0],vertex[1]);
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex2f(vertex[2],vertex[3]);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex2f(vertex[4],vertex[5]);
 		glTexCoord2f(0.0f, 0.0f);
+		glVertex2f(vertex[0],vertex[1]);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex2f(vertex[2],vertex[3]);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex2f(vertex[4],vertex[5]);
+		glTexCoord2f(0.0f, 1.0f);
 		glVertex2f(vertex[6],vertex[7]);
   	glEnd();
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -611,7 +623,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
     switch (Bread_t) {
 	case 1:
 		// trace green box
-		setDim(15.0,10.0);
+		setDim(12.0,12.0);
 		setVel(-4.0, 0.0, 0.0);
 		setAcc (0.0,-ya,0.0);
 		setColor(100,240,100);
@@ -625,7 +637,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		break;
 	case 2:
 		// gun level up box
-		setDim(15.0,10.0);
+		setDim(20.0,25.0);
 		setVel(-4.0, 0.0, 0.0);
 		setAcc(0.0,-ya,0.0);
 		setColor(156,25,226);
@@ -635,7 +647,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		bullet_type_prime = 1;
 		item_type = 12;
 		point = 0;
-		tex = nullptr;
+		tex = &g.powerup_silhouette;
 		break;
 	case 3:
 		// forky
@@ -654,7 +666,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		break;
 	case 4:
 		// normal green box
-		setDim(15.0,10.0);
+		setDim(22.0,22.0);
 		setVel(-4.0, 0.0, 0.0);
 		setAcc (0.0, 0.0, 0.0);
 		setColor(100,240,100);
@@ -664,11 +676,11 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		item_type = 14;
 		bullet_type_prime = 1;
 		point = 10;
-		tex = &g.bread_silhouette;
+		tex = &g.bread2_silhouette;
 		break;
 	case 5:
 		// full power potion 
-		setDim(15.0,10.0);
+		setDim(20.0,15.0);
 		setVel(-4.0, 0.0, 0.0);
 		setAcc(0.0,-ya,0.0);
 		setColor(214,213,142);
@@ -678,11 +690,11 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		bullet_type_prime = 1;
 		item_type = 15;
 		point = 0;
-		tex = nullptr;
+		tex = &g.energy_silhouette;
 		break;
 	case 6:
 		// full health potion 
-		setDim(15.0,10.0);
+		setDim(24.0,16.0);
 		setVel(-4.0, 0.0, 0.0);
 		setAcc(0.0,-ya,0.0);
 		setColor(125,249,255);
@@ -692,11 +704,11 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		bullet_type_prime = 1;
 		item_type = 18;
 		point = 0;
-		tex = nullptr;
+		tex = &g.health_silhouette;
 		break;
 	case 7:
 		// extra life
-		setDim(15.0,10.0);
+		setDim(27.0,20.0);
 		setVel(-4.0, 0.0, 0.0);
 		setAcc(0.0,-ya,0.0);
 		setColor(255,193,204);
@@ -706,7 +718,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		bullet_type_prime = 1;
 		item_type = 17;
 		point = 0;
-		tex = nullptr;
+		tex = &g.lives_silhouette;
 		break;
     }
 	setVertex();
