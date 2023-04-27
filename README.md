@@ -6,24 +6,25 @@
 ### Short Term
  
 - Settings / select player
-    - difficulty modes
     - character choice
     - music
-- naming convention for enemies
 - shield (note: i have a shield sound effect - mike)
-- game_reset() for entity state
-- hole in the wall obstacle
-- blocky angled entry
 - faculty face textures
-- powerup textures
-- microwave texture?
-
+- method for cycling textures to faculty faces
 
 #### In Progress:
 - ARTWORK... (ailand)
 - freeze enemy (dan)
 
+#### Known Bugs:
+- game_reset() for entity state
+
+
 #### Done:
+- naming convention for enemies
+- blocky angled entry (mike)
+- powerup textures (mike)
+- microwave texture (mike)
 - turn fork around (mike)
 - electric bullet texture (mike)
 - Bomb (mike)
@@ -68,6 +69,7 @@
 - Implement a logging system
     -- #define debug mode && cerr will work fine
     -- alternatively we can pass in a param on the command line
+- hole in the wall obstacle
 
 
 [//]: # "Laser Sound Effects"

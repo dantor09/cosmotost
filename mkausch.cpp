@@ -2136,18 +2136,18 @@ void Gamerecord::makeMenu()
     } else if (isTopTen()) {
         // cerr << "setting top ten color" << endl;
         // (hs_menu->t_boxs[place]).setColor((int)178,(int)222,(int)39);
-        (hs_menu->t_boxs[0]).color[0] = (unsigned char)178;
-        (hs_menu->t_boxs[0]).color[1] = (unsigned char)222;
-        (hs_menu->t_boxs[0]).color[2] = (unsigned char)39;
+        (hs_menu->t_boxs[place]).color[0] = (unsigned char)178;
+        (hs_menu->t_boxs[place]).color[1] = (unsigned char)222;
+        (hs_menu->t_boxs[place]).color[2] = (unsigned char)39;
     }
 
     // set 11th element to yellow (will be deleted)
     // cerr << "setting 11th element color" << endl;
     if (scores.size() == 11)
         // (hs_menu->t_boxs[scores.size()-1]).setColor((int)189,(int)195,(int)199);
-        (hs_menu->t_boxs[0]).color[0] = (unsigned char)189;
-        (hs_menu->t_boxs[0]).color[1] = (unsigned char)195;
-        (hs_menu->t_boxs[0]).color[2] = (unsigned char)199;
+        (hs_menu->t_boxs[scores.size()-1]).color[0] = (unsigned char)189;
+        (hs_menu->t_boxs[scores.size()-1]).color[1] = (unsigned char)195;
+        (hs_menu->t_boxs[scores.size()-1]).color[2] = (unsigned char)199;
     // cerr << "finished making menu...\n" << endl;
 }
 
