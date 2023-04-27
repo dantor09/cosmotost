@@ -1155,6 +1155,19 @@ void init_opengl(void)
 								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
 	free(silhouetteData);
 
+	// GLuint splash_silhouette; splash_img
+	w = splash_img.width;
+    h = splash_img.height;
+	glGenTextures(1, &g.splash_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.splash_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&splash_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
 
 	cerr << "finished initializing opengl" << endl;
 }
@@ -1720,29 +1733,47 @@ void render()
 
 	if (g.state == SPLASH) {
 		Box splash_img;
-		splash_img.setColor(61, 90, 115);
-		glColor3ubv(splash_img.color);
-		splash_img.setDim(100.0f, 100.0f);
+			splash_img.setColor(61, 90, 115);
+			glColor3ubv(splash_img.color);
+		splash_img.setDim(500.0f, 150.0f);
 		splash_img.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
 
 
 		/*******************   SPLASH IMAGE PLACEHOLDER   *******************/
+
+
 		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, g.splash_silhouette);
+		// glColor3ub(color[0], color[1], color[2]);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 		glTranslatef(splash_img.pos[0], splash_img.pos[1], splash_img.pos[2]);
 		glBegin(GL_QUADS);
+
+			glTexCoord2f(0.0f, 1.0f);
 			glVertex2f(-splash_img.w, -splash_img.h);
+
+			glTexCoord2f(0.0f, 0.0f);
 			glVertex2f(-splash_img.w,  splash_img.h);
+			
+			glTexCoord2f(1.0f, 0.0f);
 			glVertex2f( splash_img.w,  splash_img.h);
+			
+			glTexCoord2f(1.0f, 1.0f);
 			glVertex2f( splash_img.w, -splash_img.h);
 		glEnd();
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_ALPHA_TEST);
 		glPopMatrix();
 
-		Rect splash_msg;
-		splash_msg.bot = splash_img.pos[1];
-        splash_msg.left = splash_img.pos[0];
-        splash_msg.center = 1;
 
-        ggprint8b(&splash_msg, 0, 0x00ffff00, "Splash Img Placeholder");
+		// Rect splash_msg;
+		// splash_msg.bot = splash_img.pos[1];
+        // splash_msg.left = splash_img.pos[0];
+        // splash_msg.center = 1;
+
+        // ggprint8b(&splash_msg, 0, 0x00ffff00, "Splash Img Placeholder");
 
 		/******************    END SPLASH IMAGE    ***************************/
 
@@ -1751,7 +1782,7 @@ void render()
         game_msg.left = g.xres / 2.0f;
         game_msg.center = 1;
 
-        ggprint8b(&game_msg, 0, 0x00ffffff, "Press Enter to Start the Game");
+        ggprint16(&game_msg, 0, 0x00ffffff, "Press Enter to Start the Game");
 
 
 	} else if (g.state == MAINMENU) {

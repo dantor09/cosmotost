@@ -64,6 +64,7 @@ GLuint energy_silhouette;
 GLuint powerup_silhouette;
 GLuint health_silhouette;
 GLuint lives_silhouette;
+GLuint splash_silhouette;
 
 Global();
 ~Global();
@@ -130,6 +131,7 @@ inline Image powerup_img("textures/jelly.png");
 inline Image blocky_img("textures/microwave.png");
 inline Image health_img("textures/oot_heart.png");
 inline Image lives_img("textures/toaster.png");
+inline Image splash_img("textures/splash.png");
 
 
 #ifdef USE_OPENAL_SOUND

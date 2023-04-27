@@ -347,14 +347,14 @@ Toaster::Toaster()
 	lives = 3;
 	// for live bar
 	plive = new Box[lives];
-	int offset_x = -125;
+	int offset_x = -165;
 	for (int i = 0; i < lives; i++) {
 		plive[i].setColor(255, 255, 255);
-		plive[i].w = 5;
-		plive[i].h = 10;
+		plive[i].w = 8;
+		plive[i].h = 16;
 		// Position to the left of the health bar
 		plive[i].setPos(info_board_1.pos[0] + offset_x, 40, 0);
-		offset_x += 20;
+		offset_x += 28;
 	}
 	// turn dim and pos to Vertex
 	setVertex();
@@ -534,15 +534,29 @@ void Toaster::tdraw() {
 	//D.T Draw the lives boxes on the information board
 	for (int i = 0; i < lives; i++) {
 		glColor3ubv(plive[i].color);
+
 		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, g.lives_silhouette);
+		// glColor3ub(color[0], color[1], color[2]);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+		// glTranslatef(pos[0], pos[1], pos[2]);
 		glTranslatef(plive[i].pos[0], plive[i].pos[1], plive[i].pos[2]);
 		glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 0.0f);
 			glVertex2f(-plive[i].w, -plive[i].h);
+			glTexCoord2f(1.0f, 0.0f);
 			glVertex2f(-plive[i].w,  plive[i].h);
+			glTexCoord2f(1.0f, 1.0f);
 			glVertex2f( plive[i].w,  plive[i].h);
+			glTexCoord2f(0.0f, 1.0f);
 			glVertex2f( plive[i].w, -plive[i].h);
 		glEnd();
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_ALPHA_TEST);
 		glPopMatrix();
+
 	}
 
 }

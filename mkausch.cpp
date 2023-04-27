@@ -230,14 +230,14 @@ void Menu::draw()
     }
 
     for (int i = 0; i < n_texts; i++) {
-        texts[i].bot = t_boxs[i].pos[1] - 5;
+        texts[i].bot = t_boxs[i].pos[1] - 8;
         if (!centering)
             texts[i].left = t_boxs[i].pos[0]-t_boxs[i].w + 100;
         else
             texts[i].left = t_boxs[i].pos[0];
         texts[i].center = centering;
 
-        ggprint8b(texts+i, 0, 0x00ffffff, words[i].c_str());
+        ggprint12(texts+i, 0, 0x00ffffff, words[i].c_str());
     }
 
 }
