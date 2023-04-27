@@ -11,6 +11,8 @@
 - shield (note: i have a shield sound effect - mike)
 - faculty face textures
 - method for cycling textures to faculty faces
+- make sure everything writes to the screen int he correct order
+    -- ensure that nothing spills over past hud
 
 #### In Progress:
 - ARTWORK... (ailand)
@@ -18,7 +20,8 @@
 
 #### Known Bugs:
 - game_reset() for entity state
-
+- entity below high score menu
+- game crash after quitting in debug
 
 #### Done:
 - naming convention for enemies
