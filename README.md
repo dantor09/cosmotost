@@ -10,12 +10,13 @@
     - character choice
     - music
 - naming convention for enemies
-- Make multiple difficulties of enemies
-- forky needs to be a bullet
 - shield (note: i have a shield sound effect - mike)
 - game_reset() for entity state
-- linke high scores with odin
 - hole in the wall obstacle
+- blocky angled entry
+- faculty face textures
+- powerup textures
+- microwave texture?
 
 
 #### In Progress:
@@ -23,10 +24,14 @@
 - freeze enemy (dan)
 
 #### Done:
+- turn fork around (mike)
+- electric bullet texture (mike)
 - Bomb (mike)
 - full health powerup (mike)
 - partial health powerup (mike)
 - extra life powerup (mike)
+- linke high scores with odin (mike)
+- Make multiple difficulties of enemies (mike)
 - implement volume change feature (mike)
 - implement sound effects (mike)
 - fix volume issues (mike)

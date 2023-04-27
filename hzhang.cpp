@@ -215,32 +215,85 @@ bool Item::screenOut()
 void Item::draw()
 {
 		// draw item
-    glPushMatrix();
-  	glColor3ub(color[0], color[1], color[2]);
-  	glTranslatef(pos[0], pos[1], pos[2]);
-  	glBegin(GL_QUADS);
-		glVertex2f(vertex[0],vertex[1]);
-		glVertex2f(vertex[2],vertex[3]);
-		glVertex2f(vertex[4],vertex[5]);
-		glVertex2f(vertex[6],vertex[7]);
-  	glEnd();
-  	glPopMatrix();
+	if (!tex) {
+		glPushMatrix();
+		glColor3ub(color[0], color[1], color[2]);
+		glTranslatef(pos[0], pos[1], pos[2]);
+		glBegin(GL_QUADS);
+			glVertex2f(vertex[0],vertex[1]);
+			glVertex2f(vertex[2],vertex[3]);
+			glVertex2f(vertex[4],vertex[5]);
+			glVertex2f(vertex[6],vertex[7]);
+		glEnd();
+		glPopMatrix();
+
+	} else {
+		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, *tex);
+		// glColor3ub(color[0], color[1], color[2]);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+		glTranslatef(pos[0], pos[1], pos[2]);
+		glBegin(GL_QUADS);
+
+			glTexCoord2f(0.0f, 1.0f);
+			glVertex2f(vertex[0],vertex[1]);
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex2f(vertex[2],vertex[3]);
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex2f(vertex[4],vertex[5]);
+			glTexCoord2f(0.0f, 0.0f);
+			glVertex2f(vertex[6],vertex[7]);
+
+		glEnd();
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_ALPHA_TEST);
+		glPopMatrix();
+	}
+
+
+
+
 }
 void Item::draw(Item tos)
 {
 	// if(trace)
 	setTrace(tos);
     // draw item
-    glPushMatrix();
-  	glColor3ub(color[0], color[1], color[2]);
-  	glTranslatef(pos[0], pos[1], pos[2]);
-  	glBegin(GL_QUADS);
+    // glPushMatrix();
+  	// glColor3ub(color[0], color[1], color[2]);
+  	// glTranslatef(pos[0], pos[1], pos[2]);
+  	// glBegin(GL_QUADS);
+	// 	glVertex2f(vertex[0],vertex[1]);
+	// 	glVertex2f(vertex[2],vertex[3]);
+	// 	glVertex2f(vertex[4],vertex[5]);
+	// 	glVertex2f(vertex[6],vertex[7]);
+  	// glEnd();
+  	// glPopMatrix();
+
+	glPushMatrix();
+	glBindTexture(GL_TEXTURE_2D, *tex);
+	// glColor3ub(color[0], color[1], color[2]);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+	glTranslatef(pos[0], pos[1], pos[2]);
+	glBegin(GL_QUADS);
+
+		glTexCoord2f(0.0f, 1.0f);
 		glVertex2f(vertex[0],vertex[1]);
+		glTexCoord2f(1.0f, 1.0f);
 		glVertex2f(vertex[2],vertex[3]);
+		glTexCoord2f(1.0f, 0.0f);
 		glVertex2f(vertex[4],vertex[5]);
+		glTexCoord2f(0.0f, 0.0f);
 		glVertex2f(vertex[6],vertex[7]);
-  	glEnd();
-  	glPopMatrix();
+
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_ALPHA_TEST);
+	glPopMatrix();
 }
 
 Item & Item::operator = (const Item &a)
@@ -264,6 +317,7 @@ Item & Item::operator = (const Item &a)
 	for (int i = 0; i < 8; i++)
 		this->vertex[i] = a.vertex[i];
 	this->cd = a.cd;
+	this->tex = a.tex;
  	return *this;
 }
 
@@ -489,6 +543,7 @@ void Toaster::tdraw() {
 Bullet::Bullet() 
 {
     item_type = 41;
+	tex = &g.elec_bul_silhouette;
 }
 Bullet::~Bullet() {}
 
@@ -500,7 +555,7 @@ void Bullet::setBullet(float x, float y, float z, int type)
 		case 1:
 		// bullet type 1
 			setVel (10.0,0.0,0.0);
-			setDim (4.0,4.0);
+			setDim (10.0,10.0);
 			setColor(240,100,100);
 			setDamage(1);
 			setHP(1);
@@ -545,6 +600,7 @@ void Bullet::moveBullet()
 Bread::Bread() 
 {
     item_type = 11;
+	
 }
 Bread::~Bread() {}
 
@@ -565,6 +621,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		item_type = 11;
 		bullet_type_prime = 1;
 		point = 10;
+		tex = &g.bread_silhouette;
 		break;
 	case 2:
 		// gun level up box
@@ -578,6 +635,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		bullet_type_prime = 1;
 		item_type = 12;
 		point = 0;
+		tex = nullptr;
 		break;
 	case 3:
 		// forky
@@ -592,6 +650,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		bullet_type_prime = 1;
 		item_type = 13;
 		point = 0;
+		tex = &g.fork_silhouette;
 		break;
 	case 4:
 		// normal green box
@@ -605,6 +664,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		item_type = 14;
 		bullet_type_prime = 1;
 		point = 10;
+		tex = &g.bread_silhouette;
 		break;
 	case 5:
 		// full power potion 
@@ -618,6 +678,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		bullet_type_prime = 1;
 		item_type = 15;
 		point = 0;
+		tex = nullptr;
 		break;
 	case 6:
 		// full health potion 
@@ -631,6 +692,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		bullet_type_prime = 1;
 		item_type = 18;
 		point = 0;
+		tex = nullptr;
 		break;
 	case 7:
 		// extra life
@@ -644,6 +706,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		bullet_type_prime = 1;
 		item_type = 17;
 		point = 0;
+		tex = nullptr;
 		break;
     }
 	setVertex();
@@ -659,13 +722,13 @@ void Bread::moveBread()
     vel[2] += acc[2];
 }
 
-Spear::Spear(){}
+Spear::Spear(){tex = &g.fork_silhouette;}
 Spear::~Spear(){}
 
 void Spear::setSpear(float x, float y,float z, int spear_type) 
 {
 	setPos(x,y,z);
-	setDim(50.0,5.0);
+	setDim(50.0,20.0);
 	setVel(-50.0,0.0,0.0);
 	setAcc(0.0,0.0,0.0);
 	setColor(250, 238, 2);

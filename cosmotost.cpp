@@ -1012,39 +1012,65 @@ void init_opengl(void)
 
 	w = blocky_img.width;
     h = blocky_img.height;
-	// glGenTextures(1, &g.toaster_texture);
-    // glBindTexture(GL_TEXTURE_2D, g.toaster_texture);
 	glGenTextures(1, &g.blocky_silhouette);
 	glBindTexture(GL_TEXTURE_2D, g.blocky_silhouette);
 
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	silhouetteData = buildAlphaData(&blocky_img);
-    // glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
-	//     GL_RGB, GL_UNSIGNED_BYTE, blocky_img.data);
-	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-	// 	GL_RGBA, GL_UNSIGNED_BYTE, blocky_img.data);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
 	free(silhouetteData);
 
 	w = ptm_img.width;
     h = ptm_img.height;
-	// glGenTextures(1, &g.toaster_texture);
-    // glBindTexture(GL_TEXTURE_2D, g.toaster_texture);
 	glGenTextures(1, &g.ptm_silhouette);
 	glBindTexture(GL_TEXTURE_2D, g.ptm_silhouette);
 
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	silhouetteData = buildAlphaData(&ptm_img);
-    // glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
-	//     GL_RGB, GL_UNSIGNED_BYTE, ptm_img.data);
-	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-	// 	GL_RGBA, GL_UNSIGNED_BYTE, ptm_img.data);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
 	free(silhouetteData);
+
+
+	w = bread_img.width;
+    h = bread_img.height;
+	glGenTextures(1, &g.bread_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.bread_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&bread_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	w = fork_img.width;
+    h = fork_img.height;
+	glGenTextures(1, &g.fork_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.fork_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&fork_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	w = electbul_img.width;
+    h = electbul_img.height;
+	glGenTextures(1, &g.elec_bul_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.elec_bul_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&electbul_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
 
 	cerr << "finished initializing opengl" << endl;
 }
