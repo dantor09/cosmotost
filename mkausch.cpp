@@ -2143,11 +2143,13 @@ void Gamerecord::makeMenu()
 
     // set 11th element to yellow (will be deleted)
     // cerr << "setting 11th element color" << endl;
-    if (scores.size() == 11)
+    if (scores.size() == 11) {
+
         // (hs_menu->t_boxs[scores.size()-1]).setColor((int)189,(int)195,(int)199);
         (hs_menu->t_boxs[scores.size()-1]).color[0] = (unsigned char)189;
         (hs_menu->t_boxs[scores.size()-1]).color[1] = (unsigned char)195;
         (hs_menu->t_boxs[scores.size()-1]).color[2] = (unsigned char)199;
+    }
     // cerr << "finished making menu...\n" << endl;
 }
 
