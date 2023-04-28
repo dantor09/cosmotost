@@ -797,8 +797,8 @@ Donut::~Donut() {}
 void Donut::moveDonut() 
 {
 	// cerr << weapon << "  " << count_down << endl;
-	int val = rand()%5 +1;
- 	val = 5;
+	int val = rand()%3 +5;
+ 	// val = 5;
 	if (!weapon) {
 		if (count_down == 0) {
 			atteckMove(val);
@@ -929,7 +929,7 @@ void Donut::draw()
 			weapon_outer_count = 15;
 			weapon_inner_count = 4;
 		}
-		if (num == 5) {
+		if (num == 5||num == 6||num == 7) {
 			weapon_outer_count = 1;
 			weapon_inner_count = 20;
 		}
@@ -1039,12 +1039,12 @@ void Donut::draw()
 				// d_laser[g.n_laser].setDonutLaser(donut.pos[0], donut.pos[1], donut.out_radius,135,225,0.5);
 				// d_laser[g.n_laser].setCD(100,50,1,1);
 				// g.n_laser++;
-				d_laser[g.n_laser].setDonutLaser(g.xres/2, g.yres_start, 1,90,180,0.5);
+				d_laser[g.n_laser].setDonutLaser(donut.pos[0],donut.pos[0], donut.out_radius,90,270,0.5);
 				d_laser[g.n_laser].setCD(100,50,1,1);
 				g.n_laser++;
-				d_laser[g.n_laser].setDonutLaser(donut.pos[0], donut.pos[1], donut.out_radius,100,220,0.5);
-				d_laser[g.n_laser].setCD(100,50,1,1);
-				g.n_laser++;
+				// d_laser[g.n_laser].setDonutLaser(donut.pos[0], donut.pos[1], donut.out_radius,100,220,0.5);
+				// d_laser[g.n_laser].setCD(100,50,1,1);
+				// g.n_laser++;
 
 				// d_laser[g.n_laser].setDonutLaser(0,10,6,'h');
 				// d_laser[g.n_laser].setCD(10,50,1,1);
@@ -1060,7 +1060,7 @@ void Donut::draw()
 
 			case 7:
 				cerr << "in case 7" <<endl;
-				d_laser[g.n_laser].setDonutLaser(donut.pos[0],donut.pos[1], donut.out_radius,90,270,2);
+				d_laser[g.n_laser].setDonutLaser(g.yres, 30,-4,'v');
 				d_laser[g.n_laser].setCD(100,50,1,1);
 				g.n_laser++;
 				break;
