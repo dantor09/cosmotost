@@ -1746,11 +1746,20 @@ void render()
 				}
 			}
 
+
 			// Follow the item passed into followItem() 
 			// Freeze block could be set to follow any Item object
 			if(pfreeze_block->position_set && tos.disable_keys == false) {	
 				pfreeze_block->followItem(tos);
 				pfreeze_block->melt(0.25);
+
+				// Check for collision with bullets and reduce velocity
+				for (int j=0; j < g.n_Bullet; j++) {
+					if (bul[j].collision(*pfreeze_block)) {
+							pfreeze_block->reduceVelocity(0.002);
+					}
+				}
+				
 				pfreeze_block->draw();
 			}
 
