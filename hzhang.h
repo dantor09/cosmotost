@@ -11,6 +11,7 @@
 #include <new>
 #include <sstream>
 #include "fonts.h"
+#include <list>
 #include <string>
 #include <vector>
 
@@ -184,47 +185,6 @@ class Spear: public Item
 };
 
 //======================================================================
-class Donut
-{
-  public:
-  // Boss
-    GLuint * dtex;
-    GLuint * shelltex;
-    float out_radius;
-    float inner_radius;
-    float deamage_radius;
-    float shelled_radius;
-    float hp;
-    int cd;     // CD between Donets weapon
-    int count_down; // CD count_down
-    bool up_down; // 0 up, 1 down
-    bool weapon; // if weapon is true then donut attecking
-                 // if weapon is false then countdown cd 
-    bool shelled_on;
-    int weapon_id;
-    bool shelled; // have shelled or not
-    float pos[3];
-    float vel[3];
-    int numlazerx;
-    int numlazery;
-    int donut_count;
-    int weapon_outer_count;
-    int weapon_inner_count;
-
-   
-  //-----------------------------------------------------
-    Donut();
-    ~Donut();
-    void moveDonut();
-    void setCD();
-    bool hpCheck();
-    bool collision(Item);
-    void hpDemageDonut(Item);
-    void draw();
-    void atteckMove(int num);
-};
-//=======================================================================
-
 class DonutLaser
 {
   public:
@@ -302,6 +262,47 @@ class DonutLaser
     void draw();
 };
 //========================================================================
+
+class Donut
+{
+  public:
+  // Boss
+    GLuint * dtex;
+    GLuint * shelltex;
+    float out_radius;
+    float inner_radius;
+    float deamage_radius;
+    float shelled_radius;
+    float hp;
+    int cd;     // CD between Donets weapon
+    int count_down; // CD count_down
+    bool up_down; // 0 up, 1 down
+    bool weapon; // if weapon is true then donut attecking
+                 // if weapon is false then countdown cd 
+    bool shelled_on;
+    int weapon_id;
+    bool shelled; // have shelled or not
+    float pos[3];
+    float vel[3];
+    int numlazerx;
+    int numlazery;
+    int donut_count;
+    int weapon_outer_count;
+    int weapon_inner_count;
+    list<DonutLaser> donutlasers;
+   
+  //-----------------------------------------------------
+    Donut();
+    ~Donut();
+    void moveDonut();
+    void setCD();
+    bool hpCheck();
+    bool collision(Item);
+    void hpDemageDonut(Item);
+    void draw();
+    void atteckMove(int num);
+};
+//=======================================================================
 class ChargeBread: public Item
 {
   public:
