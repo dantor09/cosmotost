@@ -1006,9 +1006,15 @@ Blocky::Blocky(char type, bool g_act)
         setDim(60.0f, 85.0f);
         tex = (g_act == false) ? &g.blocky_silhouette : &g.whomp_silhouette;
     } else {
-        setDim(125.0f, 50.0f);
-        // tex = (g_act == false) ? &g.ptm_silhouette : &g.whomp_silhouette;
-        tex = &g.ptm_silhouette;
+        if (g_act == false) {
+            setDim(125.0f, 75.0f);
+            tex = &g.mitt_silhouette;
+        } else {
+            setDim(125.0f, 50.0f);
+            tex = &g.ptm_silhouette;
+        }
+        // tex = (g_act == false) ? &g.ptm_silhouette : &g.mitt_silhouette;
+        // tex = &g.ptm_silhouette;
     }
 
     setRandColor(*this);

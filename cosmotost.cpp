@@ -1192,6 +1192,19 @@ void init_opengl(void)
 								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
 	free(silhouetteData);
 
+	// GLuint mitt_silhouette; mitt_img
+	w = mitt_img.width;
+    h = mitt_img.height;
+	glGenTextures(1, &g.mitt_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.mitt_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&mitt_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
 
 	cerr << "finished initializing opengl" << endl;
 }

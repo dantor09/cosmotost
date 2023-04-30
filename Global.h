@@ -67,6 +67,7 @@ GLuint lives_silhouette;
 GLuint splash_silhouette;
 GLuint poptart_silhouette;
 GLuint donut_texture;
+GLuint mitt_silhouette;
 
 Global();
 ~Global();
@@ -136,6 +137,7 @@ inline Image lives_img("textures/toaster.png");
 inline Image splash_img("textures/splash.png");
 inline Image donut_img("textures/donut.png");
 inline Image poptart_img("textures/poptart2.png");
+inline Image mitt_img("textures/mitt.png");
 
 #ifdef USE_OPENAL_SOUND
 inline Sound sounds;
