@@ -39,8 +39,8 @@ FreezeBlock::FreezeBlock()
 	ptimer = NULL;
 	min_block_dimension = 1;
 	max_block_dimension = 30;
-	max_velocity = 1.25;
-	minimum_velocity = 0.005;
+	max_velocity = 1.50;//1.25;
+	minimum_velocity = 0.05; //0.005;
 	melting_rate = 0.1;
 	texture = &g.icecube_texture;
 }
@@ -72,13 +72,23 @@ void FreezeBlock::draw()
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_ALPHA_TEST);
   	glPopMatrix();
-	//usleep(100000);
 }
 
 void FreezeBlock::melt(float melting_rate)
 {
 	h -= melting_rate;
 	w -= melting_rate;
+}
+
+void FreezeBlock::reduceVelocity(float velocity_reduction_rate)
+{   
+	if(velocity_reduction_rate < 0) {
+		velocity_reduction_rate *= -1; // absolute value of velocity_reduction_rate
+	}
+
+	if(max_velocity > minimum_velocity) {
+		max_velocity -= velocity_reduction_rate;
+	}
 }
 
 void FreezeBlock::setFreezeTimer(int seconds) 
