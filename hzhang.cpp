@@ -862,8 +862,8 @@ void Donut::draw()
 	for (int i = 0; i < n; i++) {
 		x0= pos[0] + out_radius *cos(i*anglein);
 		y0= pos[1] + out_radius *sin(i*anglein);
-		x1= 0.5 + (20.0/43.0) *cos(i*anglein);
-		y1= 0.49 + (20.0/45.0) *sin(i*anglein);
+		x1= 0.5 + 0.5 *cos(i*anglein);
+		y1= 0.5 + 0.5 *sin(i*anglein);
 		glTexCoord2f(x1,y1);
 		glVertex2f(x0, y0);
 	}
