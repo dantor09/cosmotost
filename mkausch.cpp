@@ -1208,13 +1208,14 @@ void Blocky::draw()
             }
         }
 
-        // setRandColor(*this);
+        setRandColor(*this);
         glPushMatrix();
         glBindTexture(GL_TEXTURE_2D, *(blocky->tex));
         // glColor3ub(color[0], color[1], color[2]);
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.0f);
-        glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+        // glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+        glColor4f(color[0]/255.0f, color[1]/255.0f, color[2]/255.0f, 0.5f);
         glTranslatef(pos[0], pos[1], pos[2]);
         glBegin(GL_QUADS);
             glTexCoord2f(1.0f, 1.0f);
