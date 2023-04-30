@@ -1567,10 +1567,10 @@ void physics()
 					do_bul[i] = do_bul[--g.n_donut_bullet];
 				}
 			}
-			for (int i = 0; i < g.n_laser; i++) {
-				d_laser[i].moveLaser();
-				if (d_laser[i].collision(tos)) {
-					d_laser[i].hpDamage(tos);
+			for (auto la = donut.donutlasers.begin(); la != donut.donutlasers.end(); ) {
+				la->moveLaser();
+				if (la->collision(tos)) {
+					la->hpDamage(tos);
 					if(tos.hpCheck() && (tos.lives - 1 > 0)) {
 						tos.lives--;
 						tos.setHP(80);
@@ -1579,8 +1579,15 @@ void physics()
 						g.state = GAMEOVER;
 					}
 				}
-				if (d_laser[i].deleteLaser()) {
-					d_laser[i] = d_laser[--g.n_laser];
+				if (la->deleteLaser()) {
+					if (next(la) != donut.donutlasers.end()) {
+						la = donut.donutlasers.erase(la);
+					} else {
+						la = donut.donutlasers.erase(la);
+						break;
+					}
+				} else {
+					++la;
 				}
 			}
 

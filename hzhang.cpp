@@ -778,291 +778,6 @@ void Spear::moveSpear()
 	}
 }
 
-Donut::Donut() 
-{
-	dtex = &g.donut_texture;
-	pos[0] = g.xres * 0.9;
-	pos[1] = g.yres / 2;
-	pos[2] = 0;
-	out_radius = 200.0;
-	shelled_radius = 210.0;
-	hp = 10000;
-	cd = 200;
-	count_down = cd;
-	weapon = false;
-	shelled_on = false;
-	setCD();
-}
-Donut::~Donut() {}
-
-void Donut::moveDonut() 
-{
-	// cerr << weapon << "  " << count_down << endl;
-	int val = rand()%3 +5;
- 	// val = 5;
-	if (!weapon) {
-		if (count_down == 0) {
-			atteckMove(val);
-		} else {
-			count_down--;
-		}
-	} else {
-		atteckMove(val);
-	}
-}
-
-void Donut::setCD()
-{
-	int temp = 10000 - (int)hp;
-	temp = temp / 1000;
-	cd = 200 - temp*20;
-}
-
-bool Donut::hpCheck() 
-{
-	if (hp < 0) {
-			return true;
-	}
-	setCD();
-	return false;
-}
-
-bool Donut::collision(Item itm) 
-{
-	float dx = pos[0] - itm.pos[0] - itm.w;
-	if (dx > out_radius)
-		return false;
-	float dy;
-	if ((pos[1] - itm.pos[1] - itm.h) > 0) {
-		dy = pos[1] - itm.pos[1] - itm.h;
-	}
-	else if ((pos[1] - itm.pos[1] + itm.h) < 0) {
-		dy = itm.pos[1] - itm.h - pos[1];
-	}
-	else {
-		dy = 0;
-	}
-	float distance = sqrt((dx*dx)+(dy*dy));
-	return out_radius > distance;
-}
-
-void Donut::hpDemageDonut(Item itm) 
-{
-	hp -= itm.damage;
-}
-
-void Donut::draw() 
-{
-	int n = 40;
-	float anglein = 2*3.141592 / n;
-	float x0,x1,y0,y1;
-	glPushMatrix();
-	glBindTexture(GL_TEXTURE_2D, *dtex);
-	glBegin(GL_TRIANGLE_FAN);
-	for (int i = 0; i < n; i++) {
-		x0= pos[0] + out_radius *cos(i*anglein);
-		y0= pos[1] + out_radius *sin(i*anglein);
-		x1= 0.5 + 0.5 *cos(i*anglein);
-		y1= 0.5 + 0.5 *sin(i*anglein);
-		glTexCoord2f(x1,y1);
-		glVertex2f(x0, y0);
-	}
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	if (shelled_on) {
-		float anglein = (2*3.1415926)/40;
-		float x0,x1,y0,y1;
-		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-		for(int i=0; i<20; i++){
-			x0= pos[0] + shelled_radius *cos(i*anglein);
-			y0= pos[1] + shelled_radius *sin(i*anglein);
-			x1= pos[0] + shelled_radius *cos((i+1)*anglein);
-			y1= pos[1] + shelled_radius *sin((i+1)*anglein);
-			glBegin(GL_TRIANGLES);
-			glColor4ub(255, 255, 255, 20);
-				glVertex3f(pos[0],pos[1],0);
-			glColor4ub(255, 255, 255, 200);
-				glVertex3f(x0,y0,0);
-				glVertex3f(x1,y1,0);
-			glEnd();
-			x0= pos[0] + shelled_radius *cos(-i*anglein);
-			y0= pos[1] + shelled_radius *sin(-i*anglein);
-			x1= pos[0] + shelled_radius *cos(-(i+1)*anglein);
-			y1= pos[1] + shelled_radius *sin(-(i+1)*anglein);
-			glBegin(GL_TRIANGLES);
-			glColor4ub(255, 255, 255, 20);
-				glVertex3f(pos[0],pos[1],0);
-			glColor4ub(255, 255, 255, 200);
-				glVertex3f(x0,y0,0);
-				glVertex3f(x1,y1,0);
-			glEnd();
-		}
-		glDisable(GL_BLEND);
-	}
-}
-
- void Donut::atteckMove(int num) 
- {
-	if (!weapon) {
-		weapon_id = num;
-		if (num == 1 || num == 2){
-			weapon_outer_count = 10;
-			weapon_inner_count = 20;
-		}
-		if (num == 3) {
-			weapon_outer_count = 30;
-			weapon_inner_count = 2;
-		} 
-		if (num == 4) {
-			weapon_outer_count = 15;
-			weapon_inner_count = 4;
-		}
-		if (num == 5||num == 6||num == 7) {
-			weapon_outer_count = 1;
-			weapon_inner_count = 20;
-		}
-		weapon = true;
-	} else {
-		if(weapon_outer_count == 0) {
-			weapon = false;
-			count_down = cd;
-			return;
-		}
-		else if (weapon_inner_count == 0) {
-			float randangle;
-			int rand_pos_neg;
-			float accangle;
-			float dx;
-			float dy;
-			float ya;
-			int one = 1;
-			int negone = -1;
-			rand_pos_neg = (rand()%2) * 2 - 1; 			
-			switch (weapon_id) {
-			case 1:
-				accangle = 3.1415926/8;
-				for (int i = 0; i < 8; i++) {
-					dx = out_radius * cos(1.57 + (i * accangle));
-					dy = out_radius * sin(1.57 + (i * accangle));
-					do_bul[g.n_donut_bullet].setPos(pos[0]+dx,pos[1]+dy,0);
-					do_bul[g.n_donut_bullet].setDim(4.0,4.0);
-					do_bul[g.n_donut_bullet].setVel(-5.0, 0.0, 0.0);
-					do_bul[g.n_donut_bullet].setAcc (0.0, 0.0, 0.0);
-					do_bul[g.n_donut_bullet].setColor(255,240,255);
-					do_bul[g.n_donut_bullet].setDamage(10);
-					do_bul[g.n_donut_bullet].trace = false;
-					do_bul[g.n_donut_bullet].item_type = 16;
-					do_bul[g.n_donut_bullet].setVertex();
-					g.n_donut_bullet++;
-				}
-				break;
-			case 2:
-				accangle = 3.1415926/20;
-				for (int i = 0; i < 20; i++) {
-					dx = cos(1.57 + (i * accangle));
-					dy = sin(1.57 + (i * accangle));
-					do_bul[g.n_donut_bullet].setPos(pos[0]+(out_radius * dx),pos[1]+(out_radius * dy),0);
-					do_bul[g.n_donut_bullet].setDim(4.0,4.0);
-					do_bul[g.n_donut_bullet].setVel(5.0 * dx, 5 * dy, 0.0);
-					do_bul[g.n_donut_bullet].setAcc (0.0, 0.0, 0.0);
-					do_bul[g.n_donut_bullet].setColor(255,240,255);
-					do_bul[g.n_donut_bullet].setDamage(10);
-					do_bul[g.n_donut_bullet].trace = false;
-					do_bul[g.n_donut_bullet].item_type = 16;
-					do_bul[g.n_donut_bullet].setVertex();
-					g.n_donut_bullet++;
-				}
-				break;	
-			case 3:
-				randangle =(((float)rand()) / (float)RAND_MAX);
-				for (int i = 0; i < 2; i++) {
-					dx = out_radius * cos(one * (1.57 + 0.5*randangle));
-					dy = out_radius * sin(one * (1.57 + 0.5*randangle));
-					do_bul[g.n_donut_bullet].setPos(pos[0]+dx,pos[1]+dy,0);
-					do_bul[g.n_donut_bullet].setDim(4.0,4.0);
-					do_bul[g.n_donut_bullet].setVel(-5.0 , 0.0, 0.0);
-					ya = (2*(do_bul[g.n_donut_bullet].pos[1]-tos.pos[1])*(do_bul[g.n_donut_bullet].vel[0])*(do_bul[g.n_donut_bullet].vel[0]))/((do_bul[g.n_donut_bullet].pos[0]-tos.pos[0])*(do_bul[g.n_donut_bullet].pos[0]-tos.pos[0]));
-					do_bul[g.n_donut_bullet].setAcc (0.0, -ya, 0.0);
-					do_bul[g.n_donut_bullet].setColor(255,240,255);
-					do_bul[g.n_donut_bullet].setDamage(10);
-					do_bul[g.n_donut_bullet].trace = false;
-					do_bul[g.n_donut_bullet].item_type = 16;
-					do_bul[g.n_donut_bullet].setVertex();
-					g.n_donut_bullet++;
-					one *= negone;
-				}
-				break;
-			case 4:
-				accangle = 3.1415926/20;
-				for (int i = 1; i < 3; i++) {
-					dx = out_radius * cos(3.14 - i*accangle);
-					dy = out_radius * sin(3.14 - i*accangle);
-					do_bul[g.n_donut_bullet].setPos(pos[0]+dx,pos[1]+dy,0);
-					do_bul[g.n_donut_bullet].setDim(4.0,4.0);
-					do_bul[g.n_donut_bullet].setVel(-5.0 - i, 0.0, 0.0);
-					ya = (2*(do_bul[g.n_donut_bullet].pos[1]-tos.pos[1])*(do_bul[g.n_donut_bullet].vel[0])*(do_bul[g.n_donut_bullet].vel[0]))/((do_bul[g.n_donut_bullet].pos[0]-tos.pos[0])*(do_bul[g.n_donut_bullet].pos[0]-tos.pos[0]));
-					do_bul[g.n_donut_bullet].setAcc (0.0, -ya, 0.0);
-					do_bul[g.n_donut_bullet].setColor(255,240,255);
-					do_bul[g.n_donut_bullet].setDamage(10);
-					do_bul[g.n_donut_bullet].trace = false;
-					do_bul[g.n_donut_bullet].item_type = 16;
-					do_bul[g.n_donut_bullet].setVertex();
-					g.n_donut_bullet++;
-					dx = out_radius * cos(3.14 + i*accangle);
-					dy = out_radius * sin(3.14 + i*accangle);
-					do_bul[g.n_donut_bullet].setPos(pos[0]+dx,pos[1]+dy,0);
-					do_bul[g.n_donut_bullet].setDim(4.0,4.0);
-					do_bul[g.n_donut_bullet].setVel(-5.0 - i, 0.0, 0.0);
-					ya = (2*(do_bul[g.n_donut_bullet].pos[1]-tos.pos[1])*(do_bul[g.n_donut_bullet].vel[0])*(do_bul[g.n_donut_bullet].vel[0]))/((do_bul[g.n_donut_bullet].pos[0]-tos.pos[0])*(do_bul[g.n_donut_bullet].pos[0]-tos.pos[0]));
-					do_bul[g.n_donut_bullet].setAcc (0.0, -ya, 0.0);
-					do_bul[g.n_donut_bullet].setColor(255,240,255);
-					do_bul[g.n_donut_bullet].setDamage(10);
-					do_bul[g.n_donut_bullet].trace = false;
-					do_bul[g.n_donut_bullet].item_type = 16;
-					do_bul[g.n_donut_bullet].setVertex();
-					g.n_donut_bullet++;
-				}
-				break;
-			case 5:
-				// d_laser[g.n_laser].setDonutLaser(donut.pos[0], donut.pos[1], donut.out_radius,135,225,0.5);
-				// d_laser[g.n_laser].setCD(100,50,1,1);
-				// g.n_laser++;
-				d_laser[g.n_laser].setDonutLaser(donut.pos[0],donut.pos[0], donut.out_radius,90,270,0.5);
-				d_laser[g.n_laser].setCD(100,50,1,1);
-				g.n_laser++;
-				// d_laser[g.n_laser].setDonutLaser(donut.pos[0], donut.pos[1], donut.out_radius,100,220,0.5);
-				// d_laser[g.n_laser].setCD(100,50,1,1);
-				// g.n_laser++;
-
-				// d_laser[g.n_laser].setDonutLaser(0,10,6,'h');
-				// d_laser[g.n_laser].setCD(10,50,1,1);
-				// g.n_laser++;
-				break;
-
-			case 6:
-				cerr << "in case 6"<<endl;
-				d_laser[g.n_laser].setDonutLaser(g.yres_start,6,'h');
-				d_laser[g.n_laser].setCD(10,50,1,1);
-				g.n_laser++;
-				break;
-
-			case 7:
-				cerr << "in case 7" <<endl;
-				d_laser[g.n_laser].setDonutLaser(g.yres, 30,-4,'v');
-				d_laser[g.n_laser].setCD(100,50,1,1);
-				g.n_laser++;
-				break;
-			
-			
-			}
-			weapon_outer_count--;
-			weapon_inner_count = 20;
-		} else {
-			weapon_inner_count--;
-		}
-	}
-}
 //=========================================================================
 
 DonutLaser::DonutLaser()
@@ -1484,6 +1199,297 @@ void DonutLaser::draw()
 	}
 }
 
+Donut::Donut() 
+{
+	dtex = &g.donut_texture;
+	pos[0] = g.xres * 0.9;
+	pos[1] = g.yres / 2;
+	pos[2] = 0;
+	out_radius = 200.0;
+	shelled_radius = 210.0;
+	hp = 10000;
+	cd = 200;
+	count_down = cd;
+	weapon = false;
+	shelled_on = false;
+	setCD();
+}
+Donut::~Donut() {}
+
+void Donut::moveDonut() 
+{
+	// cerr << weapon << "  " << count_down << endl;
+	int val = rand()%3 +5;
+ 	// val = 7;
+	if (!weapon) {
+		if (count_down == 0) {
+			atteckMove(val);
+		} else {
+			count_down--;
+		}
+	} else {
+		atteckMove(val);
+	}
+}
+
+void Donut::setCD()
+{
+	int temp = 10000 - (int)hp;
+	temp = temp / 1000;
+	cd = 200 - temp*20;
+}
+
+bool Donut::hpCheck() 
+{
+	if (hp < 0) {
+			return true;
+	}
+	setCD();
+	return false;
+}
+
+bool Donut::collision(Item itm) 
+{
+	float dx = pos[0] - itm.pos[0] - itm.w;
+	if (dx > out_radius)
+		return false;
+	float dy;
+	if ((pos[1] - itm.pos[1] - itm.h) > 0) {
+		dy = pos[1] - itm.pos[1] - itm.h;
+	}
+	else if ((pos[1] - itm.pos[1] + itm.h) < 0) {
+		dy = itm.pos[1] - itm.h - pos[1];
+	}
+	else {
+		dy = 0;
+	}
+	float distance = sqrt((dx*dx)+(dy*dy));
+	return out_radius > distance;
+}
+
+void Donut::hpDemageDonut(Item itm) 
+{
+	hp -= itm.damage;
+}
+
+void Donut::draw() 
+{
+	int n = 40;
+	float anglein = 2*3.141592 / n;
+	float x0,x1,y0,y1;
+	glPushMatrix();
+	glBindTexture(GL_TEXTURE_2D, *dtex);
+	glBegin(GL_TRIANGLE_FAN);
+	for (int i = 0; i < n; i++) {
+		x0= pos[0] + out_radius *cos(i*anglein);
+		y0= pos[1] + out_radius *sin(i*anglein);
+		x1= 0.5 + 0.5 *cos(i*anglein+3.14);
+		y1= 0.5 + 0.5 *sin(i*anglein+3.14);
+		glTexCoord2f(x1 ,y1);
+		glVertex2f(x0, y0);
+	}
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	if (shelled_on) {
+		float anglein = (2*3.1415926)/40;
+		float x0,x1,y0,y1;
+		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+		for(int i=0; i<20; i++){
+			x0= pos[0] + shelled_radius *cos(i*anglein);
+			y0= pos[1] + shelled_radius *sin(i*anglein);
+			x1= pos[0] + shelled_radius *cos((i+1)*anglein);
+			y1= pos[1] + shelled_radius *sin((i+1)*anglein);
+			glBegin(GL_TRIANGLES);
+			glColor4ub(255, 255, 255, 20);
+				glVertex3f(pos[0],pos[1],0);
+			glColor4ub(255, 255, 255, 200);
+				glVertex3f(x0,y0,0);
+				glVertex3f(x1,y1,0);
+			glEnd();
+			x0= pos[0] + shelled_radius *cos(-i*anglein);
+			y0= pos[1] + shelled_radius *sin(-i*anglein);
+			x1= pos[0] + shelled_radius *cos(-(i+1)*anglein);
+			y1= pos[1] + shelled_radius *sin(-(i+1)*anglein);
+			glBegin(GL_TRIANGLES);
+			glColor4ub(255, 255, 255, 20);
+				glVertex3f(pos[0],pos[1],0);
+			glColor4ub(255, 255, 255, 200);
+				glVertex3f(x0,y0,0);
+				glVertex3f(x1,y1,0);
+			glEnd();
+		}
+		glDisable(GL_BLEND);
+	}
+
+	for (auto dlaser = donutlasers.begin(); dlaser != donutlasers.end(); dlaser++) {
+		dlaser->draw();
+	}
+}
+
+ void Donut::atteckMove(int num) 
+ {
+	if (!weapon) {
+		weapon_id = num;
+		if (num == 1 || num == 2){
+			weapon_outer_count = 10;
+			weapon_inner_count = 20;
+		}
+		if (num == 3) {
+			weapon_outer_count = 30;
+			weapon_inner_count = 2;
+		} 
+		if (num == 4) {
+			weapon_outer_count = 15;
+			weapon_inner_count = 4;
+		}
+		if (num == 5||num == 6||num == 7) {
+			weapon_outer_count = 1;
+			weapon_inner_count = 20;
+		}
+		weapon = true;
+	} else {
+		if(weapon_outer_count == 0) {
+			weapon = false;
+			count_down = cd;
+			return;
+		}
+		else if (weapon_inner_count == 0) {
+			float randangle;
+			int rand_pos_neg;
+			float accangle;
+			float dx;
+			float dy;
+			float ya;
+			int one = 1;
+			int negone = -1;
+			rand_pos_neg = (rand()%2) * 2 - 1; 	
+			DonutLaser temp;
+			switch (weapon_id) {
+			case 1:
+				accangle = 3.1415926/8;
+				for (int i = 0; i < 8; i++) {
+					dx = out_radius * cos(1.57 + (i * accangle));
+					dy = out_radius * sin(1.57 + (i * accangle));
+					do_bul[g.n_donut_bullet].setPos(pos[0]+dx,pos[1]+dy,0);
+					do_bul[g.n_donut_bullet].setDim(4.0,4.0);
+					do_bul[g.n_donut_bullet].setVel(-5.0, 0.0, 0.0);
+					do_bul[g.n_donut_bullet].setAcc (0.0, 0.0, 0.0);
+					do_bul[g.n_donut_bullet].setColor(255,240,255);
+					do_bul[g.n_donut_bullet].setDamage(10);
+					do_bul[g.n_donut_bullet].trace = false;
+					do_bul[g.n_donut_bullet].item_type = 16;
+					do_bul[g.n_donut_bullet].setVertex();
+					g.n_donut_bullet++;
+				}
+				break;
+			case 2:
+				accangle = 3.1415926/20;
+				for (int i = 0; i < 20; i++) {
+					dx = cos(1.57 + (i * accangle));
+					dy = sin(1.57 + (i * accangle));
+					do_bul[g.n_donut_bullet].setPos(pos[0]+(out_radius * dx),pos[1]+(out_radius * dy),0);
+					do_bul[g.n_donut_bullet].setDim(4.0,4.0);
+					do_bul[g.n_donut_bullet].setVel(5.0 * dx, 5 * dy, 0.0);
+					do_bul[g.n_donut_bullet].setAcc (0.0, 0.0, 0.0);
+					do_bul[g.n_donut_bullet].setColor(255,240,255);
+					do_bul[g.n_donut_bullet].setDamage(10);
+					do_bul[g.n_donut_bullet].trace = false;
+					do_bul[g.n_donut_bullet].item_type = 16;
+					do_bul[g.n_donut_bullet].setVertex();
+					g.n_donut_bullet++;
+				}
+				break;	
+			case 3:
+				randangle =(((float)rand()) / (float)RAND_MAX);
+				for (int i = 0; i < 2; i++) {
+					dx = out_radius * cos(one * (1.57 + 0.5*randangle));
+					dy = out_radius * sin(one * (1.57 + 0.5*randangle));
+					do_bul[g.n_donut_bullet].setPos(pos[0]+dx,pos[1]+dy,0);
+					do_bul[g.n_donut_bullet].setDim(4.0,4.0);
+					do_bul[g.n_donut_bullet].setVel(-5.0 , 0.0, 0.0);
+					ya = (2*(do_bul[g.n_donut_bullet].pos[1]-tos.pos[1])*(do_bul[g.n_donut_bullet].vel[0])*(do_bul[g.n_donut_bullet].vel[0]))/((do_bul[g.n_donut_bullet].pos[0]-tos.pos[0])*(do_bul[g.n_donut_bullet].pos[0]-tos.pos[0]));
+					do_bul[g.n_donut_bullet].setAcc (0.0, -ya, 0.0);
+					do_bul[g.n_donut_bullet].setColor(255,240,255);
+					do_bul[g.n_donut_bullet].setDamage(10);
+					do_bul[g.n_donut_bullet].trace = false;
+					do_bul[g.n_donut_bullet].item_type = 16;
+					do_bul[g.n_donut_bullet].setVertex();
+					g.n_donut_bullet++;
+					one *= negone;
+				}
+				break;
+			case 4:
+				accangle = 3.1415926/20;
+				for (int i = 1; i < 3; i++) {
+					dx = out_radius * cos(3.14 - i*accangle);
+					dy = out_radius * sin(3.14 - i*accangle);
+					do_bul[g.n_donut_bullet].setPos(pos[0]+dx,pos[1]+dy,0);
+					do_bul[g.n_donut_bullet].setDim(4.0,4.0);
+					do_bul[g.n_donut_bullet].setVel(-5.0 - i, 0.0, 0.0);
+					ya = (2*(do_bul[g.n_donut_bullet].pos[1]-tos.pos[1])*(do_bul[g.n_donut_bullet].vel[0])*(do_bul[g.n_donut_bullet].vel[0]))/((do_bul[g.n_donut_bullet].pos[0]-tos.pos[0])*(do_bul[g.n_donut_bullet].pos[0]-tos.pos[0]));
+					do_bul[g.n_donut_bullet].setAcc (0.0, -ya, 0.0);
+					do_bul[g.n_donut_bullet].setColor(255,240,255);
+					do_bul[g.n_donut_bullet].setDamage(10);
+					do_bul[g.n_donut_bullet].trace = false;
+					do_bul[g.n_donut_bullet].item_type = 16;
+					do_bul[g.n_donut_bullet].setVertex();
+					g.n_donut_bullet++;
+					dx = out_radius * cos(3.14 + i*accangle);
+					dy = out_radius * sin(3.14 + i*accangle);
+					do_bul[g.n_donut_bullet].setPos(pos[0]+dx,pos[1]+dy,0);
+					do_bul[g.n_donut_bullet].setDim(4.0,4.0);
+					do_bul[g.n_donut_bullet].setVel(-5.0 - i, 0.0, 0.0);
+					ya = (2*(do_bul[g.n_donut_bullet].pos[1]-tos.pos[1])*(do_bul[g.n_donut_bullet].vel[0])*(do_bul[g.n_donut_bullet].vel[0]))/((do_bul[g.n_donut_bullet].pos[0]-tos.pos[0])*(do_bul[g.n_donut_bullet].pos[0]-tos.pos[0]));
+					do_bul[g.n_donut_bullet].setAcc (0.0, -ya, 0.0);
+					do_bul[g.n_donut_bullet].setColor(255,240,255);
+					do_bul[g.n_donut_bullet].setDamage(10);
+					do_bul[g.n_donut_bullet].trace = false;
+					do_bul[g.n_donut_bullet].item_type = 16;
+					do_bul[g.n_donut_bullet].setVertex();
+					g.n_donut_bullet++;
+				}
+				break;
+			case 5:
+				// d_laser[g.n_laser].setDonutLaser(donut.pos[0], donut.pos[1], donut.out_radius,135,225,0.5);
+				// d_laser[g.n_laser].setCD(100,50,1,1);
+				// g.n_laser++;
+				temp.setDonutLaser(donut.pos[0],donut.pos[0], donut.out_radius,90,270,0.5);
+				temp.setCD(100,50,1,1);
+				donutlasers.push_front(temp);
+				// d_laser[g.n_laser].setDonutLaser(donut.pos[0], donut.pos[1], donut.out_radius,100,220,0.5);
+				// d_laser[g.n_laser].setCD(100,50,1,1);
+				// g.n_laser++;
+
+				// d_laser[g.n_laser].setDonutLaser(0,10,6,'h');
+				// d_laser[g.n_laser].setCD(10,50,1,1);
+				// g.n_laser++;
+				break;
+
+			case 6:
+				cerr << "in case 6"<<endl;
+				temp.setDonutLaser(g.yres_start,6,'h');
+				temp.setCD(10,50,1,1);
+				donutlasers.push_front(temp);
+				break;
+
+			case 7:
+				cerr << "in case 7" <<endl;
+				temp.setDonutLaser(g.yres, 30,-4,'v');
+				temp.setCD(100,50,1,1);
+				donutlasers.push_front(temp);
+				break;
+			
+			
+			}
+			weapon_outer_count--;
+			weapon_inner_count = 20;
+		} else {
+			weapon_inner_count--;
+		}
+	}
+}
+//==================================================================================================================
 
 ChargeBread::ChargeBread()
 {
