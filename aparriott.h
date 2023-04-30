@@ -30,6 +30,8 @@ class Entity {
 	float hp;	// how much hp he starts out with
 	float damage;	// how much damage he does if collides with toaster
 	int point;
+	GLuint * tex;
+
 	/*void set_color(unsigned char col[3]) {
 		memcpy(color,  col, sizeof(unsigned char) * 3);
 	}*/

@@ -680,7 +680,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		break;
 	case 4:
 		// normal green box
-		setDim(22.0,22.0);
+		setDim(12.0,12.0);
 		setVel(-4.0, 0.0, 0.0);
 		setAcc (0.0, 0.0, 0.0);
 		setColor(100,240,100);
@@ -690,7 +690,7 @@ void Bread::setBread(float x, float y,float z, int Bread_t, int type)
 		item_type = 14;
 		bullet_type_prime = 1;
 		point = 10;
-		tex = &g.bread2_silhouette;
+		tex = &g.bread_silhouette;
 		break;
 	case 5:
 		// full power potion 

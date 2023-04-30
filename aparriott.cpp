@@ -17,7 +17,7 @@ using namespace std;
 //  ENTITY CONSTRUCTORS
 Entity::Entity() {
 	dim[0] = 8;
-	dim[1] = 8;
+	dim[1] = 12;
 	pos[0] = g.xres / 2;
 	pos[1] = g.yres / 2;
 	vel[0] = -1;
@@ -27,6 +27,7 @@ Entity::Entity() {
 	setHP(2);
 	setDamage(10);
 	point = 10;
+    tex = &g.poptart_silhouette;
 }
 
 Entity::Entity(float wid, float hgt, float pos_x, float pos_y, float v_x, 
@@ -42,6 +43,7 @@ Entity::Entity(float wid, float hgt, float pos_x, float pos_y, float v_x,
 	setHP(2);
 	setDamage(10);
 	point = 10;
+    tex = &g.poptart_silhouette;
 }
 
 // FUNCTIONS
@@ -54,7 +56,7 @@ void EntitySpawn::makeEntity(float pos_x, float pos_y, float init_vel_x,
         float init_vel_y, float curve_x, float curve_y) {
 	if (e.num_ent < MAX_ENTITIES) {
 		entity[e.num_ent].dim[0] = 8;
-		entity[e.num_ent].dim[1] = 8;
+		entity[e.num_ent].dim[1] = 12;
 		entity[e.num_ent].pos[0] = pos_x;
 		entity[e.num_ent].pos[1] = pos_y;
 		entity[e.num_ent].vel[0] = init_vel_x;
@@ -102,7 +104,7 @@ void Entity::entityPhysics() {
             } else if (e.enter_loc == 3) {
                 // makeEntity SPAWN FROM BOTTOM, MOVES LEFT AND UP
                 e.spawn_x = e.randNum(g.xres / 2, g.xres);
-                e.spawn_y = 5;
+                e.spawn_y = g.yres_start;
                 e.spawn_vel_x = e.randNum(-8, -4);
                 e.spawn_vel_y = e.randNum(0, 8);
             }
@@ -128,7 +130,7 @@ void Entity::entityPhysics() {
         }
 
         // BOUNCE
-		if (entity[i].pos[1] <= 4 || entity[i].pos[1] >= g.yres - 4) {			
+		if (entity[i].pos[1] <= g.yres_start || entity[i].pos[1] >= g.yres - 4) {			
 			entity[i].vel[1] = -entity[i].vel[1];
         }
     }

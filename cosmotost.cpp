@@ -1179,6 +1179,20 @@ void init_opengl(void)
 	free(silhouetteData);
 
 
+	// GLuint poptart_silhouette; poptart_img
+	w = poptart_img.width;
+    h = poptart_img.height;
+	glGenTextures(1, &g.poptart_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.poptart_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&poptart_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+
 	cerr << "finished initializing opengl" << endl;
 }
 
@@ -1226,7 +1240,7 @@ void physics()
 					} else if (e.enter_loc == 3) {
 						// makeEntity SPAWN FROM BOTTOM, MOVES LEFT AND UP
 						e.spawn_x = e.randNum(g.xres / 2, g.xres);
-						e.spawn_y = 5;
+						e.spawn_y = g.yres/10.0f;
 						e.spawn_vel_x = e.randNum(-8, -4);
 						e.spawn_vel_y = e.randNum(0, 8);
 					}
@@ -1309,14 +1323,14 @@ void physics()
 
 
 				// DESPAWN
-				if (entity[i].pos[1] < -4 ||
-						entity[i].pos[1] > g.yres + 4 ||
+				if (entity[i].pos[1] < g.yres/10.0f - 6 ||
+						entity[i].pos[1] > g.yres + 6 ||
 						entity[i].pos[0] < -4) {
 					entity[i] = entity[--e.num_ent];
 				}
 				// BOUNCE
-				if (entity[i].pos[1] <= 4 ||
-						entity[i].pos[1] >= g.yres - 4) {
+				if (entity[i].pos[1] <= g.yres/10.0f + 6 ||
+						entity[i].pos[1] >= g.yres - 6) {
 					entity[i].vel[1] = -entity[i].vel[1];
 				}
 				if (tos.laserCollision(entity[i])) {
@@ -1876,15 +1890,25 @@ void render()
 
 			for (int i = 0; i < e.num_ent; i++) {
 				glPushMatrix();
-				glColor3ubv(entity[i].color);
+				glBindTexture(GL_TEXTURE_2D, *(entity[i].tex));
+				glEnable(GL_ALPHA_TEST);
+				glAlphaFunc(GL_GREATER, 0.0f);
+				glColor4f(entity[i].color[0]/255.0f, entity[i].color[1]/255.0f, entity[i].color[2]/255.0f, 1.0f);
 				glTranslatef(entity[i].pos[0], entity[i].pos[1], 0.0f);
 				glBegin(GL_QUADS);
+					glTexCoord2f(0.0f, 0.0f);
 					glVertex2f(-entity[i].dim[0], -entity[i].dim[1]);
+					glTexCoord2f(0.0f, 1.0f);
 					glVertex2f(-entity[i].dim[0],  entity[i].dim[1]);
+					glTexCoord2f(1.0f, 1.0f);
 					glVertex2f( entity[i].dim[0],  entity[i].dim[1]);
+					glTexCoord2f(1.0f, 0.0f);
 					glVertex2f( entity[i].dim[0], -entity[i].dim[1]);
 				glEnd();
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glDisable(GL_ALPHA_TEST);
 				glPopMatrix();
+
 			}
 		}
 
