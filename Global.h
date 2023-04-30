@@ -65,6 +65,7 @@ GLuint powerup_silhouette;
 GLuint health_silhouette;
 GLuint lives_silhouette;
 GLuint splash_silhouette;
+GLuint poptart_silhouette;
 GLuint donut_texture;
 
 Global();
@@ -133,7 +134,8 @@ inline Image blocky_img("textures/microwave.png");
 inline Image health_img("textures/oot_heart.png");
 inline Image lives_img("textures/toaster.png");
 inline Image splash_img("textures/splash.png");
-inline Image donut_img("texture/donut.png");
+inline Image donut_img("textures/donut.png");
+inline Image poptart_img("textures/poptart2.png");
 
 #ifdef USE_OPENAL_SOUND
 inline Sound sounds;
