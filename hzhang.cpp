@@ -780,6 +780,7 @@ void Spear::moveSpear()
 
 Donut::Donut() 
 {
+	dtex = &g.donut_texture;
 	pos[0] = g.xres * 0.9;
 	pos[1] = g.yres / 2;
 	pos[2] = 0;
@@ -852,34 +853,22 @@ void Donut::hpDemageDonut(Item itm)
 
 void Donut::draw() 
 {
-	int n = 20;
-	float anglein = 3.141592 / n;
+	int n = 40;
+	float anglein = 2*3.141592 / n;
 	float x0,x1,y0,y1;
 	glPushMatrix();
+	glBindTexture(GL_TEXTURE_2D, *dtex);
+	glBegin(GL_TRIANGLE_FAN);
 	for (int i = 0; i < n; i++) {
-		x0= pos[0]+ out_radius*cos(i*anglein);
-		y0= pos[1]+ out_radius*sin(i*anglein);
-		x1= pos[0]+ out_radius*cos((i+1)*anglein);
-		y1= pos[1]+ out_radius*sin((i+1)*anglein);
-		glBegin(GL_TRIANGLES);
-		glColor4ub(100, 100, 255, 1);
-			glVertex3f(pos[0],pos[1],0);
-		glColor4ub(100, 100, 255, 1);
-			glVertex3f(x0,y0,0);
-			glVertex3f(x1,y1,0);
-		glEnd();
-		x0= pos[0]+ out_radius*cos(-i*anglein);
-		y0= pos[1]+ out_radius*sin(-i*anglein);
-		x1= pos[0]+ out_radius*cos(-(i+1)*anglein);
-		y1= pos[1]+ out_radius*sin(-(i+1)*anglein);
-		glBegin(GL_TRIANGLES);
-		glColor4ub(100, 100, 255, 1);
-			glVertex3f(pos[0],pos[1],0);
-		glColor4ub(100, 100, 255, 1);
-			glVertex3f(x0,y0,0);
-			glVertex3f(x1,y1,0);
-		glEnd();
+		x0= pos[0] + out_radius *cos(i*anglein);
+		y0= pos[1] + out_radius *sin(i*anglein);
+		x1= 0.5 + (20.0/43.0) *cos(i*anglein);
+		y1= 0.49 + (20.0/45.0) *sin(i*anglein);
+		glTexCoord2f(x1,y1);
+		glVertex2f(x0, y0);
 	}
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
 	if (shelled_on) {
 		float anglein = (2*3.1415926)/40;
 		float x0,x1,y0,y1;
@@ -1105,7 +1094,7 @@ void DonutLaser::setVertex()
 		vertex[3] = coor_two[1] + dim;
 		vertex[4] = coor_two[0];
 		vertex[5] = coor_two[1] - dim;
-		vertex[6] = coor_one[0];;
+		vertex[6] = coor_one[0];
 		vertex[7] = coor_one[1] -dim;
 	} 
 	else if (laser_type == 5) {

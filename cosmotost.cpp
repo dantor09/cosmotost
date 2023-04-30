@@ -995,6 +995,16 @@ void init_opengl(void)
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
 	    GL_RGB, GL_UNSIGNED_BYTE, icecube_img.data);
 
+	w = donut_img.width;
+    h = donut_img.height;
+	glGenTextures(1, &g.donut_texture);
+	glBindTexture(GL_TEXTURE_2D, g.donut_texture);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
+	    GL_RGB, GL_UNSIGNED_BYTE, donut_img.data);
+
+
     w = bomb_img.width;
     h = bomb_img.height;
 	glGenTextures(1, &g.bomb_texture);

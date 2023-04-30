@@ -188,6 +188,8 @@ class Donut
 {
   public:
   // Boss
+    GLuint * dtex;
+    GLuint * shelltex;
     float out_radius;
     float inner_radius;
     float deamage_radius;
@@ -208,6 +210,7 @@ class Donut
     int donut_count;
     int weapon_outer_count;
     int weapon_inner_count;
+
    
   //-----------------------------------------------------
     Donut();
