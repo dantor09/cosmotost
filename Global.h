@@ -105,6 +105,7 @@ inline PowerBar vblocky_health(vblocky, HEALTH, g.xres/2.0f, 15.0f);
 inline PowerBar v2blocky_health(v2blocky, HEALTH, g.xres/2.0f, 15.0f);
 inline PowerBar hblocky_health(hblocky, HEALTH, g.xres/2.0f, 15.0f);
 inline PowerBar h2blocky_health(h2blocky, HEALTH, g.xres/2.0f, 15.0f);
+
 inline Blocky * blocky;
 inline PowerBar * blocky_health;
 inline SoundBar vol_slider(&g.m_vol, g.xres*(1.0f/3.0f), g.yres/2.0f, "Music Volume");
@@ -158,6 +159,7 @@ inline Bullet do_bul[MAX_bullet];
 // inline EffectBox effect_partical[MAX_partical];
 inline DonutLaser d_laser[10];
 inline Donut donut;
+inline PowerBar donut_health(donut, DONUT, g.xres/2.0f, 15.0f);
 
 // Huaiyu veribles================================
 

@@ -839,11 +839,40 @@ void Sound::bombExplosion()
 
 #endif
 
+PowerBar::PowerBar(const Donut & _itm_, PBType _type_, float x, float y)
+{
+    // maybe put max_health of each enemy type in case were going to
+    // use this healthbar for the boss as well
+    donut = &_itm_;
+    itm = nullptr;
+    tos = nullptr;
+    type = _type_;
+
+    if (type != DONUT) {
+        cerr << "WARNING** : BAD POWERBAR CONSTRUCTER, TYPE != DONUT" << endl;
+    }
+    
+    total.setColor(0,0,0);   // set lost health to black
+    health.setColor(255,0,0);  // set health to r
+    total.setDim(75,10);
+    total.setPos(x, y, 0);
+    
+    // mimic other bar based on what health was set to
+    health.setDim(total.w,total.h);
+    health.setPos(total.pos[0],total.pos[1],total.pos[2]);
+
+    text.bot = total.pos[1]-5;
+    text.left = total.pos[0];
+    text.center = 1;
+    // cerr << "finished itm constructor" << endl;
+}
+
 PowerBar::PowerBar(const Item & _itm_, PBType _type_, float x, float y)
 {
     // maybe put max_health of each enemy type in case were going to
     // use this healthbar for the boss as well
     itm = &_itm_;
+    tos = nullptr;
     type = _type_;
 
     if (type == HEALTH) {
@@ -864,7 +893,7 @@ PowerBar::PowerBar(const Item & _itm_, PBType _type_, float x, float y)
     text.bot = total.pos[1]-5;
     text.left = total.pos[0];
     text.center = 1;
-    cerr << "finished itm constructor" << endl;
+    // cerr << "finished itm constructor" << endl;
 }
 
 PowerBar::PowerBar(const Toaster & _tos_, PBType _type_, float x, float y)
@@ -894,13 +923,12 @@ PowerBar::PowerBar(const Toaster & _tos_, PBType _type_, float x, float y)
     text.left = total.pos[0];
     text.center = 1;
 
-    cerr << "finished tos constructor" << endl;
+    // cerr << "finished tos constructor" << endl;
 }
 
 
 void PowerBar::draw()
 {
-    
     
     if (type == HEALTH) {
         glColor3ubv(total.color);
@@ -959,6 +987,33 @@ void PowerBar::draw()
 
         ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, (int)tos->max_energy);
         // cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
+    } else if (type == DONUT) {
+        
+        glColor3ubv(total.color);
+        glPushMatrix();
+        glTranslatef(total.pos[0], total.pos[1], total.pos[2]);
+        glBegin(GL_QUADS);
+            glVertex2f(-total.w, -total.h);
+            glVertex2f(-total.w,  total.h);
+            glVertex2f( total.w,  total.h);
+            glVertex2f( total.w, -total.h);
+        glEnd();
+        glPopMatrix();
+
+
+        glColor3ubv(health.color);
+        glPushMatrix();
+        glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
+        glBegin(GL_QUADS);
+            glVertex2f(0, -health.h);
+            glVertex2f(0,  health.h);
+            glVertex2f((((donut->hp))/(10000.0f))*2.0f*health.w,  health.h);
+            glVertex2f((((donut->hp))/(10000.0f))*2.0f*health.w, -health.h);
+            
+        glEnd();
+        glPopMatrix();
+
+        ggprint8b(&text, 0, 0x00000000, "Boss Health: %i/%i", (int)donut->hp, 10000);
     }
 }
 

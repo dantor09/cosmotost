@@ -2022,6 +2022,7 @@ void render()
 		if(g.donut_active == true &&
 			(g.state == GAME || g.state == PAUSE)) {
 				donut.draw();
+				donut_health.draw();
 				for (int i=0; i < g.n_donut_bullet; i++) {
 //						cerr << "draw bullet" << endl;
 						do_bul[i].draw();
