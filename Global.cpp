@@ -34,5 +34,5 @@ void Global::gameReset()
 	// 	record.gamer[i]=' ';
 	tos.posReset();
 	vblocky.gamereset();
-	EntySpwn.ResetEntity();
+	e.ResetEntity();
 }

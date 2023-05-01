@@ -557,7 +557,6 @@ int X11_wrapper::check_keys(XEvent *e)
 		// 	sounds.gunStop();
 		// 	sounds.gun_shooting = false;
 		// }
-
 #endif
 
 		// if (key == XK_Shift_L || key == XK_Shift_R)
@@ -568,8 +567,6 @@ int X11_wrapper::check_keys(XEvent *e)
 		g.keys[key1]=1;
 		// if (key == XK_Shift_L || key == XK_Shift_R) {
 		// 	shift = 1;
-
-
 	}
 
 	if (g.state == SPLASH) {
@@ -590,7 +587,6 @@ int X11_wrapper::check_keys(XEvent *e)
 					return 1;
 				case XK_y:
 					// test key
-					
 					return 0;
 			}
 		}
@@ -673,26 +669,24 @@ int X11_wrapper::check_keys(XEvent *e)
 		// *** Should be waiting for mouse input on the menu ***
 	} 
 	
-	
-	
 	else if (g.state == GAME) {
 		if (e->type == KeyPress) {
 			float dusha = tos.pos[0] + 150*(g.keys[XK_d]-g.keys[XK_a]);
 			float dushb = tos.pos[1] + 150*(g.keys[XK_w]-g.keys[XK_s]);
 			switch (key) {
 				case XK_j:
-						// int a = 350;
-						if (tos.energy >= 10) {
-								tos.pos[0] = dusha;
-								tos.pos[1] = dushb;
-								tos.energy -= 10;
+					// int a = 350;
+					if (tos.energy >= 10) {
+						tos.pos[0] = dusha;
+						tos.pos[1] = dushb;
+						tos.energy -= 10;
 #ifdef USE_OPENAL_SOUND
-							sounds.doosh();
-#endif
-						}
-						// pos[0] = 350;
-						// pos[0] += 50;
-						// pos[1] = 350;  			// std::cout << "move w"<<pos[1]<<std::endl;
+						sounds.doosh();
+#endif					
+					}
+					// pos[0] = 350;
+					// pos[0] += 50;
+					// pos[1] = 350;  			// std::cout << "move w"<<pos[1]<<std::endl;
 				// std::cout << "move w"<<pos[1]<<std::endl;
 						return 0;
 				case XK_e:
@@ -775,6 +769,7 @@ int X11_wrapper::check_keys(XEvent *e)
 
 				case XK_q:
 					bomb.launch();
+					stats.bombsThrown++;
 					return 0;
 
 				case XK_Escape:	// pause the game
@@ -910,7 +905,6 @@ int X11_wrapper::check_keys(XEvent *e)
 	return 0;
 }
 
-
 // won't have to mess with this much in the project
 void init_opengl(void)
 {
@@ -961,8 +955,6 @@ void init_opengl(void)
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
 	    GL_RGB, GL_UNSIGNED_BYTE, background.data);
-
-
 
 	w = toaster_img.width;
     h = toaster_img.height;
@@ -1026,7 +1018,6 @@ void init_opengl(void)
 
 	cerr << "finished initializing opengl" << endl;
 }
-
 
 void physics()
 {
@@ -1126,18 +1117,17 @@ void physics()
 					} else if (tos.hpCheck()) {
 						g.state = GAMEOVER;
 					}
-
 				}
 
 				if (bomb.is_exploding &&
 						bomb.collision(entity[i])) {
 
-						entity[i].hp -= entity[i].hp;	// wipe out all health
-						tos.score += entity[i].point;
-						entity[i] = entity[--e.num_ent];
-					
-				}
+					entity[i].hp -= entity[i].hp;	// wipe out all health
+					tos.score += entity[i].point;
+					entity[i] = entity[--e.num_ent];
 
+					stats.blockyCollateral++;
+				}
 
 				for (int j=0; j < g.n_Bullet; j++) {
 					if (entity[i].collision(bul[j])) {
@@ -1218,13 +1208,13 @@ void physics()
 			// check blocky's collision with bullets
 			for (int j=0; j < g.n_Bullet; j++) {
 				if (blocky->collision(bul[j])) {
-						blocky->hpDamage(bul[j]);
-						bul[j].hpDamage(*blocky);
-						if(blocky->hpCheck()) {
-							tos.score += blocky->point;
-							blocky->reset();
-						}
-						bul[j] = bul[--g.n_Bullet];
+					blocky->hpDamage(bul[j]);
+					bul[j].hpDamage(*blocky);
+					if(blocky->hpCheck()) {
+						tos.score += blocky->point;
+						blocky->reset();
+					}
+					bul[j] = bul[--g.n_Bullet];
 				}
 
 				if (blocky->gun_active) {
@@ -1278,8 +1268,6 @@ void physics()
 						tos.score += blocky->point;
 						blocky->reset();
 				}
-
-				
 
 			} else if (!blocky->explode_done) {
 				// sub-blocky's collision with bread
@@ -1349,7 +1337,8 @@ void physics()
 
 				}
 				if (g.BreadCD == 0 && (int)rand()%3 == 0)
-						makeSpear(g.xres-60.0,(((float)rand()) / (float)RAND_MAX)*g.yres,0.0,1);
+					makeSpear(g.xres-60.0,(((float)rand()) / 
+							(float)RAND_MAX)*g.yres,0.0,1);
 				
 		}
 //======================BOSS+====================================		
@@ -1456,25 +1445,27 @@ void physics()
 				}
 				// check if collision with toaster
 				if (bread[i].collision(tos)) {
-						if (bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)	{
-								bread[i].hpDamage(tos);
-								tos.hpDamage(bread[i]);
+						if (bread[i].item_type == 11 || 
+								bread[i].item_type == 13 || 
+								bread[i].item_type == 14) {
+							bread[i].hpDamage(tos);
+							tos.hpDamage(bread[i]);
 								
-								// D.T Reset HP and decrease lives if toaster still has lives left
-								if(tos.hpCheck() && (tos.lives > 1)) {
-									cerr << "should be dead from forky" << endl;
-									tos.lives--;
-									tos.setHP(tos.starting_hp);
-									// continue;
-								} else if(tos.hpCheck()) {
-									g.state = GAMEOVER;
-									break;
-								}
-								
-								if(bread[i].hpCheck()) {
-									bread[i] = bread[--g.n_Bread];
-									continue;
-								}
+							// D.T Reset HP and decrease lives if toaster still has lives left
+							if(tos.hpCheck() && (tos.lives > 1)) {
+								cerr << "should be dead from forky" << endl;
+								tos.lives--;
+								tos.setHP(tos.starting_hp);
+								// continue;
+							} else if(tos.hpCheck()) {
+								g.state = GAMEOVER;
+								break;
+							}
+							
+							if(bread[i].hpCheck()) {
+								bread[i] = bread[--g.n_Bread];
+								continue;
+							}
 						}
 
 						// powerup handling
@@ -1839,7 +1830,20 @@ void render()
 		ggprint16(&hscore_msg, 0, 0x00DC143C, "New Record: %i", tos.score);
 		ggprint16(&game_msg, 0, 0x00ffffff, "GAME OVER");
 
-
+		cerr << "\n=======================================\n";
+		cerr << "= STATS =" << endl;
+		cerr << "Accuracy: " << stats.accuracy << endl;
+		cerr << "Time Survived: " << stats.timeSurvived << endl;
+		cerr << "Block Collaterals: " << stats.blockyCollateral << endl;
+		cerr << "Beam Kills: " << stats.beamKills << endl;
+		cerr << "Bomb Kills: " << stats.bombKills << endl;
+		cerr << "Bombs Thrown: " << stats.bombsThrown << endl;
+		cerr << "Damage Taken: " << stats.damageTaken << endl;
+		cerr << "Kills: " << stats.kills << endl;
+		cerr << "Dashes: " << stats.dashes << endl;
+		cerr << "Power Ups: " << stats.powerUpsGained << endl;
+		cerr << "Hit: " << stats.shotsHit << endl;
+		cerr << "Missed: " << stats.shotsMissed << endl;
 
 	} else if (g.state == GAMEOVER && g.substate == HIGH_SCORES) {
 	
@@ -1852,7 +1856,6 @@ void render()
 		if (record.hs_menu) {
 			record.hs_menu->draw();
 		}
-
 	}
 
 	// (A) - REMOVED PAUSE FROM IF ELSE STATEMENTS TO ALLOW GAME TO RENDER

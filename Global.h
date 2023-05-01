@@ -135,6 +135,4 @@ inline Donut donut;
 
 // AILAND VARIABLES ============
 
-inline EntitySpawn EntySpwn;
-inline Entity Enty;
 
