@@ -1235,7 +1235,7 @@ Donut::~Donut() {}
 void Donut::moveDonut() 
 {
 	// cerr << weapon << "  " << count_down << endl;
-	int val = rand()%8 + 1;
+	int val = rand()%4 + 5;
  	// val = 7;
 	if (!weapon) {
 		if (count_down == 0) {
@@ -1485,7 +1485,7 @@ void Donut::draw()
 				break;
 			case 5:
 				temp.setDonutLaser(donut.pos[0],donut.pos[1], 
-									donut.out_radius,90.01,269.9,0.5);
+									donut.out_radius,135.01,225.9,0.6);
 				temp.setCD(100,50,1,1,4,0);
 				donutlasers.push_front(temp);
 				break;
@@ -1502,9 +1502,9 @@ void Donut::draw()
 
 			case 7:
 				cerr << "in case 7" <<endl;
-				// temp.setDonutLaser(0.5*g.xres,g.yres_start, 1,90.01,180.1,0.5);
-				// temp.setCD(100,50,1,1,4,0);
-				// donutlasers.push_front(temp);
+				temp.setDonutLaser(0.5*g.xres,g.yres_start, 1,90.01,180.1,0.5);
+				temp.setCD(100,50,1,1,4,0);
+				donutlasers.push_front(temp);
 				temp.setDonutLaser(0.5*g.xres,g.yres, 1,269.99,180.1,-0.5);
 				temp.setCD(100,50,1,1,4,0);
 				donutlasers.push_front(temp);
