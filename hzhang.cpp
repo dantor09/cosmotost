@@ -14,60 +14,61 @@
 #include <cstring>
 
 using namespace std;
+//=========================================================================
 // x,y,z are pos[]. bullet_type is connect with bullet_type_prime
 void makeBullet(float x, float y,float z, int bullet_type) 
 {
-	switch(bullet_type){
+	switch(bullet_type) {
 	case 1:
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y, z, 1);
 			++g.n_Bullet;
 		}
 		break;
 	case 2:
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y+5, z, 1);
 			++g.n_Bullet;
 		}
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y-5, z, 1);
 			++g.n_Bullet;
 		}
 		break;
 	case 3:
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y, z, 1);
 			++g.n_Bullet;
 		}
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y+5, z, 2);
 			++g.n_Bullet;
 		}
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y-5, z, 3);
 			++g.n_Bullet;
 		}
 		break;
 	case 4:
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y-5, z, 1);
 			++g.n_Bullet;
 		}
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y+5, z, 1);
 			++g.n_Bullet;
 		}
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y+8, z, 2);
 			++g.n_Bullet;
 		}
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y-8, z, 3);
 			++g.n_Bullet;
 		}
 		break;
 	case 5:
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y, z, 1);
 			++g.n_Bullet;
 		}
@@ -76,7 +77,7 @@ void makeBullet(float x, float y,float z, int bullet_type)
 
 void makeBread(float x, float y,float z, int Bread_t, int type) 
 {
-  	if (g.n_Bread < MAX_bread){
+  	if (g.n_Bread < MAX_bread) {
 		bread[g.n_Bread].setBread(x, y, z, Bread_t, type);
 		++g.n_Bread;
     }
@@ -91,11 +92,11 @@ void makeSpear(float x, float y,float z, int type)
 	}
 }
 
-//==================================================================================
+//=========================================================================
 Item::Item()
 {
 	tex = nullptr;	// assign texture to null in the base class
-					// this var should be overridden in classes with textures
+				// this var should be overridden in classes with textures
 }
 Item::~Item()
 {
@@ -374,33 +375,41 @@ Toaster::~Toaster()
 	delete [] plive;
 }
 
-// laserCollison is a function test are object and toaster at same area on yres
+//laserCollison is a function test are object 
+//and toaster at same area on yres
 bool Toaster::laserCollision(Item a)
 {
-	return (pos[1] > a.pos[1]-a.h && pos[1] < a.pos[1]+a.h && pos[0] < a.pos[0] - a.w - w);
+	return (pos[1] > a.pos[1]-a.h && 
+			pos[1] < a.pos[1]+a.h && 
+			pos[0] < a.pos[0] - a.w - w);
 }
 bool Toaster::laserCollision(Entity a)
 {
-	return (pos[1] > a.pos[1]-a.dim[1] && pos[1] < a.pos[1]+a.dim[1] && pos[0] < a.pos[0] - a.dim[0] - w);
+	return (pos[1] > a.pos[1]-a.dim[1] && 
+			pos[1] < a.pos[1]+a.dim[1] && 
+			pos[0] < a.pos[0] - a.dim[0] - w);
 }
 
 void Toaster::setDistance(float val)
 {
 	distance = val;
 }
+//=========================================================================
 
 void Toaster::laserDamage(Item& a)
 {
 	cerr << " a.HP " << a.hp <<endl;
 	a.hp = a.hp - laser_damage[bullet_type_prime-5];
-	cerr << "make damage " << laser_damage[bullet_type_prime-5] << " a.HP " << a.hp <<endl;
+	cerr << "make damage " << 
+			// laser_damage[bullet_type_prime-5] << " a.HP " << a.hp <<endl;
 }
 
 void Toaster::laserDamage(Entity& a)
 {
-	cerr << " a.HP " << a.hp <<endl;
+	// cerr << " a.HP " << a.hp <<endl;
 	a.hp = a.hp - laser_damage[bullet_type_prime-5];
-	cerr << "make damage " << laser_damage[bullet_type_prime-5] << " a.HP " << a.hp <<endl;
+	// cerr << "make damage " << 
+			// laser_damage[bullet_type_prime-5] << " a.HP " << a.hp <<endl;
 }
 
 void Toaster::posReset()
@@ -565,6 +574,8 @@ void Toaster::tdraw() {
 //     temp << "Score : " << score << endl;
 //   return temp.str();
 // }
+//=========================================================================
+
 
 Bullet::Bullet() 
 {
@@ -633,7 +644,8 @@ Bread::~Bread() {}
 void Bread::setBread(float x, float y,float z, int Bread_t, int type) 
 {
     setPos (x,y,z);
-	float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
+	float ya = (2*(pos[1]-tos.pos[1])*(vel[0])*(vel[0]))/
+				((pos[0]-tos.pos[0])*(pos[0]-tos.pos[0]));
     switch (Bread_t) {
 	case 1:
 		// trace green box
@@ -748,8 +760,8 @@ void Bread::moveBread()
     vel[2] += acc[2];
 }
 
-Spear::Spear(){tex = &g.fork_silhouette;}
-Spear::~Spear(){}
+Spear::Spear() {tex = &g.fork_silhouette;}
+Spear::~Spear() {}
 
 void Spear::setSpear(float x, float y,float z, int spear_type) 
 {
@@ -838,7 +850,7 @@ void DonutLaser::setVertex()
 			vertex[4] = coor_two[0] + dim;
 			vertex[5] = coor_two[1];
 		}
-		else if (slop < limit_angle[0] || slop > limit_angle[3]){
+		else if (slop < limit_angle[0] || slop > limit_angle[3]) {
 			// right
 			vertex[2] = coor_two[0];
 			vertex[3] = coor_two[1] - dim;
@@ -904,7 +916,8 @@ void DonutLaser::setDonutLaser(float pos, float speed, char hor_or_ver)
 }
 
 // slop laser, move horizental or vertical
-void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_ver){
+void DonutLaser::setDonutLaser(float pos, float angle, 
+								float speed, char hor_or_ver) {
 	target_angle = (3.1415926 * angle)/ 180;
 	slop = tan(target_angle);
 	switch (hor_or_ver)
@@ -912,7 +925,9 @@ void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_
 	case 'h':
 		laser_type = 3;
 		coor_one[0] = pos;
-		coor_two[0] = pos + ((g.yres - g.yres_start) * tan(target_angle));
+		coor_two[0] = pos + 
+						((g.yres - g.yres_start) * 
+						tan(target_angle));
 		coor_one[1] = g.yres_start;
 		coor_two[1] = g.yres;
 		vel_one[0] = speed;
@@ -926,7 +941,9 @@ void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_
 		coor_one[0] = 0;
 		coor_two[0] = g.xres;
 		coor_one[1] = pos;
-		coor_two[1] = pos + (g.xres * tan(target_angle));
+		coor_two[1] = pos + 
+						(g.xres * 
+						tan(target_angle));
 		vel_one[0] = 0;
 		vel_two[0] = 0;
 		vel_one[1] = speed;
@@ -944,7 +961,10 @@ void DonutLaser::setDonutLaser(float pos, float angle, float speed, char hor_or_
 // 						270
 // 						||
 // 						||
-void DonutLaser::setDonutLaser(float xcenter, float ycenter, float r, float anglestart, float angleend, float anglespeed){
+void DonutLaser::setDonutLaser(
+		float xcenter, float ycenter, float r, 
+		float anglestart, float angleend, 
+		float anglespeed) {
 	cout << "make 5 laser" << endl;
 	laser_type = 5;
 	slop = anglestart * 3.1415926 / 180;
@@ -955,29 +975,39 @@ void DonutLaser::setDonutLaser(float xcenter, float ycenter, float r, float angl
 	center[1] = ycenter;
 	coor_one[0] = center[0] + (radius * cos(slop));
 	coor_one[1] = center[1] + (radius * sin(slop));
-	limit_angle[0] = atan( (g.yres - center[1]) / (g.xres - center[0]));
-	limit_angle[1] = atan( (g.yres - center[1]) / (0 - center[0])) + 3.1415926;
-	limit_angle[2] = atan( (g.yres_start - center[1]) / (0 - center[0])) + 3.1415926;
-	limit_angle[3] = atan( (g.yres_start - center[1]) / (g.xres - center[0])) + 6.2831853;
+	limit_angle[0] = atan( (g.yres - center[1]) / 
+						(g.xres - center[0]));
+	limit_angle[1] = atan( (g.yres - center[1]) / 
+						(0 - center[0])) + 3.1415926;
+	limit_angle[2] = atan( (g.yres_start - center[1]) / 
+						(0 - center[0])) + 3.1415926;
+	limit_angle[3] = atan( (g.yres_start - center[1]) / 
+						(g.xres - center[0])) + 6.2831853;
 	if (slop > limit_angle[0] && slop < limit_angle[1]) {
 		// up
-		coor_two[0] = center[0] + ((g.yres-center[1])/ tan(slop));
+		coor_two[0] = center[0] + 
+						((g.yres-center[1])/ tan(slop));
 		coor_two[1] = g.yres;
 	}
-	else if (slop > limit_angle[1] && slop < limit_angle[2]) {
+	else if (slop > limit_angle[1] && 
+					slop < limit_angle[2]) {
 		// left
 		coor_two[0] = 0;
-		coor_two[1] = center[1] + ((-center[0]) * tan(slop));
+		coor_two[1] = center[1] + 
+						((-center[0]) * tan(slop));
 	}
-	else if (slop > limit_angle[2] && slop < limit_angle[3]) {
+	else if (slop > limit_angle[2] && 
+					slop < limit_angle[3]) {
 		// down
-		coor_two[0] = center[0] - ((g.yres-center[1])/ tan(slop));
+		coor_two[0] = center[0] - 
+					((g.yres-center[1])/ tan(slop));
 		coor_two[1] = g.yres_start;
 	}
 	else {
 		// right
 		coor_two[0] = g.xres;
-		coor_two[1] = center[1] - ((-center[0]) * tan(slop));
+		coor_two[1] = center[1] - 
+					((-center[0]) * tan(slop));
 	}
 }
 
@@ -1025,7 +1055,8 @@ void DonutLaser::moveLaser() {
 				coor_one[1] = center[1] + (radius * sin(slop));
 				if (slop > limit_angle[0] && slop < limit_angle[1]) {
 					// up
-					coor_two[0] = center[0] + ((g.yres-center[1])/ tan(slop));
+					coor_two[0] = center[0] + 
+						((g.yres-center[1])/ tan(slop));
 					coor_two[1] = g.yres;
 				}
 				else if (slop > limit_angle[1] && slop < limit_angle[2]) {
@@ -1035,7 +1066,9 @@ void DonutLaser::moveLaser() {
 				}
 				else if (slop > limit_angle[2] && slop < limit_angle[3]) {
 					// down
-					coor_two[0] = center[0] - ((center[1]-g.yres_start)/ tan(slop));
+//=========================================================================
+					coor_two[0] = center[0] - 
+									((center[1]-g.yres_start)/ tan(slop));
 					coor_two[1] = g.yres_start;
 				}
 				else {
@@ -1053,61 +1086,83 @@ void DonutLaser::moveLaser() {
 	}
 }
 
-bool DonutLaser::collision(Item itm){
+bool DonutLaser::collision(Item itm) {
 	if (!(charge_on||lag_on)) {
 		if (laser_type == 1) {
 			// horizental line move up or down
-			return !((coor_one[1] - dim - itm.h - itm.pos[1] > 0)||(itm.pos[1] - coor_one[1] - dim - itm.h > 0));
+			return !((coor_one[1] - dim - itm.h - itm.pos[1] > 0)||
+				(itm.pos[1] - coor_one[1] - dim - itm.h > 0));
 		}
 		else if (laser_type == 2) {
 			// horizental line move up or down
-			return !((coor_one[0] - dim - itm.w - itm.pos[0] > 0)||(itm.pos[0] - coor_one[0] - dim - itm.w > 0));
+			return !((coor_one[0] - dim - itm.w - itm.pos[0] > 0)||
+				(itm.pos[0] - coor_one[0] - dim - itm.w > 0));
 		}
 		else if (laser_type == 3) {
 			if (slop > 0) {
-				return !((itm.pos[1] - itm.h) > slop * (itm.pos[0] + itm.w - coor_one[0] - dim)
-						|| (itm.pos[1] + itm.h) < slop * (itm.pos[0] - itm.h - coor_one[1] + dim));
+				return !((itm.pos[1] - itm.h) > 
+						slop * (itm.pos[0] + itm.w - coor_one[0] - dim)
+						|| (itm.pos[1] + itm.h) < 
+						slop * (itm.pos[0] - itm.h - coor_one[1] + dim));
 			} else {
-				return !((itm.pos[0] + itm.w) < slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
-						|| (itm.pos[0] - itm.w) > slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
+				return !((itm.pos[0] + itm.w) < 
+						slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
+						|| (itm.pos[0] - itm.w) > 
+						slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
 			}
 		}
 		else if (laser_type == 4) {
 			//slop and move up down
 			if (slop > 0) {
-				return !((itm.pos[0] + itm.w) < slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
-						|| (itm.pos[0] - itm.w) > slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
+				return !((itm.pos[0] + itm.w) < 
+						slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
+						|| (itm.pos[0] - itm.w) > 
+						slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
 			} else {
-				return !((itm.pos[0] + itm.w) > slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
-						|| (itm.pos[0] - itm.w) < slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
+				return !((itm.pos[0] + itm.w) > 
+						slop * (itm.pos[1] - itm.h - coor_one[1] - dim)
+						|| (itm.pos[0] - itm.w) < 
+						slop * (itm.pos[1] + itm.h - coor_one[1] + dim));
 			}
 		}
 		else if (laser_type == 5) {
 			if (slop > 0 && slop < 1.570796327) {
-				if((itm.pos[0] - itm.w) > coor_one[0] && (itm.pos[1] - itm.h) > coor_one[1]) {
-					return (((itm.pos[1] - itm.h - coor_one[1]) / (itm.pos[0] + itm.w - coor_one[0]) < tan(slop)) 
-						&& ((itm.pos[1] + itm.h - coor_one[1]) / (itm.pos[0] - itm.w - coor_one[0]) > tan(slop)));
+				if((itm.pos[0] - itm.w) > coor_one[0] && 
+					(itm.pos[1] - itm.h) > coor_one[1]) {
+					return (((itm.pos[1] - itm.h - coor_one[1]) / 
+							(itm.pos[0] + itm.w - coor_one[0]) < tan(slop)) 
+						&& ((itm.pos[1] + itm.h - coor_one[1]) / 
+							(itm.pos[0] - itm.w - coor_one[0]) > tan(slop)));
 				}
 				return false;
 			}
 			else if (slop > 1.570796327 && slop < 3.1415927) {
-				if((itm.pos[0] + itm.w) < coor_one[0] && (itm.pos[1] - itm.h) > coor_one[1]) {
-					return (((itm.pos[1] - itm.h - coor_one[1]) / (coor_one[0] - itm.pos[0] + itm.w) < -tan(slop)) 
-						&& ((itm.pos[1] + itm.h - coor_one[1]) / (coor_one[0] - itm.pos[0] - itm.w) > -tan(slop)));
+				if((itm.pos[0] + itm.w) < coor_one[0] && 
+					(itm.pos[1] - itm.h) > coor_one[1]) {
+					return (((itm.pos[1] - itm.h - coor_one[1]) / 
+							(coor_one[0] - itm.pos[0] + itm.w) < -tan(slop)) 
+						&& ((itm.pos[1] + itm.h - coor_one[1]) / 
+							(coor_one[0] - itm.pos[0] - itm.w) > -tan(slop)));
 				}
 				return false;			
 			}
 			else if (slop > 3.1415926 && slop < 4.71238898) {
-				if((itm.pos[0] + itm.w) < coor_one[0] && (itm.pos[1] + itm.h) < coor_one[1]) {
-					return (((coor_one[1] - itm.pos[1] - itm.h) / (coor_one[0] - itm.pos[0] + itm.w) < tan(slop)) 
-						&& ((coor_one[1] - itm.pos[1] + itm.h) / (coor_one[0] - itm.pos[0] - itm.w) > tan(slop)));
+				if((itm.pos[0] + itm.w) < coor_one[0] && 
+					(itm.pos[1] + itm.h) < coor_one[1]) {
+					return (((coor_one[1] - itm.pos[1] - itm.h) / 
+							(coor_one[0] - itm.pos[0] + itm.w) < tan(slop)) 
+						&& ((coor_one[1] - itm.pos[1] + itm.h) / 
+							(coor_one[0] - itm.pos[0] - itm.w) > tan(slop)));
 				}
 				return false;	
 			}
 		} else {
-			if((itm.pos[0] - itm.w) > coor_one[0] && (itm.pos[1] + itm.h) < coor_one[1]) {
-				return (((itm.pos[1] - itm.h - coor_one[1]) / (coor_one[0] - itm.pos[0] + itm.w) < -tan(slop)) 
-					&& ((itm.pos[1] + itm.h - coor_one[1]) / (coor_one[0] - itm.pos[0] - itm.w) > -tan(slop)));
+			if((itm.pos[0] - itm.w) > coor_one[0] && 
+				(itm.pos[1] + itm.h) < coor_one[1]) {
+				return (((itm.pos[1] - itm.h - coor_one[1]) / 
+						(coor_one[0] - itm.pos[0] + itm.w) < -tan(slop)) 
+					&& ((itm.pos[1] + itm.h - coor_one[1]) / 
+						(coor_one[0] - itm.pos[0] - itm.w) > -tan(slop)));
 			}
 			return false;			
 		}
@@ -1126,18 +1181,24 @@ bool DonutLaser::deleteLaser()
 {
 	if (moveble) {
 		if (laser_type == 1) {
-			return (coor_one[1] < g.yres_start || coor_one[1] > g.yres);
+			return (coor_one[1] < g.yres_start || 
+				coor_one[1] > g.yres);
 		}
 		else if (laser_type == 2) {
-			return (coor_one[0] < 0 || coor_one[0] > g.xres);
+			return (coor_one[0] < 0 || 
+				coor_one[0] > g.xres);
 		}
 		else if (laser_type == 3) {
-			return ((coor_one[0] < 0 && coor_two[0] < 0)
-					|| (coor_one[0] > g.xres && coor_two[0] > g.xres));
+			return ((coor_one[0] < 0 && 
+						coor_two[0] < 0)
+					|| (coor_one[0] > g.xres && 
+						coor_two[0] > g.xres));
 		}
 		else if (laser_type == 4) {
-			return ((coor_one[1] < g.yres_start && coor_two[1] < g.yres_start)
-					|| (coor_one[1] < g.yres && coor_two[1] < g.yres));
+			return ((coor_one[1] < g.yres_start && 
+						coor_two[1] < g.yres_start)
+					|| (coor_one[1] < g.yres && 
+						coor_two[1] < g.yres));
 		}
 		else if (laser_type == 5) {
 			if (angleacc > 0) {
@@ -1171,7 +1232,6 @@ void DonutLaser::draw()
 		glDisable(GL_BLEND);
 		glPopMatrix();
 		cerr << "draw charge" << vertex[0] << " " << vertex[1] << endl;
-		
 	} else if (lag_on) {
 		if (!hide) {
 			glPushMatrix();
@@ -1214,7 +1274,7 @@ void DonutLaser::draw()
 		glPopMatrix();
 	}
 }
-
+//=========================================================================
 Donut::Donut() 
 {
 	dtex = &g.donut_texture;
@@ -1290,7 +1350,8 @@ void Donut::hpDemageDonut(Item itm)
 
 void Donut::draw() 
 {
-	for (auto dlaser = donutlasers.begin(); dlaser != donutlasers.end(); dlaser++) {
+	for (auto dlaser = donutlasers.begin(); 
+			dlaser != donutlasers.end(); dlaser++) {
 		dlaser->draw();
 	}
 	int n = 40;
@@ -1315,7 +1376,7 @@ void Donut::draw()
 		float x0,x1,y0,y1;
 		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
-		for(int i=0; i<20; i++){
+		for(int i=0; i<20; i++) {
 			x0= pos[0] + shelled_radius *cos(i*anglein);
 			y0= pos[1] + shelled_radius *sin(i*anglein);
 			x1= pos[0] + shelled_radius *cos((i+1)*anglein);
@@ -1347,7 +1408,7 @@ void Donut::draw()
  {
 	if (!weapon) {
 		weapon_id = num;
-		if (num == 1 || num == 2){
+		if (num == 1 || num == 2) {
 			weapon_outer_count = 10;
 			weapon_inner_count = 20;
 		}
@@ -1409,7 +1470,8 @@ void Donut::draw()
 					dx = cos(1.57 + (i * accangle));
 					dy = sin(1.57 + (i * accangle));
 					gb = g.n_donut_bullet;					
-					do_bul[gb].setPos(pos[0]+(out_radius * dx),pos[1]+(out_radius * dy),0);
+					do_bul[gb].setPos(pos[0]+(out_radius * dx),
+										pos[1]+(out_radius * dy),0);
 					do_bul[gb].setDim(4.0,4.0);
 					do_bul[gb].setVel(5.0 * dx, 5 * dy, 0.0);
 					do_bul[gb].setAcc (0.0, 0.0, 0.0);
@@ -1422,6 +1484,7 @@ void Donut::draw()
 				}
 				break;	
 			case 3:
+//=========================================================================
 				randangle =(((float)rand()) / (float)RAND_MAX);
 				for (int i = 0; i < 2; i++) {
 					gb = g.n_donut_bullet;	
@@ -1499,10 +1562,11 @@ void Donut::draw()
 				temp.setCD(100,50,0,1,4,0);
 				donutlasers.push_front(temp);
 				break;
-
+//=========================================================================
 			case 7:
 				cerr << "in case 7" <<endl;
-				temp.setDonutLaser(0.5*g.xres,g.yres_start, 1,90.01,180.1,0.5);
+				temp.setDonutLaser(0.5*g.xres,g.yres_start,
+										 1,90.01,180.1,0.5);
 				temp.setCD(100,50,1,1,4,0);
 				donutlasers.push_front(temp);
 				temp.setDonutLaser(0.5*g.xres,g.yres, 1,269.99,180.1,-0.5);
@@ -1569,13 +1633,14 @@ void ChargeBread::moveChargeBread() {
 
 
 
-//=======================================================================================//
+//=========================================================================
 //math functions//
 bool pointIn(float x0, float y0, float * arr, int n) 
 {
 	float point[n/2];
 	for (int i = 0; i < (n/2); i++) {
-		point[i] = crossX(x0,y0,(arr[2*i]),(arr[2*i+1]),(arr[(2*i+2)%n]),(arr[(2*i+3)%n]));
+		point[i] = crossX(x0,y0,(arr[2*i]),(arr[2*i+1]),
+						(arr[(2*i+2)%n]),(arr[(2*i+3)%n]));
 	}
 	float large=0;
 	float small=0;
@@ -1671,15 +1736,17 @@ float getAngle(float x0, float y0, float x1, float y1)
 // 		bool delta = false;
 // 		for(int i = 0; i < 4; i++) {
 // 			if(!delta)
-// 				delta = pointIn(pos[0]+vertex[i*2],pos[1]+vertex[i*2+1],aArr,8);
+// 				delta = pointIn(pos[0]+vertex[i*2],
+							// pos[1]+vertex[i*2+1],aArr,8);
 // 		}
 // 		for(int i = 0; i < 4; i++) {
 // 			if(!delta)
-// 				delta = pointIn(a.pos[0]+a.vertex[i*2],a.pos[1]+a.vertex[i*2+1],arr,8);
+// 				delta = pointIn(a.pos[0]+a.vertex[i*2],
+							// a.pos[1]+a.vertex[i*2+1],arr,8);
 // 		}
 // 		return delta;
 // 	}
 // }
 
-///====================================Draw shape Functions=======================
-//===============================================================================
+///====================================Draw shape Functions================
+//=========================================================================
