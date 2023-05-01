@@ -398,9 +398,9 @@ void Toaster::setDistance(float val)
 
 void Toaster::laserDamage(Item& a)
 {
-	cerr << " a.HP " << a.hp <<endl;
+	// cerr << " a.HP " << a.hp <<endl;
 	a.hp = a.hp - laser_damage[bullet_type_prime-5];
-	cerr << "make damage " << 
+	// cerr << "make damage " << 
 			// laser_damage[bullet_type_prime-5] << " a.HP " << a.hp <<endl;
 }
 
