@@ -203,8 +203,8 @@ class DonutLaser
     float radius;
     // how wide lazer is
     float dim;
-    int alpha;
-    int alpha_inc;
+    float alpha;
+    float alpha_inc;
     // angle velocity
     float angleacc;
     // where the lazer stop
@@ -243,8 +243,8 @@ class DonutLaser
     //-------------------------------------------------------------------
     // Always go together!!!!
 
-    // chargeCD , lagCD, hide, moveble
-    void setCD(int, int, bool, bool);
+    // chargeCD , lagCD, hide, moveble, dim, stay_cd
+    void setCD(int, int, bool, bool, int, int);
     // horizental or vertical
     // coordinate, velocity, 'h' or 'v'
     void setDonutLaser(float, float, char);
