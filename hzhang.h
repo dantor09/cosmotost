@@ -30,7 +30,7 @@ void makeBullet(float x, float y,float z, int bullet_type);
 //int Bread_t is the type of bread
 //type is id of Bullet_type this bread carrying
 void makeBread(float x, float y,float z, int Bread_t, int type);
-void makeSpear(float x, float y,float z, int type);
+void makeSpear(float x, float y,float z, int cd);
 
 float crossX(float x0,float y0,float xa,float ya,float xb,float yb);
 float maxRadius(float *arr,int n);
@@ -55,6 +55,7 @@ class Item: public Box
     // Toaster is 0;
 
     // velocity
+    float velocity;
     float vel[3];
 
     //acceleration
@@ -312,6 +313,7 @@ class ChargeBread: public Item
     void setBulCD(int,int,int);
     void charge();
     void moveChargeBread();
+    void draw();
 };
 
 //=======================================================================
@@ -323,12 +325,14 @@ class Donut
     GLuint * dtex;
     GLuint * shelltex;
     float out_radius;
-    float inner_radius;
     float deamage_radius;
     float shelled_radius;
     float hp;
+    float d_rotate;
+    float d_rotate_acc;
     bool breado;
     int cd;     // CD between Donets weapon
+    int bonus;
     int count_down; // CD count_down
     bool up_down; // 0 up, 1 down
     bool weapon; // if weapon is true then donut attecking
