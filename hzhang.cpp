@@ -585,7 +585,7 @@ void Bullet::setBullet(float x, float y, float z, int type)
 			setColor(240,100,100);
 			setDamage(1);
 			setHP(1);
-						item_type = 41;
+			item_type = 41;
 			break;
 		case 2:
 			// bullet type 2
@@ -609,6 +609,21 @@ void Bullet::setBullet(float x, float y, float z, int type)
 			setHP(1);
 			item_type = 43;
 			break;
+		case 4:
+			cerr << "make 4 bullet" << endl;
+			float r;
+			float dx;
+			float dy;	
+			dx = pos[0]-tos.pos[0];
+    		dy = pos[1]-tos.pos[1];
+			r = (float)sqrt((dx*dx)+(dy*dy));
+			setVel (-10.0 * ((dx/r)),-10 *(dy/r),0.0);
+			setDim (4.0,4.0);
+			setColor(240,100,100);
+			setDamage(10);
+			setHP(1);
+			break;
+		
     	}
 	setVertex();
 }
@@ -1030,7 +1045,6 @@ void DonutLaser::moveLaser() {
 				}
 				coor_one[0] = center[0] + (radius * cos(slop));
 				coor_one[1] = center[1] + (radius * sin(slop));
-//=========================================================================
 				if (slop > limit_angle[0] && slop < limit_angle[1]) {
 					// up
 					coor_two[0] = center[0] + ((g.yres-center[1])/ tan(slop));
@@ -1247,7 +1261,235 @@ void DonutLaser::draw()
 		glPopMatrix();
 	}
 }
+//=============================================================================
+EffectBox::EffectBox()
+{
+}
 
+EffectBox::~EffectBox()
+{
+}
+
+void EffectBox::setXY()
+{
+	xy_pos[0] = (pos[0] - tpos[0]) > 0;
+	xy_pos[1] = (pos[1] - tpos[1]) > 0;
+}
+
+void EffectBox::setTpos(float a,float b)
+{
+	tpos[0] = a;
+	tpos[1] = b;
+}
+void EffectBox::setTcolor(int a, int b, int c)
+{
+	t_color[0] = a;
+	t_color[1] = b;
+	t_color[2] = c;
+}
+
+void EffectBox::setEffectVel(float angle, float racc) 
+{
+	a_vel = angle;
+	r_acc = racc;
+}
+
+void EffectBox::setBools(bool b)
+{
+	zhixian_or_zhuan = b;
+}
+
+void EffectBox::moveEffect()
+{
+	float rgrav;
+  	float dx;
+  	float dy;
+	if (zhixian_or_zhuan) {
+		//zhixian
+		pos[0] += vel[0];
+		pos[1] += vel[1];
+		vel[0] += acc[0];
+		vel[1] += acc[1];
+	} else {
+        dx = pos[0]-tpos[0];
+        dy = pos[1]-tpos[1];
+		vel[0] = dy * a_vel;
+		vel[1] = -dx * a_vel;
+		if (split_cd > 0) {
+			split_cd--;
+			if (split_cd == 0) {
+				r_acc == 0;
+			}
+		} else {
+			if (stay_cd > 0) {
+				stay_cd--;
+			} else {
+				r_acc -= 0.1;
+			}
+		}
+		rgrav = (float)sqrt((dx*dx)+(dy*dy));
+		vel[0] += r_acc * (dx/rgrav);
+		vel[1] += r_acc * (dy/rgrav);
+		pos[0] += vel[0];
+		pos[1] += vel[1];
+	}
+}
+
+bool EffectBox::deleteEffect()
+{
+	bool x;
+	bool y;
+	x = xy_pos[0] != (pos[0] - tpos[0]) > 0;
+	y = xy_pos[1] != (pos[1] - tpos[1]) > 0;
+	return x&&y;
+}
+
+bool EffectBox::deleteEffect(float dis)
+{
+	float rgrav;
+  	float dx;
+  	float dy;
+	dx = pos[0]-tpos[0];
+    dy = pos[1]-tpos[1];
+	rgrav = (float)sqrt((dx*dx)+(dy*dy));
+	return rgrav < dis;
+}
+
+//=============================================================================
+ChargeBread::ChargeBread()
+{
+	cerr<<"make a charge bread" <<endl;
+	charge_on = true;
+	charge_dim[0] = 0;
+	charge_dim[1] = 0;
+	charge_dim_acc[0] = 0;
+	charge_dim_acc[1] = 0;
+    charge_need = 1;	
+}
+
+ChargeBread::~ChargeBread() 
+{
+}
+
+void ChargeBread::setDimAcc(int n)
+{
+	charge_need = n;
+	charge_dim_acc[0] = w/charge_need;
+	charge_dim_acc[1] = h/charge_need;
+}
+void ChargeBread::setBulCD(int a,int b,int t)
+{
+	inner_cd = a;
+	bul_count = b;
+	b_type = t;
+	shoot = true;
+}
+void ChargeBread::charge() 
+{
+	float r;
+  	float dx;
+  	float dy;	
+	EffectBox temp;
+	if (charge_need > 0) {
+		for (int i = 0; i < rand()%2+1; i++) {
+			cerr << "make partical" << endl;
+			temp.setPos(pos[0]+rand()%300-150,pos[1]+rand()%300-150,0);
+			temp.setTpos(pos[0],pos[1]);
+			temp.setBools(1);
+			temp.setDim(2,2);
+			temp.setColor(255,255,255);
+			temp.setVel(0,0,0);
+			dx = pos[0]-temp.pos[0];
+			dy = pos[1]-temp.pos[1];
+			r = (float)sqrt((dx*dx)+(dy*dy));
+			temp.setAcc(-0.1*(dx/r),-0.1*(dy/r), 0);
+			temp.setVertex();
+			effect.push_front(temp);
+			charge_need--;
+			if (charge_need == 0) {
+				break;
+			}
+		}
+	} else {
+		if (effect.empty()) {
+			charge_on = false;
+		}
+	}
+}
+void ChargeBread::moveChargeBread() {
+	int c_count = inner_cd;
+	Bullet temp;
+	DonutLaser ltemp;
+	float rad;
+  	float dx;
+  	float dy;	
+	if (charge_on) {
+		charge();
+	} 
+	else if (working) {
+		if (c_count == 0) {
+			if (las.empty()) {
+				if (shoot) {
+					switch (b_type)
+					{
+					case 1:
+						temp.setBullet(pos[0]-w-10,pos[1],0,4);
+						cbul.push_front(temp);
+						shoot = false;
+						break;
+					case 2:
+						temp.setBullet(pos[0]-w-10,pos[1],0,4);
+						cbul.push_front(temp);
+						temp.setBullet(pos[0]-w-10,pos[1],0,4);
+						temp.setPos(pos[0]-w-10,pos[1]+8,0);
+						cbul.push_front(temp);
+						temp.setBullet(pos[0]-w-10,pos[1],0,4);
+						temp.setPos(pos[0]-w-10,pos[1]-8,0);
+						cbul.push_front(temp);
+						shoot = false;
+						break;
+					case 3:
+						dx = pos[0]-w-10 -tos.pos[0];
+						dy = pos[1]-tos.pos[1];
+						rad = (atan(dx/dy)*180/3.1415926) + 180; 
+						ltemp.setDonutLaser(pos[0]-w-10,pos[1],1,rad,rad+30,0);
+						ltemp.setCD(100,20,0,0,4,200);
+						las.push_front(ltemp);
+						shoot = false;
+						break;
+					}
+				} else {
+					c_count = inner_cd;
+					bul_count--;
+				}
+			}
+
+		} else {
+			c_count--;
+		}
+	}
+	if (bul_count == 0) {
+		working = false;
+	} else {
+		shoot = true;
+	}
+	for (auto la = effect.begin(); la != effect.end(); ) {
+		la->moveEffect();
+		if (la->deleteEffect()) {
+			if (next(la) != effect.end()) {
+				la = effect.erase(la);
+				cerr << "erase eff" << endl;
+			} else {
+				la = effect.erase(la);
+				break;
+			}
+		} else {
+			++la;
+		}			
+	}
+}
+
+//=============================================================================
 Donut::Donut() 
 {
 	dtex = &g.donut_texture;
@@ -1268,8 +1510,8 @@ Donut::~Donut() {}
 void Donut::moveDonut() 
 {
 	// cerr << weapon << "  " << count_down << endl;
-	int val = rand()%3 +5;
- 	val = 7;
+	int val = rand()%10 + 1;
+ 	// val = 9;
 	if (!weapon) {
 		if (count_down == 0) {
 			atteckMove(val);
@@ -1321,12 +1563,27 @@ void Donut::hpDemageDonut(Item itm)
 	hp -= itm.damage;
 }
 
+void Donut::makeChargeBread(int )
+{
+
+}
+
 void Donut::draw() 
 {
 	for (auto dlaser = donutlasers.begin(); 
 									dlaser != donutlasers.end(); dlaser++) {
 		dlaser->draw();
 	}
+	for (auto dbread = dbready.begin(); 
+									dbread != dbready.end(); dbread++) {
+		dbread->draw();
+		for (auto ef = dbread->effect.begin(); 
+									ef != dbread->effect.end(); ef++) {
+			ef->draw();
+			cerr << "draw ef" << endl;
+		}
+	}
+
 	int n = 40;
 	float anglein = 2*3.141592 / n;
 	float x0,x1,y0,y1;
@@ -1397,10 +1654,16 @@ void Donut::draw()
 			weapon_outer_count = 1;
 			weapon_inner_count = 20;
 		}
+		if (num >= 9 && num <= 10) {
+			weapon_outer_count = 1;
+			weapon_inner_count = 20;
+			breado = true;
+		}
 		weapon = true;
 	} else {
+		// cerr << donutlasers.empty() << dfork.empty() << dbready.empty() <<endl;
 		if (weapon_outer_count == 0) {
-			if (donutlasers.empty()) {
+			if (donutlasers.empty() && (num >= 5 && num <= 8)) {
 				weapon = false;
 				count_down = cd;
 				return;
@@ -1418,6 +1681,8 @@ void Donut::draw()
 			int negone = -1;
 			rand_pos_neg = (rand()%2) * 2 - 1; 	
 			DonutLaser temp;
+			Spear stemp;
+			ChargeBread btemp;
 			switch (weapon_id) {
 			case 1:
 				accangle = 3.1415926/8;
@@ -1520,7 +1785,7 @@ void Donut::draw()
 				break;
 			case 5:
 				temp.setDonutLaser(donut.pos[0],donut.pos[1], 
-										donut.out_radius,90.01,269.9,0.5);
+										donut.out_radius,90.01,269.9,1);
 				temp.setCD(100,50,1,1,4,0);
 				donutlasers.push_front(temp);
 				break;
@@ -1537,10 +1802,10 @@ void Donut::draw()
 
 			case 7:
 				cerr << "in case 7" <<endl;
-				// temp.setDonutLaser(0.5*g.xres,g.yres_start, 
-														// 1,90.01,180.1,0.5);
-				// temp.setCD(100,50,1,1,4,0);
-				// donutlasers.push_front(temp);
+				temp.setDonutLaser(0.5*g.xres,g.yres_start, 
+														1,90.01,180.1,0.5);
+				temp.setCD(100,50,1,1,4,0);
+				donutlasers.push_front(temp);
 				temp.setDonutLaser(0.5*g.xres,g.yres, 1,269.99,180.1,-0.5);
 				temp.setCD(100,50,1,1,4,0);
 				donutlasers.push_front(temp);
@@ -1548,13 +1813,37 @@ void Donut::draw()
 			case 8:
 				cerr << "in case 8" <<endl;
 				temp.setDonutLaser((0.33*g.yres), 0,'h');
-				temp.setCD(200,50,0,0,10,100);
+				temp.setCD(100 + rand()%150,50 + rand()%200,0,0,10,100);
 				donutlasers.push_front(temp);
 				temp.setDonutLaser((0.7*g.yres), 0,'h');
-				temp.setCD(200,150,1,0,20,100);
+				temp.setCD(200,150+rand()%100,1,0,20,100);
 				donutlasers.push_front(temp);
-
 				break;
+			case 9:
+				cerr << "in case 9" <<endl;
+				if (breado && weapon_outer_count > 0) {
+					btemp.setDimAcc(100);
+					btemp.setDim(25,20);
+					btemp.setPos(pos[0] + out_radius + 25, out_radius + 100,0);
+					btemp.setColor(200,170,50);
+					btemp.setHP(50);
+					btemp.setDamage(80);
+					btemp.setBulCD(10,10,1);
+					cerr << "before push" <<endl;
+					dbready.push_front(btemp);
+					cerr << "after push" <<endl;
+				}
+				break;	
+			case 10:
+				cerr << "in case 10" <<endl;
+				temp.setDonutLaser((0.33*g.yres), 0,'h');
+				temp.setCD(100 + rand()%150,50 + rand()%200,0,0,10,100);
+				donutlasers.push_front(temp);
+				temp.setDonutLaser((0.7*g.yres), 0,'h');
+				temp.setCD(200,150+rand()%100,1,0,20,100);
+				donutlasers.push_front(temp);
+				break;			
+					
 			}
 			weapon_outer_count--;
 			weapon_inner_count = 20;
@@ -1564,33 +1853,6 @@ void Donut::draw()
 	}
 }
 //=============================================================================
-ChargeBread::ChargeBread()
-{
-	charge_on = true;
-	charge_dim[0] = 0;
-	charge_dim[1] = 0;
-	charge_dim_acc[0] = 0;
-	charge_dim_acc[1] = 0;
-    charge_need = 0;
-    charge_num_now = 0;
-	
-}
-
-ChargeBread::~ChargeBread() 
-{
-}
-
-void ChargeBread::setDimAcc()
-{
-
-}
-
-void ChargeBread::charge() {
-
-}
-void ChargeBread::moveChargeBread() {
-
-}
 
 
 

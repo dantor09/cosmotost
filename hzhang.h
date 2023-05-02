@@ -262,6 +262,59 @@ class DonutLaser
     void draw();
 };
 //========================================================================
+class EffectBox: public Item
+{
+  public:
+    // target pos[3]
+    float tpos[2];
+    unsigned char t_color[3];
+    float a_vel;
+    float r_acc;
+    //true is zhixian, flase is zhuan
+    bool zhixian_or_zhuan;
+    int split_cd;
+    int stay_cd;
+    bool xy_pos[2];
+    
+    EffectBox();
+    ~EffectBox();
+    void setXY();
+    void setTpos(float a,float b);
+    void setTcolor(int a, int b, int c); 
+    void setEffectVel(float angle, float rvel); 
+    void setBools(bool);
+    void moveEffect();
+    bool deleteEffect(); 
+    bool deleteEffect(float dis);
+
+};
+
+class ChargeBread: public Item
+{
+  public:
+    bool charge_on;
+    float charge_dim[2];
+    float charge_dim_acc[2];
+    int charge_need;
+    
+    bool working;
+    int inner_cd;
+    int bul_count;
+    int b_type;
+    bool shoot;
+    list<EffectBox> effect;
+    list<Bullet> cbul;
+    list<DonutLaser> las;
+
+    ChargeBread();
+    ~ChargeBread();
+    void setDimAcc(int);
+    void setBulCD(int,int,int);
+    void charge();
+    void moveChargeBread();
+};
+
+//=======================================================================
 
 class Donut
 {
@@ -274,6 +327,7 @@ class Donut
     float deamage_radius;
     float shelled_radius;
     float hp;
+    bool breado;
     int cd;     // CD between Donets weapon
     int count_down; // CD count_down
     bool up_down; // 0 up, 1 down
@@ -290,6 +344,8 @@ class Donut
     int weapon_outer_count;
     int weapon_inner_count;
     list<DonutLaser> donutlasers;
+    list<Spear> dfork;
+    list<ChargeBread> dbready;
    
   //-----------------------------------------------------
     Donut();
@@ -299,27 +355,7 @@ class Donut
     bool hpCheck();
     bool collision(Item);
     void hpDemageDonut(Item);
+    void makeChargeBread(int);
     void draw();
     void atteckMove(int num);
-};
-//=======================================================================
-class ChargeBread: public Item
-{
-  public:
-    bool charge_on;
-    float charge_dim[2];
-    float charge_dim_acc[2];
-    int charge_need;
-    int charge_num_now;
-
-    ChargeBread();
-    ~ChargeBread();
-    void setDimAcc();
-    void charge();
-    void moveChargeBread();
-};
-
-class EffectBox: public Item
-{
-
 };

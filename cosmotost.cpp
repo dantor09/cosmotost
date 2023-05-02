@@ -1547,6 +1547,33 @@ void physics()
 					donut.hpDemageDonut(bul[i]);
 					bul[i] = bul[--g.n_Bullet];
 				}
+				for (auto la = donut.dbready.begin(); la != donut.dbready.end(); ) {
+					la->moveChargeBread();
+					if (la->collision(tos)) {
+						la->hpDamage(tos);
+						if(tos.hpCheck() && (tos.lives - 1 > 0)) {
+							tos.lives--;
+							tos.setHP(80);
+						}
+						else if(tos.hpCheck()) {
+							g.state = GAMEOVER;
+						}
+					}
+					if (la->collision(bul[i])) {
+						la->hpDamage(bul[i]);
+						bul[i] = bul[--g.n_Bullet];
+					}
+					if (la->hpCheck()) {
+						if (next(la) != donut.dbready.end()) {
+							la = donut.dbready.erase(la);
+						} else {
+							la = donut.dbready.erase(la);
+							break;
+						}
+					} else {
+						++la;
+					}
+				}
 			}
 			donut.moveDonut();
 			for (int i=0; i < g.n_donut_bullet; i++) {
