@@ -116,6 +116,7 @@ class Toaster: public Item
       float max_energy;
       bool disable_keys;
       bool laserOn;
+      bool freeze;
       float distance;
       float laser_damage[4] = {0.1,0.25,0.5,1};
       float laser_h[4] = {1,1.5,2,2.5};
@@ -331,6 +332,8 @@ class Donut
     float d_rotate;
     float d_rotate_acc;
     bool breado;
+    bool charge_on;
+    int charge_need;
     int cd;     // CD between Donets weapon
     int bonus;
     int count_down; // CD count_down
@@ -350,6 +353,7 @@ class Donut
     list<DonutLaser> donutlasers;
     list<Spear> dfork;
     list<ChargeBread> dbready;
+    list<EffectBox> eff;
    
   //-----------------------------------------------------
     Donut();

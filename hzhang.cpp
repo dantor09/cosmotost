@@ -411,6 +411,7 @@ void Toaster::posReset()
 	bullet_type_prime = 1;
 	bullet_type_minor = 5;
 	energy = 100.0f;
+	freeze = false;
 }
 void Toaster::moveToster()
 {
@@ -454,19 +455,21 @@ void Toaster::moveToster()
 		if (pos[1] < (3*g.yres/40) + h - 1) 
 			pos[1] = (3*g.yres/40) + h-1;
 	}
-	if (g.keys[XK_space] && bullet_type_prime <= 4) {
-		//shoot bullet if not in CD
-		if (bullet_type_prime < 5 && g.BulletCD==5) {
-			makeBullet(pos[0]+w,pos[1],pos[2],bullet_type_prime);
+	if (!freeze) {
+		if (g.keys[XK_space] && bullet_type_prime <= 4) {
+			//shoot bullet if not in CD
+			if (bullet_type_prime < 5 && g.BulletCD==5) {
+				makeBullet(pos[0]+w,pos[1],pos[2],bullet_type_prime);
+			}
 		}
-	}
-	if (bullet_type_prime > 4 && bullet_type_prime <= 8) {
-		if (g.keys[XK_space] && energy > 5) {
-			laserOn = true;
-			energy -= 0.2;
+		if (bullet_type_prime > 4 && bullet_type_prime <= 8) {
+			if (g.keys[XK_space] && energy > 5) {
+				laserOn = true;
+				energy -= 0.2;
 
-		} else {
-			laserOn = false;
+			} else {
+				laserOn = false;
+			}
 		}
 	}
 	if (energy < 100) {
@@ -1554,21 +1557,69 @@ Donut::~Donut() {}
 
 void Donut::moveDonut() 
 {
-	// cerr << weapon << "  " << count_down << endl;
-	int arr[] = {1, 2 , 5 , 8 , 3 , 4 , 6 , 7 , 9, 10, 11, 12, 13 ,14};
-	int val = rand()%4 + bonus;
- 	// val = 14;
-	val = arr[val];
-	if (!weapon) {
-		if (count_down == 0) {
-			atteckMove(val);
-			d_rotate = 0;
-		} else {
-			count_down--;
-			d_rotate += d_rotate_acc;
+	float r;
+  	float dx;
+  	float dy;	
+	float alp;
+	EffectBox temp;
+	if (charge_on) {
+		tos.freeze = true;
+		for (auto ef = eff.begin(); ef != eff.end();) {
+			ef->moveEffect();
+			if (ef->deleteEffect()) {
+				
+				if (next(ef) != eff.end()) {
+					ef = eff.erase(ef);
+				} else {
+					ef = eff.erase(ef);
+					break;
+				}
+			} else {
+				++ef;
+			}
+		}
+		if (charge_need > 0) {
+			for (int i = 0; i < rand()%2+1; i++) {
+				cerr << "make partical" << endl;
+				alp=(((float)rand()) / (float)RAND_MAX);
+				temp.setPos(alp*g.xres,alp*g.yres,0);
+				temp.setTpos(pos[0],pos[1]);
+				temp.setBools(1);
+				temp.setDim(2,2);
+				temp.setColor(255,192,203);
+				temp.setVel(0,0,0);
+				dx = pos[0]-temp.pos[0];
+				dy = pos[1]-temp.pos[1];
+				r = (float)sqrt((dx*dx)+(dy*dy));
+				temp.setAcc(-0.1*(dx/r),-0.1*(dy/r), 0);
+				temp.setVertex();
+				eff.push_front(temp);
+				charge_need--;
+				if (charge_need == 0) {
+					break;
+				}
 		}
 	} else {
-		atteckMove(val);
+		if (eff.empty()) {
+			charge_on = false;
+		}
+	}
+
+	} else {
+		tos.freeze = false;
+		// cerr << weapon << "  " << count_down << endl;
+		int arr[] = {1,2,5,8,3,4, 6 ,7, 9, 10,11,12,13,14};
+		int val = rand()%4 + bonus;
+		val = arr[val];
+		if (!weapon) {
+			if (count_down == 0) {
+				atteckMove(val);
+			} else {
+				count_down--;
+			}
+		} else {
+			atteckMove(val);
+		}
 	}
 }
 
