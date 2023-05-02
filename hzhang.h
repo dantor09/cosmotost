@@ -30,7 +30,7 @@ void makeBullet(float x, float y,float z, int bullet_type);
 //int Bread_t is the type of bread
 //type is id of Bullet_type this bread carrying
 void makeBread(float x, float y,float z, int Bread_t, int type);
-void makeSpear(float x, float y,float z, int type);
+void makeSpear(float x, float y,float z, int cd);
 
 float crossX(float x0,float y0,float xa,float ya,float xb,float yb);
 float maxRadius(float *arr,int n);
@@ -55,6 +55,7 @@ class Item: public Box
     // Toaster is 0;
 
     // velocity
+    float velocity;
     float vel[3];
 
     //acceleration
@@ -115,6 +116,7 @@ class Toaster: public Item
       float max_energy;
       bool disable_keys;
       bool laserOn;
+      bool freeze;
       float distance;
       float laser_damage[4] = {0.1,0.25,0.5,1};
       float laser_h[4] = {1,1.5,2,2.5};
@@ -262,6 +264,60 @@ class DonutLaser
     void draw();
 };
 //========================================================================
+class EffectBox: public Item
+{
+  public:
+    // target pos[3]
+    float tpos[2];
+    unsigned char t_color[3];
+    float a_vel;
+    float r_acc;
+    //true is zhixian, flase is zhuan
+    bool zhixian_or_zhuan;
+    int split_cd;
+    int stay_cd;
+    bool xy_pos[2];
+    
+    EffectBox();
+    ~EffectBox();
+    void setXY();
+    void setTpos(float a,float b);
+    void setTcolor(int a, int b, int c); 
+    void setEffectVel(float angle, float rvel); 
+    void setBools(bool);
+    void moveEffect();
+    bool deleteEffect(); 
+    bool deleteEffect(float dis);
+
+};
+
+class ChargeBread: public Item
+{
+  public:
+    bool charge_on;
+    float charge_dim[2];
+    float charge_dim_acc[2];
+    int charge_need;
+    
+    bool working;
+    int inner_cd;
+    int bul_count;
+    int b_type;
+    bool shoot;
+    list<EffectBox> effect;
+    list<Bullet> cbul;
+    list<DonutLaser> las;
+
+    ChargeBread();
+    ~ChargeBread();
+    void setDimAcc(int);
+    void setBulCD(int,int,int);
+    void charge();
+    void moveChargeBread();
+    void draw();
+};
+
+//=======================================================================
 
 class Donut
 {
@@ -270,11 +326,16 @@ class Donut
     GLuint * dtex;
     GLuint * shelltex;
     float out_radius;
-    float inner_radius;
     float deamage_radius;
     float shelled_radius;
     float hp;
+    float d_rotate;
+    float d_rotate_acc;
+    bool breado;
+    bool charge_on;
+    int charge_need;
     int cd;     // CD between Donets weapon
+    int bonus;
     int count_down; // CD count_down
     bool up_down; // 0 up, 1 down
     bool weapon; // if weapon is true then donut attecking
@@ -290,6 +351,9 @@ class Donut
     int weapon_outer_count;
     int weapon_inner_count;
     list<DonutLaser> donutlasers;
+    list<Spear> dfork;
+    list<ChargeBread> dbready;
+    list<EffectBox> eff;
    
   //-----------------------------------------------------
     Donut();
@@ -299,27 +363,7 @@ class Donut
     bool hpCheck();
     bool collision(Item);
     void hpDemageDonut(Item);
+    void makeChargeBread(int);
     void draw();
     void atteckMove(int num);
-};
-//=======================================================================
-class ChargeBread: public Item
-{
-  public:
-    bool charge_on;
-    float charge_dim[2];
-    float charge_dim_acc[2];
-    int charge_need;
-    int charge_num_now;
-
-    ChargeBread();
-    ~ChargeBread();
-    void setDimAcc();
-    void charge();
-    void moveChargeBread();
-};
-
-class EffectBox: public Item
-{
-
 };
