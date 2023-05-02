@@ -252,10 +252,8 @@ void Item::draw()
 		glPopMatrix();
 	}
 
-
-
-
 }
+
 void Item::draw(Item tos)
 {
 	// if(trace)

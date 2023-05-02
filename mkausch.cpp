@@ -116,8 +116,6 @@ using namespace std;
 
 // #define USE_OPENAL_SOUND
 
-
-
 Menu::Menu(unsigned int _n_texts,
             float w, float h,
             float x, float y,
@@ -133,7 +131,6 @@ Menu::Menu(unsigned int _n_texts,
     boarder.setPos(pos[0], pos[1], pos[2]);
     boarder.setColor(69, 85, 89);
 
-
     try {
         t_boxs = new Box[n_texts];
         texts = new Rect[n_texts];
@@ -141,7 +138,7 @@ Menu::Menu(unsigned int _n_texts,
 
 
         float spacing = (2*h)/(n_texts+1);
-        std::cout << "spacing: " << spacing << std::endl;
+        // std::cerr << "spacing: " << spacing << std::endl;
 
         for (int i = 0; i < n_texts; i++) {
             t_boxs[i].w = mainbox.w - PADDING;
@@ -278,14 +275,12 @@ void Menu::setOrigColor()
     }
 }
 
-
-
-void Menu::setBcolor(int r, int g, int b)
-{
-    bcolor[0] = (char)r;
-    bcolor[1] = (char)g;
-    bcolor[2] = (char)b;
-}
+// void Menu::setBcolor(int r, int g, int b)
+// {
+//     bcolor[0] = (char)r;
+//     bcolor[1] = (char)g;
+//     bcolor[2] = (char)b;
+// }
 
 void Menu::setColor(int r, int g, int b)
 {
@@ -301,13 +296,13 @@ void Menu::setPos(float x, float y, float z)
     pos[2] = z;
 }
 
-std::string Menu::getInfo()
-{
-    std::ostringstream temp;
-    temp << std::endl;
+// std::string Menu::getInfo()
+// {
+//     std::ostringstream temp;
+//     temp << std::endl;
 
-    return temp.str();
-}
+//     return temp.str();
+// }
 
 
 /***************************************************************************
@@ -331,9 +326,9 @@ Timer::Timer(double sec) : duration(sec), pause_duration(0.00),
 // delete pause timer if it were active
 Timer::~Timer()
 {
-    cerr << "in Timer destructor\n";
+    // cerr << "in Timer destructor\n";
     if (pause_timer) {
-        cerr << "deleting pause timer\n";
+        // cerr << "deleting pause timer\n";
         delete pause_timer;
         pause_timer = nullptr;
     }
@@ -368,7 +363,7 @@ int Timer::getTime(char time_code)
 
     // D.T - retrieve minutes, seconds, or net time
     // based on time_code passed in getTime parameter
-    switch(time_code) {
+    switch (time_code) {
         case 'm': time = net_time/60;
                   break;
         case 's': time = net_time % 60;
@@ -572,9 +567,7 @@ Sound::~Sound()
     }
 
     alDeleteSources(1, &menuQueueSource);
-
     closeOpenal();
-
 }
 
 void Sound::initOpenal()
@@ -722,7 +715,6 @@ void Sound::resetBufferDone()
 // loops buffer queue at this point
 void Sound::loopIntro()
 {
-
     alSourceStop(menuQueueSource);
     alSourceRewind(menuQueueSource);
     alSourcePlay(alSources[4]);
@@ -751,7 +743,8 @@ void Sound::playStartTrack()
         alSourceRewind(alSources[5]);
     }
 
-    is_intro = true; is_game = false;
+    is_intro = true; 
+    is_game = false;
 
     // begin playing menu music
     alSourcePlay(menuQueueSource);
@@ -806,7 +799,7 @@ bool Sound::getPause()
     return is_music_paused;
 }
 
-
+// changes the volume of music tracks
 void Sound::updateMusicVol()
 {
     int n_songs = 3;
@@ -819,6 +812,7 @@ void Sound::updateMusicVol()
     alSourcef(menuQueueSource, AL_GAIN, g.m_vol);
 }
 
+// changes the volume of all sfx in game
 void Sound::updateSFXVol()
 {
     int n_sfx = 12;
@@ -829,7 +823,7 @@ void Sound::updateSFXVol()
     }
 }
 
-
+// play's bombExplosion sound
 void Sound::bombExplosion()
 {
     int bomb_index = 13;
@@ -839,6 +833,7 @@ void Sound::bombExplosion()
 
 #endif
 
+// initializes settings for powerbar used with donut
 PowerBar::PowerBar(const Donut & _itm_, PBType _type_, float x, float y)
 {
     // maybe put max_health of each enemy type in case were going to
@@ -867,6 +862,7 @@ PowerBar::PowerBar(const Donut & _itm_, PBType _type_, float x, float y)
     // cerr << "finished itm constructor" << endl;
 }
 
+// initializes settings for itm class
 PowerBar::PowerBar(const Item & _itm_, PBType _type_, float x, float y)
 {
     // maybe put max_health of each enemy type in case were going to
@@ -896,6 +892,7 @@ PowerBar::PowerBar(const Item & _itm_, PBType _type_, float x, float y)
     // cerr << "finished itm constructor" << endl;
 }
 
+// initializes settings for use with toaster class
 PowerBar::PowerBar(const Toaster & _tos_, PBType _type_, float x, float y)
 {
     // maybe put max_health of each enemy type in case were going to 
@@ -926,10 +923,9 @@ PowerBar::PowerBar(const Toaster & _tos_, PBType _type_, float x, float y)
     // cerr << "finished tos constructor" << endl;
 }
 
-
+// draw power bars as a proportion of current health / power
 void PowerBar::draw()
 {
-    
     if (type == HEALTH) {
         glColor3ubv(total.color);
         glPushMatrix();
@@ -972,7 +968,6 @@ void PowerBar::draw()
         glEnd();
         glPopMatrix();
 
-
         glColor3ubv(health.color);
         glPushMatrix();
         glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
@@ -1000,7 +995,6 @@ void PowerBar::draw()
         glEnd();
         glPopMatrix();
 
-
         glColor3ubv(health.color);
         glPushMatrix();
         glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
@@ -1018,6 +1012,7 @@ void PowerBar::draw()
 }
 
 // modified from hzhang's file by mkausch
+// detects collision between item class and entity class
 bool Entity::collision(Item & a)
 {
     // for (x0,y0,x1,y1)and(x2,y2,x3,y3) squares
@@ -1028,31 +1023,39 @@ bool Entity::collision(Item & a)
   	return x&&y;
 }
 
+// sets hp of enentiy items
 void Entity::setHP(float life)
 {
     hp = life;
 }
 
+// sets damage of entity class
 void Entity::setDamage(float x)
 {
     damage = x;
 }
 
+// damages entity item based on item passed in
 void Entity::hpDamage(Item & a) 
 {
     hp = hp - a.damage;
 }
 
+// checks to see if hp is gone
 bool Entity::hpCheck()
 {
     return (hp < 0.01);
 }
 
+// damages item object based on passed in entity object
 void Item::hpDamage(Entity & e)
 {
     hp = hp - e.damage;
 }
 
+// Blocky constructor
+// pass in type (verticle or horizontal)
+// pass in whether the gun is active on the blocky 
 Blocky::Blocky(char type, bool g_act)
 {
     srand(time(NULL));
@@ -1137,7 +1140,6 @@ void Blocky::setRandPosition()
     float curr_player_xpos = (tos.pos[0] < 10 ) ? g.xres / 2.0 : tos.pos[0];
     float curr_player_ypos = tos.pos[1];
 
-
     // check and make sure toaster is not right up against the top of the screen
     if ((g.yres - (tos.pos[1] + tos.h)) < 20) {
         setPos(tos.pos[0], 0-h, 0);
@@ -1158,9 +1160,9 @@ void Blocky::setRandPosition()
     
 }
 
+// sets random color of item object passed in
 void setRandColor(Item & it)
 {
-
     static int color[5][3] =   {{242, 4, 159},
                         {4, 177, 216},
                         {4, 216, 78},
@@ -1171,6 +1173,7 @@ void setRandColor(Item & it)
     index = (index + 1) % 5;
 }
 
+// tests to see if the sub boxes are on screen
 bool Blocky::subScreenIn()
 {
     bool subs_onscreen = false;
@@ -1184,17 +1187,22 @@ bool Blocky::subScreenIn()
     return subs_onscreen;
 }
 
+// delays blocky once he goes off screen
+// controls the timer associated with the delay
 bool Blocky::delayBlocky()
 {
+    bool finish_delay = false;
+
     if (delay == nullptr) {
         delay = new Timer(delay_t);
         cerr << "delaying Blocky" << endl;
+        
     } else if (delay->isDone()) {
-        reset();
+        // reset();
         delete delay;
         delay = nullptr;
         cerr << "blocky delay done" << endl;
-        return true;
+        finish_delay = true;
     } else if (!delay->isDone() && !delay->isPaused()) {
         if (g.state == PAUSE) {
             delay->pause();
@@ -1207,17 +1215,14 @@ bool Blocky::delayBlocky()
 
         }
     }
-    return false;
+    return finish_delay;
 }
 
-
+// draws blocky and sub blockies if he's exploded
+// draws blocky's bullets if he shoots
 void Blocky::draw()
 {
-    // static int rot_angle = 0;
-    // draw item
-
-        // reset blocky if he's out of screen
-
+    // draw bullets 
     if (gun_active && isAlive() && did_shoot) {
         // draw blocky's bullets if they've been shot
 
@@ -1245,38 +1250,25 @@ void Blocky::draw()
     if (isAlive() && explode_done) {
 
         // delay blocky if he went out of screen
-        if (screenOut()) {
-            if (delay == nullptr) {
-                delay = new Timer(delay_t);
-                cerr << "delaying Blocky" << endl;
-
-            } else if (delay->isDone()) {
-                reset();
-                delete delay;
-                delay = nullptr;
-                cerr << "blocky delay done" << endl;
-            } else if (!delay->isDone() && !delay->isPaused()) {
-                if (g.state == PAUSE) {
-                    delay->pause();
-                    cerr << "pausing blocky delay timer" << endl;
-                }
-            } else if (!delay->isDone() && delay->isPaused()) {
-                if (g.state == GAME) {
-                    delay->unPause();
-                    cerr << "unpausing blocky delay timer" << endl;
-
-                }
-            }
+        if (screenOut() && delayBlocky()) {
+            reset();
         }
+    // TODO 
 
-        setRandColor(*this);
         glPushMatrix();
         glBindTexture(GL_TEXTURE_2D, *(blocky->tex));
         // glColor3ub(color[0], color[1], color[2]);
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.0f);
-        // glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
-        glColor4f(color[0]/255.0f, color[1]/255.0f, color[2]/255.0f, 0.5f);
+
+        // draw pissed-off coloring if his health is below 50%
+        if (hp < starting_hp / 2) {
+            setRandColor(*this);
+            glColor4f(color[0]/255.0f, color[1]/255.0f, color[2]/255.0f, 0.5f);
+        } else {
+            glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+        }
+
         glTranslatef(pos[0], pos[1], pos[2]);
         glBegin(GL_QUADS);
             glTexCoord2f(1.0f, 1.0f);
@@ -1291,21 +1283,6 @@ void Blocky::draw()
         glBindTexture(GL_TEXTURE_2D, 0);
         glDisable(GL_ALPHA_TEST);
         glPopMatrix();
-
-
-
-
-        // setRandColor(*this);
-        // glPushMatrix();
-        // glColor3ub(color[0], color[1], color[2]);
-        // glTranslatef(pos[0], pos[1], pos[2]);
-        // glBegin(GL_QUADS);
-        //         glVertex2f(-w, -h);
-        //         glVertex2f(-w,  h);
-        //         glVertex2f( w,  h);
-        //         glVertex2f( w, -h);
-        // glEnd();
-        // glPopMatrix();
 
     } else {    // draw little blockies
         // cerr << "checking if sub boxes are in the screen...\n";
@@ -1328,34 +1305,6 @@ void Blocky::draw()
                 glEnd();
                 glPopMatrix();
 
-
-
-                // // setRandColor(*this);
-                // glPushMatrix();
-                // glBindTexture(GL_TEXTURE_2D, *(blocky->tex));
-                // // glColor3ub(color[0], color[1], color[2]);
-                // glEnable(GL_ALPHA_TEST);
-                // glAlphaFunc(GL_GREATER, 0.0f);
-                // glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
-                // glTranslatef(sub_boxes[i].pos[0], sub_boxes[i].pos[1], sub_boxes[i].pos[2]);
-                // glMatrixMode(GL_MODELVIEW);
-                // glRotatef(rot_angle[i], 0, 0, 1.0);
-                
-                // glBegin(GL_QUADS);
-                //     glTexCoord2f(1.0f, 1.0f);
-                //     glVertex2f(-sub_boxes[i].w, -sub_boxes[i].h);
-                //     glTexCoord2f(1.0f, 0.0f);
-                //     glVertex2f(-sub_boxes[i].w,  sub_boxes[i].h);
-                //     glTexCoord2f(0.0f, 0.0f);
-                //     glVertex2f( sub_boxes[i].w,  sub_boxes[i].h);
-                //     glTexCoord2f(0.0f, 1.0f);
-                //     glVertex2f( sub_boxes[i].w, -sub_boxes[i].h);
-                // glEnd();
-                // glBindTexture(GL_TEXTURE_2D, 0);
-                // glDisable(GL_ALPHA_TEST);
-                // glPopMatrix();
-
-
                 rot_angle[i] -= rot_speed[i];
             }
         } else {
@@ -1365,13 +1314,7 @@ void Blocky::draw()
             // reset_sub_boxes();
         }
     }
-
 }
-
-// void Blocky::reset_sub_boxes()
-// {
-
-// }
 
 void Blocky::reset()
 {
@@ -1383,7 +1326,6 @@ void Blocky::reset()
         if (lives > 0) {
             hp = starting_hp;   // give back full health
         }
-
     }
     was_hit = false;
 
@@ -1421,8 +1363,6 @@ void Blocky::move()
     // static float shoot_point = g.yres*(4/5.0f);
     static float shoot_point = 100.0;   // distance away he shoots
     float distance = abs(pos[1] - tos.pos[1]);
-
-
 
         // move main blocky
     if (isAlive() && explode_done) {
@@ -1476,16 +1416,6 @@ list<Bullet>::iterator Blocky::bulCollision(Item & a)
     }
 
     return bullets.end();
-
-    /*******************************
-     * original collision function
-    ********************************/
-    // // for (x0,y0,x1,y1)and(x2,y2,x3,y3) squares
-    // // if collison -->(x0-x3)*(x1-x2)<0
-    // // same for y
-    // bool x = (((pos[0]+w)-(a.pos[0]-a.w))*((pos[0]-w)-(a.pos[0]+a.w))) < 0;
-  	// bool y = (((pos[1]+h)-(a.pos[1]-a.h))*((pos[1]-h)-(a.pos[1]+a.h))) < 0;
-  	// return x&&y;
 }
 
 // returns iterator to end of bullet list
@@ -1508,9 +1438,6 @@ bool Blocky::subBoxCollision(Item & itm)
         if (sub_boxes[i].collision(itm)) {
             return true;
         }
-        // if (itm.collision(sub_boxes[i])) {
-        //     return true;
-        // }
     }
     return false;
 }
@@ -1526,6 +1453,8 @@ bool Blocky::subBoxCollision(Entity & ent)
     return false;
 }
 
+// damages the itemp based on the passed in blocky's damage val
+// sets was_hit bool so that toaster is only hit once per fall
 void Item::hpDamage(Blocky & bf)
 {
     // cerr << "blocky's hpDamage called" << endl;
@@ -1540,16 +1469,17 @@ void Item::hpDamage(Blocky & bf)
     }
 }
 
+// returns true if lives > 0
 bool Blocky::isAlive()
 {
     return (lives > 0);
 }
 
-void Blocky::setHit()
-{
-    was_hit = true;
-    // cerr << "setting hit in blocky" << endl;
-}
+// void Blocky::setHit()
+// {
+//     was_hit = true;
+//     // cerr << "setting hit in blocky" << endl;
+// }
 
 void Blocky::explode()
 {

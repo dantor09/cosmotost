@@ -71,7 +71,7 @@ public:
     ~Menu();
 
     // setters
-    void setBcolor(int r, int g, int b);   // sets boarder color
+    // void setBcolor(int r, int g, int b);   // sets boarder color
     void setColor(int r, int g, int b);   // sets mainbox color
     void setPos(float x, float y, float z);
     void setHighlight(Box * b);
@@ -79,7 +79,7 @@ public:
 
     // getters
     // unsigned char * get_tcolor();
-    std::string getInfo(); // get debug info
+    // std::string getInfo(); // get debug info
 
     // other
     void draw();
