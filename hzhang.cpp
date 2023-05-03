@@ -237,14 +237,15 @@ void Item::draw()
 		glTranslatef(pos[0], pos[1], pos[2]);
 		glBegin(GL_QUADS);
 
-			glTexCoord2f(1.0f, 1.0f);
-			glVertex2f(vertex[0],vertex[1]);
 			glTexCoord2f(0.0f, 1.0f);
+			glVertex2f(vertex[0],vertex[1]);
+			glTexCoord2f(1.0f, 1.0f);
 			glVertex2f(vertex[2],vertex[3]);
-			glTexCoord2f(0.0f, 0.0f);
-			glVertex2f(vertex[4],vertex[5]);
 			glTexCoord2f(1.0f, 0.0f);
+			glVertex2f(vertex[4],vertex[5]);
+			glTexCoord2f(0.0f, 0.0f);
 			glVertex2f(vertex[6],vertex[7]);
+
 
 		glEnd();
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -281,13 +282,13 @@ void Item::draw(Item tos)
 	glTranslatef(pos[0], pos[1], pos[2]);
 	glBegin(GL_QUADS);
 
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex2f(vertex[0],vertex[1]);
 		glTexCoord2f(0.0f, 1.0f);
+		glVertex2f(vertex[0],vertex[1]);
+		glTexCoord2f(1.0f, 1.0f);
 		glVertex2f(vertex[2],vertex[3]);
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex2f(vertex[4],vertex[5]);
 		glTexCoord2f(1.0f, 0.0f);
+		glVertex2f(vertex[4],vertex[5]);
+		glTexCoord2f(0.0f, 0.0f);
 		glVertex2f(vertex[6],vertex[7]);
 
 	glEnd();
