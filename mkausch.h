@@ -32,7 +32,7 @@ using namespace std;
 inline const int NUM_SOUNDS = 16;
 // inline const int NUM_SONGS = 1;
 
-enum PBType {HEALTH, COOLDOWN};
+enum PBType {HEALTH, COOLDOWN, DONUT};
 
 // #define USE_OPENAL_SOUND
 
@@ -207,11 +207,14 @@ private:
     PBType type;
     const Toaster * tos;   // item that this healthbar is attached to
     const Item * itm;   // item that this healthbar is attached to
+    const Donut * donut;    // item that this healthbar is attached to
     // void hp_resize();   // resizes hp box based on passed on item's health
 
 public:
     PowerBar(const Toaster & _tos_, PBType type, float x, float y);
     PowerBar(const Item & _itm_, PBType type, float x, float y);
+    PowerBar(const Donut & _itm_, PBType _type_, float x, float y);
+
     
     void draw();
 };

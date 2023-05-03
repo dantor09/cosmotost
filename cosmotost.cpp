@@ -487,6 +487,8 @@ int X11_wrapper::check_mouse(XEvent *e)
 					cerr << "g.state was changed to should be quitting..." <<
 							endl;
 
+					stats.DisplayStats();
+
 					// if (g.gameTimer) {
 					// 	cerr << "killing game clock\n";
 					// 	delete g.gameTimer;	// kill game clock
@@ -980,8 +982,21 @@ void init_opengl(void)
 	glBindTexture(GL_TEXTURE_2D, g.icecube_texture);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	unsigned char * ice_data = buildAlphaData(&icecube_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+	    GL_RGBA, GL_UNSIGNED_BYTE, ice_data);
+
+	free(ice_data);
+
+	w = donut_img.width;
+    h = donut_img.height;
+	glGenTextures(1, &g.donut_texture);
+	glBindTexture(GL_TEXTURE_2D, g.donut_texture);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
-	    GL_RGB, GL_UNSIGNED_BYTE, icecube_img.data);
+	    GL_RGB, GL_UNSIGNED_BYTE, donut_img.data);
+
 
     w = bomb_img.width;
     h = bomb_img.height;
@@ -1000,21 +1015,189 @@ void init_opengl(void)
 
 	w = blocky_img.width;
     h = blocky_img.height;
-	// glGenTextures(1, &g.toaster_texture);
-    // glBindTexture(GL_TEXTURE_2D, g.toaster_texture);
 	glGenTextures(1, &g.blocky_silhouette);
 	glBindTexture(GL_TEXTURE_2D, g.blocky_silhouette);
 
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	silhouetteData = buildAlphaData(&blocky_img);
-    // glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
-	//     GL_RGB, GL_UNSIGNED_BYTE, blocky_img.data);
-	// glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
-	// 	GL_RGBA, GL_UNSIGNED_BYTE, blocky_img.data);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
 	free(silhouetteData);
+
+	w = ptm_img.width;
+    h = ptm_img.height;
+	glGenTextures(1, &g.ptm_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.ptm_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&ptm_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+
+	w = bread_img.width;
+    h = bread_img.height;
+	glGenTextures(1, &g.bread_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.bread_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&bread_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	w = fork_img.width;
+    h = fork_img.height;
+	glGenTextures(1, &g.fork_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.fork_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&fork_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+
+	w = electbul_img.width;
+    h = electbul_img.height;
+	glGenTextures(1, &g.elec_bul_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.elec_bul_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&electbul_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+
+	// GLuint whomp_silhouette;	 whomp_img
+	w = whomp_img.width;
+    h = whomp_img.height;
+	glGenTextures(1, &g.whomp_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.whomp_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&whomp_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+
+	
+	// GLuint bread2_silhouette; bread2_img
+
+	w = bread2_img.width;
+    h = bread2_img.height;
+	glGenTextures(1, &g.bread2_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.bread2_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&bread2_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint energy_silhouette; energy_img
+
+	w = energy_img.width;
+    h = energy_img.height;
+	glGenTextures(1, &g.energy_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.energy_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&energy_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint powerup_silhouette; powerup_img
+	w = powerup_img.width;
+    h = powerup_img.height;
+	glGenTextures(1, &g.powerup_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.powerup_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&powerup_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint health_silhouette; health_img
+	w = health_img.width;
+    h = health_img.height;
+	glGenTextures(1, &g.health_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.health_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&health_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint lives_silhouette; lives_img
+	w = lives_img.width;
+    h = lives_img.height;
+	glGenTextures(1, &g.lives_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.lives_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&lives_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint splash_silhouette; splash_img
+	w = splash_img.width;
+    h = splash_img.height;
+	glGenTextures(1, &g.splash_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.splash_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&splash_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+
+	// GLuint poptart_silhouette; poptart_img
+	w = poptart_img.width;
+    h = poptart_img.height;
+	glGenTextures(1, &g.poptart_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.poptart_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&poptart_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint mitt_silhouette; mitt_img
+	w = mitt_img.width;
+    h = mitt_img.height;
+	glGenTextures(1, &g.mitt_silhouette);
+	glBindTexture(GL_TEXTURE_2D, g.mitt_silhouette);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&mitt_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
 
 	cerr << "finished initializing opengl" << endl;
 }
@@ -1022,7 +1205,7 @@ void init_opengl(void)
 void physics()
 {
 	if (g.state == SPLASH) {
-
+		// place for test code at start of game
 
 	}
 
@@ -1062,7 +1245,7 @@ void physics()
 					} else if (e.enter_loc == 3) {
 						// makeEntity SPAWN FROM BOTTOM, MOVES LEFT AND UP
 						e.spawn_x = e.randNum(g.xres / 2, g.xres);
-						e.spawn_y = 5;
+						e.spawn_y = g.yres/10.0f;
 						e.spawn_vel_x = e.randNum(-8, -4);
 						e.spawn_vel_y = e.randNum(0, 8);
 					}
@@ -1079,6 +1262,8 @@ void physics()
 				if (entity[i].hpCheck()) {
 					tos.score += entity[i].point;
 					entity[i] = entity[--e.num_ent];
+
+					stats.UpdateKills();
 				}
 				entity[i].pos[0] += entity[i].vel[0]/2;
 				entity[i].pos[1] += entity[i].vel[1]/2;
@@ -1091,6 +1276,9 @@ void physics()
 						entity[i].hpDamage(*blocky);
 						if (entity[i].hpCheck()) {
 							entity[i] = entity[--e.num_ent];
+
+							stats.UpdateKills();
+							stats.blockyCollateral++;
 						} 
 					}
 				} else if (!blocky->explode_done) {
@@ -1099,16 +1287,22 @@ void physics()
 						if (entity[i].hpCheck()) {
 							entity[i] = entity[--e.num_ent];
 							tos.score += entity[i].point;
+
+							stats.UpdateKills();
+							stats.blockyCollateral++;
 						} 
 					}
 				}
 
 				if (entity[i].collision(tos)) {
 					entity[i].hpDamage(tos);
+
 					tos.hpDamage(entity[i]);
 					if (entity[i].hpCheck()) {
 						tos.score += entity[i].point;
 						entity[i] = entity[--e.num_ent];
+
+						stats.UpdateKills();
 					}
 
 					if (tos.hpCheck() && (tos.lives - 1 > 0)) {
@@ -1126,32 +1320,34 @@ void physics()
 					tos.score += entity[i].point;
 					entity[i] = entity[--e.num_ent];
 
-					stats.blockyCollateral++;
+					stats.UpdateKills();
 				}
 
 				for (int j=0; j < g.n_Bullet; j++) {
 					if (entity[i].collision(bul[j])) {
-							entity[i].hpDamage(bul[j]);
-							if (entity[i].hpCheck()) {
-								tos.score += entity[i].point;
-								entity[i] = entity[--e.num_ent];
-							}
-							
-							bul[j].hpDamage(entity[i]);
-							bul[j] = bul[--g.n_Bullet];
+						entity[i].hpDamage(bul[j]);
+						if (entity[i].hpCheck()) {
+							tos.score += entity[i].point;
+							entity[i] = entity[--e.num_ent];
+
+							stats.UpdateKills();
+						}
+						
+						stats.shotsHit++;
+						bul[j].hpDamage(entity[i]);
+						bul[j] = bul[--g.n_Bullet];
 					}
 				}
 
-
 				// DESPAWN
-				if (entity[i].pos[1] < -4 ||
-						entity[i].pos[1] > g.yres + 4 ||
+				if (entity[i].pos[1] < g.yres/10.0f - 6 ||
+						entity[i].pos[1] > g.yres + 6 ||
 						entity[i].pos[0] < -4) {
 					entity[i] = entity[--e.num_ent];
 				}
 				// BOUNCE
-				if (entity[i].pos[1] <= 4 ||
-						entity[i].pos[1] >= g.yres - 4) {
+				if (entity[i].pos[1] <= g.yres/10.0f + 6 ||
+						entity[i].pos[1] >= g.yres - 6) {
 					entity[i].vel[1] = -entity[i].vel[1];
 				}
 				if (tos.laserCollision(entity[i])) {
@@ -1175,10 +1371,6 @@ void physics()
 
 				// cerr << "resetting blocky..." << endl;
 				blocky->reset();
-
-				// if (blocky->hpCheck()) {
-				// 	blocky->reset();
-				// }
 
 				if (tos.hpCheck() && (tos.lives - 1 > 0)) {
 					tos.lives--;
@@ -1204,7 +1396,6 @@ void physics()
 				}
 			}
 
-
 			// check blocky's collision with bullets
 			for (int j=0; j < g.n_Bullet; j++) {
 				if (blocky->collision(bul[j])) {
@@ -1214,6 +1405,8 @@ void physics()
 						tos.score += blocky->point;
 						blocky->reset();
 					}
+
+					stats.shotsHit++;
 					bul[j] = bul[--g.n_Bullet];
 				}
 
@@ -1235,9 +1428,10 @@ void physics()
 						bread[i].hpDamage(*blocky);
 						if (bread[i].hpCheck()) {
 							bread[i] = bread[--g.n_Bread];
-							// tos.score += bread[i].point;
                             tos.score += bread[i].point;
 
+							
+							stats.blockyCollateral++;
 #ifdef USE_OPENAL_SOUND
 							sounds.playZap2();
 #endif
@@ -1254,6 +1448,9 @@ void physics()
 							// tos.score += entity[i].point;
 							entity[i] = entity[--e.num_ent];
                             tos.score += entity[i].point;
+
+							stats.UpdateKills();
+							stats.blockyCollateral++;
 #ifdef USE_OPENAL_SOUND
 							sounds.playZap2();
 #endif
@@ -1277,6 +1474,9 @@ void physics()
 						if (bread[i].hpCheck()) {
 							bread[i] = bread[--g.n_Bread];
 							tos.score += bread[i].point;
+							
+							stats.UpdateKills();
+							stats.blockyCollateral++;
 
 #ifdef USE_OPENAL_SOUND
 							sounds.playZap2();
@@ -1293,6 +1493,7 @@ void physics()
 						if(entity[i].hpCheck()) {
 							tos.score += entity[i].point;
 							entity[i] = entity[--e.num_ent];
+							
 
 #ifdef USE_OPENAL_SOUND
 							sounds.playZap2();
@@ -1351,8 +1552,11 @@ void physics()
 					donut.hpDemageDonut(bul[i]);
 					bul[i] = bul[--g.n_Bullet];
 				}
+				stats.shotsHit++;
 			}
 			donut.moveDonut();
+
+			// Donut's bullets.
 			for (int i=0; i < g.n_donut_bullet; i++) {
 				do_bul[i].moveBullet();
 				if(do_bul[i].collision(tos)) {
@@ -1371,10 +1575,11 @@ void physics()
 					do_bul[i] = do_bul[--g.n_donut_bullet];
 				}
 			}
-			for (int i = 0; i < g.n_laser; i++) {
-				d_laser[i].moveLaser();
-				if (d_laser[i].collision(tos)) {
-					d_laser[i].hpDamage(tos);
+			// Donuts laser weapon
+			for (auto la = donut.donutlasers.begin(); la != donut.donutlasers.end(); ) {
+				la->moveLaser();
+				if (la->collision(tos)) {
+					la->hpDamage(tos);
 					if(tos.hpCheck() && (tos.lives - 1 > 0)) {
 						tos.lives--;
 						tos.setHP(80);
@@ -1383,8 +1588,15 @@ void physics()
 						g.state = GAMEOVER;
 					}
 				}
-				if (d_laser[i].deleteLaser()) {
-					d_laser[i] = d_laser[--g.n_laser];
+				if (la->deleteLaser()) {
+					if (next(la) != donut.donutlasers.end()) {
+						la = donut.donutlasers.erase(la);
+					} else {
+						la = donut.donutlasers.erase(la);
+						break;
+					}
+				} else {
+					++la;
 				}
 			}
 
@@ -1392,7 +1604,7 @@ void physics()
 			
 		}
 //================================================================
-		// cout << tos.pos[0] << endl;
+
 		// move of toaster
 		tos.moveToster();
 		if (g.BulletCD > 0) g.BulletCD--;
@@ -1411,11 +1623,11 @@ void physics()
 
 			breadrand = (int)rand()%100;
 			if (breadrand == 0) {
-				makeBread(g.xres-10 ,0.25*g.yres,0.0,5,1);	// full power
-			} else if (breadrand == 1 || breadrand == 2) {
+				makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1);	// extra life
+			} else if (breadrand == 2 || breadrand == 3) {
 				makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1);	// full health
-			} else if (breadrand == 3 || breadrand == 4) {
-				makeBread(g.xres-10 ,0.5*g.yres,0.0,7,1);	// extra life
+			} else if (breadrand == 4 || breadrand == 5) {
+				makeBread(g.xres-10 ,0.5*g.yres,0.0,5,1);	// full power
 			}
 		}
 
@@ -1434,99 +1646,108 @@ void physics()
 		}
 		//move of all bread and check collision with bullet and Toaster
 		for (int i=0; i < g.n_Bread; i++) {
-				if (bread[i].screenOut()) {
-					bread[i] = bread[--g.n_Bread];
-					continue;
-				}
-				if (bread[i].hpCheck()) {
-					tos.score += bread[i].point;
-					bread[i] = bread[--g.n_Bread];
-					continue;
-				}
-				// check if collision with toaster
-				if (bread[i].collision(tos)) {
-						if (bread[i].item_type == 11 || 
-								bread[i].item_type == 13 || 
-								bread[i].item_type == 14) {
-							bread[i].hpDamage(tos);
-							tos.hpDamage(bread[i]);
-								
-							// D.T Reset HP and decrease lives if toaster still has lives left
-							if(tos.hpCheck() && (tos.lives > 1)) {
-								cerr << "should be dead from forky" << endl;
-								tos.lives--;
-								tos.setHP(tos.starting_hp);
-								// continue;
-							} else if(tos.hpCheck()) {
-								g.state = GAMEOVER;
-								break;
-							}
+			if (bread[i].screenOut()) {
+				bread[i] = bread[--g.n_Bread];
+				continue;
+			}
+			if (bread[i].hpCheck()) {
+				tos.score += bread[i].point;
+				bread[i] = bread[--g.n_Bread];
+				continue;
+			}
+			// check if collision with toaster
+			if (bread[i].collision(tos)) {
+					if (bread[i].item_type == 11 || 
+							bread[i].item_type == 13 || 
+							bread[i].item_type == 14) {
+						bread[i].hpDamage(tos);
+						tos.hpDamage(bread[i]);
 							
-							if(bread[i].hpCheck()) {
-								bread[i] = bread[--g.n_Bread];
-								continue;
-							}
+						// D.T Reset HP and decrease lives if toaster still has lives left
+						if(tos.hpCheck() && (tos.lives > 1)) {
+							cerr << "should be dead from forky" << endl;
+							tos.lives--;
+							tos.setHP(tos.starting_hp);
+							// continue;
+						} else if(tos.hpCheck()) {
+							g.state = GAMEOVER;
+							break;
 						}
-
-						// powerup handling
-						if (bread[i].item_type == 12) {	// gun level up
-							if (tos.bullet_type_prime != 4	&&	tos.bullet_type_prime != 8) tos.bullet_type_prime++;
-							bread[i] = bread[--g.n_Bread];
-							continue;
-						} else if (bread[i].item_type == 15) {	// half health potion
-							tos.energy = tos.max_energy;
-							bread[i] = bread[--g.n_Bread];
-							continue;
-						} else if (bread[i].item_type == 18) { // full health potion
-							tos.hp = tos.starting_hp;
-							bread[i] = bread[--g.n_Bread];
-							continue;
-						} else if (bread[i].item_type == 17) { // extra life
-							tos.lives = (tos.lives < 3) ? tos.lives + 1 : 3;
-							bread[i] = bread[--g.n_Bread];
-							// cerr << "added 1 life" << endl;
-							// cerr << "item_type: " << bread[i].item_type << endl;
-							// cerr << bread[i].getInfo();
-							// cerr << "rgb: " 
-							// 		<< (int)bread[i].getColor()[0] << ", "
-							// 		<< (int)bread[i].getColor()[1] << ", "
-							// 		<< (int)bread[i].getColor()[2] << endl;
-							continue;
-						}
-
-						break;
-				}
-				// ckeak if collision with bullet
-				for (int j=0; j < g.n_Bullet; j++) {
-					if (bread[i].collision(bul[j])&&(bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)) {
-						bread[i].hpDamage(bul[j]);
-						bul[j].hpDamage(bread[i]);
-						bul[j] = bul[--g.n_Bullet];
+						
 						if(bread[i].hpCheck()) {
-							tos.score += bread[i].point;
 							bread[i] = bread[--g.n_Bread];
+
+							stats.UpdateKills();
+							continue;
 						}
 					}
+					// powerup handling
+					if (bread[i].item_type == 12) {	// gun level up
+						if (tos.bullet_type_prime != 4	&&	tos.bullet_type_prime != 8) tos.bullet_type_prime++;
+						bread[i] = bread[--g.n_Bread];
 
-				}
+						stats.powerUpsGained++;
+						continue;
+					} else if (bread[i].item_type == 15) {	// half health potion
+						tos.energy = tos.max_energy;
+						bread[i] = bread[--g.n_Bread];
 
-				if (bomb.is_exploding && 
-						(bomb.collision(bread[i]))) {
-						bread[i].hp = 0;
+						stats.powerUpsGained++;
+						continue;
+					} else if (bread[i].item_type == 18) { // full health potion
+						tos.hp = tos.starting_hp;
+						bread[i] = bread[--g.n_Bread];
+
+						stats.powerUpsGained++;
+						continue;
+					} else if (bread[i].item_type == 17) { // extra life
+						tos.lives = (tos.lives < 3) ? tos.lives + 1 : 3;
+						bread[i] = bread[--g.n_Bread];
+						// cerr << "added 1 life" << endl;
+						// cerr << "item_type: " << bread[i].item_type << endl;
+						// cerr << bread[i].getInfo();
+						// cerr << "rgb: " 
+						// 		<< (int)bread[i].getColor()[0] << ", "
+						// 		<< (int)bread[i].getColor()[1] << ", "
+						// 		<< (int)bread[i].getColor()[2] << endl;
+
+						stats.powerUpsGained++;
+						continue;
+					}
+					break;
+			}
+			// ckeak if collision with bullet
+			for (int j=0; j < g.n_Bullet; j++) {
+				if (bread[i].collision(bul[j])&&(bread[i].item_type == 11 || bread[i].item_type == 13 || bread[i].item_type == 14)) {
+					bread[i].hpDamage(bul[j]);
+					bul[j].hpDamage(bread[i]);
+					bul[j] = bul[--g.n_Bullet];
+					if(bread[i].hpCheck()) {
 						tos.score += bread[i].point;
 						bread[i] = bread[--g.n_Bread];
-				}
 
-
-				if(!bread[i].trace)
-						bread[i].moveBread();
-				if(tos.laserCollision(bread[i])&& !bread[i].hpCheck()) {
-						if((bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w) < distanceBread) {
-								distanceBread = bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w;
-								whichBread = i;
-								entity_or_tos = false;
-						}
+						stats.UpdateKills();
+					}
+					stats.shotsHit++;
 				}
+			}
+			if (bomb.is_exploding && 
+					bomb.collision(bread[i])) {
+				bread[i].hp = 0;
+				tos.score += bread[i].point;
+				bread[i] = bread[--g.n_Bread];
+
+				stats.UpdateKills();
+			}
+			if(!bread[i].trace)
+					bread[i].moveBread();
+			if(tos.laserCollision(bread[i])&& !bread[i].hpCheck()) {
+					if((bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w) < distanceBread) {
+							distanceBread = bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w;
+							whichBread = i;
+							entity_or_tos = false;
+					}
+			}
 		// time stuff/ change when timer finish
 		// for bullet
 		}
@@ -1579,29 +1800,47 @@ void render()
 
 	if (g.state == SPLASH) {
 		Box splash_img;
-		splash_img.setColor(61, 90, 115);
-		glColor3ubv(splash_img.color);
-		splash_img.setDim(100.0f, 100.0f);
+			splash_img.setColor(61, 90, 115);
+			glColor3ubv(splash_img.color);
+		splash_img.setDim(500.0f, 150.0f);
 		splash_img.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
 
 
 		/*******************   SPLASH IMAGE PLACEHOLDER   *******************/
+
+
 		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, g.splash_silhouette);
+		// glColor3ub(color[0], color[1], color[2]);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 		glTranslatef(splash_img.pos[0], splash_img.pos[1], splash_img.pos[2]);
 		glBegin(GL_QUADS);
+
+			glTexCoord2f(0.0f, 1.0f);
 			glVertex2f(-splash_img.w, -splash_img.h);
+
+			glTexCoord2f(0.0f, 0.0f);
 			glVertex2f(-splash_img.w,  splash_img.h);
+			
+			glTexCoord2f(1.0f, 0.0f);
 			glVertex2f( splash_img.w,  splash_img.h);
+			
+			glTexCoord2f(1.0f, 1.0f);
 			glVertex2f( splash_img.w, -splash_img.h);
 		glEnd();
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_ALPHA_TEST);
 		glPopMatrix();
 
-		Rect splash_msg;
-		splash_msg.bot = splash_img.pos[1];
-        splash_msg.left = splash_img.pos[0];
-        splash_msg.center = 1;
 
-        ggprint8b(&splash_msg, 0, 0x00ffff00, "Splash Img Placeholder");
+		// Rect splash_msg;
+		// splash_msg.bot = splash_img.pos[1];
+        // splash_msg.left = splash_img.pos[0];
+        // splash_msg.center = 1;
+
+        // ggprint8b(&splash_msg, 0, 0x00ffff00, "Splash Img Placeholder");
 
 		/******************    END SPLASH IMAGE    ***************************/
 
@@ -1610,7 +1849,7 @@ void render()
         game_msg.left = g.xres / 2.0f;
         game_msg.center = 1;
 
-        ggprint8b(&game_msg, 0, 0x00ffffff, "Press Enter to Start the Game");
+        ggprint16(&game_msg, 0, 0x00ffffff, "Press Enter to Start the Game");
 
 
 	} else if (g.state == MAINMENU) {
@@ -1669,17 +1908,16 @@ void render()
 		info_board_1.setPos(g.xres/2, g.yres/40, 0);
 		info_board_1.draw();
 
-		
-		
-
-
 		// draw Toaster bullet and bread
 		tos.tdraw();
 		tos_health.draw();
 		// cerr << "gonna draw..." << endl;
 		tos_cd.draw();
 		for (int i=0; i < g.n_Bullet; i++) {
-				bul[i].draw();
+			bul[i].draw();
+
+			// couldnt find where shots are actually fired, so counting here.
+			stats.shots++;
 		}
 		for (int i=0; i < g.n_Bread; i++) {
 			if(!bread[i].trace)
@@ -1694,15 +1932,26 @@ void render()
 
 			for (int i = 0; i < e.num_ent; i++) {
 				glPushMatrix();
-				glColor3ubv(entity[i].color);
+				glBindTexture(GL_TEXTURE_2D, *(entity[i].tex));
+				glEnable(GL_ALPHA_TEST);
+				glAlphaFunc(GL_GREATER, 0.0f);
+				glColor4f(entity[i].color[0]/255.0f, entity[i].color[1]/255.0f, 
+						entity[i].color[2]/255.0f, 1.0f);
 				glTranslatef(entity[i].pos[0], entity[i].pos[1], 0.0f);
 				glBegin(GL_QUADS);
+					glTexCoord2f(0.0f, 0.0f);
 					glVertex2f(-entity[i].dim[0], -entity[i].dim[1]);
+					glTexCoord2f(0.0f, 1.0f);
 					glVertex2f(-entity[i].dim[0],  entity[i].dim[1]);
+					glTexCoord2f(1.0f, 1.0f);
 					glVertex2f( entity[i].dim[0],  entity[i].dim[1]);
+					glTexCoord2f(1.0f, 0.0f);
 					glVertex2f( entity[i].dim[0], -entity[i].dim[1]);
 				glEnd();
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glDisable(GL_ALPHA_TEST);
 				glPopMatrix();
+
 			}
 		}
 
@@ -1752,11 +2001,22 @@ void render()
 				}
 			}
 
+
 			// Follow the item passed into followItem() 
 			// Freeze block could be set to follow any Item object
 			if(pfreeze_block->position_set && tos.disable_keys == false) {	
 				pfreeze_block->followItem(tos);
 				pfreeze_block->melt(0.25);
+
+				// Check for collision with bullets and reduce velocity
+				for (int j=0; j < g.n_Bullet; j++) {
+					if (bul[j].collision(*pfreeze_block)) {
+						pfreeze_block->reduceVelocity(0.002);
+						
+						stats.shotsHit++;
+					}
+				}
+				
 				pfreeze_block->draw();
 			}
 
@@ -1784,6 +2044,7 @@ void render()
 		if(g.donut_active == true &&
 			(g.state == GAME || g.state == PAUSE)) {
 				donut.draw();
+				donut_health.draw();
 				for (int i=0; i < g.n_donut_bullet; i++) {
 //						cerr << "draw bullet" << endl;
 						do_bul[i].draw();
@@ -1830,20 +2091,7 @@ void render()
 		ggprint16(&hscore_msg, 0, 0x00DC143C, "New Record: %i", tos.score);
 		ggprint16(&game_msg, 0, 0x00ffffff, "GAME OVER");
 
-		cerr << "\n=======================================\n";
-		cerr << "= STATS =" << endl;
-		cerr << "Accuracy: " << stats.accuracy << endl;
-		cerr << "Time Survived: " << stats.timeSurvived << endl;
-		cerr << "Block Collaterals: " << stats.blockyCollateral << endl;
-		cerr << "Beam Kills: " << stats.beamKills << endl;
-		cerr << "Bomb Kills: " << stats.bombKills << endl;
-		cerr << "Bombs Thrown: " << stats.bombsThrown << endl;
-		cerr << "Damage Taken: " << stats.damageTaken << endl;
-		cerr << "Kills: " << stats.kills << endl;
-		cerr << "Dashes: " << stats.dashes << endl;
-		cerr << "Power Ups: " << stats.powerUpsGained << endl;
-		cerr << "Hit: " << stats.shotsHit << endl;
-		cerr << "Missed: " << stats.shotsMissed << endl;
+		stats.DisplayStats();
 
 	} else if (g.state == GAMEOVER && g.substate == HIGH_SCORES) {
 	

@@ -30,6 +30,7 @@ class FreezeBlock : public Item
         ~FreezeBlock();
         void draw();
         void melt(float);
+        void reduceVelocity(float);
         void setFreezeTimer(int);
         int randomDimension();
         void followItem(Item & );

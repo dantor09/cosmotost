@@ -230,14 +230,14 @@ void Menu::draw()
     }
 
     for (int i = 0; i < n_texts; i++) {
-        texts[i].bot = t_boxs[i].pos[1] - 5;
+        texts[i].bot = t_boxs[i].pos[1] - 8;
         if (!centering)
             texts[i].left = t_boxs[i].pos[0]-t_boxs[i].w + 100;
         else
             texts[i].left = t_boxs[i].pos[0];
         texts[i].center = centering;
 
-        ggprint8b(texts+i, 0, 0x00ffffff, words[i].c_str());
+        ggprint12(texts+i, 0, 0x00ffffff, words[i].c_str());
     }
 
 }
@@ -839,11 +839,40 @@ void Sound::bombExplosion()
 
 #endif
 
+PowerBar::PowerBar(const Donut & _itm_, PBType _type_, float x, float y)
+{
+    // maybe put max_health of each enemy type in case were going to
+    // use this healthbar for the boss as well
+    donut = &_itm_;
+    itm = nullptr;
+    tos = nullptr;
+    type = _type_;
+
+    if (type != DONUT) {
+        cerr << "WARNING** : BAD POWERBAR CONSTRUCTER, TYPE != DONUT" << endl;
+    }
+    
+    total.setColor(0,0,0);   // set lost health to black
+    health.setColor(255,0,0);  // set health to r
+    total.setDim(75,10);
+    total.setPos(x, y, 0);
+    
+    // mimic other bar based on what health was set to
+    health.setDim(total.w,total.h);
+    health.setPos(total.pos[0],total.pos[1],total.pos[2]);
+
+    text.bot = total.pos[1]-5;
+    text.left = total.pos[0];
+    text.center = 1;
+    // cerr << "finished itm constructor" << endl;
+}
+
 PowerBar::PowerBar(const Item & _itm_, PBType _type_, float x, float y)
 {
     // maybe put max_health of each enemy type in case were going to
     // use this healthbar for the boss as well
     itm = &_itm_;
+    tos = nullptr;
     type = _type_;
 
     if (type == HEALTH) {
@@ -864,7 +893,7 @@ PowerBar::PowerBar(const Item & _itm_, PBType _type_, float x, float y)
     text.bot = total.pos[1]-5;
     text.left = total.pos[0];
     text.center = 1;
-    cerr << "finished itm constructor" << endl;
+    // cerr << "finished itm constructor" << endl;
 }
 
 PowerBar::PowerBar(const Toaster & _tos_, PBType _type_, float x, float y)
@@ -894,13 +923,12 @@ PowerBar::PowerBar(const Toaster & _tos_, PBType _type_, float x, float y)
     text.left = total.pos[0];
     text.center = 1;
 
-    cerr << "finished tos constructor" << endl;
+    // cerr << "finished tos constructor" << endl;
 }
 
 
 void PowerBar::draw()
 {
-    
     
     if (type == HEALTH) {
         glColor3ubv(total.color);
@@ -959,6 +987,33 @@ void PowerBar::draw()
 
         ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, (int)tos->max_energy);
         // cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
+    } else if (type == DONUT) {
+        
+        glColor3ubv(total.color);
+        glPushMatrix();
+        glTranslatef(total.pos[0], total.pos[1], total.pos[2]);
+        glBegin(GL_QUADS);
+            glVertex2f(-total.w, -total.h);
+            glVertex2f(-total.w,  total.h);
+            glVertex2f( total.w,  total.h);
+            glVertex2f( total.w, -total.h);
+        glEnd();
+        glPopMatrix();
+
+
+        glColor3ubv(health.color);
+        glPushMatrix();
+        glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
+        glBegin(GL_QUADS);
+            glVertex2f(0, -health.h);
+            glVertex2f(0,  health.h);
+            glVertex2f((((donut->hp))/(10000.0f))*2.0f*health.w,  health.h);
+            glVertex2f((((donut->hp))/(10000.0f))*2.0f*health.w, -health.h);
+            
+        glEnd();
+        glPopMatrix();
+
+        ggprint8b(&text, 0, 0x00000000, "Boss Health: %i/%i", (int)donut->hp, 10000);
     }
 }
 
@@ -990,6 +1045,7 @@ void Entity::hpDamage(Item & a)
 
 bool Entity::hpCheck()
 {
+    stats.UpdateKills(); // declared in aparriott.cpp
     return (hp < 0.01);
 }
 
@@ -1003,10 +1059,20 @@ Blocky::Blocky(char type, bool g_act)
     srand(time(NULL));
     float sub_blocky_size = sqrt((25.0*100.0)/SUB_BLOCK_N);
     if (type == 'v') {
-        setDim(50.0f, 100.0f);
-    } else if (type == 'h') {
-        setDim(100.0f, 75.0f);
+        setDim(60.0f, 85.0f);
+        tex = (g_act == false) ? &g.blocky_silhouette : &g.whomp_silhouette;
+    } else {
+        if (g_act == false) {
+            setDim(125.0f, 75.0f);
+            tex = &g.mitt_silhouette;
+        } else {
+            setDim(125.0f, 50.0f);
+            tex = &g.ptm_silhouette;
+        }
+        // tex = (g_act == false) ? &g.ptm_silhouette : &g.mitt_silhouette;
+        // tex = &g.ptm_silhouette;
     }
+
     setRandColor(*this);
     setRandPosition();
     setAcc(0.0f,-0.25f,0.0f);
@@ -1023,7 +1089,7 @@ Blocky::Blocky(char type, bool g_act)
     delay = nullptr;
     delay_t = 0.5;
     gun_active = g_act;
-    tex = &g.blocky_silhouette;
+    
 
     // sub box assignment
     // assignes itself and it's mirror image (i+4 in this case)
@@ -1065,17 +1131,32 @@ void Blocky::initRotationVel()
 void Blocky::setRandPosition()
 {
     static int pm_dir = 1;
-    float curr_player_xpos = tos.pos[0];
-    int delta_from_xpos = rand() % 50;
-    float block_xpos = curr_player_xpos + (delta_from_xpos * pm_dir);
+    // float curr_player_xpos;
 
-    // set to be this new random position situated near the player char
-    // that is above the yres and out of view of the screen
-    setPos(block_xpos, g.yres+h,0);
+    // float curr_player_ypos = (tos.pos[1] > (g.xres - tos.h - 5)) ? g.xres / 2.0 : tos.pos[0];
+   
+    float curr_player_xpos = (tos.pos[0] < 10 ) ? g.xres / 2.0 : tos.pos[0];
+    float curr_player_ypos = tos.pos[1];
 
-    // if this block was generated in front of the player then
-    // next time make it randomly behind the player (it'll keep switching)
-    pm_dir *= -1;
+
+    // check and make sure toaster is not right up against the top of the screen
+    if ((g.yres - (tos.pos[1] + tos.h)) < 20) {
+        setPos(tos.pos[0], 0-h, 0);
+    } else {
+        
+        int delta_from_xpos = rand() % 50;
+        float block_xpos = curr_player_xpos + (delta_from_xpos * pm_dir);
+
+        // set to be this new random position situated near the player char
+        // that is above the yres and out of view of the screen
+        setPos(block_xpos, g.yres+h,0);
+
+        // if this block was generated in front of the player then
+        // next time make it randomly behind the player (it'll keep switching)
+        pm_dir *= -1;
+
+    }
+    
 }
 
 void setRandColor(Item & it)
@@ -1189,13 +1270,14 @@ void Blocky::draw()
             }
         }
 
-        // setRandColor(*this);
+        setRandColor(*this);
         glPushMatrix();
         glBindTexture(GL_TEXTURE_2D, *(blocky->tex));
         // glColor3ub(color[0], color[1], color[2]);
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.0f);
-        glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+        // glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+        glColor4f(color[0]/255.0f, color[1]/255.0f, color[2]/255.0f, 0.5f);
         glTranslatef(pos[0], pos[1], pos[2]);
         glBegin(GL_QUADS);
             glTexCoord2f(1.0f, 1.0f);
@@ -1229,7 +1311,6 @@ void Blocky::draw()
     } else {    // draw little blockies
         // cerr << "checking if sub boxes are in the screen...\n";
         if (subScreenIn()) {
-
             for (int i = 0; i < SUB_BLOCK_N; i++) {
                 setRandColor(sub_boxes[i]);
                 glPushMatrix();
@@ -1302,11 +1383,20 @@ void Blocky::reset()
         if (lives > 0) {
             hp = starting_hp;   // give back full health
         }
+        stats.UpdateKills();
 
     }
     was_hit = false;
 
-    setVel(0.0f, -4.0f, 0.0f);
+    if (tex == &g.ptm_silhouette) {
+        float xv = tos.vel[0]*0.75;
+        cerr << "setting xv: " << xv << endl;
+
+        setVel(xv, -4.0f, 0.0f);
+    } else {
+        setVel(0, -4.0f, 0.0f);
+    }
+
     setRandPosition();    // put at a new random position
     did_shoot = false;
     // was_hit = false;
@@ -1332,10 +1422,7 @@ void Blocky::move()
     // static float shoot_point = g.yres*(4/5.0f);
     static float shoot_point = 100.0;   // distance away he shoots
     float distance = abs(pos[1] - tos.pos[1]);
-
-
-
-        // move main blocky
+    // move main blocky
     if (isAlive() && explode_done) {
         pos[0] += vel[0];
         pos[1] += vel[1];
@@ -2109,18 +2196,20 @@ void Gamerecord::makeMenu()
     } else if (isTopTen()) {
         // cerr << "setting top ten color" << endl;
         // (hs_menu->t_boxs[place]).setColor((int)178,(int)222,(int)39);
-        (hs_menu->t_boxs[0]).color[0] = (unsigned char)178;
-        (hs_menu->t_boxs[0]).color[1] = (unsigned char)222;
-        (hs_menu->t_boxs[0]).color[2] = (unsigned char)39;
+        (hs_menu->t_boxs[place]).color[0] = (unsigned char)178;
+        (hs_menu->t_boxs[place]).color[1] = (unsigned char)222;
+        (hs_menu->t_boxs[place]).color[2] = (unsigned char)39;
     }
 
     // set 11th element to yellow (will be deleted)
     // cerr << "setting 11th element color" << endl;
-    if (scores.size() == 11)
+    if (scores.size() == 11) {
+
         // (hs_menu->t_boxs[scores.size()-1]).setColor((int)189,(int)195,(int)199);
-        (hs_menu->t_boxs[0]).color[0] = (unsigned char)189;
-        (hs_menu->t_boxs[0]).color[1] = (unsigned char)195;
-        (hs_menu->t_boxs[0]).color[2] = (unsigned char)199;
+        (hs_menu->t_boxs[scores.size()-1]).color[0] = (unsigned char)189;
+        (hs_menu->t_boxs[scores.size()-1]).color[1] = (unsigned char)195;
+        (hs_menu->t_boxs[scores.size()-1]).color[2] = (unsigned char)199;
+    }
     // cerr << "finished making menu...\n" << endl;
 }
 

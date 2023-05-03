@@ -42,18 +42,32 @@ bool entity_active,
         huaiyu_active,
         mike_active,
         donut_active;
-
+ 
 float sfx_vol;
 float m_vol;
 
 GLuint bkg_texture;
-GLuint toaster_texture;
+// GLuint toaster_texture;
 GLuint toaster_silhouette;
 GLuint bomb_texture;
 GLuint icecube_texture;
 // GLuint blocky_texture;
 GLuint blocky_silhouette;
+GLuint ptm_silhouette;
+GLuint bread_silhouette;
+GLuint fork_silhouette;
+GLuint elec_bul_silhouette;
 
+GLuint whomp_silhouette;
+GLuint bread2_silhouette;
+GLuint energy_silhouette;
+GLuint powerup_silhouette;
+GLuint health_silhouette;
+GLuint lives_silhouette;
+GLuint splash_silhouette;
+GLuint poptart_silhouette;
+GLuint donut_texture;
+GLuint mitt_silhouette;
 
 Global();
 ~Global();
@@ -91,6 +105,7 @@ inline PowerBar vblocky_health(vblocky, HEALTH, g.xres/2.0f, 15.0f);
 inline PowerBar v2blocky_health(v2blocky, HEALTH, g.xres/2.0f, 15.0f);
 inline PowerBar hblocky_health(hblocky, HEALTH, g.xres/2.0f, 15.0f);
 inline PowerBar h2blocky_health(h2blocky, HEALTH, g.xres/2.0f, 15.0f);
+
 inline Blocky * blocky;
 inline PowerBar * blocky_health;
 inline SoundBar vol_slider(&g.m_vol, g.xres*(1.0f/3.0f), g.yres/2.0f, "Music Volume");
@@ -105,11 +120,25 @@ inline Bomb bomb;
  * 
 ********************************/
 
-inline Image background("textures/background.jpg");
-inline Image toaster_img("textures/toaster.png");
+inline Image background("textures/background.png");
+inline Image toaster_img("textures/toaster2.png");
 inline Image bomb_img("textures/firebullet.png");
 inline Image icecube_img("textures/iceSmallSpike.png");
-inline Image blocky_img("textures/blocky.png");
+inline Image whomp_img("textures/whomp.png");
+inline Image ptm_img("textures/ptm.png");
+inline Image bread_img("textures/bread2.png");
+inline Image electbul_img("textures/electricbullet.png");
+inline Image fork_img("textures/fork.png");
+inline Image bread2_img("textures/bread.png");
+inline Image energy_img("textures/lightning.png");
+inline Image powerup_img("textures/jelly.png");
+inline Image blocky_img("textures/microwave.png");
+inline Image health_img("textures/oot_heart.png");
+inline Image lives_img("textures/toaster.png");
+inline Image splash_img("textures/splash.png");
+inline Image donut_img("textures/donut.png");
+inline Image poptart_img("textures/poptart2.png");
+inline Image mitt_img("textures/mitt.png");
 
 #ifdef USE_OPENAL_SOUND
 inline Sound sounds;
@@ -130,6 +159,7 @@ inline Bullet do_bul[MAX_bullet];
 // inline EffectBox effect_partical[MAX_partical];
 inline DonutLaser d_laser[10];
 inline Donut donut;
+inline PowerBar donut_health(donut, DONUT, g.xres/2.0f, 15.0f);
 
 // Huaiyu veribles================================
 

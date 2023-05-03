@@ -6,27 +6,36 @@
 ### Short Term
  
 - Settings / select player
-    - difficulty modes
     - character choice
     - music
-- naming convention for enemies
-- Make multiple difficulties of enemies
-- forky needs to be a bullet
 - shield (note: i have a shield sound effect - mike)
-- game_reset() for entity state
-- linke high scores with odin
-- hole in the wall obstacle
-
+- faculty face textures
+- method for cycling textures to faculty faces
+- make sure everything writes to the screen int he correct order
+    -- ensure that nothing spills over past hud
 
 #### In Progress:
 - ARTWORK... (ailand)
 - freeze enemy (dan)
 
+#### Known Bugs:
+- game_reset() for entity state
+- entity below high score menu
+- game crash after quitting in debug
+
 #### Done:
+- naming convention for enemies
+- blocky angled entry (mike)
+- powerup textures (mike)
+- microwave texture (mike)
+- turn fork around (mike)
+- electric bullet texture (mike)
 - Bomb (mike)
 - full health powerup (mike)
 - partial health powerup (mike)
 - extra life powerup (mike)
+- linke high scores with odin (mike)
+- Make multiple difficulties of enemies (mike)
 - implement volume change feature (mike)
 - implement sound effects (mike)
 - fix volume issues (mike)
@@ -63,6 +72,7 @@
 - Implement a logging system
     -- #define debug mode && cerr will work fine
     -- alternatively we can pass in a param on the command line
+- hole in the wall obstacle
 
 
 [//]: # "Laser Sound Effects"
