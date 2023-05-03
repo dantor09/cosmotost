@@ -766,7 +766,7 @@ int X11_wrapper::check_keys(XEvent *e)
 						cerr << "g.mike_active set to false\n";
 					}
 					return 0;
-				case XK_b: // t was pressed - toggle Dan's Feature Mode
+				case XK_b: // b was pressed - toggle donut feature
 					// if (g.substate == NONE) {
 					if (g.donut_active == false) {
 						g.donut_active = true;

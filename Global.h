@@ -159,7 +159,7 @@ inline Bullet do_bul[MAX_bullet];
 // inline EffectBox effect_partical[MAX_partical];
 inline DonutLaser d_laser[10];
 inline Donut donut;
-inline PowerBar donut_health(donut, DONUT, g.xres/2.0f, 15.0f);
+inline PowerBar donut_health(donut, DONUT, g.xres/2.0f, 4.0f);
 
 // Huaiyu veribles================================
 

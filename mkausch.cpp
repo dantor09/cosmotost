@@ -849,7 +849,7 @@ PowerBar::PowerBar(const Donut & _itm_, PBType _type_, float x, float y)
     
     total.setColor(0,0,0);   // set lost health to black
     health.setColor(255,0,0);  // set health to r
-    total.setDim(75,10);
+    total.setDim(g.xres/2.0f,2.0f);
     total.setPos(x, y, 0);
     
     // mimic other bar based on what health was set to
@@ -1007,7 +1007,7 @@ void PowerBar::draw()
         glEnd();
         glPopMatrix();
 
-        ggprint8b(&text, 0, 0x00000000, "Boss Health: %i/%i", (int)donut->hp, 10000);
+        // ggprint8b(&text, 0, 0x00000000, "Boss Health: %i/%i", (int)donut->hp, 10000);
     }
 }
 
@@ -1316,6 +1316,7 @@ void Blocky::draw()
     }
 }
 
+// resets blocky's vars when he dies or goes off screen
 void Blocky::reset()
 {
     if (hpCheck()) {
@@ -1407,6 +1408,7 @@ void Blocky::move()
 
 }
 
+// returns an iterator to the bullet that causes a collision with an item
 list<Bullet>::iterator Blocky::bulCollision(Item & a) 
 {
     for (auto it = bullets.begin(); it != bullets.end(); it++) {
@@ -1776,6 +1778,7 @@ void checkLevel()
                 case LEVEL9:
                     // should transition to game over
                     // g.level = LEVEL1;
+                    g.donut_active = true;
                     break;
                 default:    // Level 1 behavior (Bread(1))   // shouldn't need
                     g.level = LEVEL1;
