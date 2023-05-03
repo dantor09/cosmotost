@@ -2039,6 +2039,7 @@ void render()
 					pfreeze_block->setPos(pfreeze_block->w + (rand() % (int)(g.xres - pfreeze_block->w)), 
 										  (pfreeze_block->h + (info_board_1.h * 2)) + (rand() % (int)(g.yres - pfreeze_block->h)), 0);
 					pfreeze_block->position_set = true;
+					pfreeze_block->setFollowTimer(3);
 				} 
 				catch (bad_alloc) {
 					cerr << "Freeze Block Bad Allocation" << endl;
@@ -2049,17 +2050,17 @@ void render()
 
 			// Follow the item passed into followItem() 
 			// Freeze block could be set to follow any Item object
-			if (pfreeze_block->position_set && tos.disable_keys == false) {	
-				pfreeze_block->followItem(tos);
+			if (pfreeze_block->position_set && tos.disable_keys == false) {
+				
+				(!pfreeze_block->pFollowTimer->isDone()) ? pfreeze_block->followItem(tos) : pfreeze_block->checkBounce();
 				pfreeze_block->melt(0.25);
 
 				// Check for collision with bullets and reduce velocity
 				for (int j=0; j < g.n_Bullet; j++) {
 					if (bul[j].collision(*pfreeze_block)) {
-							pfreeze_block->reduceVelocity(0.002);
+							pfreeze_block->reduceVelocity(freeze_block_velocity_reduction_rate);
 					}
 				}
-				
 				pfreeze_block->draw();
 			}
 
@@ -2072,12 +2073,12 @@ void render()
 			}
 
 			// Unfreeze the toaster after timer is done or freeze block melted away
-			if (tos.disable_keys && pfreeze_block->ptimer->isDone() 
+			if (tos.disable_keys && pfreeze_block->pFreezeTimer->isDone() 
 			   || pfreeze_block -> h <= 0
 			   || pfreeze_block -> w <= 0 ) {
 
-				delete pfreeze_block->ptimer;
-				pfreeze_block->ptimer = NULL;
+				delete pfreeze_block->pFreezeTimer;
+				pfreeze_block->pFreezeTimer = NULL;
 				delete pfreeze_block;
 				pfreeze_block = NULL;
 				tos.disable_keys = false;

@@ -1739,6 +1739,8 @@ void checkLevel()
 
                     g.entity_active = true;
                     g.dtorres_active = true;
+                    freeze_block_velocity_reduction_rate = 0.001;
+                    
                     // change blocky vars
                     break;
                 case LEVEL6:
@@ -1750,9 +1752,9 @@ void checkLevel()
                     blocky_health = &hblocky_health;
                     blocky->gamereset();
                     g.mike_active = true;
-
                     g.entity_active = true;
                     g.dtorres_active = true;
+                    freeze_block_velocity_reduction_rate = 0.0009;
                     break;
                 case LEVEL7:
                     // Level8: HBlocky(2) + Bread(2) + Entities(2)
@@ -1763,9 +1765,9 @@ void checkLevel()
                     blocky_health = &h2blocky_health;
                     blocky->gamereset();
                     g.mike_active = true;
-
                     g.entity_active = true;
                     g.dtorres_active = true;
+                    freeze_block_velocity_reduction_rate = 0.00019;
                     break;
                 case LEVEL8:
                     // Level9: Boss
@@ -1773,12 +1775,12 @@ void checkLevel()
                     g.entity_active = true;
                     // unleash bossman randy savage
                     g.huaiyu_active = true;
-
+                    g.dtorres_active = false;
                     break;
                 case LEVEL9:
                     // should transition to game over
                     // g.level = LEVEL1;
-                    g.donut_active = true;
+                    g.dtorres_active = false;
                     break;
                 default:    // Level 1 behavior (Bread(1))   // shouldn't need
                     g.level = LEVEL1;

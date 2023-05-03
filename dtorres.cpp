@@ -36,7 +36,8 @@ float FreezeBlock::getVelocityConsideringArea(float area)
 FreezeBlock::FreezeBlock() 
 {
 	position_set = false;
-	ptimer = NULL;
+	pFreezeTimer = NULL;
+	pFollowTimer = NULL;
 	min_block_dimension = 1;
 	max_block_dimension = 30;
 	max_velocity = 1.50;//1.25;
@@ -93,7 +94,12 @@ void FreezeBlock::reduceVelocity(float velocity_reduction_rate)
 
 void FreezeBlock::setFreezeTimer(int seconds) 
 {
-	ptimer = new Timer(seconds);
+	pFreezeTimer = new Timer(seconds);
+}
+
+void FreezeBlock::setFollowTimer(int seconds)
+{
+	pFollowTimer = new Timer(seconds);
 }
 
 int FreezeBlock::randomDimension()
@@ -136,6 +142,33 @@ void FreezeBlock::followItem(Item & object)
 	pos[1] += vel[1];
 }
 
+void FreezeBlock::checkBounce()
+{	
+	// Check if freeze block is going out of bounds
+	if(pos[0] + w - 5>= g.xres) {
+		pos[0] = g.xres - w;
+		vel[0] *= -1;
+		setVel(-getVelocityConsideringArea(w * h), vel[1], 0);
+	}
+	else if(pos[0] - 5<= 0) {
+		pos[0] = w;
+		vel[0] *= -1;
+		setVel(getVelocityConsideringArea(w * h), vel[1], 0);
+	}
+	else if(pos[1] + h - 5>= g.yres) {
+		pos[1] = g.yres - h;
+		vel[1] *= -1;
+		setVel(vel[0], -getVelocityConsideringArea(w * h), 0);
+	}
+	else if(pos[1] - 5<= info_board_1.pos[1] + info_board_1.h) {
+		vel[1] *= -1;
+		setVel(vel[0], getVelocityConsideringArea(w * h), 0);
+	}
+	
+	// Update freeze block position
+	pos[0] += vel[0];
+	pos[1] += vel[1];
+}
 void FreezeBlock::setMinMaxBlockDimensions(int min, int max)
 {
 	if(min < 1 || max > g.yres/3 || max > g.xres/3) {
