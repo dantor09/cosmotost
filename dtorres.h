@@ -23,7 +23,8 @@ class FreezeBlock : public Item
         float max_velocity;
         float minimum_velocity;
         float melting_rate;
-        Timer * ptimer;
+        Timer * pFreezeTimer;
+        Timer * pFollowTimer;
         GLuint * texture;
 
         FreezeBlock();
@@ -32,7 +33,9 @@ class FreezeBlock : public Item
         void melt(float);
         void reduceVelocity(float);
         void setFreezeTimer(int);
+        void setFollowTimer(int);
         int randomDimension();
         void followItem(Item & );
+        void checkBounce();
         void setMinMaxBlockDimensions(int, int);
 };

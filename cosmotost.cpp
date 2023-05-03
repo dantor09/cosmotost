@@ -842,7 +842,7 @@ int X11_wrapper::check_keys(XEvent *e)
 		int key = XLookupKeysym(&e->xkey, 0);
 		if (e->type == KeyPress) {
 			// cout << key << endl;
-			if(key >=97 && key <= 122) {
+			if (key >=97 && key <= 122) {
 					record.gamer[record.n]= (char)key;
 					// record.str = record.gamer;
 					cout << (char)key << endl;
@@ -850,13 +850,13 @@ int X11_wrapper::check_keys(XEvent *e)
 					if (record.n < 9)
 						record.n++;
 			}
-			if(key == XK_BackSpace) {
+			if (key == XK_BackSpace) {
 					cout << "<<backspace>>" <<endl;
 					record.gamer[record.n] = ' ';
-					if(record.n > 0)
+					if (record.n > 0)
 							record.n--;
 			}
-			if(key == XK_Return) {
+			if (key == XK_Return) {
 				record.submitRecord(tos.score);
 				// g.state = MAINMENU;
 				// g.gameReset();
@@ -1351,7 +1351,7 @@ void physics()
 					entity[i].vel[1] = -entity[i].vel[1];
 				}
 				if (tos.laserCollision(entity[i])) {
-						if((entity[i].pos[0] - tos.pos[0] - entity[i].dim[0] - tos.w) < distanceBread) {
+						if ((entity[i].pos[0] - tos.pos[0] - entity[i].dim[0] - tos.w) < distanceBread) {
 								distanceBread = entity[i].pos[0] - tos.pos[0] - entity[i].dim[0] - tos.w;
 								whichBread = i;
 						}
@@ -1360,7 +1360,7 @@ void physics()
 		}
 		if (g.mike_active == true) {
 			blocky->move();
-			if (tos.laserCollision(*blocky)){
+			if (tos.laserCollision(*blocky)) {
 				whichBread = -2;
 				distanceBread = blocky->pos[0] - tos.pos[0] - blocky->w - tos.w;
 			}
@@ -1381,7 +1381,7 @@ void physics()
 			}
 
 			list<Bullet>::iterator bulptr = blocky->getEndBullets();
-			if(blocky->gun_active) {
+			if (blocky->gun_active) {
 				bulptr = blocky->bulCollision(tos);
 				if (bulptr != blocky->getEndBullets()) {
 					tos.hpDamage(*bulptr);
@@ -1444,7 +1444,7 @@ void physics()
 				for (int i = 0; i < e.num_ent; i++) {
 					if (entity[i].collision(*blocky)) {
 						entity[i].hpDamage(*blocky);
-						if(entity[i].hpCheck()) {
+						if (entity[i].hpCheck()) {
 							// tos.score += entity[i].point;
 							entity[i] = entity[--e.num_ent];
                             tos.score += entity[i].point;
@@ -1490,7 +1490,7 @@ void physics()
 					if (blocky->subBoxCollision(entity[i])) {
 					// if (entity[i].collision(*blocky)) {
 						entity[i].hpDamage(*blocky);
-						if(entity[i].hpCheck()) {
+						if (entity[i].hpCheck()) {
 							tos.score += entity[i].point;
 							entity[i] = entity[--e.num_ent];
 							
@@ -1506,22 +1506,22 @@ void physics()
 		if (g.huaiyu_active == true) {
 				for (int i=0; i < g.n_Spear; i++) {
 					spear[i].moveSpear();
-					if(spear[i].trace) {
+					if (spear[i].trace) {
 							spear[i].cd--;
-							if(0 == spear[i].cd)
+							if (0 == spear[i].cd)
 									spear[i].trace = false;
 					}
 					
-					if(tos.collision(spear[i])) {
+					if (tos.collision(spear[i])) {
 						tos.hpDamage(spear[i]);
 						spear[i]=spear[--g.n_Spear];
 
-						if(tos.hpCheck() && (tos.lives > 1)) {
+						if (tos.hpCheck() && (tos.lives > 1)) {
 							// cerr << "should be dead from forky" << endl;
 							tos.lives--;
 							tos.setHP(tos.starting_hp);
 							// continue;
-						} else if(tos.hpCheck()) {
+						} else if (tos.hpCheck()) {
 							g.state = GAMEOVER;
 							break;
 						}
@@ -1544,6 +1544,7 @@ void physics()
 		}
 //======================BOSS+====================================		
 		if (g.donut_active == true) {
+			g.huaiyu_active == false;
 			if (donut.collision(tos)) {
 				tos.hpDamage(1000);
 			}
@@ -1551,6 +1552,38 @@ void physics()
 				if (donut.collision(bul[i])) {
 					donut.hpDemageDonut(bul[i]);
 					bul[i] = bul[--g.n_Bullet];
+					if(donut.hpCheck()) {
+						tos.score += 30000;
+						g.state = GAMEOVER;					
+					}	
+				}
+				for (auto la = donut.dbready.begin(); la != 
+						donut.dbready.end(); ) {
+					la->moveChargeBread();
+					if (la->collision(tos)) {
+						la->hpDamage(tos);
+						if (tos.hpCheck() && (tos.lives - 1 > 0)) {
+							tos.lives--;
+							tos.setHP(80);
+						}
+						else if (tos.hpCheck()) {
+							g.state = GAMEOVER;
+						}
+					}
+					if (la->collision(bul[i])) {
+						la->hpDamage(bul[i]);
+						bul[i] = bul[--g.n_Bullet];
+					}
+					if (la->hpCheck()) {
+						if (next(la) != donut.dbready.end()) {
+							la = donut.dbready.erase(la);
+						} else {
+							la = donut.dbready.erase(la);
+							break;
+						}
+					} else {
+						++la;
+					}
 				}
 				stats.shotsHit++;
 			}
@@ -1559,18 +1592,18 @@ void physics()
 			// Donut's bullets.
 			for (int i=0; i < g.n_donut_bullet; i++) {
 				do_bul[i].moveBullet();
-				if(do_bul[i].collision(tos)) {
+				if (do_bul[i].collision(tos)) {
 					tos.hpDamage(do_bul[i]);
-					if(tos.hpCheck() && (tos.lives - 1 > 0)) {
+					if (tos.hpCheck() && (tos.lives - 1 > 0)) {
 						tos.lives--;
 						tos.setHP(80);
 					}
-					else if(tos.hpCheck()) {
+					else if (tos.hpCheck()) {
 						g.state = GAMEOVER;
 					}
 					do_bul[i] = do_bul[--g.n_donut_bullet];
 				}
-				if (do_bul[i].screenOut()){
+				if (do_bul[i].screenOut()) {
 					cerr << "clear dobullet" << endl;
 					do_bul[i] = do_bul[--g.n_donut_bullet];
 				}
@@ -1580,11 +1613,11 @@ void physics()
 				la->moveLaser();
 				if (la->collision(tos)) {
 					la->hpDamage(tos);
-					if(tos.hpCheck() && (tos.lives - 1 > 0)) {
+					if (tos.hpCheck() && (tos.lives - 1 > 0)) {
 						tos.lives--;
 						tos.setHP(80);
 					}
-					else if(tos.hpCheck()) {
+					else if (tos.hpCheck()) {
 						g.state = GAMEOVER;
 					}
 				}
@@ -1599,6 +1632,39 @@ void physics()
 					++la;
 				}
 			}
+			for (int i=0; i < g.n_Spear; i++) {
+				spear[i].moveSpear();
+				if (spear[i].trace) {
+						spear[i].cd--;
+						if (0 == spear[i].cd)
+								spear[i].trace = false;
+				}
+				
+				if (tos.collision(spear[i])) {
+					tos.hpDamage(spear[i]);
+					spear[i]=spear[--g.n_Spear];
+
+					if (tos.hpCheck() && (tos.lives > 1)) {
+						// cerr << "should be dead from forky" << endl;
+						tos.lives--;
+						tos.setHP(tos.starting_hp);
+						// continue;
+					} else if (tos.hpCheck()) {
+						g.state = GAMEOVER;
+						break;
+					}
+				}
+
+				if (bomb.is_exploding &&
+					bomb.collision(spear[i])) {
+					// cerr << "bomb & spear collision" << endl;
+					spear[i].hp = 0;	// wipe out all health
+					tos.score += spear[i].point;
+					spear[i]=spear[--g.n_Spear];
+					blocky->reset();
+				}
+			}
+
 
 			// cerr << donut.hp << endl;
 			
@@ -1615,11 +1681,11 @@ void physics()
 			g.BreadCD=30;
 			float alp=(((float)rand()) / (float)RAND_MAX);
 			int breadrand = (int)rand()%g.levelchance;
-			if(breadrand !=0 && (int)rand()%3 != 0)
+			if (breadrand !=0 && (int)rand()%3 != 0)
 					makeBread(g.xres,alp*g.yres,0.0,1,1);
 			else
 					makeBread(g.xres,alp*g.yres,0.0,4,1);
-			if(breadrand==0) makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1);
+			if (breadrand==0) makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1);
 
 			breadrand = (int)rand()%100;
 			if (breadrand == 0) {
@@ -1636,9 +1702,9 @@ void physics()
 			// testing to see if this fixes crash
 				if (bul[i].screenOut()) bul[i] = bul[--g.n_Bullet];
 				bul[i].moveBullet();
-				if(g.donut_active){
+				if (g.donut_active) {
 					for (int i = 0; i < g.n_laser; i++) {
-						if(d_laser[i].collision(bul[i])) {
+						if (d_laser[i].collision(bul[i])) {
 							bul[i] = bul[--g.n_Bullet];
 						}
 					}
@@ -1657,64 +1723,63 @@ void physics()
 			}
 			// check if collision with toaster
 			if (bread[i].collision(tos)) {
-					if (bread[i].item_type == 11 || 
-							bread[i].item_type == 13 || 
-							bread[i].item_type == 14) {
-						bread[i].hpDamage(tos);
-						tos.hpDamage(bread[i]);
-							
-						// D.T Reset HP and decrease lives if toaster still has lives left
-						if(tos.hpCheck() && (tos.lives > 1)) {
-							cerr << "should be dead from forky" << endl;
-							tos.lives--;
-							tos.setHP(tos.starting_hp);
-							// continue;
-						} else if(tos.hpCheck()) {
-							g.state = GAMEOVER;
-							break;
-						}
+				if (bread[i].item_type == 11 || 
+						bread[i].item_type == 13 || 
+						bread[i].item_type == 14) {
+					bread[i].hpDamage(tos);
+					tos.hpDamage(bread[i]);
 						
-						if(bread[i].hpCheck()) {
-							bread[i] = bread[--g.n_Bread];
-
-							stats.UpdateKills();
-							continue;
-						}
+					// D.T Reset HP and decrease lives if toaster still has lives left
+					if(tos.hpCheck() && (tos.lives > 1)) {
+						cerr << "should be dead from forky" << endl;
+						tos.lives--;
+						tos.setHP(tos.starting_hp);
+						// continue;
+					} else if(tos.hpCheck()) {
+						g.state = GAMEOVER;
+						break;
 					}
-					// powerup handling
-					if (bread[i].item_type == 12) {	// gun level up
-						if (tos.bullet_type_prime != 4	&&	tos.bullet_type_prime != 8) tos.bullet_type_prime++;
+					
+					if(bread[i].hpCheck()) {
 						bread[i] = bread[--g.n_Bread];
-
-						stats.powerUpsGained++;
-						continue;
-					} else if (bread[i].item_type == 15) {	// half health potion
-						tos.energy = tos.max_energy;
-						bread[i] = bread[--g.n_Bread];
-
-						stats.powerUpsGained++;
-						continue;
-					} else if (bread[i].item_type == 18) { // full health potion
-						tos.hp = tos.starting_hp;
-						bread[i] = bread[--g.n_Bread];
-
-						stats.powerUpsGained++;
-						continue;
-					} else if (bread[i].item_type == 17) { // extra life
-						tos.lives = (tos.lives < 3) ? tos.lives + 1 : 3;
-						bread[i] = bread[--g.n_Bread];
-						// cerr << "added 1 life" << endl;
-						// cerr << "item_type: " << bread[i].item_type << endl;
-						// cerr << bread[i].getInfo();
-						// cerr << "rgb: " 
-						// 		<< (int)bread[i].getColor()[0] << ", "
-						// 		<< (int)bread[i].getColor()[1] << ", "
-						// 		<< (int)bread[i].getColor()[2] << endl;
-
-						stats.powerUpsGained++;
+						stats.UpdateKills();
 						continue;
 					}
-					break;
+				}
+				// powerup handling
+				if (bread[i].item_type == 12) {	// gun level up
+					if (tos.bullet_type_prime != 4	&&	
+							tos.bullet_type_prime != 8) 
+							tos.bullet_type_prime++;
+					bread[i] = bread[--g.n_Bread];
+					stats.powerUpsGained++;
+					continue;
+				// half health potion
+				} else if (bread[i].item_type == 15) {	
+					tos.energy = tos.max_energy;
+					bread[i] = bread[--g.n_Bread];
+					stats.powerUpsGained++;
+					continue;
+				// full health potion
+				} else if (bread[i].item_type == 18) { 
+					tos.hp = tos.starting_hp;
+					bread[i] = bread[--g.n_Bread];
+					stats.powerUpsGained++;
+					continue;
+				} else if (bread[i].item_type == 17) { // extra life
+					tos.lives = (tos.lives < 3) ? tos.lives + 1 : 3;
+					bread[i] = bread[--g.n_Bread];
+					// cerr << "added 1 life" << endl;
+					// cerr << "item_type: " << bread[i].item_type << endl;
+					// cerr << bread[i].getInfo();
+					// cerr << "rgb: " 
+					// 		<< (int)bread[i].getColor()[0] << ", "
+					// 		<< (int)bread[i].getColor()[1] << ", "
+					// 		<< (int)bread[i].getColor()[2] << endl;
+					stats.powerUpsGained++;
+					continue;
+				}
+				break;
 			}
 			// ckeak if collision with bullet
 			for (int j=0; j < g.n_Bullet; j++) {
@@ -1740,34 +1805,35 @@ void physics()
 				stats.UpdateKills();
 			}
 			if(!bread[i].trace)
-					bread[i].moveBread();
+				bread[i].moveBread();
 			if(tos.laserCollision(bread[i])&& !bread[i].hpCheck()) {
-					if((bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w) < distanceBread) {
-							distanceBread = bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w;
-							whichBread = i;
-							entity_or_tos = false;
-					}
+				if((bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w) < 
+						distanceBread) {
+					distanceBread = bread[i].pos[0] - tos.pos[0] - bread[i].w - tos.w;
+					whichBread = i;
+					entity_or_tos = false;
+				}
 			}
 		// time stuff/ change when timer finish
 		// for bullet
 		}
 		tos.setDistance(distanceBread);
-		if(tos.laserOn)  {
+		if (tos.laserOn)  {
 			if (whichBread == -2) {
-					tos.laserDamage(*blocky);
-					if(blocky->hpCheck()) {
-						tos.score += blocky->point;
-						blocky->reset();
-					}
-					cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
+				tos.laserDamage(*blocky);
+				if (blocky->hpCheck()) {
+					tos.score += blocky->point;
+					blocky->reset();
+				}
+				cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
 			} 
 			else if (whichBread != -1 && entity_or_tos) {
-					tos.laserDamage(entity[whichBread]);
-        			cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
+				tos.laserDamage(entity[whichBread]);
+        		cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
 			}
 			else if (whichBread != -1 && !entity_or_tos) {
-					tos.laserDamage(bread[whichBread]);
-        			cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
+				tos.laserDamage(bread[whichBread]);
+        		cerr << "distanceBread: " << distanceBread << " whichBread " << whichBread << endl;
 			}
 
 		}
@@ -1920,7 +1986,7 @@ void render()
 			stats.shots++;
 		}
 		for (int i=0; i < g.n_Bread; i++) {
-			if(!bread[i].trace)
+			if (!bread[i].trace)
 				bread[i].draw();
 			else
 				bread[i].draw(tos);
@@ -1968,17 +2034,17 @@ void render()
 		if (g.state == PAUSE) {
 			pause_menu.draw();
 		}
-		if(g.huaiyu_active == true &&
+		if (g.huaiyu_active == true &&
 			(g.state == GAME || g.state == PAUSE)) {
 				for (int i = 0; i < g.n_Spear; i++) {
-					if(!spear[i].trace)
+					if (!spear[i].trace)
 						spear[i].draw();
 					else
 						spear[i].draw(tos);
 				}
 		}
-		// if(g.substate == DTORRES) {
-		if(g.dtorres_active == true &&
+		// if (g.substate == DTORRES) {
+		if (g.dtorres_active == true &&
 		   (g.state == GAME || g.state == PAUSE)) {
 
 			if (pfreeze_block == NULL) {
@@ -1994,6 +2060,7 @@ void render()
 					pfreeze_block->setPos(pfreeze_block->w + (rand() % (int)(g.xres - pfreeze_block->w)), 
 										  (pfreeze_block->h + (info_board_1.h * 2)) + (rand() % (int)(g.yres - pfreeze_block->h)), 0);
 					pfreeze_block->position_set = true;
+					pfreeze_block->setFollowTimer(3);
 				} 
 				catch (bad_alloc) {
 					cerr << "Freeze Block Bad Allocation" << endl;
@@ -2004,44 +2071,43 @@ void render()
 
 			// Follow the item passed into followItem() 
 			// Freeze block could be set to follow any Item object
-			if(pfreeze_block->position_set && tos.disable_keys == false) {	
-				pfreeze_block->followItem(tos);
+			if (pfreeze_block->position_set && tos.disable_keys == false) {
+				
+				(!pfreeze_block->pFollowTimer->isDone()) ? pfreeze_block->followItem(tos) : pfreeze_block->checkBounce();
 				pfreeze_block->melt(0.25);
 
 				// Check for collision with bullets and reduce velocity
 				for (int j=0; j < g.n_Bullet; j++) {
 					if (bul[j].collision(*pfreeze_block)) {
-						pfreeze_block->reduceVelocity(0.002);
-						
+						pfreeze_block->reduceVelocity(freeze_block_velocity_reduction_rate);
 						stats.shotsHit++;
 					}
 				}
-				
 				pfreeze_block->draw();
 			}
 
 			// Freeze the toster as soon as collision is detected and freeze for 
 			// pre-determined amount of seconds
-			if(pfreeze_block->collision(tos) && !tos.disable_keys) {
+			if (pfreeze_block->collision(tos) && !tos.disable_keys) {
 				tos.disable_keys = true;
 				pfreeze_block->position_set = false;
 				pfreeze_block->setFreezeTimer(2);
 			}
 
 			// Unfreeze the toaster after timer is done or freeze block melted away
-			if(tos.disable_keys && pfreeze_block->ptimer->isDone() 
+			if (tos.disable_keys && pfreeze_block->pFreezeTimer->isDone() 
 			   || pfreeze_block -> h <= 0
 			   || pfreeze_block -> w <= 0 ) {
 
-				delete pfreeze_block->ptimer;
-				pfreeze_block->ptimer = NULL;
+				delete pfreeze_block->pFreezeTimer;
+				pfreeze_block->pFreezeTimer = NULL;
 				delete pfreeze_block;
 				pfreeze_block = NULL;
 				tos.disable_keys = false;
 			}
 		}
 //================================Boss===================================
-		if(g.donut_active == true &&
+		if (g.donut_active == true &&
 			(g.state == GAME || g.state == PAUSE)) {
 				donut.draw();
 				donut_health.draw();
@@ -2052,8 +2118,12 @@ void render()
 				for (int i=0; i < g.n_laser; i++) {
 					d_laser[i].draw();
 				}
-		
-		
+				for (int i = 0; i < g.n_Spear; i++) {
+					if (!spear[i].trace)
+						spear[i].draw();
+					else
+						spear[i].draw(tos);
+				}	
 		}
 
 		bomb.draw();
@@ -2253,7 +2323,7 @@ void render()
 															"STATE - High Scores");
 					ggprint8b(&key_msg[0], 0, 0x00ffff00,
 												"<ESC> - Back to Main Menu");
-					// if(record.highscore == 0) {
+					// if (record.highscore == 0) {
 					// 		ggprint16(&hscore_msg, 0, 0x00DC143C,
 					// 			 						"No Record Yet!!");
 					// } else {
