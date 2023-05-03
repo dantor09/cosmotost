@@ -2052,7 +2052,7 @@ void render()
 			// Freeze block could be set to follow any Item object
 			if (pfreeze_block->position_set && tos.disable_keys == false) {
 				
-				(!pfreeze_block->pFollowTimer->isDone()) ? pfreeze_block->followItem(tos) : pfreeze_block->followItem(bread[0]);
+				(!pfreeze_block->pFollowTimer->isDone()) ? pfreeze_block->followItem(tos) : pfreeze_block->checkBounce();
 				pfreeze_block->melt(0.25);
 
 				// Check for collision with bullets and reduce velocity
