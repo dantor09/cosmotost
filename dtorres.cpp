@@ -36,7 +36,8 @@ float FreezeBlock::getVelocityConsideringArea(float area)
 FreezeBlock::FreezeBlock() 
 {
 	position_set = false;
-	ptimer = NULL;
+	pFreezeTimer = NULL;
+	pFollowTimer = NULL;
 	min_block_dimension = 1;
 	max_block_dimension = 30;
 	max_velocity = 1.50;//1.25;
@@ -93,7 +94,12 @@ void FreezeBlock::reduceVelocity(float velocity_reduction_rate)
 
 void FreezeBlock::setFreezeTimer(int seconds) 
 {
-	ptimer = new Timer(seconds);
+	pFreezeTimer = new Timer(seconds);
+}
+
+void FreezeBlock::setFollowTimer(int seconds)
+{
+	pFollowTimer = new Timer(seconds);
 }
 
 int FreezeBlock::randomDimension()
