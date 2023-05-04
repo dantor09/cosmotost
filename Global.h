@@ -89,7 +89,7 @@ void gameReset();
 
 
 inline Global g;
-inline float freeze_block_velocity_reduction_rate = 0.5f;
+inline float freeze_block_velocity_reduction_rate = 0.001f;
 inline std::string mm_text[] = {"Start Game",
                                 "Debug Mode",
                                 "High Scores",

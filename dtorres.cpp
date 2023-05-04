@@ -142,6 +142,19 @@ void FreezeBlock::followItem(Item & object)
 	pos[1] += vel[1];
 }
 
+void FreezeBlock::reduceFreezeArea(float area_reduction_rate)
+{
+	if(area_reduction_rate < 0) {
+		area_reduction_rate *= -1; // absolute value of reduction_rate
+	}
+
+	
+	if((w > 1) && (h > 1)) {
+		w -= area_reduction_rate;
+		h -= area_reduction_rate;
+	}
+}
+
 void FreezeBlock::checkBounce()
 {	
 	// Check if freeze block is going out of bounds
