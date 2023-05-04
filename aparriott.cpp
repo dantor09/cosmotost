@@ -66,6 +66,7 @@ void EntitySpawn::makeEntity(float pos_x, float pos_y, float init_vel_x,
         entity[e.num_ent].curve[0] = curve_x;
         entity[e.num_ent].curve[1] = curve_y;
 		entity[e.num_ent].setHP(2);
+        
 		e.num_ent++;
 	}	
 }
@@ -146,6 +147,7 @@ void Entity::entityPhysics() {
 // ENTITY SPAWN
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // STATISTICS
 Statistics::Statistics() {
@@ -169,23 +171,23 @@ Statistics::Statistics() {
 
 void Statistics::DisplayStats() {
     stats.shotsMissed = stats.shots - stats.shotsHit;
-    stats.accuracy = stats.shots;
-
+    stats.accuracy = float(stats.shotsHit) / float(stats.shots) * 100;
 
     cerr << "\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n";
 	cerr << "= STATS =" << endl;
 	cerr << "Accuracy: " << stats.accuracy << endl;
+        cerr << "  Fired: " << stats.shots << endl;
     	cerr << "  Hit: " << stats.shotsHit << endl;
 	    cerr << "  Missed: " << stats.shotsMissed << endl;
-	cerr << "Time Survived: " << stats.timeSurvived << endl;
 	cerr << "Beam Kills: " << stats.beamKills << endl;
 	cerr << "Bombs Thrown: " << stats.bombsThrown << endl;
     	cerr << "  Bomb Kills: " << stats.bombKills << endl;
 	cerr << "Damage Taken: " << stats.damageTaken << endl;
+	cerr << "Dashes: " << stats.dashes << endl;
 	cerr << "Kills: " << stats.kills << endl;
 	  cerr << "  Blocky Collaterals: " << stats.blockyCollateral << endl;
-	cerr << "Dashes: " << stats.dashes << endl;
 	cerr << "Power Ups: " << stats.powerUpsGained << endl;
+	cerr << "Time Survived: " << stats.timeSurvived << endl;
 	cerr << "= STATS =" << endl;
     cerr << "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n\n";
 }
@@ -193,7 +195,34 @@ void Statistics::DisplayStats() {
 void Statistics::UpdateKills() {
 	stats.kills++;
 }
+void Statistics::UpdateShots(int numBullets) {
+    if(numBullets < 5) {
+		stats.shots += numBullets;
+    } else {
+        stats.shots++;
+    }
+}
+
 // STATISTICS
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
+// my attempt at making the textures code into a function
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+// TEXTURES
+
+/*
+TextureLoad::TextureLoad(int width, int height, ) {
+    int w = background.width;
+    int h = background.height;
+	glGenTextures(1, &g.bkg_texture);
+    glBindTexture(GL_TEXTURE_2D, g.bkg_texture);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
+	    GL_RGB, GL_UNSIGNED_BYTE, background.data);
+}
+*/
+
+// TEXTURES
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 

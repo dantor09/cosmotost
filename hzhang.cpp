@@ -17,6 +17,8 @@ using namespace std;
 // x,y,z are pos[]. bullet_type is connect with bullet_type_prime
 void makeBullet(float x, float y,float z, int bullet_type) 
 {
+	stats.UpdateShots(bullet_type);
+
 	switch(bullet_type){
 	case 1:
 		if (g.n_Bullet < MAX_bullet){

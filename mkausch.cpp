@@ -1041,6 +1041,7 @@ void Entity::setDamage(float x)
 void Entity::hpDamage(Item & a) 
 {
     hp = hp - a.damage;
+    stats.damageTaken += a.damage;
 }
 
 bool Entity::hpCheck()
@@ -1052,6 +1053,8 @@ bool Entity::hpCheck()
 void Item::hpDamage(Entity & e)
 {
     hp = hp - e.damage;
+    stats.damageTaken += e.damage;
+
 }
 
 Blocky::Blocky(char type, bool g_act)
@@ -1534,6 +1537,7 @@ void Item::hpDamage(Blocky & bf)
         } else {
             hp = hp - bf.damage;
         }
+            stats.damageTaken += bf.damage;
         // cerr << "blocky hit something" << endl;
     }
 }

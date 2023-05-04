@@ -90,12 +90,28 @@ class Statistics {
 
 	void DisplayStats();
 	void UpdateKills();
+	void UpdateShots(int numBullets);
 
 };
 // STATISTICS
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+// TEXTURES
+class TextureLoad {
+	public:
+	int a;
+
+	TextureLoad();
+};
+// TEXTURES
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+
 inline Entity entity[MAX_ENTITIES];
 inline EntitySpawn e;
 
 inline Statistics stats;
+
+inline TextureLoad texture;
