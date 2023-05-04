@@ -2448,28 +2448,35 @@ void Bomb::draw()
             glPopMatrix();
         */
     } else if (is_exploding) {
-        float angle1 = (2 * PI * 1)/100;
-        float angle2 = (2 * PI * 2)/100;
+        float angle1 = (2 * PI * 0)/100;
+        float angle2 = (2 * PI * 1)/100;
         float vert1[2] = {cos(angle1) * curr_radius, sin(angle1) * curr_radius};
         float vert2[2] = {cos(angle2) * curr_radius, sin(angle2) * curr_radius};
         float center[3] = {pos[0], pos[1], pos[2]};
+        float orig_vert[2] = {vert1[0], vert1[1]};
+
 
         // cerr << "center: " << pos[0] << "," << pos[1] << "," << pos[2] << endl; 
 
         glPushMatrix();
+        // glEnable(GL_ALPHA_TEST);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        // glAlphaFunc(GL_GREATER, 0.0f);
         glTranslatef(center[0], center[1], center[2]);
         glBegin(GL_TRIANGLE_FAN);
-        glColor3ub(204, 204, 0);
+        glColor4ub(204, 204, 0, 255);
         glVertex2f(0,0);
-        for (int i = 0; i < 103; i++) {
-            glColor3ubv(color);
+        for (int i = 1; i < 102; i++) {
+            // glColor3ubv(color);
+            glColor4ub(color[0], color[1], color[2], 100);
             glVertex2f(vert1[0], vert1[1]);
             // cerr << "vert1: " << vert1[0] << "," << vert1[1] << endl; 
 
             glVertex2f(vert2[0], vert2[1]);
             // cerr << "vert2: " << vert2[0] << "," << vert2[1] << endl; 
 
-            glColor3ub(0, 0, 0);
+            glColor4ub(204, 204, 0, 255);
             glVertex2f(0, 0);
 
             // move vert2 to vert1 vertices
@@ -2477,11 +2484,17 @@ void Bomb::draw()
             vert1[1] = vert2[1];
 
             // calc new vert for vert2
-            angle2 = (2 * PI * i)/100;
-            vert2[0] = cos(angle2) * curr_radius;
-            vert2[1] = sin(angle2) * curr_radius;
+            angle1 = (2 * PI * i)/100;
+            vert2[0] = cos(angle1) * curr_radius;
+            vert2[1] = sin(angle1) * curr_radius;
+            if (i == 101) {
+                vert2[0] = orig_vert[0];
+                vert2[1] = orig_vert[1];
+            }
         }
         glEnd();
+        // glDisable(GL_ALPHA_TEST);
+        glDisable(GL_BLEND);
         glPopMatrix();
     }
 

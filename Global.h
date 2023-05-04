@@ -128,7 +128,7 @@ inline Image whomp_img("textures/whomp.png");
 inline Image ptm_img("textures/ptm.png");
 inline Image bread_img("textures/bread2.png");
 inline Image electbul_img("textures/electricbullet.png");
-inline Image fork_img("textures/fork.png");
+inline Image fork_img("textures/fork-reverse.png");
 inline Image bread2_img("textures/bread.png");
 inline Image energy_img("textures/lightning.png");
 inline Image powerup_img("textures/jelly.png");
