@@ -12,6 +12,7 @@ Global::Global()
 	levelchance = 15;
 	sfx_vol = 1.0f;
 	m_vol = 1.0f;
+	fstate = REGULAR;
 }
 
 

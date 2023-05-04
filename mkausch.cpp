@@ -2394,7 +2394,12 @@ Bomb::Bomb()
     num_bombs = 99;
     w = 6;
     h = 6;
+    // button text
+    // message.bot = pos[1];
+    // message.left = pos[0];
+    message.center = 1;
     tex = &g.bomb_texture;
+    text_accel = -1;
 }
 
 Bomb::~Bomb()
@@ -2408,6 +2413,8 @@ Bomb::~Bomb()
 
 void Bomb::draw()
 {
+    
+
     if (is_thrown && !is_exploding) {
 
         int size = 50;
@@ -2498,6 +2505,17 @@ void Bomb::draw()
         glPopMatrix();
     }
 
+    if (is_thrown && show_message) {
+        message.left = pos[0];
+        ggprint16(&message, 0, 0x00ffffff, "LAUNCHING BOMB!!!");
+        if (g.state != PAUSE) {
+            if (text_vel > -16) {
+                text_vel += text_accel;
+                message.bot += text_vel;
+            }
+        }
+    }
+
 }
 
 void Bomb::setColor(unsigned char * col, int r, int g, int b)
@@ -2505,6 +2523,13 @@ void Bomb::setColor(unsigned char * col, int r, int g, int b)
     col[0] = (char)r;
     col[1] = (char)g;
     col[2] = (char)b;
+}
+
+void Bomb::toggleDisplayMessage()
+{
+    if (!show_message) {
+        show_message = true;
+    }
 }
 
 void Bomb::setPos(float x, float y, float z)
@@ -2526,6 +2551,8 @@ void Bomb::explode()
         is_exploding = false;
         // cerr << "is_exploding to false" << endl;
         is_thrown = false;
+        show_message = false;
+        // message.bot = (g.yres*3)/4;
         curr_radius = start_radius;
 
     } else {
@@ -2555,6 +2582,9 @@ void Bomb::launch()
         is_thrown = true;
         tos.energy -= 20;
         setPos(tos.pos[0],tos.pos[1],tos.pos[2]);
+        message.left = pos[0];
+        message.bot = pos[1] - 10;
+        text_vel = 24;
         bomb_timer = new Timer(0.7);
 #ifdef USE_OPENAL_SOUND
         sounds.bombExplosion();
@@ -2676,20 +2706,10 @@ bool Bomb::collision(Entity & ent)
 
 */
 
-    // double xvec[4] = { itm.pos[0] - (itm.w/2.0f) - pos[0],
-    //                     itm.pos[0] - (itm.w/2.0f) - pos[0],
-    //                     (itm.pos[0] + (itm.w/2.0f)) - pos[0],
-    //                     (itm.pos[0] + (itm.w/2.0f)) - pos[0] }
-
     double xvec[4] = { ent.pos[0] - (ent.dim[0]/2.0f) - pos[0],
                         xvec[0],
                         xvec[0]+ent.dim[0],
                         xvec[2]};
-
-    // double yvec[4] = { itm.pos[1] + (itm.h/2.0f) - pos[1],
-    //                     itm.pos[1] - (itm.h/2.0f) - pos[1],
-    //                     (itm.pos[1] - (itm.h/2.0f)) - pos[1],
-    //                     (itm.pos[1] + (itm.h/2.0f)) - pos[1] };
 
     double yvec[4] = { ent.pos[1] + (ent.dim[1]/2.0f) - pos[1],
                     yvec[0] - ent.dim[1],
@@ -2706,3 +2726,56 @@ bool Bomb::collision(Entity & ent)
 
     return false;
 }
+
+// TODO
+FeatureModeBlock::FeatureModeBlock()
+{
+    tex = nullptr;
+    setPos(g.xres*0.75, (g.yres-info_board_1.pos[1])*0.25+75, 0);
+    setDim(200, 75);
+}
+void FeatureModeBlock::setTexture()
+{
+    if (g.fstate == REGULAR) {
+        tex = nullptr;
+    } else if (g.fstate == MKAUSCH) {
+        tex = &g.mkfm_texture;
+    } else if (g.fstate == DTORRES) {
+        tex = &g.dtfm_texture;
+    } else if (g.fstate == HZHANG) {
+        tex = &g.hzfm_texture;
+    } else if (g.fstate == APARRIOTT) {
+        tex = &g.apfm_texture;
+    }
+}
+
+void FeatureModeBlock::draw()
+{
+    if (tex != nullptr) {
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D, *tex);
+        // glColor3ub(color[0], color[1], color[2]);
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.0f);
+        glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+        glTranslatef(pos[0], pos[1], pos[2]);
+        glBegin(GL_QUADS);
+
+            glTexCoord2f(0.0f, 1.0f);
+            glVertex2f(-w, -h);
+
+            glTexCoord2f(0.0f, 0.0f);
+            glVertex2f(-w,  h);
+            
+            glTexCoord2f(1.0f, 0.0f);
+            glVertex2f( w,  h);
+            
+            glTexCoord2f(1.0f, 1.0f);
+            glVertex2f( w, -h);
+        glEnd();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_ALPHA_TEST);
+        glPopMatrix();
+    }
+}
+

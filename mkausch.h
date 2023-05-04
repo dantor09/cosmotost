@@ -300,6 +300,8 @@ public:
     int num_bombs;
     // bool is_gone;
     GLuint * tex;
+    bool show_message;
+    Rect message;
     
 
     // constructors
@@ -319,6 +321,9 @@ public:
     bool hitboxCollision(Entity & ent);
     bool collision(Item & itm);
     bool collision(Entity & ent);
+    void toggleDisplayMessage();
+    int text_vel;
+    int text_accel;
     // bool onScreen();
 };
 
@@ -416,3 +421,12 @@ public:           // ______________________________
     // void move(float y
 };
 
+class FeatureModeBlock : public Box
+{
+private:
+    GLuint * tex;
+public:
+    FeatureModeBlock();
+    void draw();
+    void setTexture(); 
+};

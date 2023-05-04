@@ -370,8 +370,6 @@ int X11_wrapper::check_mouse(XEvent *e)
 
 						return 0;
 					}
-
-					
 				}
 			}
 
@@ -440,6 +438,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 				if (selection && (pause_menu.words[selection->id] == "Main Menu")) {
 					pause_menu.setOrigColor();
 					g.state = MAINMENU;
+					g.substate = NONE;
 					g.gameTimer.pause();
 					selection = nullptr;
 
@@ -703,11 +702,15 @@ int X11_wrapper::check_keys(XEvent *e)
 					if (g.entity_active == false) {
 						// g.substate = ENTITY;
 						g.entity_active = true;
+						g.fstate = APARRIOTT;
+						fmtext.setTexture();
 						cerr << "g.entity_active set to true\n";
 					// } else if (g.substate == ENTITY) {
 					} else if (g.entity_active == true) {
 						// g.substate = NONE;
 						g.entity_active = false;
+						g.fstate = REGULAR;
+						fmtext.setTexture();
 						cerr << "g.entity_active set to false\n";
 					}
 					return 0;
@@ -715,11 +718,15 @@ int X11_wrapper::check_keys(XEvent *e)
 					if (g.dtorres_active == false) {
 						// g.substate = DTORRES;
 						g.dtorres_active = true;
+						g.fstate = DTORRES;
+						fmtext.setTexture();
 						cerr << "g.dtorres_active set to true\n";
 					// } else if (g.substate == DTORRES) {
 					} else if (g.dtorres_active == true) {
 						// g.substate = NONE;
 						g.dtorres_active = false;
+						g.fstate = REGULAR;
+						fmtext.setTexture();
 						cerr << "g.dtorres_active set to false\n";
 					}
 					return 0;
@@ -728,11 +735,15 @@ int X11_wrapper::check_keys(XEvent *e)
 					if (g.huaiyu_active == false) {
 						// g.substate = HUAIYU;
 						g.huaiyu_active = true;
+						g.fstate = HZHANG;
+						fmtext.setTexture();
 						cerr << "g.huaiyu_active set to true\n";
 					// } else if (g.substate == HUAIYU) {
 					} else if (g.huaiyu_active == true) {
 						g.huaiyu_active = false;
 						// g.substate = NONE;
+						g.fstate = REGULAR;
+						fmtext.setTexture();
 						cerr << "g.huaiyu_active set to false\n";
 					}
 					return 0;
@@ -741,6 +752,8 @@ int X11_wrapper::check_keys(XEvent *e)
 					if (g.mike_active == false) {
 						// g.substate = MIKE;
 						g.mike_active = true;
+						g.fstate = MKAUSCH;
+						fmtext.setTexture();
 						// blocky = (blocky == &vblocky) ? &hblocky : &vblocky;
 						// blocky_health = (blocky_health == &vblocky_health) ? 
 						// 									&hblocky_health : &hblocky_health;
@@ -758,9 +771,13 @@ int X11_wrapper::check_keys(XEvent *e)
 							blocky_health = &vblocky_health;
 						}
 						cerr << "g.mike_active set to true\n";
+						cerr << boolalpha << "g.fstate is mkauscH: " 
+								<< (g.fstate == MKAUSCH) << endl;
 					// } else if (g.substate == MIKE) {
 					} else if (g.mike_active == true) {
 						g.mike_active = false;
+						g.fstate = REGULAR;
+						fmtext.setTexture();
 						blocky->gamereset();
 						// g.substate = NONE;
 						cerr << "g.mike_active set to false\n";
@@ -770,15 +787,22 @@ int X11_wrapper::check_keys(XEvent *e)
 					// if (g.substate == NONE) {
 					if (g.donut_active == false) {
 						g.donut_active = true;
+						g.fstate = HZHANG;
+						fmtext.setTexture();
 						cerr << "g.donut_active set to true\n";
 					} else if (g.donut_active == true) {
 						g.donut_active = false;
+						g.fstate = HZHANG;
+						fmtext.setTexture();
 						cerr << "g.donut_active set to false\n";
 					}
 					return 0;
 
 				case XK_q:
 					bomb.launch();
+					if (g.fstate == MKAUSCH) {
+						bomb.toggleDisplayMessage();
+					}
 					return 0;
 
 				case XK_Escape:	// pause the game
@@ -1207,7 +1231,58 @@ void init_opengl(void)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
 								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
 	free(silhouetteData);
+	
+	// GLuint mkfm_texture; mkfm_img
+	w = mkfm_img.width;
+    h = mkfm_img.height;
+	glGenTextures(1, &g.mkfm_texture);
+	glBindTexture(GL_TEXTURE_2D, g.mkfm_texture);
 
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&mkfm_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint dtfm_texture; dtfm_img
+	w = dtfm_img.width;
+    h = dtfm_img.height;
+	glGenTextures(1, &g.dtfm_texture);
+	glBindTexture(GL_TEXTURE_2D, g.dtfm_texture);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&dtfm_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint hzfm_texture; hzfm_img
+	w = hzfm_img.width;
+    h = hzfm_img.height;
+	glGenTextures(1, &g.hzfm_texture);
+	glBindTexture(GL_TEXTURE_2D, g.hzfm_texture);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&hzfm_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
+
+	// GLuint apfm_texture; apfm_img
+	w = apfm_img.width;
+    h = apfm_img.height;
+	glGenTextures(1, &g.apfm_texture);
+	glBindTexture(GL_TEXTURE_2D, g.apfm_texture);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	silhouetteData = buildAlphaData(&apfm_img);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0,
+								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
+	free(silhouetteData);
 
 	cerr << "finished initializing opengl" << endl;
 }
@@ -1844,11 +1919,29 @@ void render()
 
 
 	if (g.state == SPLASH) {
-		Box splash_img;
-			splash_img.setColor(61, 90, 115);
-			glColor3ubv(splash_img.color);
-		splash_img.setDim(500.0f, 150.0f);
-		splash_img.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+		Box splash;
+			splash.setColor(61, 90, 115);
+			glColor3ubv(splash.color);
+		splash.setDim(550.0f, 150.0f);
+		splash.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+
+		Box toast_pic;
+		toast_pic.setColor(61, 90, 115);
+			glColor3ubv(toast_pic.color);
+		toast_pic.setDim(100.0f, 100.0f);
+		toast_pic.setPos(splash.pos[0], g.yres * (2.0/3.0f), 0);
+
+		Box ptm_pic;
+		ptm_pic.setColor(61, 90, 115);
+			glColor3ubv(ptm_pic.color);
+		ptm_pic.setDim(550.0f, 150.0f);
+		ptm_pic.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+
+		Box bread_pic;
+		bread_pic.setColor(61, 90, 115);
+			glColor3ubv(bread_pic.color);
+		bread_pic.setDim(550.0f, 150.0f);
+		bread_pic.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
 
 
 		/*******************   SPLASH IMAGE PLACEHOLDER   *******************/
@@ -1860,20 +1953,20 @@ void render()
 		glEnable(GL_ALPHA_TEST);
 		glAlphaFunc(GL_GREATER, 0.0f);
 		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
-		glTranslatef(splash_img.pos[0], splash_img.pos[1], splash_img.pos[2]);
+		glTranslatef(splash.pos[0], splash.pos[1], splash.pos[2]);
 		glBegin(GL_QUADS);
 
 			glTexCoord2f(0.0f, 1.0f);
-			glVertex2f(-splash_img.w, -splash_img.h);
+			glVertex2f(-splash.w, -splash.h);
 
 			glTexCoord2f(0.0f, 0.0f);
-			glVertex2f(-splash_img.w,  splash_img.h);
+			glVertex2f(-splash.w,  splash.h);
 			
 			glTexCoord2f(1.0f, 0.0f);
-			glVertex2f( splash_img.w,  splash_img.h);
+			glVertex2f( splash.w,  splash.h);
 			
 			glTexCoord2f(1.0f, 1.0f);
-			glVertex2f( splash_img.w, -splash_img.h);
+			glVertex2f( splash.w, -splash.h);
 		glEnd();
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glDisable(GL_ALPHA_TEST);
@@ -1960,7 +2053,6 @@ void render()
 		// draw Toaster bullet and bread
 		tos.tdraw();
 		tos_health.draw();
-		// cerr << "gonna draw..." << endl;
 		tos_cd.draw();
 		for (int i=0; i < g.n_Bullet; i++) {
 				bul[i].draw();
@@ -2010,9 +2102,7 @@ void render()
 			blocky_health->draw();
 		}
 
-		if (g.state == PAUSE) {
-			pause_menu.draw();
-		}
+		
 		if (g.huaiyu_active == true &&
 			(g.state == GAME || g.state == PAUSE)) {
 				for (int i = 0; i < g.n_Spear; i++) {
@@ -2105,6 +2195,7 @@ void render()
 		}
 
 		bomb.draw();
+		
 
 
 	} else if (g.state == GAMEOVER && g.substate == NONE) {
@@ -2176,7 +2267,7 @@ void render()
 #ifdef USE_OPENAL_SOUND
 		Rect s_name;
 		s_name.bot = 20;
-		s_name.left = g.xres - 300;
+		s_name.left = g.xres - 330;
 		s_name.center = 0;
 
 #endif
@@ -2201,8 +2292,8 @@ void render()
 		debug.left = score.left-80;
 		debug.center = 0;
 
-		lvl.bot = debug.bot-20;
-		lvl.left = debug.left;
+		lvl.bot = info_board_1.pos[1];
+		lvl.left = debug.left/2.0f;
 		lvl.center = 0;
 
 
@@ -2211,12 +2302,12 @@ void render()
 			ggprint8b(&help_msg, 0, 0x00ffff00, "Press <F1> for help");
 			ggprint8b(&score, 0, 0x00DC143C, "Score : %i",tos.score);
 			ggprint8b(&g_time, 0, 0x00DC143C, "Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
-			ggprint8b(&lvl, 0, 0x00DC143C, "Level %i", g.level);
-			ggprint8b(&debug, 0, 0x00DC143C, "num_ent: %i",e.num_ent);	// debug output
+			ggprint16(&lvl, 0, 0x00FFFFFF, "Level %i", g.level);
+			// ggprint8b(&debug, 0, 0x00DC143C, "num_ent: %i",e.num_ent);	// debug output
 
 #ifdef USE_OPENAL_SOUND
 
-			if (g.state == GAME)
+			if (g.state == GAME && !sounds.getPause())
 				ggprint8b(&s_name, 0, 0x00DC143C, "Now Playing: %s",sounds.getSongName().c_str());
 			else
 				ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
@@ -2225,14 +2316,23 @@ void render()
 		}
 
 	} else if (g.show_help_menu == true) {
-		const unsigned int KEY_MESSAGES = 13;
-		Rect gamestate_msg, key_msg[KEY_MESSAGES], score, g_time, s_name, debug, lvl;
+		const unsigned int KEY_MESSAGES = 15;
+		Rect gamestate_msg, 
+			key_msg[KEY_MESSAGES], 
+			score, 
+			g_time, 
+			s_name, 
+			debug, 
+			lvl,
+			ftr_mode;
 
-		// ***********Locations of all the text rectangles******************
-		// 					Top Left side of the screen					//
+		
+		// ***********Locations of all the text rectangles***************
+		// 					Top Left side of the screen
 		gamestate_msg.bot = (g.yres - 20);				// 1st (top)
         gamestate_msg.left = 20;
         gamestate_msg.center = 0;
+
 
 		// everything's based on where the gamestate message is to
 		// easily line it all up
@@ -2243,33 +2343,31 @@ void render()
 		}
 
 
-		// 					Top Right side of the screen				//
-		score.bot = g.yres-20;
-		score.left = g.xres - 80;
+		// 					Bottom left of information board
+		score.bot = info_board_1.pos[1] + 15;
+		score.left = info_board_1.pos[0] - ((info_board_1.w)/2);
 		score.center = 0;
-
+		// 					Bottom left of information board
+		//					Time display is relative to the position of the score above
 		g_time.bot = score.bot-20;
 		g_time.left = score.left;
 		g_time.center = 0;
 
-		debug.bot = g_time.bot-20;
-		debug.left = g_time.left-80;
+		debug.bot = score.bot;
+		debug.left = score.left-80;
 		debug.center = 0;
 
-		lvl.bot = debug.bot-20;
-		lvl.left = debug.left;
+		lvl.bot = info_board_1.pos[1];
+		lvl.left = debug.left/2.0f;
 		lvl.center = 0;
+		
 
 		// bottom right of the screen
 #ifdef USE_OPENAL_SOUND
-			s_name.bot = 20;
-			s_name.left = g.xres - 300;
-			s_name.center = 0;
-
+		s_name.bot = 20;
+		s_name.left = g.xres - 330;
+		s_name.center = 0;
 #endif
-
-
-
 
 		// 					Write Messages Based On State					//
 		switch (g.state)
@@ -2318,40 +2416,40 @@ void render()
 				if (g.substate == NONE) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAME");
 
-					ggprint8b(&key_msg[8], 0, 0x00ffff00,
-										"<p> - Go To AParriott Feature Mode");
-					ggprint8b(&key_msg[9], 0, 0x00ffff00,
-										"<h> - Go To HZhang Feature Mode");
 					ggprint8b(&key_msg[10], 0, 0x00ffff00,
-										"<k> - Go To MKausch Feature Mode");
+										"<p> - Go To AParriott Feature Mode");
 					ggprint8b(&key_msg[11], 0, 0x00ffff00,
-										"<t> - Go To DTorres Feature Mode");
+										"<h> - Go To HZhang Feature Mode");
 					ggprint8b(&key_msg[12], 0, 0x00ffff00,
+										"<k> - Go To MKausch Feature Mode");
+					ggprint8b(&key_msg[13], 0, 0x00ffff00,
+										"<t> - Go To DTorres Feature Mode");
+					ggprint8b(&key_msg[14], 0, 0x00ffff00,
 										"<u> - Cycle Music");
 
 				// } else if (g.substate == ENTITY) {
 				} else if (g.entity_active == true) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - ENTITY - APARRIOTT FEATURE MODE");
-					ggprint8b(&key_msg[8], 0, 0x00ffff00,
+					ggprint8b(&key_msg[10], 0, 0x00ffff00,
 										"<p> - Go back to Game Mode");
 				// } else if (g.substate == DTORRES) {
 				} else if (g.dtorres_active == true) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - DTORRES - DTORRES FEATURE MODE");
-					ggprint8b(&key_msg[8], 0, 0x00ffff00,
+					ggprint8b(&key_msg[10], 0, 0x00ffff00,
 										"<t> - Go back to Game Mode");
 				// } else if (g.substate == HUAIYU) {
 				} else if (g.dtorres_active == true) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - HUAIYU - HZHANG FEATURE MODE");
-					ggprint8b(&key_msg[8], 0, 0x00ffff00,
+					ggprint8b(&key_msg[10], 0, 0x00ffff00,
 										"<h> - Go back to Game Mode");
 				// } else if (g.substate == MIKE) {
 				} else if (g.mike_active == true) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - MIKE - MKAUSCH FEATURE MODE");
-					ggprint8b(&key_msg[8], 0, 0x00ffff00,
+					ggprint8b(&key_msg[10], 0, 0x00ffff00,
 										"<k> - Go back to Game Mode");
 				}
 
@@ -2371,6 +2469,10 @@ void render()
 												"<spacebar> - Shoot");
 				ggprint8b(&key_msg[7], 0, 0x00ffff00,
 												"<j> - Dodge");
+				ggprint8b(&key_msg[8], 0, 0x00ffff00,
+												"<q> - Launch Bomb");
+				ggprint8b(&key_msg[9], 0, 0x00ffff00,
+												"<e> - Switch Weapon");
 
 
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
@@ -2384,6 +2486,7 @@ void render()
 					ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
 				}
 #endif
+				ggprint16(&lvl, 0, 0x00FFFFFF, "Level %i", g.level);
 				break;
 			case PAUSE:
 				// ggprint8b(&score, 100, 0x00DC143C, "Score");
@@ -2392,6 +2495,7 @@ void render()
 				ggprint8b(&key_msg[0], 0, 0x00ffff00, "<ESC> - Un-Pause Game");
 				ggprint8b(&g_time, 0, 0x00DC143C,
 											"Time : %d %s : %d %s",g.gameTimer.getTime('m')," m", g.gameTimer.getTime('s'), " s");
+				ggprint16(&lvl, 0, 0x00FFFFFF, "Level %i", g.level);
 #ifdef USE_OPENAL_SOUND
 				ggprint8b(&s_name, 0, 0x00DC143C, "Music Paused");
 #endif
@@ -2414,6 +2518,15 @@ void render()
 
 	}
 
-	
+	if (g.fstate != REGULAR) {
+		fmtext.draw();
+	}
+
+
+	if (g.state == PAUSE) {
+		pause_menu.draw();
+	}
+
+
 
 }

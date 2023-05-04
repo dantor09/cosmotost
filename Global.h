@@ -10,6 +10,7 @@
 //                  0       1       2       3       4
 enum Gamestate { SPLASH, MAINMENU, GAME, PAUSE, GAMEOVER };
 enum Substate { NONE, HIGH_SCORES, SETTINGS, DEBUG };
+enum FeatureState { REGULAR, DTORRES, HZHANG, MKAUSCH, APARRIOTT };
 enum Levels { LEVEL1=1, LEVEL2, LEVEL3, LEVEL4, LEVEL5, LEVEL6, LEVEL7, LEVEL8, LEVEL9 };
 
 // removing Substates ENTITY, DTORRES, HUAIYU, MIKE and made into bools
@@ -22,6 +23,7 @@ public:
 int xres, yres, yres_start;
 Gamestate state;
 Substate substate;
+FeatureState fstate;
 int n_Bullet;
 // how may bread(enamy) we have
 int n_Bread;
@@ -68,6 +70,10 @@ GLuint splash_silhouette;
 GLuint poptart_silhouette;
 GLuint donut_texture;
 GLuint mitt_silhouette;
+GLuint mkfm_texture;
+GLuint dtfm_texture;
+GLuint hzfm_texture;
+GLuint apfm_texture;
 
 Global();
 ~Global();
@@ -133,12 +139,17 @@ inline Image bread2_img("textures/bread.png");
 inline Image energy_img("textures/lightning.png");
 inline Image powerup_img("textures/jelly.png");
 inline Image blocky_img("textures/microwave.png");
-inline Image health_img("textures/oot_heart.png");
+inline Image health_img("textures/greenheart.png");
 inline Image lives_img("textures/toaster.png");
 inline Image splash_img("textures/splash.png");
 inline Image donut_img("textures/donut.png");
 inline Image poptart_img("textures/poptart2.png");
 inline Image mitt_img("textures/mitt.png");
+inline Image mkfm_img("textures/mkfm.png");
+inline Image dtfm_img("textures/dtfm.png");
+inline Image hzfm_img("textures/hzfm.png");
+inline Image apfm_img("textures/apfm.png");
+inline FeatureModeBlock fmtext;
 
 #ifdef USE_OPENAL_SOUND
 inline Sound sounds;
