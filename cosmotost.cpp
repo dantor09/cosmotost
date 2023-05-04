@@ -787,13 +787,13 @@ int X11_wrapper::check_keys(XEvent *e)
 					// if (g.substate == NONE) {
 					if (g.donut_active == false) {
 						g.donut_active = true;
-						g.fstate = HZHANG;
-						fmtext.setTexture();
+						// g.fstate = HZHANG;
+						// fmtext.setTexture();
 						cerr << "g.donut_active set to true\n";
 					} else if (g.donut_active == true) {
 						g.donut_active = false;
-						g.fstate = HZHANG;
-						fmtext.setTexture();
+						// g.fstate = HZHANG;
+						// fmtext.setTexture();
 						cerr << "g.donut_active set to false\n";
 					}
 					return 0;
@@ -1920,31 +1920,102 @@ void render()
 
 	if (g.state == SPLASH) {
 		Box splash;
-			splash.setColor(61, 90, 115);
-			glColor3ubv(splash.color);
+		glColor3ubv(splash.color);
 		splash.setDim(550.0f, 150.0f);
-		splash.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+		splash.setPos(g.xres/2.0f, g.yres * 0.55, 0);
 
 		Box toast_pic;
-		toast_pic.setColor(61, 90, 115);
-			glColor3ubv(toast_pic.color);
+		glColor3ubv(toast_pic.color);
 		toast_pic.setDim(100.0f, 100.0f);
-		toast_pic.setPos(splash.pos[0], g.yres * (2.0/3.0f), 0);
+		toast_pic.setPos(splash.pos[0]-300, g.yres * 0.85, 0);
 
 		Box ptm_pic;
-		ptm_pic.setColor(61, 90, 115);
-			glColor3ubv(ptm_pic.color);
-		ptm_pic.setDim(550.0f, 150.0f);
-		ptm_pic.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+		glColor3ubv(ptm_pic.color);
+		ptm_pic.setDim(400.0f, 150.0f);
+		ptm_pic.setPos(splash.pos[0], splash.pos[1]-235, 0);
 
 		Box bread_pic;
-		bread_pic.setColor(61, 90, 115);
-			glColor3ubv(bread_pic.color);
-		bread_pic.setDim(550.0f, 150.0f);
-		bread_pic.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
+		glColor3ubv(bread_pic.color);
+		bread_pic.setDim(100.0f, 100.0f);
+		bread_pic.setPos(splash.pos[0]+300, g.yres * 0.85, 0);
 
 
 		/*******************   SPLASH IMAGE PLACEHOLDER   *******************/
+
+		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, g.bread2_silhouette);
+		// glColor3ub(color[0], color[1], color[2]);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+		glTranslatef(bread_pic.pos[0], bread_pic.pos[1], bread_pic.pos[2]);
+		glBegin(GL_QUADS);
+
+			glTexCoord2f(0.0f, 1.0f);
+			glVertex2f(-bread_pic.w, -bread_pic.h);
+
+			glTexCoord2f(0.0f, 0.0f);
+			glVertex2f(-bread_pic.w,  bread_pic.h);
+			
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex2f( bread_pic.w,  bread_pic.h);
+			
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex2f( bread_pic.w, -bread_pic.h);
+		glEnd();
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_ALPHA_TEST);
+		glPopMatrix();
+
+		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, g.toaster_silhouette);
+		// glColor3ub(color[0], color[1], color[2]);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+		glTranslatef(toast_pic.pos[0], toast_pic.pos[1], toast_pic.pos[2]);
+		glBegin(GL_QUADS);
+
+			glTexCoord2f(0.0f, 1.0f);
+			glVertex2f(-toast_pic.w, -toast_pic.h);
+
+			glTexCoord2f(0.0f, 0.0f);
+			glVertex2f(-toast_pic.w,  toast_pic.h);
+			
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex2f( toast_pic.w,  toast_pic.h);
+			
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex2f( toast_pic.w, -toast_pic.h);
+		glEnd();
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_ALPHA_TEST);
+		glPopMatrix();
+
+		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, g.ptm_silhouette);
+		// glColor3ub(color[0], color[1], color[2]);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+		glTranslatef(ptm_pic.pos[0], ptm_pic.pos[1], ptm_pic.pos[2]);
+		glBegin(GL_QUADS);
+
+			glTexCoord2f(0.0f, 1.0f);
+			glVertex2f(-ptm_pic.w, -ptm_pic.h);
+
+			glTexCoord2f(0.0f, 0.0f);
+			glVertex2f(-ptm_pic.w,  ptm_pic.h);
+			
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex2f( ptm_pic.w,  ptm_pic.h);
+			
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex2f( ptm_pic.w, -ptm_pic.h);
+		glEnd();
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_ALPHA_TEST);
+		glPopMatrix();
 
 
 		glPushMatrix();
@@ -1983,8 +2054,8 @@ void render()
 		/******************    END SPLASH IMAGE    ***************************/
 
 		Rect game_msg;
-		game_msg.bot = g.yres * (1/4.0f);
-        game_msg.left = g.xres / 2.0f;
+		game_msg.bot = g.yres * 0.23;
+        game_msg.left = g.xres * 0.69;
         game_msg.center = 1;
 
         ggprint16(&game_msg, 0, 0x00ffffff, "Press Enter to Start the Game");
@@ -2413,7 +2484,7 @@ void render()
 
 				break;
 			case GAME:
-				if (g.substate == NONE) {
+				if (g.fstate == REGULAR) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00, "STATE - GAME");
 
 					ggprint8b(&key_msg[10], 0, 0x00ffff00,
@@ -2428,25 +2499,25 @@ void render()
 										"<u> - Cycle Music");
 
 				// } else if (g.substate == ENTITY) {
-				} else if (g.entity_active == true) {
+				} else if (g.fstate == APARRIOTT) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - ENTITY - APARRIOTT FEATURE MODE");
 					ggprint8b(&key_msg[10], 0, 0x00ffff00,
 										"<p> - Go back to Game Mode");
 				// } else if (g.substate == DTORRES) {
-				} else if (g.dtorres_active == true) {
+				} else if (g.fstate == DTORRES) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - DTORRES - DTORRES FEATURE MODE");
 					ggprint8b(&key_msg[10], 0, 0x00ffff00,
 										"<t> - Go back to Game Mode");
 				// } else if (g.substate == HUAIYU) {
-				} else if (g.dtorres_active == true) {
+				} else if (g.fstate == HZHANG) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - HUAIYU - HZHANG FEATURE MODE");
 					ggprint8b(&key_msg[10], 0, 0x00ffff00,
 										"<h> - Go back to Game Mode");
 				// } else if (g.substate == MIKE) {
-				} else if (g.mike_active == true) {
+				} else if (g.fstate == MKAUSCH) {
 					ggprint8b(&gamestate_msg, 0, 0x00ffff00,
 									"STATE - MIKE - MKAUSCH FEATURE MODE");
 					ggprint8b(&key_msg[10], 0, 0x00ffff00,
