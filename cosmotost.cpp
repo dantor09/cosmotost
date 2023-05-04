@@ -2149,6 +2149,7 @@ void render()
 				for (int j=0; j < g.n_Bullet; j++) {
 					if (bul[j].collision(*pfreeze_block)) {
 							pfreeze_block->reduceVelocity(freeze_block_velocity_reduction_rate);
+							pfreeze_block->reduceFreezeArea(.09);
 					}
 				}
 				pfreeze_block->draw();

@@ -36,6 +36,7 @@ class FreezeBlock : public Item
         void setFollowTimer(int);
         int randomDimension();
         void followItem(Item & );
+        void reduceFreezeArea(float);
         void checkBounce();
         void setMinMaxBlockDimensions(int, int);
 };
