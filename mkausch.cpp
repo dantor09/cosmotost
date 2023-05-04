@@ -2785,3 +2785,15 @@ void FeatureModeBlock::draw()
     }
 }
 
+void initializeLogFile(ofstream & fout)
+{
+    fout.open("cosmo_log.log");
+    if (!fout)
+        cerr << "couldn't open log file" << endl;
+    const auto now = std::chrono::system_clock::now();
+    const std::time_t t_c = std::chrono::system_clock::to_time_t(now);
+    // std::cout << "The system clock is currently at " << std::ctime(&t_c);
+    fout << "******************************************" << endl;
+    fout << "STARTING LOG " << std::ctime(&t_c) << endl;
+    fout << "*******************************************" << endl << endl;
+}

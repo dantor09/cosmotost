@@ -1995,7 +1995,7 @@ void render()
 			
 			glTexCoord2f(1.0f, 0.0f);
 			glVertex2f( bread_pic.w,  bread_pic.h);
-			
+
 			glTexCoord2f(1.0f, 1.0f);
 			glVertex2f( bread_pic.w, -bread_pic.h);
 		glEnd();

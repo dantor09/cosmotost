@@ -13,12 +13,13 @@ Global::Global()
 	sfx_vol = 1.0f;
 	m_vol = 0.5f;
 	fstate = REGULAR;
+	initializeLogFile(log);
 }
 
 
 Global::~Global()
 {
-
+	log.close();
 }
 
 void Global::gameReset()

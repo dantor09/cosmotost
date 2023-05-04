@@ -276,6 +276,7 @@ public:
 void setRandColor(Item & it);
 void checkSound(void);
 void checkLevel();
+void initializeLogFile(ofstream & fout);
 
 class Bomb
 {
