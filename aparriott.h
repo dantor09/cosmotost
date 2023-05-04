@@ -99,12 +99,12 @@ class Statistics {
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 // TEXTURES
-class TextureLoad {
-	public:
-	int a;
-
-	TextureLoad();
-};
+//class TextureLoad {
+//	public:
+//	int a;
+//
+//	TextureLoad();
+//};
 // TEXTURES
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
@@ -114,4 +114,4 @@ inline EntitySpawn e;
 
 inline Statistics stats;
 
-inline TextureLoad texture;
+// inline TextureLoad texture;

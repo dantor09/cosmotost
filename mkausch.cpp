@@ -116,8 +116,6 @@ using namespace std;
 
 // #define USE_OPENAL_SOUND
 
-
-
 Menu::Menu(unsigned int _n_texts,
             float w, float h,
             float x, float y,
@@ -133,7 +131,6 @@ Menu::Menu(unsigned int _n_texts,
     boarder.setPos(pos[0], pos[1], pos[2]);
     boarder.setColor(69, 85, 89);
 
-
     try {
         t_boxs = new Box[n_texts];
         texts = new Rect[n_texts];
@@ -141,7 +138,7 @@ Menu::Menu(unsigned int _n_texts,
 
 
         float spacing = (2*h)/(n_texts+1);
-        std::cout << "spacing: " << spacing << std::endl;
+        // std::cerr << "spacing: " << spacing << std::endl;
 
         for (int i = 0; i < n_texts; i++) {
             t_boxs[i].w = mainbox.w - PADDING;
@@ -278,14 +275,12 @@ void Menu::setOrigColor()
     }
 }
 
-
-
-void Menu::setBcolor(int r, int g, int b)
-{
-    bcolor[0] = (char)r;
-    bcolor[1] = (char)g;
-    bcolor[2] = (char)b;
-}
+// void Menu::setBcolor(int r, int g, int b)
+// {
+//     bcolor[0] = (char)r;
+//     bcolor[1] = (char)g;
+//     bcolor[2] = (char)b;
+// }
 
 void Menu::setColor(int r, int g, int b)
 {
@@ -301,13 +296,13 @@ void Menu::setPos(float x, float y, float z)
     pos[2] = z;
 }
 
-std::string Menu::getInfo()
-{
-    std::ostringstream temp;
-    temp << std::endl;
+// std::string Menu::getInfo()
+// {
+//     std::ostringstream temp;
+//     temp << std::endl;
 
-    return temp.str();
-}
+//     return temp.str();
+// }
 
 
 /***************************************************************************
@@ -331,9 +326,9 @@ Timer::Timer(double sec) : duration(sec), pause_duration(0.00),
 // delete pause timer if it were active
 Timer::~Timer()
 {
-    cerr << "in Timer destructor\n";
+    // cerr << "in Timer destructor\n";
     if (pause_timer) {
-        cerr << "deleting pause timer\n";
+        // cerr << "deleting pause timer\n";
         delete pause_timer;
         pause_timer = nullptr;
     }
@@ -368,7 +363,7 @@ int Timer::getTime(char time_code)
 
     // D.T - retrieve minutes, seconds, or net time
     // based on time_code passed in getTime parameter
-    switch(time_code) {
+    switch (time_code) {
         case 'm': time = net_time/60;
                   break;
         case 's': time = net_time % 60;
@@ -572,9 +567,7 @@ Sound::~Sound()
     }
 
     alDeleteSources(1, &menuQueueSource);
-
     closeOpenal();
-
 }
 
 void Sound::initOpenal()
@@ -722,7 +715,6 @@ void Sound::resetBufferDone()
 // loops buffer queue at this point
 void Sound::loopIntro()
 {
-
     alSourceStop(menuQueueSource);
     alSourceRewind(menuQueueSource);
     alSourcePlay(alSources[4]);
@@ -751,7 +743,8 @@ void Sound::playStartTrack()
         alSourceRewind(alSources[5]);
     }
 
-    is_intro = true; is_game = false;
+    is_intro = true; 
+    is_game = false;
 
     // begin playing menu music
     alSourcePlay(menuQueueSource);
@@ -806,7 +799,7 @@ bool Sound::getPause()
     return is_music_paused;
 }
 
-
+// changes the volume of music tracks
 void Sound::updateMusicVol()
 {
     int n_songs = 3;
@@ -819,6 +812,7 @@ void Sound::updateMusicVol()
     alSourcef(menuQueueSource, AL_GAIN, g.m_vol);
 }
 
+// changes the volume of all sfx in game
 void Sound::updateSFXVol()
 {
     int n_sfx = 12;
@@ -829,7 +823,7 @@ void Sound::updateSFXVol()
     }
 }
 
-
+// play's bombExplosion sound
 void Sound::bombExplosion()
 {
     int bomb_index = 13;
@@ -839,6 +833,7 @@ void Sound::bombExplosion()
 
 #endif
 
+// initializes settings for powerbar used with donut
 PowerBar::PowerBar(const Donut & _itm_, PBType _type_, float x, float y)
 {
     // maybe put max_health of each enemy type in case were going to
@@ -854,7 +849,7 @@ PowerBar::PowerBar(const Donut & _itm_, PBType _type_, float x, float y)
     
     total.setColor(0,0,0);   // set lost health to black
     health.setColor(255,0,0);  // set health to r
-    total.setDim(75,10);
+    total.setDim(g.xres/2.0f,2.0f);
     total.setPos(x, y, 0);
     
     // mimic other bar based on what health was set to
@@ -867,6 +862,7 @@ PowerBar::PowerBar(const Donut & _itm_, PBType _type_, float x, float y)
     // cerr << "finished itm constructor" << endl;
 }
 
+// initializes settings for itm class
 PowerBar::PowerBar(const Item & _itm_, PBType _type_, float x, float y)
 {
     // maybe put max_health of each enemy type in case were going to
@@ -896,6 +892,7 @@ PowerBar::PowerBar(const Item & _itm_, PBType _type_, float x, float y)
     // cerr << "finished itm constructor" << endl;
 }
 
+// initializes settings for use with toaster class
 PowerBar::PowerBar(const Toaster & _tos_, PBType _type_, float x, float y)
 {
     // maybe put max_health of each enemy type in case were going to 
@@ -926,10 +923,9 @@ PowerBar::PowerBar(const Toaster & _tos_, PBType _type_, float x, float y)
     // cerr << "finished tos constructor" << endl;
 }
 
-
+// draw power bars as a proportion of current health / power
 void PowerBar::draw()
 {
-    
     if (type == HEALTH) {
         glColor3ubv(total.color);
         glPushMatrix();
@@ -972,7 +968,6 @@ void PowerBar::draw()
         glEnd();
         glPopMatrix();
 
-
         glColor3ubv(health.color);
         glPushMatrix();
         glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
@@ -1000,7 +995,6 @@ void PowerBar::draw()
         glEnd();
         glPopMatrix();
 
-
         glColor3ubv(health.color);
         glPushMatrix();
         glTranslatef(health.pos[0]-health.w, health.pos[1], health.pos[2]);
@@ -1013,11 +1007,12 @@ void PowerBar::draw()
         glEnd();
         glPopMatrix();
 
-        ggprint8b(&text, 0, 0x00000000, "Boss Health: %i/%i", (int)donut->hp, 10000);
+        // ggprint8b(&text, 0, 0x00000000, "Boss Health: %i/%i", (int)donut->hp, 10000);
     }
 }
 
 // modified from hzhang's file by mkausch
+// detects collision between item class and entity class
 bool Entity::collision(Item & a)
 {
     // for (x0,y0,x1,y1)and(x2,y2,x3,y3) squares
@@ -1028,28 +1023,33 @@ bool Entity::collision(Item & a)
   	return x&&y;
 }
 
+// sets hp of enentiy items
 void Entity::setHP(float life)
 {
     hp = life;
 }
 
+// sets damage of entity class
 void Entity::setDamage(float x)
 {
     damage = x;
 }
 
+// damages entity item based on item passed in
 void Entity::hpDamage(Item & a) 
 {
     hp = hp - a.damage;
     stats.damageTaken += a.damage;
 }
 
+// checks to see if hp is gone
 bool Entity::hpCheck()
 {
     stats.UpdateKills(); // declared in aparriott.cpp
     return (hp < 0.01);
 }
 
+// damages item object based on passed in entity object
 void Item::hpDamage(Entity & e)
 {
     hp = hp - e.damage;
@@ -1057,6 +1057,9 @@ void Item::hpDamage(Entity & e)
 
 }
 
+// Blocky constructor
+// pass in type (verticle or horizontal)
+// pass in whether the gun is active on the blocky 
 Blocky::Blocky(char type, bool g_act)
 {
     srand(time(NULL));
@@ -1141,7 +1144,6 @@ void Blocky::setRandPosition()
     float curr_player_xpos = (tos.pos[0] < 10 ) ? g.xres / 2.0 : tos.pos[0];
     float curr_player_ypos = tos.pos[1];
 
-
     // check and make sure toaster is not right up against the top of the screen
     if ((g.yres - (tos.pos[1] + tos.h)) < 20) {
         setPos(tos.pos[0], 0-h, 0);
@@ -1162,9 +1164,9 @@ void Blocky::setRandPosition()
     
 }
 
+// sets random color of item object passed in
 void setRandColor(Item & it)
 {
-
     static int color[5][3] =   {{242, 4, 159},
                         {4, 177, 216},
                         {4, 216, 78},
@@ -1175,6 +1177,7 @@ void setRandColor(Item & it)
     index = (index + 1) % 5;
 }
 
+// tests to see if the sub boxes are on screen
 bool Blocky::subScreenIn()
 {
     bool subs_onscreen = false;
@@ -1188,17 +1191,22 @@ bool Blocky::subScreenIn()
     return subs_onscreen;
 }
 
+// delays blocky once he goes off screen
+// controls the timer associated with the delay
 bool Blocky::delayBlocky()
 {
+    bool finish_delay = false;
+
     if (delay == nullptr) {
         delay = new Timer(delay_t);
         cerr << "delaying Blocky" << endl;
+        
     } else if (delay->isDone()) {
-        reset();
+        // reset();
         delete delay;
         delay = nullptr;
         cerr << "blocky delay done" << endl;
-        return true;
+        finish_delay = true;
     } else if (!delay->isDone() && !delay->isPaused()) {
         if (g.state == PAUSE) {
             delay->pause();
@@ -1211,17 +1219,14 @@ bool Blocky::delayBlocky()
 
         }
     }
-    return false;
+    return finish_delay;
 }
 
-
+// draws blocky and sub blockies if he's exploded
+// draws blocky's bullets if he shoots
 void Blocky::draw()
 {
-    // static int rot_angle = 0;
-    // draw item
-
-        // reset blocky if he's out of screen
-
+    // draw bullets 
     if (gun_active && isAlive() && did_shoot) {
         // draw blocky's bullets if they've been shot
 
@@ -1249,38 +1254,25 @@ void Blocky::draw()
     if (isAlive() && explode_done) {
 
         // delay blocky if he went out of screen
-        if (screenOut()) {
-            if (delay == nullptr) {
-                delay = new Timer(delay_t);
-                cerr << "delaying Blocky" << endl;
-
-            } else if (delay->isDone()) {
-                reset();
-                delete delay;
-                delay = nullptr;
-                cerr << "blocky delay done" << endl;
-            } else if (!delay->isDone() && !delay->isPaused()) {
-                if (g.state == PAUSE) {
-                    delay->pause();
-                    cerr << "pausing blocky delay timer" << endl;
-                }
-            } else if (!delay->isDone() && delay->isPaused()) {
-                if (g.state == GAME) {
-                    delay->unPause();
-                    cerr << "unpausing blocky delay timer" << endl;
-
-                }
-            }
+        if (screenOut() && delayBlocky()) {
+            reset();
         }
+    // TODO 
 
-        setRandColor(*this);
         glPushMatrix();
         glBindTexture(GL_TEXTURE_2D, *(blocky->tex));
         // glColor3ub(color[0], color[1], color[2]);
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.0f);
-        // glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
-        glColor4f(color[0]/255.0f, color[1]/255.0f, color[2]/255.0f, 0.5f);
+
+        // draw pissed-off coloring if his health is below 50%
+        if (hp < starting_hp / 2) {
+            setRandColor(*this);
+            glColor4f(color[0]/255.0f, color[1]/255.0f, color[2]/255.0f, 0.5f);
+        } else {
+            glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+        }
+
         glTranslatef(pos[0], pos[1], pos[2]);
         glBegin(GL_QUADS);
             glTexCoord2f(1.0f, 1.0f);
@@ -1295,21 +1287,6 @@ void Blocky::draw()
         glBindTexture(GL_TEXTURE_2D, 0);
         glDisable(GL_ALPHA_TEST);
         glPopMatrix();
-
-
-
-
-        // setRandColor(*this);
-        // glPushMatrix();
-        // glColor3ub(color[0], color[1], color[2]);
-        // glTranslatef(pos[0], pos[1], pos[2]);
-        // glBegin(GL_QUADS);
-        //         glVertex2f(-w, -h);
-        //         glVertex2f(-w,  h);
-        //         glVertex2f( w,  h);
-        //         glVertex2f( w, -h);
-        // glEnd();
-        // glPopMatrix();
 
     } else {    // draw little blockies
         // cerr << "checking if sub boxes are in the screen...\n";
@@ -1331,34 +1308,6 @@ void Blocky::draw()
                 glEnd();
                 glPopMatrix();
 
-
-
-                // // setRandColor(*this);
-                // glPushMatrix();
-                // glBindTexture(GL_TEXTURE_2D, *(blocky->tex));
-                // // glColor3ub(color[0], color[1], color[2]);
-                // glEnable(GL_ALPHA_TEST);
-                // glAlphaFunc(GL_GREATER, 0.0f);
-                // glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
-                // glTranslatef(sub_boxes[i].pos[0], sub_boxes[i].pos[1], sub_boxes[i].pos[2]);
-                // glMatrixMode(GL_MODELVIEW);
-                // glRotatef(rot_angle[i], 0, 0, 1.0);
-                
-                // glBegin(GL_QUADS);
-                //     glTexCoord2f(1.0f, 1.0f);
-                //     glVertex2f(-sub_boxes[i].w, -sub_boxes[i].h);
-                //     glTexCoord2f(1.0f, 0.0f);
-                //     glVertex2f(-sub_boxes[i].w,  sub_boxes[i].h);
-                //     glTexCoord2f(0.0f, 0.0f);
-                //     glVertex2f( sub_boxes[i].w,  sub_boxes[i].h);
-                //     glTexCoord2f(0.0f, 1.0f);
-                //     glVertex2f( sub_boxes[i].w, -sub_boxes[i].h);
-                // glEnd();
-                // glBindTexture(GL_TEXTURE_2D, 0);
-                // glDisable(GL_ALPHA_TEST);
-                // glPopMatrix();
-
-
                 rot_angle[i] -= rot_speed[i];
             }
         } else {
@@ -1368,14 +1317,9 @@ void Blocky::draw()
             // reset_sub_boxes();
         }
     }
-
 }
 
-// void Blocky::reset_sub_boxes()
-// {
-
-// }
-
+// resets blocky's vars when he dies or goes off screen
 void Blocky::reset()
 {
     if (hpCheck()) {
@@ -1386,8 +1330,8 @@ void Blocky::reset()
         if (lives > 0) {
             hp = starting_hp;   // give back full health
         }
-        stats.UpdateKills();
 
+        stats.UpdateKills(); // aparriott.cpp
     }
     was_hit = false;
 
@@ -1425,7 +1369,8 @@ void Blocky::move()
     // static float shoot_point = g.yres*(4/5.0f);
     static float shoot_point = 100.0;   // distance away he shoots
     float distance = abs(pos[1] - tos.pos[1]);
-    // move main blocky
+
+        // move main blocky
     if (isAlive() && explode_done) {
         pos[0] += vel[0];
         pos[1] += vel[1];
@@ -1468,6 +1413,7 @@ void Blocky::move()
 
 }
 
+// returns an iterator to the bullet that causes a collision with an item
 list<Bullet>::iterator Blocky::bulCollision(Item & a) 
 {
     for (auto it = bullets.begin(); it != bullets.end(); it++) {
@@ -1477,16 +1423,6 @@ list<Bullet>::iterator Blocky::bulCollision(Item & a)
     }
 
     return bullets.end();
-
-    /*******************************
-     * original collision function
-    ********************************/
-    // // for (x0,y0,x1,y1)and(x2,y2,x3,y3) squares
-    // // if collison -->(x0-x3)*(x1-x2)<0
-    // // same for y
-    // bool x = (((pos[0]+w)-(a.pos[0]-a.w))*((pos[0]-w)-(a.pos[0]+a.w))) < 0;
-  	// bool y = (((pos[1]+h)-(a.pos[1]-a.h))*((pos[1]-h)-(a.pos[1]+a.h))) < 0;
-  	// return x&&y;
 }
 
 // returns iterator to end of bullet list
@@ -1509,9 +1445,6 @@ bool Blocky::subBoxCollision(Item & itm)
         if (sub_boxes[i].collision(itm)) {
             return true;
         }
-        // if (itm.collision(sub_boxes[i])) {
-        //     return true;
-        // }
     }
     return false;
 }
@@ -1527,6 +1460,8 @@ bool Blocky::subBoxCollision(Entity & ent)
     return false;
 }
 
+// damages the itemp based on the passed in blocky's damage val
+// sets was_hit bool so that toaster is only hit once per fall
 void Item::hpDamage(Blocky & bf)
 {
     // cerr << "blocky's hpDamage called" << endl;
@@ -1542,16 +1477,17 @@ void Item::hpDamage(Blocky & bf)
     }
 }
 
+// returns true if lives > 0
 bool Blocky::isAlive()
 {
     return (lives > 0);
 }
 
-void Blocky::setHit()
-{
-    was_hit = true;
-    // cerr << "setting hit in blocky" << endl;
-}
+// void Blocky::setHit()
+// {
+//     was_hit = true;
+//     // cerr << "setting hit in blocky" << endl;
+// }
 
 void Blocky::explode()
 {
@@ -2464,7 +2400,12 @@ Bomb::Bomb()
     num_bombs = 99;
     w = 6;
     h = 6;
+    // button text
+    // message.bot = pos[1];
+    // message.left = pos[0];
+    message.center = 1;
     tex = &g.bomb_texture;
+    text_accel = -1;
 }
 
 Bomb::~Bomb()
@@ -2478,6 +2419,8 @@ Bomb::~Bomb()
 
 void Bomb::draw()
 {
+    
+
     if (is_thrown && !is_exploding) {
 
         int size = 50;
@@ -2518,28 +2461,35 @@ void Bomb::draw()
             glPopMatrix();
         */
     } else if (is_exploding) {
-        float angle1 = (2 * PI * 1)/100;
-        float angle2 = (2 * PI * 2)/100;
+        float angle1 = (2 * PI * 0)/100;
+        float angle2 = (2 * PI * 1)/100;
         float vert1[2] = {cos(angle1) * curr_radius, sin(angle1) * curr_radius};
         float vert2[2] = {cos(angle2) * curr_radius, sin(angle2) * curr_radius};
         float center[3] = {pos[0], pos[1], pos[2]};
+        float orig_vert[2] = {vert1[0], vert1[1]};
+
 
         // cerr << "center: " << pos[0] << "," << pos[1] << "," << pos[2] << endl; 
 
         glPushMatrix();
+        // glEnable(GL_ALPHA_TEST);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        // glAlphaFunc(GL_GREATER, 0.0f);
         glTranslatef(center[0], center[1], center[2]);
         glBegin(GL_TRIANGLE_FAN);
-        glColor3ub(204, 204, 0);
+        glColor4ub(204, 204, 0, 255);
         glVertex2f(0,0);
-        for (int i = 0; i < 103; i++) {
-            glColor3ubv(color);
+        for (int i = 1; i < 102; i++) {
+            // glColor3ubv(color);
+            glColor4ub(color[0], color[1], color[2], 100);
             glVertex2f(vert1[0], vert1[1]);
             // cerr << "vert1: " << vert1[0] << "," << vert1[1] << endl; 
 
             glVertex2f(vert2[0], vert2[1]);
             // cerr << "vert2: " << vert2[0] << "," << vert2[1] << endl; 
 
-            glColor3ub(0, 0, 0);
+            glColor4ub(204, 204, 0, 255);
             glVertex2f(0, 0);
 
             // move vert2 to vert1 vertices
@@ -2547,12 +2497,29 @@ void Bomb::draw()
             vert1[1] = vert2[1];
 
             // calc new vert for vert2
-            angle2 = (2 * PI * i)/100;
-            vert2[0] = cos(angle2) * curr_radius;
-            vert2[1] = sin(angle2) * curr_radius;
+            angle1 = (2 * PI * i)/100;
+            vert2[0] = cos(angle1) * curr_radius;
+            vert2[1] = sin(angle1) * curr_radius;
+            if (i == 101) {
+                vert2[0] = orig_vert[0];
+                vert2[1] = orig_vert[1];
+            }
         }
         glEnd();
+        // glDisable(GL_ALPHA_TEST);
+        glDisable(GL_BLEND);
         glPopMatrix();
+    }
+
+    if (is_thrown && show_message) {
+        message.left = pos[0];
+        ggprint16(&message, 0, 0x00ffffff, "LAUNCHING BOMB!!!");
+        if (g.state != PAUSE) {
+            if (text_vel > -16) {
+                text_vel += text_accel;
+                message.bot += text_vel;
+            }
+        }
     }
 
 }
@@ -2562,6 +2529,13 @@ void Bomb::setColor(unsigned char * col, int r, int g, int b)
     col[0] = (char)r;
     col[1] = (char)g;
     col[2] = (char)b;
+}
+
+void Bomb::toggleDisplayMessage()
+{
+    if (!show_message) {
+        show_message = true;
+    }
 }
 
 void Bomb::setPos(float x, float y, float z)
@@ -2583,6 +2557,8 @@ void Bomb::explode()
         is_exploding = false;
         // cerr << "is_exploding to false" << endl;
         is_thrown = false;
+        show_message = false;
+        // message.bot = (g.yres*3)/4;
         curr_radius = start_radius;
 
     } else {
@@ -2612,6 +2588,9 @@ void Bomb::launch()
         is_thrown = true;
         tos.energy -= 20;
         setPos(tos.pos[0],tos.pos[1],tos.pos[2]);
+        message.left = pos[0];
+        message.bot = pos[1] - 10;
+        text_vel = 24;
         bomb_timer = new Timer(0.7);
 #ifdef USE_OPENAL_SOUND
         sounds.bombExplosion();
@@ -2733,20 +2712,10 @@ bool Bomb::collision(Entity & ent)
 
 */
 
-    // double xvec[4] = { itm.pos[0] - (itm.w/2.0f) - pos[0],
-    //                     itm.pos[0] - (itm.w/2.0f) - pos[0],
-    //                     (itm.pos[0] + (itm.w/2.0f)) - pos[0],
-    //                     (itm.pos[0] + (itm.w/2.0f)) - pos[0] }
-
     double xvec[4] = { ent.pos[0] - (ent.dim[0]/2.0f) - pos[0],
                         xvec[0],
                         xvec[0]+ent.dim[0],
                         xvec[2]};
-
-    // double yvec[4] = { itm.pos[1] + (itm.h/2.0f) - pos[1],
-    //                     itm.pos[1] - (itm.h/2.0f) - pos[1],
-    //                     (itm.pos[1] - (itm.h/2.0f)) - pos[1],
-    //                     (itm.pos[1] + (itm.h/2.0f)) - pos[1] };
 
     double yvec[4] = { ent.pos[1] + (ent.dim[1]/2.0f) - pos[1],
                     yvec[0] - ent.dim[1],
@@ -2763,3 +2732,56 @@ bool Bomb::collision(Entity & ent)
 
     return false;
 }
+
+// TODO
+FeatureModeBlock::FeatureModeBlock()
+{
+    tex = nullptr;
+    setPos(g.xres*0.75, (g.yres-info_board_1.pos[1])*0.25+75, 0);
+    setDim(200, 75);
+}
+void FeatureModeBlock::setTexture()
+{
+    if (g.fstate == REGULAR) {
+        tex = nullptr;
+    } else if (g.fstate == MKAUSCH) {
+        tex = &g.mkfm_texture;
+    } else if (g.fstate == DTORRES) {
+        tex = &g.dtfm_texture;
+    } else if (g.fstate == HZHANG) {
+        tex = &g.hzfm_texture;
+    } else if (g.fstate == APARRIOTT) {
+        tex = &g.apfm_texture;
+    }
+}
+
+void FeatureModeBlock::draw()
+{
+    if (tex != nullptr) {
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D, *tex);
+        // glColor3ub(color[0], color[1], color[2]);
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.0f);
+        glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+        glTranslatef(pos[0], pos[1], pos[2]);
+        glBegin(GL_QUADS);
+
+            glTexCoord2f(0.0f, 1.0f);
+            glVertex2f(-w, -h);
+
+            glTexCoord2f(0.0f, 0.0f);
+            glVertex2f(-w,  h);
+            
+            glTexCoord2f(1.0f, 0.0f);
+            glVertex2f( w,  h);
+            
+            glTexCoord2f(1.0f, 1.0f);
+            glVertex2f( w, -h);
+        glEnd();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_ALPHA_TEST);
+        glPopMatrix();
+    }
+}
+
