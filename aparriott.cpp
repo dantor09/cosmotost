@@ -2,12 +2,11 @@
  * 23.02.17
  * 3350
  * cosmotost
- * entity.cpp
+ * aparriott.cpp
  */
 
 #include <iostream>
 #include <GL/glx.h>
-// #include <curl/curl.h>
 
 #include "Global.h"
 #include "aparriott.h"
@@ -67,6 +66,7 @@ void EntitySpawn::makeEntity(float pos_x, float pos_y, float init_vel_x,
         entity[e.num_ent].curve[0] = curve_x;
         entity[e.num_ent].curve[1] = curve_y;
 		entity[e.num_ent].setHP(2);
+        
 		e.num_ent++;
 	}	
 }
@@ -79,7 +79,6 @@ void EntitySpawn::ResetEntity() {
 
 void Entity::entityPhysics() {
     // makeEntity(int pos_x, int pos_y,  int init_vel_x, int init_vel_y) 
-
     // Spawn_speed determines how many ticks until spawning another entity
     if (e.spawn_speed == 0) {
         e.spawn_speed = 6;
@@ -87,7 +86,6 @@ void Entity::entityPhysics() {
             e.chain_len = e.randNum(4, 12);
             e.curve_rand_x = e.randNum(-4, 0);
             e.curve_rand_y = e.randNum(-4, 4);
-
             e.enter_loc = e.randNum(0, 3);
             if (e.enter_loc == 0) {
                 // makeEntity SPAWN FROM TOP, MOVES LEFT DOWNWARD
@@ -96,7 +94,7 @@ void Entity::entityPhysics() {
                 e.spawn_vel_x = e.randNum(-8, -4);
                 e.spawn_vel_y = e.randNum(-8, 0);
             } else if (e.enter_loc <= 2) {
-                // makeEntity SPAWN FROM RIGHT, MOVES LEFT, RANDUM UP AND DOWN
+                // makeEntity SPAWN RIGHT, MOVE LEFT, RAND UP AND DOWN
                 e.spawn_x = g.xres;
                 e.spawn_y = e.randNum(0, g.yres);
                 e.spawn_vel_x = e.randNum(-8, -4);
@@ -104,25 +102,22 @@ void Entity::entityPhysics() {
             } else if (e.enter_loc == 3) {
                 // makeEntity SPAWN FROM BOTTOM, MOVES LEFT AND UP
                 e.spawn_x = e.randNum(g.xres / 2, g.xres);
-                e.spawn_y = g.yres_start;
+                e.spawn_y = 5;
                 e.spawn_vel_x = e.randNum(-8, -4);
                 e.spawn_vel_y = e.randNum(0, 8);
             }
         }
         e.makeEntity(e.spawn_x, e.spawn_y, e.spawn_vel_x, e.spawn_vel_y, 
                 e.curve_rand_x, e.curve_rand_y);
-
         e.chain_len--;
     }
     e.spawn_speed--;
 
-	 for (int i = 0; i < e.num_ent; i++) {
+    for (int i = 0; i < e.num_ent; i++) {
         entity[i].pos[0] += entity[i].vel[0]/2;
-		entity[i].pos[1] += entity[i].vel[1]/2;
-
+        entity[i].pos[1] += entity[i].vel[1]/2;
         entity[i].vel[0] += entity[i].curve[0] / 32;
         entity[i].vel[1] += entity[i].curve[1] / 32;
-
         // DESPAWN
         if (entity[i].pos[1] < -4 || entity[i].pos[1] > g.yres + 4 ||
                 entity[i].pos[0] < -4) {	
@@ -133,14 +128,101 @@ void Entity::entityPhysics() {
 		if (entity[i].pos[1] <= g.yres_start || entity[i].pos[1] >= g.yres - 4) {			
 			entity[i].vel[1] = -entity[i].vel[1];
         }
+    
     }
- 
- }
-
-//  ENTITYSPAWN CONSTRUCTOR
-EntitySpawn::EntitySpawn() {
-    chain_len = 0;
-    spawn_speed = 0;
-    curve_rand_x = 0;
-    curve_rand_y = 0;
 }
+// ENTITY
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// ENTITY SPAWN
+    // ENTITYSPAWN CONSTRUCTOR
+    EntitySpawn::EntitySpawn() {
+        chain_len = 0;
+        spawn_speed = 0;
+        curve_rand_x = 0;
+        curve_rand_y = 0;
+    }
+// ENTITY SPAWN
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// STATISTICS
+Statistics::Statistics() {
+    // floats
+	accuracy = 0.0f;
+	timeSurvived = 0.0f;
+
+    // ints
+	blockyCollateral = 0;
+    beamKills = 0;
+    bombKills = 0;
+	bombsThrown = 0;
+	damageTaken = 0;
+	dashes = 0;
+	kills = 0;
+	powerUpsGained = 0;
+    shots = 0;
+	shotsHit = 0;
+	shotsMissed = 0;
+}
+
+void Statistics::DisplayStats() {
+    stats.shotsMissed = stats.shots - stats.shotsHit;
+    stats.accuracy = float(stats.shotsHit) / float(stats.shots) * 100;
+
+    cerr << "\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n";
+	cerr << "= STATS =" << endl;
+	cerr << "Accuracy: " << stats.accuracy << endl;
+        cerr << "  Fired: " << stats.shots << endl;
+    	cerr << "  Hit: " << stats.shotsHit << endl;
+	    cerr << "  Missed: " << stats.shotsMissed << endl;
+	cerr << "Beam Kills: " << stats.beamKills << endl;
+	cerr << "Bombs Thrown: " << stats.bombsThrown << endl;
+    	cerr << "  Bomb Kills: " << stats.bombKills << endl;
+	cerr << "Damage Taken: " << stats.damageTaken << endl;
+	cerr << "Dashes: " << stats.dashes << endl;
+	cerr << "Kills: " << stats.kills << endl;
+	  cerr << "  Blocky Collaterals: " << stats.blockyCollateral << endl;
+	cerr << "Power Ups: " << stats.powerUpsGained << endl;
+	cerr << "Time Survived: " << stats.timeSurvived << endl;
+	cerr << "= STATS =" << endl;
+    cerr << "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n\n";
+}
+
+void Statistics::UpdateKills() {
+	stats.kills++;
+}
+void Statistics::UpdateShots(int numBullets) {
+    if(numBullets < 5) {
+		stats.shots += numBullets;
+    } else {
+        stats.shots++;
+    }
+}
+
+// STATISTICS
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// my attempt at making the textures code into a function
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+// TEXTURES
+
+/*
+TextureLoad::TextureLoad(int width, int height, ) {
+    int w = background.width;
+    int h = background.height;
+	glGenTextures(1, &g.bkg_texture);
+    glBindTexture(GL_TEXTURE_2D, g.bkg_texture);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0,
+	    GL_RGB, GL_UNSIGNED_BYTE, background.data);
+}
+*/
+
+// TEXTURES
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 

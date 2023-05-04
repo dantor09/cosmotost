@@ -1039,11 +1039,13 @@ void Entity::setDamage(float x)
 void Entity::hpDamage(Item & a) 
 {
     hp = hp - a.damage;
+    stats.damageTaken += a.damage;
 }
 
 // checks to see if hp is gone
 bool Entity::hpCheck()
 {
+    stats.UpdateKills(); // declared in aparriott.cpp
     return (hp < 0.01);
 }
 
@@ -1051,6 +1053,8 @@ bool Entity::hpCheck()
 void Item::hpDamage(Entity & e)
 {
     hp = hp - e.damage;
+    stats.damageTaken += e.damage;
+
 }
 
 // Blocky constructor
@@ -1287,7 +1291,6 @@ void Blocky::draw()
     } else {    // draw little blockies
         // cerr << "checking if sub boxes are in the screen...\n";
         if (subScreenIn()) {
-
             for (int i = 0; i < SUB_BLOCK_N; i++) {
                 setRandColor(sub_boxes[i]);
                 glPushMatrix();
@@ -1327,6 +1330,8 @@ void Blocky::reset()
         if (lives > 0) {
             hp = starting_hp;   // give back full health
         }
+
+        stats.UpdateKills(); // aparriott.cpp
     }
     was_hit = false;
 
@@ -1467,6 +1472,7 @@ void Item::hpDamage(Blocky & bf)
         } else {
             hp = hp - bf.damage;
         }
+            stats.damageTaken += bf.damage;
         // cerr << "blocky hit something" << endl;
     }
 }

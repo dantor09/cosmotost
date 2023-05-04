@@ -176,4 +176,4 @@ inline PowerBar donut_health(donut, DONUT, g.xres/2.0f, 4.0f);
 
 // AILAND VARIABLES ============
 
-inline EntitySpawn EntySpwn;
+

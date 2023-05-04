@@ -2,23 +2,23 @@
  * 23.02.21
  * 3350
  * Cosmotost
- * hostile.h
+ * aparriott.h
  */
 
 #pragma once
+
+// libraries
 #include <iostream>
+
+// local
 #include "hzhang.h"
-//#include <stdio.h>
-//#include <unistd.h>
-//#include <cstdlib>
-//#include <ctime>
-//#include <cstring>
-//#include <cmath>
-#include <GL/glx.h>
 
 using namespace std;
 
 const int MAX_ENTITIES = 128;
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// ENTITY
 
 class Entity {
 	public:
@@ -38,8 +38,8 @@ class Entity {
 
 	// CONSTRUCTORS
 	Entity();
-	Entity(float wid, float hgt, float pos_x, float pos_y, float v_x, float v_y,
-            float curve_x, float curve_y);
+	Entity(float wid, float hgt, float pos_x, float pos_y, float v_x, 
+            float v_y, float curve_x, float curve_y) ;
 
 	// SETTERS
 	void entityPhysics();
@@ -49,23 +49,69 @@ class Entity {
 	void setDamage(float x);	// defined in mkausch.cpp
 	void hpDamage(Item & a);	// defined in mkausch.cpp
 	bool hpCheck();			// defined in mkausch.cpp
-
 };
+
 
 class EntitySpawn {
-    public:
-    int enter_loc, chain_len, spawn_speed, num_ent;
-    float spawn_x, spawn_y;
-    float spawn_vel_x, spawn_vel_y;
-    float curve_rand_x, curve_rand_y;
-
-    EntitySpawn();
-
+	public:
+	int enter_loc, chain_len, spawn_speed, num_ent;
+	float spawn_x, spawn_y;
+	float spawn_vel_x, spawn_vel_y;
+	float curve_rand_x, curve_rand_y;
+	EntitySpawn();
 	int randNum(int min, int max);
-	void makeEntity(float pos_x, float pos_y, float init_vel_x, float init_vel_y,
-            float curve_x, float curve_y);
+	void makeEntity(float pos_x, float pos_y, float init_vel_x, 
+			float init_vel_y, float curve_x, float curve_y);
 	void ResetEntity();
 };
+// ENTITY
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// STATISTICS
+class Statistics {
+	public:
+	float accuracy;
+	float timeSurvived;
+	int blockyCollateral;
+	int beamKills;
+	int bombKills;
+	int bombsThrown;
+	int damageTaken; 
+	int kills;
+	int dashes;
+	int powerUpsGained;
+	int shots;
+	int shotsHit;
+	int shotsMissed;
+
+	Statistics();
+
+	void DisplayStats();
+	void UpdateKills();
+	void UpdateShots(int numBullets);
+
+};
+// STATISTICS
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+// TEXTURES
+//class TextureLoad {
+//	public:
+//	int a;
+//
+//	TextureLoad();
+//};
+// TEXTURES
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
 
 inline Entity entity[MAX_ENTITIES];
 inline EntitySpawn e;
+
+inline Statistics stats;
+
+// inline TextureLoad texture;

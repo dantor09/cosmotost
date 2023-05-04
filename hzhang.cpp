@@ -17,6 +17,8 @@ using namespace std;
 // x,y,z are pos[]. bullet_type is connect with bullet_type_prime
 void makeBullet(float x, float y,float z, int bullet_type) 
 {
+	stats.UpdateShots(bullet_type);
+
 	switch(bullet_type){
 	case 1:
 		if (g.n_Bullet < MAX_bullet){
@@ -166,6 +168,8 @@ bool Item::hpCheck()
 {
     // if no hp return true
     return (hp < 0.01);
+	// stats.UpdateKills(); // declared in aparriott.cpp
+
 }
 
 bool Item::collision(Item a) 
@@ -1631,6 +1635,8 @@ void Donut::setCD()
 
 bool Donut::hpCheck() 
 {
+	stats.UpdateKills(); // declared in aparriott.cpp
+	
 	if (hp < 0) {
 			return true;
 	}
