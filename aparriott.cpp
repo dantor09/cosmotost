@@ -173,23 +173,23 @@ void Statistics::DisplayStats() {
     stats.shotsMissed = stats.shots - stats.shotsHit;
     stats.accuracy = float(stats.shotsHit) / float(stats.shots) * 100;
 
-    cerr << "\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n";
-	cerr << "= STATS =" << endl;
-	cerr << "Accuracy: " << stats.accuracy << endl;
-        cerr << "  Fired: " << stats.shots << endl;
-    	cerr << "  Hit: " << stats.shotsHit << endl;
-	    cerr << "  Missed: " << stats.shotsMissed << endl;
-	cerr << "Beam Kills: " << stats.beamKills << endl;
-	cerr << "Bombs Thrown: " << stats.bombsThrown << endl;
-    	cerr << "  Bomb Kills: " << stats.bombKills << endl;
-	cerr << "Damage Taken: " << stats.damageTaken << endl;
-	cerr << "Dashes: " << stats.dashes << endl;
-	cerr << "Kills: " << stats.kills << endl;
-	  cerr << "  Blocky Collaterals: " << stats.blockyCollateral << endl;
-	cerr << "Power Ups: " << stats.powerUpsGained << endl;
-	cerr << "Time Survived: " << stats.timeSurvived << endl;
-	cerr << "= STATS =" << endl;
-    cerr << "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n\n";
+    g.log << "\n= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n";
+	g.log << "= STATS =" << endl;
+	g.log << "Accuracy: " << stats.accuracy << endl;
+        g.log << "  Fired: " << stats.shots << endl;
+    	g.log << "  Hit: " << stats.shotsHit << endl;
+	    g.log << "  Missed: " << stats.shotsMissed << endl;
+	g.log << "Beam Kills: " << stats.beamKills << endl;
+	g.log << "Bombs Thrown: " << stats.bombsThrown << endl;
+    	g.log << "  Bomb Kills: " << stats.bombKills << endl;
+	g.log << "Damage Taken: " << stats.damageTaken << endl;
+	g.log << "Dashes: " << stats.dashes << endl;
+	g.log << "Kills: " << stats.kills << endl;
+	  g.log << "  Blocky Collaterals: " << stats.blockyCollateral << endl;
+	g.log << "Power Ups: " << stats.powerUpsGained << endl;
+	g.log << "Time Survived: " << stats.timeSurvived << endl;
+	g.log << "= STATS =" << endl;
+    g.log << "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = \n\n";
 }
 
 void Statistics::UpdateKills() {

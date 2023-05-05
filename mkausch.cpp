@@ -116,7 +116,7 @@ using namespace std;
 
 // #define USE_OPENAL_SOUND
 
-Menu::Menu(unsigned int _n_texts,
+Menu::Menu(int _n_texts,
             float w, float h,
             float x, float y,
             std::string* _words,
@@ -138,7 +138,7 @@ Menu::Menu(unsigned int _n_texts,
 
 
         float spacing = (2*h)/(n_texts+1);
-        // std::cerr << "spacing: " << spacing << std::endl;
+        // std::g.log << "spacing: " << spacing << std::endl;
 
         for (int i = 0; i < n_texts; i++) {
             t_boxs[i].w = mainbox.w - PADDING;
@@ -158,7 +158,7 @@ Menu::Menu(unsigned int _n_texts,
             delete [] texts;
         if (t_boxs) 
             delete [] t_boxs;
-        std::cerr << "Error allocating rectangles in Menu call\n"
+        g.log << "Error allocating rectangles in Menu call\n"
                 << ba.what() << '\n';
         texts = nullptr;
         t_boxs = nullptr;
@@ -326,9 +326,9 @@ Timer::Timer(double sec) : duration(sec), pause_duration(0.00),
 // delete pause timer if it were active
 Timer::~Timer()
 {
-    // cerr << "in Timer destructor\n";
+    // g.log << "in Timer destructor\n";
     if (pause_timer) {
-        // cerr << "deleting pause timer\n";
+        // g.log << "deleting pause timer\n";
         delete pause_timer;
         pause_timer = nullptr;
     }
@@ -553,7 +553,7 @@ Sound::Sound()
     if (alGetError() != AL_NO_ERROR) {
         throw "ERROR: setting source\n";
     }
-    cout << "does it reach here???" << endl;
+    g.log << "does it reach here???" << endl;
 
 }
 
@@ -629,7 +629,7 @@ void Sound::gunPlay(int btype)
 {
     // static int gun_start = 6;
 
-    cerr << "gun shooting..." << endl;
+    g.log << "gun shooting..." << endl;
     if (btype == 1) {
         alSourcePlay(alSources[6]);
     } else if (btype == 2) {
@@ -649,7 +649,7 @@ void Sound::gunStop()
 {
     static int gun_start = 6;
     static int num_guns = 4;
-    // cerr << "gun not shooting..." << endl;
+    // g.log << "gun not shooting..." << endl;
     for (int i = 0; i < num_guns; i++) {
         alSourceStop(alSources[i+gun_start]);
     }
@@ -844,7 +844,7 @@ PowerBar::PowerBar(const Donut & _itm_, PBType _type_, float x, float y)
     type = _type_;
 
     if (type != DONUT) {
-        cerr << "WARNING** : BAD POWERBAR CONSTRUCTER, TYPE != DONUT" << endl;
+        g.log << "WARNING** : BAD POWERBAR CONSTRUCTER, TYPE != DONUT" << endl;
     }
     
     total.setColor(0,0,0);   // set lost health to black
@@ -859,7 +859,7 @@ PowerBar::PowerBar(const Donut & _itm_, PBType _type_, float x, float y)
     text.bot = total.pos[1]-5;
     text.left = total.pos[0];
     text.center = 1;
-    // cerr << "finished itm constructor" << endl;
+    // g.log << "finished itm constructor" << endl;
 }
 
 // initializes settings for itm class
@@ -889,7 +889,7 @@ PowerBar::PowerBar(const Item & _itm_, PBType _type_, float x, float y)
     text.bot = total.pos[1]-5;
     text.left = total.pos[0];
     text.center = 1;
-    // cerr << "finished itm constructor" << endl;
+    // g.log << "finished itm constructor" << endl;
 }
 
 // initializes settings for use with toaster class
@@ -920,7 +920,7 @@ PowerBar::PowerBar(const Toaster & _tos_, PBType _type_, float x, float y)
     text.left = total.pos[0];
     text.center = 1;
 
-    // cerr << "finished tos constructor" << endl;
+    // g.log << "finished tos constructor" << endl;
 }
 
 // draw power bars as a proportion of current health / power
@@ -981,7 +981,7 @@ void PowerBar::draw()
         glPopMatrix();
 
         ggprint8b(&text, 0, 0x00FF0000, "Jump Energy: %i/%i", (int)tos->energy, (int)tos->max_energy);
-        // cerr << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
+        // g.log << "tos->energy: " << tos->energy << " max_energy: " << max_energy << endl;
     } else if (type == DONUT) {
         
         glColor3ubv(total.color);
@@ -1199,23 +1199,23 @@ bool Blocky::delayBlocky()
 
     if (delay == nullptr) {
         delay = new Timer(delay_t);
-        cerr << "delaying Blocky" << endl;
+        g.log << "delaying Blocky" << endl;
         
     } else if (delay->isDone()) {
         // reset();
         delete delay;
         delay = nullptr;
-        cerr << "blocky delay done" << endl;
+        g.log << "blocky delay done" << endl;
         finish_delay = true;
     } else if (!delay->isDone() && !delay->isPaused()) {
         if (g.state == PAUSE) {
             delay->pause();
-            cerr << "pausing blocky delay timer" << endl;
+            g.log << "pausing blocky delay timer" << endl;
         }
     } else if (!delay->isDone() && delay->isPaused()) {
         if (g.state == GAME) {
             delay->unPause();
-            cerr << "unpausing blocky delay timer" << endl;
+            g.log << "unpausing blocky delay timer" << endl;
 
         }
     }
@@ -1232,13 +1232,13 @@ void Blocky::draw()
 
         for (auto bul = bullets.begin(); bul != bullets.end(); bul++) {
             if (g.state != PAUSE)
-                // cerr << "drawing bullet " << &(*bul) << endl;
+                // g.log << "drawing bullet " << &(*bul) << endl;
             
             glPushMatrix();
             glColor3ub(bul->color[0], bul->color[1], bul->color[2]);
             if (g.state != PAUSE)
-                // cerr << "\tcurrent pos[x]: " << bul->pos[0] << endl;
-                // cerr << "\tcurrent pos[y]: " << bul->pos[1] << endl;
+                // g.log << "\tcurrent pos[x]: " << bul->pos[0] << endl;
+                // g.log << "\tcurrent pos[y]: " << bul->pos[1] << endl;
             glTranslatef(bul->pos[0], bul->pos[1], bul->pos[2]);
             glBegin(GL_QUADS);
                     glVertex2f(-bul->w, -bul->h);
@@ -1289,7 +1289,7 @@ void Blocky::draw()
         glPopMatrix();
 
     } else {    // draw little blockies
-        // cerr << "checking if sub boxes are in the screen...\n";
+        // g.log << "checking if sub boxes are in the screen...\n";
         if (subScreenIn()) {
             for (int i = 0; i < SUB_BLOCK_N; i++) {
                 setRandColor(sub_boxes[i]);
@@ -1325,7 +1325,7 @@ void Blocky::reset()
     if (hpCheck()) {
         lives--;
         explode();
-        // cerr << "explode called\n";
+        // g.log << "explode called\n";
         explode_done = false;
         if (lives > 0) {
             hp = starting_hp;   // give back full health
@@ -1337,7 +1337,7 @@ void Blocky::reset()
 
     if (tex == &g.ptm_silhouette) {
         float xv = tos.vel[0]*0.75;
-        cerr << "setting xv: " << xv << endl;
+        g.log << "setting xv: " << xv << endl;
 
         setVel(xv, -4.0f, 0.0f);
     } else {
@@ -1347,7 +1347,7 @@ void Blocky::reset()
     setRandPosition();    // put at a new random position
     did_shoot = false;
     // was_hit = false;
-    // cerr << "was_hit set to " << boolalpha << was_hit << endl;
+    // g.log << "was_hit set to " << boolalpha << was_hit << endl;
 }
 
 void Blocky::gamereset()
@@ -1392,14 +1392,14 @@ void Blocky::move()
     }
 
     // shoot at player once blocky gets past 1/2 screen distance
-    // cerr << "pos[1]: " << pos[1] << "\tshoot_point: " << shoot_point << endl;
+    // g.log << "pos[1]: " << pos[1] << "\tshoot_point: " << shoot_point << endl;
     // if (did_shoot == false && pos[1] <= shoot_point) {
     
     if (gun_active) {
         if (did_shoot == false && distance <= shoot_point) {
 
             did_shoot = true;
-            // cerr << "blocky below shootpoint" << endl;
+            // g.log << "blocky below shootpoint" << endl;
             setBulletVectors();
         }
 
@@ -1464,7 +1464,7 @@ bool Blocky::subBoxCollision(Entity & ent)
 // sets was_hit bool so that toaster is only hit once per fall
 void Item::hpDamage(Blocky & bf)
 {
-    // cerr << "blocky's hpDamage called" << endl;
+    // g.log << "blocky's hpDamage called" << endl;
     if (!bf.was_hit) {
         if (item_type == 0) {   // toaster collision
             hp = hp - bf.damage;
@@ -1473,7 +1473,7 @@ void Item::hpDamage(Blocky & bf)
             hp = hp - bf.damage;
         }
             stats.damageTaken += bf.damage;
-        // cerr << "blocky hit something" << endl;
+        // g.log << "blocky hit something" << endl;
     }
 }
 
@@ -1486,7 +1486,7 @@ bool Blocky::isAlive()
 // void Blocky::setHit()
 // {
 //     was_hit = true;
-//     // cerr << "setting hit in blocky" << endl;
+//     // g.log << "setting hit in blocky" << endl;
 // }
 
 void Blocky::explode()
@@ -1510,21 +1510,21 @@ void Blocky::explode()
 // respect to blocky
 int Blocky::getPlayerRelativeQuad(float xvec, float yvec)
 {
-    // cerr << "xvec: " << xvec << " yvec: " << yvec << endl;
+    // g.log << "xvec: " << xvec << " yvec: " << yvec << endl;
     if (xvec >= 0 && yvec >= 0) {
-        // cerr << "quad 1" << endl;
+        // g.log << "quad 1" << endl;
         return 1;
     }
     else if (xvec >=0 && yvec < 0) {
-        // cerr << "quad 4" << endl;
+        // g.log << "quad 4" << endl;
         return 4;
     }
     else if (xvec < 0 && yvec >= 0) {
-        // cerr << "quad 2" << endl;
+        // g.log << "quad 2" << endl;
         return 2;
     }
     else if (xvec < 0 && yvec < 0) {
-        // cerr << "quad 3" << endl;
+        // g.log << "quad 3" << endl;
         return 3;
     }
     else
@@ -1535,7 +1535,7 @@ int Blocky::getPlayerRelativeQuad(float xvec, float yvec)
 void Blocky::setBulletVectors()
 {
     bullets.clear();
-    cerr << "setBulletVectors called" << endl;
+    g.log << "setBulletVectors called" << endl;
     float bullet_vel = 15.0;
     // float spread = ((5*PI)/(180));
     float spread = 4;
@@ -1546,10 +1546,10 @@ void Blocky::setBulletVectors()
     // float angle_rad = abs(atan(vec[1]/vec[0]));
     float angle_rad = atan(vec[1]/vec[0]);
     float angle_deg = abs(angle_rad*(180/PI));
-    // cerr << "quadrand: " << quad << endl;
-    // cerr << "quad_coeff[x]: " << quad_coeffs[0] << 
+    // g.log << "quadrand: " << quad << endl;
+    // g.log << "quad_coeff[x]: " << quad_coeffs[0] << 
     //         " quad_coeff[y]: " << quad_coeffs[1] << endl;
-    // cerr << "angle_deg: " << angle_rad*(180/PI) << endl;
+    // g.log << "angle_deg: " << angle_rad*(180/PI) << endl;
 
     // start from first angle and center bullet spread around angle_rad
     float start_angle = angle_deg - (NUM_BLOCKY_BULLETS/2.0f)*spread;    
@@ -1566,7 +1566,7 @@ void Blocky::setBulletVectors()
     temp.item_type = 41; // just using this bullet type for now
 
     for (int i = 0; i < NUM_BLOCKY_BULLETS; i++) {
-        // cerr << "start_angle: " << start_angle << endl;
+        // g.log << "start_angle: " << start_angle << endl;
         temp.setVel(bullet_vel*cos(start_angle*(PI/180))*quad_coeffs[0], 
                     bullet_vel*sin(start_angle*(PI/180))*quad_coeffs[1], 
                                                             0.0);
@@ -1575,11 +1575,11 @@ void Blocky::setBulletVectors()
         start_angle += spread;
     }
 
-    // cerr << "pushed the following bullets to blocky's list:\n";
+    // g.log << "pushed the following bullets to blocky's list:\n";
     // for (auto it = bullets.begin(); it != bullets.end(); it++) {
-    //     cerr << "addr: " << &(*it) << endl;
-    //     cerr << "vel[x]: " << it->vel[0] << " vel[y]: " << it->vel[1] << endl;
-    //     cerr << it->getInfo() << endl;
+    //     g.log << "addr: " << &(*it) << endl;
+    //     g.log << "vel[x]: " << it->vel[0] << " vel[y]: " << it->vel[1] << endl;
+    //     g.log << it->getInfo() << endl;
 
     // }
 
@@ -1605,15 +1605,15 @@ void checkSound(void)
 		initial_game_setup = false;	// switch to false if it was prev true
 
 		if (initial_play == false) {
-			// cerr << "calling playStartTrack()" << endl;
+			// g.log << "calling playStartTrack()" << endl;
 			sounds.playStartTrack();	// queues intro songs and plays
 			initial_play = true;
 		}
 
 		if (sounds.checkIntroBufferDone() && !loop_set) {
 			// sounds.resetBufferDone();
-			// cerr << "sounds.checkintobuffer == true" << endl;
-			// cerr << "calling loopIntro()" << endl;
+			// g.log << "sounds.checkintobuffer == true" << endl;
+			// g.log << "calling loopIntro()" << endl;
 			sounds.loopIntro();
 			loop_set = true;
 		}
@@ -1621,7 +1621,7 @@ void checkSound(void)
 			// reset initial play so that intro plays
 		initial_play = loop_set = false;
 		initial_game_setup = true;
-		// cerr << "calling setupGameMode()" << endl;
+		// g.log << "calling setupGameMode()" << endl;
 		sounds.setupGameMode();
 
 	}
@@ -1637,7 +1637,7 @@ void checkSound(void)
         }
         // if space bar is pressed down and gun not already shooting
         if ((g.keys[XK_space] == 1) && (!sounds.gun_shooting)) {
-            cerr << "tos.bullet_type_prime: " << tos.bullet_type_prime << endl;
+            g.log << "tos.bullet_type_prime: " << tos.bullet_type_prime << endl;
             sounds.gunPlay(tos.bullet_type_prime);
             sounds.gun_shooting = true;
             // if spacebar not pressed down and gun noise currently set to shoot
@@ -1654,7 +1654,7 @@ void checkSound(void)
         }
 
         if (blocky->was_hit == true && bhit_occured == 0) {
-            cerr << "should be playing doosh";
+            g.log << "should be playing doosh";
             sounds.doosh(1);
             bhit_occured = true;
             blocky->was_hit = false;
@@ -1688,7 +1688,7 @@ void checkLevel()
     static bool lvl_change = false;
 
     if (g.substate != DEBUG) {
-        int level_duration = 20; // 20 second levels at the moment
+        int level_duration = 15; // 20 second levels at the moment
         int level_time = g.gameTimer.getTime('n');
         
         static int lvl_change_time;
@@ -1696,7 +1696,7 @@ void checkLevel()
         // wait until the next clock tick
         if (lvl_change && lvl_change_time != level_time) {
             lvl_change = false;
-            cerr << "lvl_change toggled to false\n";
+            g.log << "lvl_change toggled to false\n";
         }
 
         if (g.state == GAME && 
@@ -1705,7 +1705,7 @@ void checkLevel()
             ((level_time % (level_duration)) == 0)) {
 
             lvl_change = true;
-            cerr << "lvl change being toggled to true\n";
+            g.log << "lvl change being toggled to true\n";
             lvl_change_time = level_time; 
             // level up handler
             switch (g.level) {
@@ -1787,10 +1787,10 @@ void checkLevel()
                     // should transition to game over
                     // g.level = LEVEL1;
                     g.dtorres_active = false;
+                    g.donut_active = true;
                     break;
                 default:    // Level 1 behavior (Bread(1))   // shouldn't need
                     g.level = LEVEL1;
-
                     break;
             }
         }        
@@ -1802,6 +1802,7 @@ void checkLevel()
             g.entity_active = false;
             g.dtorres_active = false;
             g.mike_active = false;
+            g.donut_active = false;
             blocky = &vblocky;
             blocky_health = &vblocky_health;
     }
@@ -1856,7 +1857,7 @@ Gamerecord::Gamerecord()
 
 Gamerecord::~Gamerecord()
 {
-    cerr << "constructor called..." << endl;
+    g.log << "constructor called..." << endl;
 	writeRecord();
 	if (user_score) {
 		delete user_score;
@@ -1868,7 +1869,7 @@ Gamerecord::~Gamerecord()
         hs_menu = nullptr;
     }
 
-    cerr << "gamerecord constructor finishing..." << endl;
+    g.log << "gamerecord constructor finishing..." << endl;
 }
 
 bool Gamerecord::testConnection()
@@ -1882,11 +1883,11 @@ bool Gamerecord::testConnection()
     getline(hs_file, line);
     size_t found = line.find("200"); // return true of a 200 code was found
     if (found != std::string::npos) {
-        // cout << "200 was found at position: " << found << endl;
+        // g.log << "200 was found at position: " << found << endl;
         result = true;
     }
     else {
-        // cout << "couldn't find 200" << endl;
+        // g.log << "couldn't find 200" << endl;
         result = false;
     }
 
@@ -1907,13 +1908,13 @@ bool Gamerecord::getRecord()
             // open remote highscore file
         system("curl -s https://cs.csub.edu/~mkausch/3350/cosmo_connect.php?op_type=read > remote-Highscore.txt"); 
         filename = "remote-Highscore.txt";
-        cerr << "using remote..." << endl;
+        g.log << "using remote..." << endl;
         // fin.open("remote-Highscore.txt");        
     }
 
     if (!fin){
-        cerr << "error, bad connection with remote" << endl;
-        cerr << "attempting to open local Highscore.txt file" << endl;
+        g.log << "error, bad connection with remote" << endl;
+        g.log << "attempting to open local Highscore.txt file" << endl;
         filename = "Highscore.txt";
         // fin.open("Highscore.txt");
     }
@@ -1921,7 +1922,7 @@ bool Gamerecord::getRecord()
     fin.open(filename);
 
 	if (!fin) {
-        cerr << "error opening local Highscore file" << endl;
+        g.log << "error opening local Highscore file" << endl;
 		result = false;
 	} else {
         string user;
@@ -1929,7 +1930,7 @@ bool Gamerecord::getRecord()
         int count = 0;
 
         while (fin >> user >> score) {
-            // cerr << user << " : " << score << endl;
+            // g.log << user << " : " << score << endl;
             HighScore entry = HighScore(user, score);
             scores.push_back(entry);
             count++;
@@ -1978,28 +1979,28 @@ void Gamerecord::writeRecord()
     temp << "\" > response.txt";
     string tstr = temp.str();
 
-    cerr << "<<< URL  >>> " << endl;
-    cerr << temp.str() << endl;
+    g.log << "<<< URL  >>> " << endl;
+    g.log << temp.str() << endl;
     
     system(tstr.c_str());
     ifstream fin("response.txt");
     if (!fin) {
-        cerr << "error, no response" << endl;
+        g.log << "error, no response" << endl;
     } else {
         string l;
         getline(fin, l);
-        cerr << "line: " << l << endl;
+        g.log << "line: " << l << endl;
         size_t found = l.find("done");
         if (found != std::string::npos) {
-            cerr << "transmitted successfully" << endl;
+            g.log << "transmitted successfully" << endl;
         } else {
-            cerr << "error transmitting file, no response after write" << endl;
+            g.log << "error transmitting file, no response after write" << endl;
         }
 
         fin.close();
         system("rm response.txt");
     }
-	cerr << "Highscore.txt written successfully...\n";
+	g.log << "Highscore.txt written successfully...\n";
 }
 
 string removeSpaces(string s)
@@ -2011,9 +2012,9 @@ string removeSpaces(string s)
 
 void Gamerecord::submitRecord(int s)
 {
-    cerr << "originally: |" << string(gamer) << "|" << endl;
+    g.log << "originally: |" << string(gamer) << "|" << endl;
     string gamer_tag = removeSpaces(string(gamer));
-    cerr << "now: |" << gamer_tag << "|" << endl;
+    g.log << "now: |" << gamer_tag << "|" << endl;
 
 	if (user_score == nullptr) {
 		user_score = new HighScore(gamer_tag, s);
@@ -2024,10 +2025,10 @@ void Gamerecord::submitRecord(int s)
 	}
 
     if (user_score) {
-        cerr << user_score->uname << "'s score is " 
+        g.log << user_score->uname << "'s score is " 
                 << user_score->score << endl;
 
-        cerr << "adding to records..." << endl;
+        g.log << "adding to records..." << endl;
         addRecord(*user_score);
         for (int i = 0; i < scores.size(); i++) {
             if ((scores[i].score == user_score->score) && 
@@ -2040,7 +2041,7 @@ void Gamerecord::submitRecord(int s)
         highscore = s;
     }
 
-    cerr << "making new menu... " << endl;
+    g.log << "making new menu... " << endl;
     makeMenu(); // make the menu with 11 people
 
 	scores.pop_back();	// delete the lowest
@@ -2052,14 +2053,14 @@ void Gamerecord::sortRecord()
 	sort(scores.begin(), scores.end());	// sorts in ascending
 	reverse(scores.begin(), scores.end());	// changes to descending
 
-    cerr << "finished sorting scores\n";
+    g.log << "finished sorting scores\n";
 }
 
 // adds a record then sorts the records
 void Gamerecord::addRecord(HighScore s)
 {
 	scores.push_back(s);
-    cerr << "finished adding score\n";
+    g.log << "finished adding score\n";
 	sortRecord();
 }
 
@@ -2107,7 +2108,7 @@ void Gamerecord::makeMenu()
     for (int i = 0; i < scores.size(); i++) {
         temp << left << setw(12) << scores[i].uname 
              << right << setw(60) << scores[i].score;
-        cerr << left << setw(12) << scores[i].uname 
+        g.log << left << setw(12) << scores[i].uname 
              << right << setw(60) << scores[i].score << endl;
 
         name_list[i] = temp.str();
@@ -2116,20 +2117,20 @@ void Gamerecord::makeMenu()
     
     // allocate mem for new menu
     if (!hs_menu) {
-        // cerr << "menu set to null so far" << endl;
-        hs_menu = new Menu(scores.size(), 300.0f, 300.0f, 
+        // g.log << "menu set to null so far" << endl;
+        hs_menu = new Menu((int)scores.size(), 300.0f, 300.0f, 
                             g.xres/2.0f, g.yres/2.0f, name_list, 1);
     } else if (hs_menu) {   // make a new menu
-        // cerr << "deleting the prev menu" << endl;
+        // g.log << "deleting the prev menu" << endl;
         delete hs_menu;
-        // cerr << "now making a new menu" << endl;
-        hs_menu = new Menu(scores.size(), 300.0f, 300.0f, 
+        // g.log << "now making a new menu" << endl;
+        hs_menu = new Menu((int)scores.size(), 300.0f, 300.0f, 
                             g.xres/2.0f, g.yres/2.0f, name_list, 1);
     }
 
-    // cerr << "checking if high score" << endl;
+    // g.log << "checking if high score" << endl;
     if (isHighScore()) {
-        // cerr << "setting high score color" << endl;
+        // g.log << "setting high score color" << endl;
         // (hs_menu->t_boxs[0]).setColor((int)124,(int)10,(int)2);
         (hs_menu->t_boxs[0]).color[0] = (unsigned char)124;
         (hs_menu->t_boxs[0]).color[1] = (unsigned char)10;
@@ -2137,7 +2138,7 @@ void Gamerecord::makeMenu()
 
 
     } else if (isTopTen()) {
-        // cerr << "setting top ten color" << endl;
+        // g.log << "setting top ten color" << endl;
         // (hs_menu->t_boxs[place]).setColor((int)178,(int)222,(int)39);
         (hs_menu->t_boxs[place]).color[0] = (unsigned char)178;
         (hs_menu->t_boxs[place]).color[1] = (unsigned char)222;
@@ -2145,7 +2146,7 @@ void Gamerecord::makeMenu()
     }
 
     // set 11th element to yellow (will be deleted)
-    // cerr << "setting 11th element color" << endl;
+    // g.log << "setting 11th element color" << endl;
     if (scores.size() == 11) {
 
         // (hs_menu->t_boxs[scores.size()-1]).setColor((int)189,(int)195,(int)199);
@@ -2153,7 +2154,7 @@ void Gamerecord::makeMenu()
         (hs_menu->t_boxs[scores.size()-1]).color[1] = (unsigned char)195;
         (hs_menu->t_boxs[scores.size()-1]).color[2] = (unsigned char)199;
     }
-    // cerr << "finished making menu...\n" << endl;
+    // g.log << "finished making menu...\n" << endl;
 }
 
 SoundBar::SoundBar(float * _val, float _x, float _y, std::string _bn_)
@@ -2469,7 +2470,7 @@ void Bomb::draw()
         float orig_vert[2] = {vert1[0], vert1[1]};
 
 
-        // cerr << "center: " << pos[0] << "," << pos[1] << "," << pos[2] << endl; 
+        // g.log << "center: " << pos[0] << "," << pos[1] << "," << pos[2] << endl; 
 
         glPushMatrix();
         // glEnable(GL_ALPHA_TEST);
@@ -2484,10 +2485,10 @@ void Bomb::draw()
             // glColor3ubv(color);
             glColor4ub(color[0], color[1], color[2], 100);
             glVertex2f(vert1[0], vert1[1]);
-            // cerr << "vert1: " << vert1[0] << "," << vert1[1] << endl; 
+            // g.log << "vert1: " << vert1[0] << "," << vert1[1] << endl; 
 
             glVertex2f(vert2[0], vert2[1]);
-            // cerr << "vert2: " << vert2[0] << "," << vert2[1] << endl; 
+            // g.log << "vert2: " << vert2[0] << "," << vert2[1] << endl; 
 
             glColor4ub(204, 204, 0, 255);
             glVertex2f(0, 0);
@@ -2555,14 +2556,14 @@ void Bomb::explode()
     if (curr_radius >= stop_radius) {
         // is_gone = true;
         is_exploding = false;
-        // cerr << "is_exploding to false" << endl;
+        // g.log << "is_exploding to false" << endl;
         is_thrown = false;
         show_message = false;
         // message.bot = (g.yres*3)/4;
         curr_radius = start_radius;
 
     } else {
-        // cerr << "is_exploding to true" << endl;
+        // g.log << "is_exploding to true" << endl;
         is_exploding = true;
         // is_gone = false;
         curr_radius += 12;
@@ -2597,7 +2598,7 @@ void Bomb::launch()
 #endif
         // num_bombs--;
     } else {
-        // cerr << "no bombs or one already active" << endl;
+        // g.log << "no bombs or one already active" << endl;
     }
 }
 
@@ -2629,13 +2630,13 @@ bool Bomb::hitboxCollision(Entity & ent)
 // tests collision with hitbox first then itm's corners 
 bool Bomb::collision(Item & itm)
 {
-    // cerr << "checking bomb collision with " << &itm << endl;
+    // g.log << "checking bomb collision with " << &itm << endl;
     if (!hitboxCollision(itm)) {
-        // cerr << "not a hitbox collision on " << &itm << endl;
+        // g.log << "not a hitbox collision on " << &itm << endl;
         return false;
     }
 
-    // cerr << "hitbox collision on " << endl;
+    // g.log << "hitbox collision on " << endl;
 /*
     This would be for center of the box:
 
@@ -2785,3 +2786,15 @@ void FeatureModeBlock::draw()
     }
 }
 
+void initializeLogFile(ofstream & fout)
+{
+    fout.open("cosmo_log.log");
+    if (!fout)
+        cerr << "couldn't open log file" << endl;
+    const auto now = std::chrono::system_clock::now();
+    const std::time_t t_c = std::chrono::system_clock::to_time_t(now);
+    // std::g.log << "The system clock is currently at " << std::ctime(&t_c);
+    fout << "******************************************" << endl;
+    fout << "STARTING LOG " << std::ctime(&t_c) << endl;
+    fout << "*******************************************" << endl << endl;
+}

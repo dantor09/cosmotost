@@ -106,13 +106,13 @@ X11_wrapper::X11_wrapper()
 	int w = g.xres, h = g.yres;
 	dpy = XOpenDisplay(NULL);
 	if (dpy == NULL) {
-		cout << "\n\tcannot connect to X server\n" << endl;
+		g.log << "\n\tcannot connect to X server\n" << endl;
 		exit(EXIT_FAILURE);
 	}
 	Window root = DefaultRootWindow(dpy);
 	XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
 	if (vi == NULL) {
-		cout << "\n\tno appropriate visual found\n" << endl;
+		g.log << "\n\tno appropriate visual found\n" << endl;
 		exit(EXIT_FAILURE);
 	}
 	Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
@@ -333,7 +333,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 						sounds.boop();
 
 #endif
-						// std::cerr << "sound turned down to: " << g.m_vol 
+						// std::g.log << "sound turned down to: " << g.m_vol 
 						// << endl;
 
 						return 0;
@@ -346,7 +346,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 						sounds.boop();
 
 #endif
-						// std::cerr << "sound turned up to: " << g.m_vol 
+						// std::log << "sound turned up to: " << g.m_vol 
 						// << endl;
 
 						return 0;
@@ -361,7 +361,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 						sounds.boop();
 
 #endif
-						// std::cerr << "sfx turned down to: " << g.sfx_vol 
+						// std::g.log << "sfx turned down to: " << g.sfx_vol 
 						// << endl;
 
 						return 0;
@@ -374,7 +374,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 						sounds.boop();
 
 #endif
-						// std::cerr << "sfx turned down to: " << g.sfx_vol 
+						// std::g.log << "sfx turned down to: " << g.sfx_vol 
 						// << endl;
 
 						return 0;
@@ -463,7 +463,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					g.state = MAINMENU;
 					g.gameReset();
 					g.state = GAME;
-					cerr << "g.state was changed back to GAME (RESET SEQUENCE)"
+					g.log << "g.state was changed back to GAME (RESET SEQUENCE)"
 							<< endl;
 					g.gameTimer.reset();
 					selection = nullptr;
@@ -471,7 +471,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
 					sounds.rewindGameMusic();
-					cerr << "rewinding song " << sounds.getSongName() << endl;
+					g.log << "rewinding song " << sounds.getSongName() << endl;
 #endif
 
 					return 0;
@@ -483,30 +483,30 @@ int X11_wrapper::check_mouse(XEvent *e)
 					if (g.gameTimer.isPaused()) {
 						g.gameTimer.unPause();	// unpause the game
 					}
-					cerr << "g.state was changed back to GAME" << endl;
+					g.log << "g.state was changed back to GAME" << endl;
 					selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
 					sounds.boop();
 					sounds.unpause();
-					cerr << "unpausing song " << sounds.getSongName() << endl;
+					g.log << "unpausing song " << sounds.getSongName() << endl;
 #endif
 					return 0;
 
 				} else if (selection && (pause_menu.words[selection->id] == 
 						"Quit Game")) {
 					pause_menu.setOrigColor();
-					cerr << "g.state was changed to should be quitting..." <<
+					g.log << "g.state was changed to should be quitting..." <<
 							endl;
 
 					stats.DisplayStats();
 
 					// if (g.gameTimer) {
-					// 	cerr << "killing game clock\n";
+					// 	g.log << "killing game clock\n";
 					// 	delete g.gameTimer;	// kill game clock
 					// }
 
-					cerr << "killing game clock\n";
+					g.log << "killing game clock\n";
 					g.gameTimer.pause();
 					selection = nullptr;
 
@@ -577,7 +577,7 @@ int X11_wrapper::check_keys(XEvent *e)
 		// 	shift = 0;
 	}
 	if (e->type == KeyPress) {
-		//std::cout << "press" << std::endl;
+		//std::g.log << "press" << std::endl;
 		g.keys[key1]=1;
 		// if (key == XK_Shift_L || key == XK_Shift_R) {
 		// 	shift = 1;
@@ -591,7 +591,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				case XK_Return:
 					// Enter was pressed
 					g.state = MAINMENU;
-					cerr << "g.state was changed to MAINMENU" << endl;
+					g.log << "g.state was changed to MAINMENU" << endl;
 					g.gameReset();
 					g.substate = NONE;
 					return 0;
@@ -617,9 +617,9 @@ int X11_wrapper::check_keys(XEvent *e)
 					g.state = MAINMENU;
 					g.gameReset();
 					g.substate = NONE;
-					cerr << "g.state was changed to MAINMENU" << endl;
-					cerr << "g.substate was changed to NONE" << endl;
-					cerr << "Back to the main menu" << endl;
+					g.log << "g.state was changed to MAINMENU" << endl;
+					g.log << "g.substate was changed to NONE" << endl;
+					g.log << "Back to the main menu" << endl;
 					return 0;
 
 				case XK_7:
@@ -628,7 +628,7 @@ int X11_wrapper::check_keys(XEvent *e)
 #ifdef USE_OPENAL_SOUND
 					sounds.updateMusicVol();
 #endif
-					// cerr << "sound turned down to: " << g.m_vol << endl;
+					// g.log << "sound turned down to: " << g.m_vol << endl;
 					// sfx_slider.moveSliderDown();
 					return 0;
 				case XK_8:
@@ -637,7 +637,7 @@ int X11_wrapper::check_keys(XEvent *e)
 #ifdef USE_OPENAL_SOUND
 					sounds.updateMusicVol();
 #endif
-					// cerr << "sound turned up to: " << g.m_vol << endl;
+					// g.log << "sound turned up to: " << g.m_vol << endl;
 					// sfx_slider.moveSliderUp();
 					return 0;
 
@@ -647,7 +647,7 @@ int X11_wrapper::check_keys(XEvent *e)
 #ifdef USE_OPENAL_SOUND
 					sounds.updateSFXVol();
 #endif
-					// cerr << "sfx turned down to: " << g.sfx_vol << endl;
+					// g.log << "sfx turned down to: " << g.sfx_vol << endl;
 					// sfx_slider.moveSliderDown();
 					return 0;
 				case XK_0:
@@ -656,7 +656,7 @@ int X11_wrapper::check_keys(XEvent *e)
 #ifdef USE_OPENAL_SOUND
 					sounds.updateSFXVol();
 #endif
-					// cerr << "sfx turned up to: " << g.sfx_vol << endl;
+					// g.log << "sfx turned up to: " << g.sfx_vol << endl;
 					// sfx_slider.moveSliderUp();
 					return 0;
 
@@ -666,7 +666,7 @@ int X11_wrapper::check_keys(XEvent *e)
 // 					//Escape key was pressed
 // 					//Enter Pause State
 // 					sounds.toggleUserPause();
-// 					cerr << "toggling pause"  << endl;
+// 					g.log << "toggling pause"  << endl;
 // 					return 0;
 // #endif
 
@@ -699,8 +699,8 @@ int X11_wrapper::check_keys(XEvent *e)
 					// pos[0] = 350;
 					// pos[0] += 50;
 					// pos[1] = 350;  			
-					// std::cout << "move w"<<pos[1]<<std::endl;
-				// std::cout << "move w"<<pos[1]<<std::endl;
+					// std::g.log << "move w"<<pos[1]<<std::endl;
+				// std::g.log << "move w"<<pos[1]<<std::endl;
 						return 0;
 				case XK_e:
 						tos.bulletReload();
@@ -710,12 +710,12 @@ int X11_wrapper::check_keys(XEvent *e)
 						g.entity_active = true;
 						g.fstate = APARRIOTT;
 						fmtext.setTexture();
-						cerr << "g.entity_active set to true\n";
+						g.log << "g.entity_active set to true\n";
 					} else if (g.entity_active == true) {
 						g.entity_active = false;
 						g.fstate = REGULAR;
 						fmtext.setTexture();
-						cerr << "g.entity_active set to false\n";
+						g.log << "g.entity_active set to false\n";
 					}
 					return 0;
 				case XK_t: // t was pressed - toggle Dan's Feature Mode
@@ -724,14 +724,14 @@ int X11_wrapper::check_keys(XEvent *e)
 						g.dtorres_active = true;
 						g.fstate = DTORRES;
 						fmtext.setTexture();
-						cerr << "g.dtorres_active set to true\n";
+						g.log << "g.dtorres_active set to true\n";
 					// } else if (g.substate == DTORRES) {
 					} else if (g.dtorres_active == true) {
 						// g.substate = NONE;
 						g.dtorres_active = false;
 						g.fstate = REGULAR;
 						fmtext.setTexture();
-						cerr << "g.dtorres_active set to false\n";
+						g.log << "g.dtorres_active set to false\n";
 					}
 					return 0;
 				case XK_h: // h was pressed - toggle Huaiyu's Feature Mode
@@ -741,14 +741,14 @@ int X11_wrapper::check_keys(XEvent *e)
 						g.huaiyu_active = true;
 						g.fstate = HZHANG;
 						fmtext.setTexture();
-						cerr << "g.huaiyu_active set to true\n";
+						g.log << "g.huaiyu_active set to true\n";
 					// } else if (g.substate == HUAIYU) {
 					} else if (g.huaiyu_active == true) {
 						g.huaiyu_active = false;
 						// g.substate = NONE;
 						g.fstate = REGULAR;
 						fmtext.setTexture();
-						cerr << "g.huaiyu_active set to false\n";
+						g.log << "g.huaiyu_active set to false\n";
 					}
 					return 0;
 				case XK_k: // t was pressed - toggle Dan's Feature Mode
@@ -774,8 +774,8 @@ int X11_wrapper::check_keys(XEvent *e)
 							blocky = &vblocky;
 							blocky_health = &vblocky_health;
 						}
-						cerr << "g.mike_active set to true\n";
-						cerr << boolalpha << "g.fstate is mkauscH: " 
+						g.log << "g.mike_active set to true\n";
+						g.log << boolalpha << "g.fstate is mkauscH: " 
 								<< (g.fstate == MKAUSCH) << endl;
 					// } else if (g.substate == MIKE) {
 					} else if (g.mike_active == true) {
@@ -784,7 +784,7 @@ int X11_wrapper::check_keys(XEvent *e)
 						fmtext.setTexture();
 						blocky->gamereset();
 						// g.substate = NONE;
-						cerr << "g.mike_active set to false\n";
+						g.log << "g.mike_active set to false\n";
 					}
 					return 0;
 				case XK_b: // b was pressed - toggle donut feature
@@ -794,12 +794,12 @@ int X11_wrapper::check_keys(XEvent *e)
 						g.donut_active = true;
 						// g.fstate = HZHANG;
 						// fmtext.setTexture();
-						cerr << "g.donut_active set to true\n";
+						g.log << "g.donut_active set to true\n";
 					} else if (g.donut_active == true) {
 						g.donut_active = false;
 						// g.fstate = HZHANG;
 						// fmtext.setTexture();
-						cerr << "g.donut_active set to false\n";
+						g.log << "g.donut_active set to false\n";
 					}
 					return 0;
 
@@ -816,22 +816,22 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Enter Pause State
 					g.state = PAUSE;
 					g.gameTimer.pause();
-					cerr << "g.state was changed to PAUSE" << endl;
+					g.log << "g.state was changed to PAUSE" << endl;
 
 #ifdef USE_OPENAL_SOUND
 
 					sounds.pause();
-					cerr << "pausing song " << sounds.getSongName() << endl;
+					g.log << "pausing song " << sounds.getSongName() << endl;
 #endif
 
 					return 0;
 				case XK_F1:	// Toggle Help Menu
 					g.show_help_menu = (g.show_help_menu ? false : true);
-					cerr << "g.show_help_menu was toggled" << endl;
+					g.log << "g.show_help_menu was toggled" << endl;
 					return 0;
 				case XK_F2:	// Toggle Game Over
 					g.state = GAMEOVER;
-					cerr << "g.state was changed to GAMEOVER" << endl;
+					g.log << "g.state was changed to GAMEOVER" << endl;
 					return 0;
 
 #ifdef USE_OPENAL_SOUND
@@ -839,7 +839,7 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Escape key was pressed
 					//Enter Pause State
 					sounds.toggleUserPause();
-					cerr << "toggling pause"  << endl;
+					g.log << "toggling pause"  << endl;
 					return 0;
 #endif
 
@@ -858,11 +858,11 @@ int X11_wrapper::check_keys(XEvent *e)
 					//Return to Game State
 					g.state = GAME;
 					g.gameTimer.unPause();
-					cerr << "g.state was changed back to GAME" << endl;
+					g.log << "g.state was changed back to GAME" << endl;
 
 #ifdef USE_OPENAL_SOUND
 					sounds.unpause();
-					cerr << "unpausing song " << sounds.getSongName() << endl;
+					g.log << "unpausing song " << sounds.getSongName() << endl;
 #endif
 
 					return 0;
@@ -878,17 +878,17 @@ int X11_wrapper::check_keys(XEvent *e)
 		// if (tos.score > record.highscore) {
 		int key = XLookupKeysym(&e->xkey, 0);
 		if (e->type == KeyPress) {
-			// cout << key << endl;
+			// g.log << key << endl;
 			if (key >=97 && key <= 122) {
 					record.gamer[record.n]= (char)key;
 					// record.str = record.gamer;
-					cout << (char)key << endl;
-					cout << record.gamer << endl;
+					g.log << (char)key << endl;
+					g.log << record.gamer << endl;
 					if (record.n < 9)
 						record.n++;
 			}
 			if (key == XK_BackSpace) {
-					cout << "<<backspace>>" <<endl;
+					g.log << "<<backspace>>" <<endl;
 					record.gamer[record.n] = ' ';
 					if (record.n > 0)
 							record.n--;
@@ -898,7 +898,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				// g.state = MAINMENU;
 				// g.gameReset();
 				g.substate = HIGH_SCORES;
-				cerr << "g.substate was changed to HIGH_SCORES" << endl;
+				g.log << "g.substate was changed to HIGH_SCORES" << endl;
 				return 0;
 			}
 
@@ -908,7 +908,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				// g.state = MAINMENU;
 				// g.gameReset();
 				g.substate = HIGH_SCORES;
-				cerr << "g.substate was changed to HIGH_SCORES" << endl;
+				g.log << "g.substate was changed to HIGH_SCORES" << endl;
 				return 0;
 			}
 		}
@@ -917,7 +917,7 @@ int X11_wrapper::check_keys(XEvent *e)
 		// if (tos.score > record.highscore) {
 		int key = XLookupKeysym(&e->xkey, 0);
 		if (e->type == KeyPress) {
-			// cout << key << endl;
+			// g.log << key << endl;
 			if (key == XK_Return) {
 				// g.state = MAINMENU;
 				g.gameReset();
@@ -925,7 +925,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				g.substate = NONE;
 				record.makeMenu();
 				// record.hs_menu->setOrigColor();
-				cerr << "g.state was changed to MAINMENU" << endl;
+				g.log << "g.state was changed to MAINMENU" << endl;
 				return 0;
 			}
 			if (key == XK_Escape) {
@@ -936,7 +936,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				g.state = MAINMENU;
 				g.substate = NONE;
 				record.makeMenu();
-				cerr << "g.state was changed to MAINMENU" << endl;
+				g.log << "g.state was changed to MAINMENU" << endl;
 				return 0;
 			}
 		}
@@ -947,7 +947,7 @@ int X11_wrapper::check_keys(XEvent *e)
 // won't have to mess with this much in the project
 void init_opengl(void)
 {
-	cerr << "starting initializing opengl\n";
+	g.log << "starting initializing opengl\n";
 	//OpenGL initialization
     // make the viewport the size of the whole window
 	glViewport(0, 0, g.xres, g.yres);
@@ -1277,7 +1277,7 @@ void init_opengl(void)
 								GL_RGBA, GL_UNSIGNED_BYTE, silhouetteData);
 	free(silhouetteData);
 
-	cerr << "finished initializing opengl" << endl;
+	g.log << "finished initializing opengl" << endl;
 }
 
 void physics()
@@ -1330,7 +1330,7 @@ void physics()
 				}
 				e.makeEntity(e.spawn_x, e.spawn_y, e.spawn_vel_x, 
 						e.spawn_vel_y, e.curve_rand_x, e.curve_rand_y);
-				// cerr << "makeEntity called" << endl;
+				// g.log << "makeEntity called" << endl;
 							
 				e.chain_len--;
 			}
@@ -1451,7 +1451,7 @@ void physics()
 				tos.hpDamage(*blocky);
 				// blocky->hpDamage(tos);
 
-				// cerr << "resetting blocky..." << endl;
+				// g.log << "resetting blocky..." << endl;
 				blocky->reset();
 
 				if (tos.hpCheck() && (tos.lives - 1 > 0)) {
@@ -1598,7 +1598,7 @@ void physics()
 						spear[i]=spear[--g.n_Spear];
 
 						if (tos.hpCheck() && (tos.lives > 1)) {
-							// cerr << "should be dead from forky" << endl;
+							// g.log << "should be dead from forky" << endl;
 							tos.lives--;
 							tos.setHP(tos.starting_hp);
 							// continue;
@@ -1610,7 +1610,7 @@ void physics()
 
 					if (bomb.is_exploding &&
 						bomb.collision(spear[i])) {
-						// cerr << "bomb & spear collision" << endl;
+						// g.log << "bomb & spear collision" << endl;
 						spear[i].hp = 0;	// wipe out all health
 						tos.score += spear[i].point;
 						spear[i]=spear[--g.n_Spear];
@@ -1685,7 +1685,7 @@ void physics()
 					do_bul[i] = do_bul[--g.n_donut_bullet];
 				}
 				if (do_bul[i].screenOut()) {
-					cerr << "clear dobullet" << endl;
+					g.log << "clear dobullet" << endl;
 					do_bul[i] = do_bul[--g.n_donut_bullet];
 				}
 			}
@@ -1727,7 +1727,7 @@ void physics()
 					spear[i]=spear[--g.n_Spear];
 
 					if (tos.hpCheck() && (tos.lives > 1)) {
-						// cerr << "should be dead from forky" << endl;
+						// g.log << "should be dead from forky" << endl;
 						tos.lives--;
 						tos.setHP(tos.starting_hp);
 						// continue;
@@ -1739,7 +1739,7 @@ void physics()
 
 				if (bomb.is_exploding &&
 					bomb.collision(spear[i])) {
-					// cerr << "bomb & spear collision" << endl;
+					// g.log << "bomb & spear collision" << endl;
 					spear[i].hp = 0;	// wipe out all health
 					tos.score += spear[i].point;
 					spear[i]=spear[--g.n_Spear];
@@ -1748,7 +1748,7 @@ void physics()
 			}
 
 
-			// cerr << donut.hp << endl;
+			// g.log << donut.hp << endl;
 			
 		}
 //================================================================
@@ -1815,7 +1815,7 @@ void physics()
 					// D.T Reset HP and decrease lives if toaster still has 
 					// lives left
 					if(tos.hpCheck() && (tos.lives > 1)) {
-						cerr << "should be dead from forky" << endl;
+						g.log << "should be dead from forky" << endl;
 						tos.lives--;
 						tos.setHP(tos.starting_hp);
 						// continue;
@@ -1853,10 +1853,10 @@ void physics()
 				} else if (bread[i].item_type == 17) { // extra life
 					tos.lives = (tos.lives < 3) ? tos.lives + 1 : 3;
 					bread[i] = bread[--g.n_Bread];
-					// cerr << "added 1 life" << endl;
-					// cerr << "item_type: " << bread[i].item_type << endl;
-					// cerr << bread[i].getInfo();
-					// cerr << "rgb: " 
+					// g.log << "added 1 life" << endl;
+					// g.log << "item_type: " << bread[i].item_type << endl;
+					// g.log << bread[i].getInfo();
+					// g.log << "rgb: " 
 					// 		<< (int)bread[i].getColor()[0] << ", "
 					// 		<< (int)bread[i].getColor()[1] << ", "
 					// 		<< (int)bread[i].getColor()[2] << endl;
@@ -1913,17 +1913,17 @@ void physics()
 					
 					stats.beamKills++;
 				}
-				cerr << "distanceBread: " << distanceBread << " whichBread " 
+				g.log << "distanceBread: " << distanceBread << " whichBread " 
 						<< whichBread << endl;
 			} 
 			else if (whichBread != -1 && entity_or_tos) {
 				tos.laserDamage(entity[whichBread]);
-        		cerr << "distanceBread: " << distanceBread << " whichBread " 
+        		g.log << "distanceBread: " << distanceBread << " whichBread " 
 						<< whichBread << endl;
 			}
 			else if (whichBread != -1 && !entity_or_tos) {
 				tos.laserDamage(bread[whichBread]);
-        		cerr << "distanceBread: " << distanceBread << " whichBread " 
+        		g.log << "distanceBread: " << distanceBread << " whichBread " 
 						<< whichBread << endl;
 			}
 
@@ -1996,7 +1996,7 @@ void render()
 			
 			glTexCoord2f(1.0f, 0.0f);
 			glVertex2f( bread_pic.w,  bread_pic.h);
-			
+
 			glTexCoord2f(1.0f, 1.0f);
 			glVertex2f( bread_pic.w, -bread_pic.h);
 		glEnd();
@@ -2245,7 +2245,7 @@ void render()
 					pfreeze_block->setFollowTimer(3);
 				} 
 				catch (bad_alloc) {
-					cerr << "Freeze Block Bad Allocation" << endl;
+					g.log << "Freeze Block Bad Allocation" << endl;
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -2297,7 +2297,7 @@ void render()
 			donut.draw();
 			donut_health.draw();
 			for (int i=0; i < g.n_donut_bullet; i++) {
-				//cerr << "draw bullet" << endl;
+				//g.log << "draw bullet" << endl;
 				do_bul[i].draw();
 			}
 			for (int i=0; i < g.n_laser; i++) {

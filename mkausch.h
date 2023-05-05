@@ -55,7 +55,7 @@ public:
     float pos[3];
     unsigned char color[3];
     unsigned char bcolor[3];
-    unsigned int n_texts;
+    int n_texts;
     Rect *texts;
     // Rect texts[4];
     Box *t_boxs;
@@ -63,7 +63,7 @@ public:
     int centering;
 
     // constructors
-    Menu(unsigned int n_texts,
+    Menu(int n_texts,
             float _w, float _h,
             float _x, float _y,
             std::string* _words,
@@ -276,6 +276,7 @@ public:
 void setRandColor(Item & it);
 void checkSound(void);
 void checkLevel();
+void initializeLogFile(ofstream & fout);
 
 class Bomb
 {

@@ -47,6 +47,7 @@ bool entity_active,
  
 float sfx_vol;
 float m_vol;
+ofstream log;
 
 GLuint bkg_texture;
 // GLuint toaster_texture;

@@ -86,7 +86,7 @@ void makeBread(float x, float y,float z, int Bread_t, int type)
 
 void makeSpear(float x, float y,float z, int cd) 
 {
-	cerr << "a spear make" << endl;
+	g.log << "a spear make" << endl;
 	if (g.n_Spear < 10) {
 		spear[g.n_Spear].setSpear(x,y,z,cd);
 		++g.n_Spear;
@@ -188,9 +188,9 @@ void Item::hpDamage(float val)
 }
 void Item::hpDamage(Item a) 
 {
-    // std::cout << "hp 1 :" << hp << "Damage :" << a.damage<< std::endl;
+    // std::g.log << "hp 1 :" << hp << "Damage :" << a.damage<< std::endl;
     hp = hp - a.damage;
-    // std::cout << "hp 2 :" << hp << std::endl;
+    // std::g.log << "hp 2 :" << hp << std::endl;
 }
 
 bool Item::screenIn() 
@@ -616,7 +616,7 @@ void Bullet::setBullet(float x, float y, float z, int type)
 			item_type = 43;
 			break;
 		case 4:
-			cerr << "make 4 bullet" << endl;
+			g.log << "make 4 bullet" << endl;
 			float r;
 			float dx;
 			float dy;	
@@ -971,7 +971,7 @@ void DonutLaser::setDonutLaser(float pos, float angle,
 void DonutLaser::setDonutLaser(float xcenter, float ycenter, float r, 
 						float anglestart, float angleend, float anglespeed)
 {
-	cout << "make 5 laser" << endl;
+	g.log << "make 5 laser" << endl;
 	laser_type = 5;
 	slop = anglestart * 3.1415926 / 180;
 	angleacc = anglespeed * 3.1415926 / 180;
@@ -1011,13 +1011,13 @@ void DonutLaser::setDonutLaser(float xcenter, float ycenter, float r,
 }
 
 void DonutLaser::moveLaser() {
-	// cerr << slop << endl;
+	// g.log << slop << endl;
 	if (charge_on) {
 	// charge and chclearange alpha
 		if (cd_charge > 0) {
 			cd_charge--;
 			alpha += alpha_inc;
-			// cerr << alpha << endl;
+			// g.log << alpha << endl;
 		} else {
 			charge_on = false;
 			lag_on = true;
@@ -1365,7 +1365,7 @@ bool EffectBox::deleteEffect(float dis)
 //=============================================================================
 ChargeBread::ChargeBread()
 {
-	cerr<<"make a charge bread" <<endl;
+	g.log<<"make a charge bread" <<endl;
 	charge_on = true;
 	charge_dim[0] = 0;
 	charge_dim[1] = 0;
@@ -1400,7 +1400,7 @@ void ChargeBread::charge()
 	EffectBox temp;
 	if (charge_need > 0) {
 		for (int i = 0; i < rand()%2+1; i++) {
-			cerr << "make partical" << endl;
+			g.log << "make partical" << endl;
 			deltax = rand()%300-150;
 			deltay = rand()%300-150;
 			if (deltax >=0) {
@@ -1501,7 +1501,7 @@ void ChargeBread::moveChargeBread() {
 			charge_dim[1] += charge_dim_acc[1];
 			if (next(la) != effect.end()) {
 				la = effect.erase(la);
-				cerr << "erase eff" << endl;
+				g.log << "erase eff" << endl;
 			} else {
 				la = effect.erase(la);
 				break;
@@ -1616,7 +1616,7 @@ void Donut::moveDonut()
 				temp.setAcc(0.01*(dx/r),0.01*(dy/r), 0);
 				temp.setVertex();
 				eff.push_front(temp);
-				cerr << "make partical" << charge_need << " " << temp.acc[0] <<
+				g.log << "make partical" << charge_need << " " << temp.acc[0] <<
 							temp.acc[1]<<endl;
 				charge_need--;
 				if (charge_need == 0) {
@@ -1631,7 +1631,7 @@ void Donut::moveDonut()
 
 	} else {
 		tos.freeze = false;
-		// cerr << weapon << "  " << count_down << endl;
+		// g.log << weapon << "  " << count_down << endl;
 		int arr[] = {1,2,5,8,3,4, 6 ,7, 9, 10,11,12,13,14};
 		int val = rand()%4 + bonus;
 		val = arr[val];
@@ -1713,11 +1713,11 @@ void Donut::draw()
 	for (auto dbread = dbready.begin(); 
 									dbread != dbready.end(); dbread++) {
 		dbread->draw();
-		cerr << "draw charge" << dbread->charge_on << dbread->charge_dim[0] <<  endl;
+		g.log << "draw charge" << dbread->charge_on << dbread->charge_dim[0] <<  endl;
 		for (auto ef = dbread->effect.begin(); 
 									ef != dbread->effect.end(); ef++) {
 			ef->draw();
-			cerr << "draw ef" << ef->pos[0] << ef->pos[1] << endl;
+			g.log << "draw ef" << ef->pos[0] << ef->pos[1] << endl;
 		}
 	}
 	int n = 40;
@@ -1875,7 +1875,7 @@ void Donut::draw()
 		}		
 		weapon = true;
 	} else {
-		// cerr << donutlasers.empty() << dfork.empty() << dbready.empty() <<endl;
+		// g.log << donutlasers.empty() << dfork.empty() << dbready.empty() <<endl;
 		if (weapon_outer_count == 0) {
 			if (donutlasers.empty()) {
 				d_rotate = 0;
@@ -2008,7 +2008,7 @@ void Donut::draw()
 				break;
 
 			case 6:
-				cerr << "in case 6"<<endl;
+				g.log << "in case 6"<<endl;
 				temp.setDonutLaser(g.yres_start+100,6,'h');
 				temp.setCD(100,50,0,1,4,0);
 				donutlasers.push_front(temp);
@@ -2018,7 +2018,7 @@ void Donut::draw()
 				break;
 
 			case 7:
-				cerr << "in case 7" <<endl;
+				g.log << "in case 7" <<endl;
 				temp.setDonutLaser(0.5*g.xres,g.yres_start, 
 														1,90.01,180.1,0.5);
 				temp.setCD(100,50,1,1,4,0);
@@ -2028,7 +2028,7 @@ void Donut::draw()
 				donutlasers.push_front(temp);
 				break;
 			case 8:
-				cerr << "in case 8" <<endl;
+				g.log << "in case 8" <<endl;
 				alp=(((float)rand()) / (float)RAND_MAX);
 				alp = g.yres - (alp *(g.yres-g.yres_start) * 0.33);
 				temp.setDonutLaser(alp, 0,'h');
@@ -2089,7 +2089,7 @@ void Donut::draw()
 				g.n_donut_bullet++;
 				break;
 			case 11:
-				cerr << "in case 11"<<endl;
+				g.log << "in case 11"<<endl;
 				if (rand()%2) {
 					temp.setDonutLaser(g.yres-10,-6,'h');
 					temp.setCD(50,50,0,1,4,0);
@@ -2104,7 +2104,7 @@ void Donut::draw()
 				donutlasers.push_front(temp);
 				break;
 			case 12:
-				cerr << "in case 12" <<endl;
+				g.log << "in case 12" <<endl;
 				alp=(((float)rand()) / (float)RAND_MAX);
 				alp = g.yres - (alp *(g.yres-g.yres_start) * 0.33);
 				temp.setDonutLaser(alp, 0,'h');
@@ -2126,7 +2126,7 @@ void Donut::draw()
 				makeSpear(alp,g.yres_start+10,0, 100);
 				break;	
 			case 13:
-				cerr << "in case 13" <<endl;
+				g.log << "in case 13" <<endl;
 				if (weapon_outer_count == 6) {
 					temp.setDonutLaser(g.xres,-8,'v');
 					temp.setCD(50,50,0,1,4,0);
@@ -2139,7 +2139,7 @@ void Donut::draw()
 				donutlasers.push_front(temp);
 				break;		
 			case 14:
-				cerr << "in case 14" <<endl;
+				g.log << "in case 14" <<endl;
 				if (rand()%2) {
 				temp.setDonutLaser(donut.pos[0],donut.pos[1], 
 										donut.out_radius,90.01,269.9,1.5);
@@ -2153,7 +2153,7 @@ void Donut::draw()
 				}
 				break;														
 			case 15:
-				cerr << "in case 8" <<endl;
+				g.log << "in case 8" <<endl;
 				
 				break;														
 
@@ -2198,7 +2198,7 @@ bool pointIn(float x0, float y0, float * arr, int n)
 		if (large > point[i] && small < point[i])
 			small = point[i];
 	}
-	cout << large << " " << small <<endl;
+	g.log << large << " " << small <<endl;
 	if (x0 > large || x0 < small)
 		return false;
 	else
