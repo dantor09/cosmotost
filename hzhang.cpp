@@ -1322,7 +1322,7 @@ void EffectBox::moveEffect()
 		dx = tpos[0]-pos[0];
 		dy = tpos[1]-pos[1];
 		r = (float)sqrt((dx*dx)+(dy*dy));
-		setAcc(0.1*(dx/(r*r*r)),0.1*(dy/(r*r*r)), 0);
+		setAcc(50*(dx/(r*r*r)),50*(dy/(r*r*r)), 0);
 
 
 	} else {
@@ -1596,7 +1596,7 @@ void Donut::moveDonut()
 		tos.freeze = true;
 		for (auto ef = eff.begin(); ef != eff.end();) {
 			ef->moveEffect();
-			if (ef->deleteEffect()) {
+			if (ef->deleteEffect()||ef->deleteEffect(inner_radius)) {
 				inner_radius += 0.1;
 				if (next(ef) != eff.end()) {
 					ef = eff.erase(ef);
@@ -1621,7 +1621,7 @@ void Donut::moveDonut()
 				dx = pos[0]-temp.pos[0];
 				dy = pos[1]-temp.pos[1];
 				r = (float)sqrt((dx*dx)+(dy*dy));
-				temp.setAcc(0.1*(dx/(r*r*r)),0.1*(dy/(r*r*r)), 0);
+				temp.setAcc(50*(dx/(r*r*r)),50*(dy/(r*r*r)), 0);
 				temp.setVertex();
 				eff.push_front(temp);
 				g.log << "make partical" << charge_need << " " << temp.acc[0] <<
