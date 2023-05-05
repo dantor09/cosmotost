@@ -1712,6 +1712,7 @@ void checkLevel()
                 case LEVEL1:
                     // Level2: Bread(2)
                     g.level = LEVEL2;
+                    g.bread_active = true;
                     // change bread vars
                     break;
                 case LEVEL2:
@@ -1786,6 +1787,8 @@ void checkLevel()
                 case LEVEL9:
                     // should transition to game over
                     // g.level = LEVEL1;
+                    g.bread_active = false;
+                    g.huaiyu_active = false;
                     g.dtorres_active = false;
                     g.donut_active = true;
                     break;
@@ -1798,6 +1801,7 @@ void checkLevel()
 
     if (g.state == GAMEOVER) {
             g.level = LEVEL1;
+            g.bread_active = false;
             g.huaiyu_active = false;
             g.entity_active = false;
             g.dtorres_active = false;
@@ -1857,7 +1861,7 @@ Gamerecord::Gamerecord()
 
 Gamerecord::~Gamerecord()
 {
-    g.log << "constructor called..." << endl;
+    g.log << "destructor called..." << endl;
 	writeRecord();
 	if (user_score) {
 		delete user_score;
@@ -1869,7 +1873,7 @@ Gamerecord::~Gamerecord()
         hs_menu = nullptr;
     }
 
-    g.log << "gamerecord constructor finishing..." << endl;
+    g.log << "destructor constructor finishing..." << endl;
 }
 
 bool Gamerecord::testConnection()
@@ -2036,6 +2040,7 @@ void Gamerecord::submitRecord(int s)
                 place = i;
         }
     }
+	scores.pop_back();	// delete the lowest
 
     if (isHighScore()) {
         highscore = s;
@@ -2044,7 +2049,6 @@ void Gamerecord::submitRecord(int s)
     g.log << "making new menu... " << endl;
     makeMenu(); // make the menu with 11 people
 
-	scores.pop_back();	// delete the lowest
 }
 
 // sorts the records
@@ -2103,9 +2107,10 @@ void Gamerecord::genFakeNames()
 void Gamerecord::makeMenu()
 {
     ostringstream temp;
-    string name_list[scores.size()];
+    // string name_list[scores.size()];
+    string name_list[10];
 
-    for (int i = 0; i < scores.size(); i++) {
+    for (int i = 0; i < 10; i++) {
         temp << left << setw(12) << scores[i].uname 
              << right << setw(60) << scores[i].score;
         g.log << left << setw(12) << scores[i].uname 
@@ -2118,13 +2123,13 @@ void Gamerecord::makeMenu()
     // allocate mem for new menu
     if (!hs_menu) {
         // g.log << "menu set to null so far" << endl;
-        hs_menu = new Menu((int)scores.size(), 300.0f, 300.0f, 
+        hs_menu = new Menu(10, 300.0f, 300.0f, 
                             g.xres/2.0f, g.yres/2.0f, name_list, 1);
     } else if (hs_menu) {   // make a new menu
         // g.log << "deleting the prev menu" << endl;
         delete hs_menu;
         // g.log << "now making a new menu" << endl;
-        hs_menu = new Menu((int)scores.size(), 300.0f, 300.0f, 
+        hs_menu = new Menu(10, 300.0f, 300.0f, 
                             g.xres/2.0f, g.yres/2.0f, name_list, 1);
     }
 
@@ -2147,13 +2152,13 @@ void Gamerecord::makeMenu()
 
     // set 11th element to yellow (will be deleted)
     // g.log << "setting 11th element color" << endl;
-    if (scores.size() == 11) {
+    // if (scores.size() == 11) {
 
-        // (hs_menu->t_boxs[scores.size()-1]).setColor((int)189,(int)195,(int)199);
-        (hs_menu->t_boxs[scores.size()-1]).color[0] = (unsigned char)189;
-        (hs_menu->t_boxs[scores.size()-1]).color[1] = (unsigned char)195;
-        (hs_menu->t_boxs[scores.size()-1]).color[2] = (unsigned char)199;
-    }
+    //     // (hs_menu->t_boxs[scores.size()-1]).setColor((int)189,(int)195,(int)199);
+    //     (hs_menu->t_boxs[scores.size()-1]).color[0] = (unsigned char)189;
+    //     (hs_menu->t_boxs[scores.size()-1]).color[1] = (unsigned char)195;
+    //     (hs_menu->t_boxs[scores.size()-1]).color[2] = (unsigned char)199;
+    // }
     // g.log << "finished making menu...\n" << endl;
 }
 

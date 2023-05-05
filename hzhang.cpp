@@ -1613,7 +1613,7 @@ void Donut::moveDonut()
 				dx = pos[0]-temp.pos[0];
 				dy = pos[1]-temp.pos[1];
 				r = (float)sqrt((dx*dx)+(dy*dy));
-				temp.setAcc(0.01*(dx/r),0.01*(dy/r), 0);
+				temp.setAcc(0.1*(dx/r),0.1*(dy/r), 0);
 				temp.setVertex();
 				eff.push_front(temp);
 				g.log << "make partical" << charge_need << " " << temp.acc[0] <<

@@ -43,8 +43,8 @@ bool entity_active,
         dtorres_active,
         huaiyu_active,
         mike_active,
-        donut_active;
- 
+        donut_active,
+        bread_active;
 float sfx_vol;
 float m_vol;
 ofstream log;

@@ -221,6 +221,7 @@ int X11_wrapper::check_mouse(XEvent *e)
 					mm.setOrigColor();
 					g.state = GAME;
 					g.gameTimer.reset();	// start the game timer
+					g.bread_active = true;
 					selection = nullptr;
 
 #ifdef USE_OPENAL_SOUND
@@ -463,6 +464,11 @@ int X11_wrapper::check_mouse(XEvent *e)
 					g.state = MAINMENU;
 					g.gameReset();
 					g.state = GAME;
+					if (g.substate == DEBUG) {
+						g.bread_active = false;
+					} else if (g.substate == NONE) {
+						g.bread_active = true;
+					}
 					g.log << "g.state was changed back to GAME (RESET SEQUENCE)"
 							<< endl;
 					g.gameTimer.reset();
@@ -803,6 +809,11 @@ int X11_wrapper::check_keys(XEvent *e)
 					}
 					return 0;
 
+				case XK_0:	// bread active
+					g.bread_active = (g.bread_active == false) ? true : false;
+					g.log << boolalpha << "setting bread_active to: " 
+						<< g.bread_active << endl;
+					return 0;
 				case XK_q:
 					bomb.launch();
 					stats.bombsThrown++;
@@ -877,6 +888,8 @@ int X11_wrapper::check_keys(XEvent *e)
 	} else if (g.state == GAMEOVER && g.substate == NONE) {
 		// if (tos.score > record.highscore) {
 		int key = XLookupKeysym(&e->xkey, 0);
+	
+	
 		if (e->type == KeyPress) {
 			// g.log << key << endl;
 			if (key >=97 && key <= 122) {
@@ -902,15 +915,15 @@ int X11_wrapper::check_keys(XEvent *e)
 				return 0;
 			}
 
-			if (key == XK_Escape) {
-				// Escape key was pressed
-				// Go back to the Main Menu
-				// g.state = MAINMENU;
-				// g.gameReset();
-				g.substate = HIGH_SCORES;
-				g.log << "g.substate was changed to HIGH_SCORES" << endl;
-				return 0;
-			}
+			// if (key == XK_Escape) {
+			// 	// Escape key was pressed
+			// 	// Go back to the Main Menu
+			// 	// g.state = MAINMENU;
+			// 	// g.gameReset();
+			// 	g.substate = HIGH_SCORES;
+			// 	g.log << "g.substate was changed to HIGH_SCORES" << endl;
+			// 	return 0;
+			// }
 		}
 	} else if (g.state == GAMEOVER && (g.substate == HIGH_SCORES ||
 											g.substate == DEBUG)) {
@@ -1758,24 +1771,28 @@ void physics()
 		if (g.BulletCD > 0) g.BulletCD--;
 		else g.BulletCD=5;
 		// auto create bread
-		if (g.BreadCD > 0) g.BreadCD--;
-		else {
-			g.BreadCD=30;
-			float alp=(((float)rand()) / (float)RAND_MAX);
-			int breadrand = (int)rand()%g.levelchance;
-			if (breadrand !=0 && (int)rand()%3 != 0)
-					makeBread(g.xres,alp*g.yres,0.0,1,1);
-			else
-					makeBread(g.xres,alp*g.yres,0.0,4,1);
-			if (breadrand==0) makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1);
 
-			breadrand = (int)rand()%100;
-			if (breadrand == 0) {
-				makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1);	// extra life
-			} else if (breadrand == 2 || breadrand == 3) {
-				makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1);	// full health
-			} else if (breadrand == 4 || breadrand == 5) {
-				makeBread(g.xres-10 ,0.5*g.yres,0.0,5,1);	// full power
+		if (g.bread_active) {
+			if (g.BreadCD > 0) {
+				g.BreadCD--;
+			} else {
+				g.BreadCD=30;
+				float alp=(((float)rand()) / (float)RAND_MAX);
+				int breadrand = (int)rand()%g.levelchance;
+				if (breadrand !=0 && (int)rand()%3 != 0)
+						makeBread(g.xres,alp*g.yres,0.0,1,1);
+				else
+						makeBread(g.xres,alp*g.yres,0.0,4,1);
+				if (breadrand==0) makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1);
+
+				breadrand = (int)rand()%100;
+				if (breadrand == 0) {
+					makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1);	// extra life
+				} else if (breadrand == 2 || breadrand == 3) {
+					makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1);	// full health
+				} else if (breadrand == 4 || breadrand == 5) {
+					makeBread(g.xres-10 ,0.5*g.yres,0.0,5,1);	// full power
+				}
 			}
 		}
 
