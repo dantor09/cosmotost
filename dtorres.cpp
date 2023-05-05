@@ -152,6 +152,7 @@ void FreezeBlock::reduceFreezeArea(float area_reduction_rate)
 	if((w > 1) && (h > 1)) {
 		w -= area_reduction_rate;
 		h -= area_reduction_rate;
+		setVel(getVelocityConsideringArea(w * h), getVelocityConsideringArea(w * h), 0);
 	}
 }
 
