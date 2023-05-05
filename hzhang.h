@@ -326,6 +326,7 @@ class Donut
     GLuint * dtex;
     GLuint * shelltex;
     float out_radius;
+    float inner_radius;
     float deamage_radius;
     float shelled_radius;
     float hp;
@@ -358,6 +359,7 @@ class Donut
   //-----------------------------------------------------
     Donut();
     ~Donut();
+    void donutReset();
     void moveDonut();
     void setCD();
     bool hpCheck();

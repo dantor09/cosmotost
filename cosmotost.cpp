@@ -790,6 +790,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				case XK_b: // b was pressed - toggle donut feature
 					// if (g.substate == NONE) {
 					if (g.donut_active == false) {
+						donut.donutReset();
 						g.donut_active = true;
 						// g.fstate = HZHANG;
 						// fmtext.setTexture();

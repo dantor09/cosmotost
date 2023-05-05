@@ -1558,19 +1558,38 @@ Donut::Donut()
 }
 Donut::~Donut() {}
 
+
+void Donut::donutReset() 
+{
+	dtex = &g.donut_texture;
+	pos[0] = g.xres * 0.9;
+	pos[1] = g.yres / 2;
+	pos[2] = 0;
+	out_radius = 200.0;
+	inner_radius = 0;
+	shelled_radius = 210.0;
+	charge_on = true;
+	charge_need = 2000;
+	hp = 10000;
+	cd = 200;
+	count_down = cd;
+	weapon = false;
+	shelled_on = false;
+
+}
+
 void Donut::moveDonut() 
 {
 	float r;
   	float dx;
   	float dy;	
-	float alp;
 	EffectBox temp;
 	if (charge_on) {
 		tos.freeze = true;
 		for (auto ef = eff.begin(); ef != eff.end();) {
 			ef->moveEffect();
 			if (ef->deleteEffect()) {
-				
+				inner_radius += 0.1;
 				if (next(ef) != eff.end()) {
 					ef = eff.erase(ef);
 				} else {
@@ -1582,21 +1601,23 @@ void Donut::moveDonut()
 			}
 		}
 		if (charge_need > 0) {
-			for (int i = 0; i < rand()%2+1; i++) {
-				cerr << "make partical" << endl;
-				alp=(((float)rand()) / (float)RAND_MAX);
-				temp.setPos(alp*g.xres,alp*g.yres,0);
+			for (int i = 0; i < rand()%5+1; i++) {
+				dx=(((float)rand()) / (float)RAND_MAX);
+				dy=(((float)rand()) / (float)RAND_MAX);
+				temp.setPos(dx*g.xres,dy*g.yres,0);
 				temp.setTpos(pos[0],pos[1]);
 				temp.setBools(1);
-				temp.setDim(2,2);
+				temp.setDim(4,4);
 				temp.setColor(255,192,203);
 				temp.setVel(0,0,0);
 				dx = pos[0]-temp.pos[0];
 				dy = pos[1]-temp.pos[1];
 				r = (float)sqrt((dx*dx)+(dy*dy));
-				temp.setAcc(-0.1*(dx/r),-0.1*(dy/r), 0);
+				temp.setAcc(0.01*(dx/r),0.01*(dy/r), 0);
 				temp.setVertex();
 				eff.push_front(temp);
+				cerr << "make partical" << charge_need << " " << temp.acc[0] <<
+							temp.acc[1]<<endl;
 				charge_need--;
 				if (charge_need == 0) {
 					break;
@@ -1619,6 +1640,7 @@ void Donut::moveDonut()
 				atteckMove(val);
 			} else {
 				count_down--;
+				d_rotate += d_rotate_acc;
 			}
 		} else {
 			atteckMove(val);
@@ -1698,54 +1720,112 @@ void Donut::draw()
 			cerr << "draw ef" << ef->pos[0] << ef->pos[1] << endl;
 		}
 	}
-
 	int n = 40;
 	float anglein = 2*3.141592 / n;
 	float x0,x1,y0,y1;
-	glPushMatrix();
-	glBindTexture(GL_TEXTURE_2D, *dtex);
-	glColor4ub(255,255,255,255);
-	glBegin(GL_TRIANGLE_FAN);
-	for (int i = 0; i < n; i++) {
-		x0= pos[0] + out_radius *cos(i*anglein +d_rotate);
-		y0= pos[1] + out_radius *sin(i*anglein +d_rotate);
-		x1= 0.5 + 0.5 *cos(i*anglein+3.14);
-		y1= 0.5 + 0.5 *sin(i*anglein+3.14);
-		glTexCoord2f(x1 ,y1);
-		glVertex2f(x0, y0);
-	}
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	if (shelled_on) {
-		float anglein = (2*3.1415926)/40;
-		float x0,x1,y0,y1;
+	if (charge_on) {
+		for (auto ef = eff.begin();
+								ef != eff.end(); ef++) {
+			ef->draw();
+		}
+		glPushMatrix();
 		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
-		for(int i=0; i<20; i++){
-			x0= pos[0] + shelled_radius *cos(i*anglein);
-			y0= pos[1] + shelled_radius *sin(i*anglein);
-			x1= pos[0] + shelled_radius *cos((i+1)*anglein);
-			y1= pos[1] + shelled_radius *sin((i+1)*anglein);
-			glBegin(GL_TRIANGLES);
-			glColor4ub(255, 255, 255, 20);
-				glVertex3f(pos[0],pos[1],0);
-			glColor4ub(255, 255, 255, 200);
+		glBindTexture(GL_TEXTURE_2D, *dtex);
+		// glBindTexture(GL_TEXTURE_2D, *dtex);
+		glColor4ub(255,255,255,(int)inner_radius);
+		glBegin(GL_TRIANGLE_FAN);
+		for (int i = 0; i < n; i++) {
+			x0= pos[0] + inner_radius *cos(i*anglein +d_rotate);
+			y0= pos[1] + inner_radius *sin(i*anglein +d_rotate);
+			x1= 0.5 + 0.5 *cos(i*anglein+3.14);
+			y1= 0.5 + 0.5 *sin(i*anglein+3.14);
+			glTexCoord2f(x1 ,y1);
+			glVertex2f(x0, y0);
+		}
+		glEnd();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		for (int i = 0; i < n; i++) {
+				x0=pos[0]+inner_radius*cos(i*anglein);
+				y0=pos[1]+inner_radius*sin(i*anglein);
+				x1=pos[0]+inner_radius*cos((i+1)*anglein);
+				y1=pos[1]+inner_radius*sin((i+1)*anglein);
+				// glBegin(GL_TRIANGLES);
+				// glColor4ub(0,0,0,0);
+				// // glTexCoord3f(1,1,0);
+				// glVertex3f(pos[0],pos[1],0);
+				// glColor4ub(255, 143, 196,255);
+				// // glTexCoord3f(tx1,ty1,0);
+				// glVertex3f(x0,y0,0);
+				// // glTexCoord3f(tx2,ty2,0);
+				// glVertex3f(x1,y1,0);
+				// glEnd();
+				glBegin(GL_QUADS);
+				glColor4ub(255, 143, 196,255);
 				glVertex3f(x0,y0,0);
+				// glTexCoord3f(tx2,ty2,0);
 				glVertex3f(x1,y1,0);
-			glEnd();
-			x0= pos[0] + shelled_radius *cos(-i*anglein);
-			y0= pos[1] + shelled_radius *sin(-i*anglein);
-			x1= pos[0] + shelled_radius *cos(-(i+1)*anglein);
-			y1= pos[1] + shelled_radius *sin(-(i+1)*anglein);
-			glBegin(GL_TRIANGLES);
-			glColor4ub(255, 255, 255, 20);
-				glVertex3f(pos[0],pos[1],0);
-			glColor4ub(255, 255, 255, 200);
+				x0=pos[0]+2*inner_radius*cos(i*anglein);
+				y0=pos[1]+2*inner_radius*sin(i*anglein);
+				x1=pos[0]+2*inner_radius*cos((i+1)*anglein);
+				y1=pos[1]+2*inner_radius*sin((i+1)*anglein);
+				int n = 255-(int)inner_radius;
+				glColor4ub(n,n,n,0);
+				// glTexCoord3f(tx2,ty2,0);
+				glVertex3f(x1,y1,0);
 				glVertex3f(x0,y0,0);
-				glVertex3f(x1,y1,0);
-			glEnd();
+				glEnd();
+
 		}
 		glDisable(GL_BLEND);
+
+	} else {
+		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, *dtex);
+		glColor4ub(255,255,255,255);
+		glBegin(GL_TRIANGLE_FAN);
+		for (int i = 0; i < n; i++) {
+			x0= pos[0] + out_radius *cos(i*anglein +d_rotate);
+			y0= pos[1] + out_radius *sin(i*anglein +d_rotate);
+			x1= 0.5 + 0.5 *cos(i*anglein+3.14);
+			y1= 0.5 + 0.5 *sin(i*anglein+3.14);
+			glTexCoord2f(x1 ,y1);
+			glVertex2f(x0, y0);
+		}
+		glEnd();
+		glBindTexture(GL_TEXTURE_2D, 0);
+		if (shelled_on) {
+			float anglein = (2*3.1415926)/40;
+			float x0,x1,y0,y1;
+			glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_BLEND);
+			for(int i=0; i<20; i++){
+				x0= pos[0] + shelled_radius *cos(i*anglein);
+				y0= pos[1] + shelled_radius *sin(i*anglein);
+				x1= pos[0] + shelled_radius *cos((i+1)*anglein);
+				y1= pos[1] + shelled_radius *sin((i+1)*anglein);
+				glBegin(GL_TRIANGLES);
+				glColor4ub(255, 255, 255, 20);
+					glVertex3f(pos[0],pos[1],0);
+				glColor4ub(255, 255, 255, 200);
+					glVertex3f(x0,y0,0);
+					glVertex3f(x1,y1,0);
+				glEnd();
+				x0= pos[0] + shelled_radius *cos(-i*anglein);
+				y0= pos[1] + shelled_radius *sin(-i*anglein);
+				x1= pos[0] + shelled_radius *cos(-(i+1)*anglein);
+				y1= pos[1] + shelled_radius *sin(-(i+1)*anglein);
+				glBegin(GL_TRIANGLES);
+				glColor4ub(255, 255, 255, 20);
+					glVertex3f(pos[0],pos[1],0);
+				glColor4ub(255, 255, 255, 200);
+					glVertex3f(x0,y0,0);
+					glVertex3f(x1,y1,0);
+				glEnd();
+			}
+			glDisable(GL_BLEND);
+		}
 	}
 }
 
