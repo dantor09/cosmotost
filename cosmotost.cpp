@@ -802,6 +802,7 @@ int X11_wrapper::check_keys(XEvent *e)
 						// fmtext.setTexture();
 						g.log << "g.donut_active set to true\n";
 					} else if (g.donut_active == true) {
+						tos.freeze = false;
 						g.donut_active = false;
 						// g.fstate = HZHANG;
 						// fmtext.setTexture();
@@ -1629,11 +1630,22 @@ void physics()
 						spear[i]=spear[--g.n_Spear];
 						blocky->reset();
 					}
+					if (spear[i].screenOut()) {
+						spear[i]=spear[--g.n_Spear];
+					} 
 
 				}
-				if (g.BreadCD == 0 && (int)rand()%3 == 0)
-					makeSpear(g.xres-60.0,(((float)rand()) / 
-							(float)RAND_MAX)*g.yres,0.0,1);
+				if (g.SpearCD > 0) {
+					g.SpearCD--;
+				} else {
+					if (g.SpearCD == 0) {
+						g.SpearCD = 50;
+						if ((int)rand()%3 == 0) { 
+							makeSpear(g.xres-60.0,(((float)rand()) / 
+									(float)RAND_MAX)*g.yres,0.0,100 + rand()%50);
+						}
+					}
+				}
 				
 		}
 //======================BOSS+====================================		
@@ -1779,12 +1791,14 @@ void physics()
 				g.BreadCD=30;
 				float alp=(((float)rand()) / (float)RAND_MAX);
 				int breadrand = (int)rand()%g.levelchance;
-				if (breadrand !=0 && (int)rand()%3 != 0)
-						makeBread(g.xres,alp*g.yres,0.0,1,1);
-				else
-						makeBread(g.xres,alp*g.yres,0.0,4,1);
-				if (breadrand==0) makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1);
-
+				if (breadrand !=0 && (int)rand()%3 != 0) {
+					makeBread(g.xres,alp*g.yres,0.0,1,1);
+				} else {
+					makeBread(g.xres,alp*g.yres,0.0,4,1);
+				}
+				if (breadrand==0) {
+					makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1);
+				}
 				breadrand = (int)rand()%100;
 				if (breadrand == 0) {
 					makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1);	// extra life

@@ -32,6 +32,7 @@ int n_donut_bullet;
 int n_effect;
 int n_laser;
 int BreadCD=30;
+int SpearCD=50;
 int BulletCD=5;
 char keys[65536];
 bool show_help_menu;
