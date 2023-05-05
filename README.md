@@ -11,19 +11,19 @@
 - shield (note: i have a shield sound effect - mike)
 - faculty face textures
 - method for cycling textures to faculty faces
-- make sure everything writes to the screen int he correct order
-    -- ensure that nothing spills over past hud
 
 #### In Progress:
-- ARTWORK... (ailand)
-- freeze enemy (dan)
-
+- timer for gun
 #### Known Bugs:
 - game_reset() for entity state
-- entity below high score menu
-- game crash after quitting in debug
 
 #### Done:
+- entity below high score menu (fixed - mike)
+- make sure everything writes to the screen int he correct order (mike)
+    -- ensure that nothing spills over past hud
+- freeze enemy (dan)
+- game crash after quitting in debug (fixed - mike)
+- ARTWORK... (ailand)
 - naming convention for enemies
 - blocky angled entry (mike)
 - powerup textures (mike)
@@ -66,12 +66,10 @@
 - input player's name/handle (Huaiyu)
 - scores (Huaiyu)
 - Make screen size / menu bigger (mike)
+- Implement a logging system (mike)
 
 ### Longer Term
 
-- Implement a logging system
-    -- #define debug mode && cerr will work fine
-    -- alternatively we can pass in a param on the command line
 - hole in the wall obstacle
 
 
