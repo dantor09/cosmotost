@@ -1322,9 +1322,8 @@ void EffectBox::moveEffect()
 		dx = tpos[0]-pos[0];
 		dy = tpos[1]-pos[1];
 		r = (float)sqrt((dx*dx)+(dy*dy));
-		setAcc(50*(dx/(r*r*r)),50*(dy/(r*r*r)), 0);
-
-
+		acc[0] += 0.1*(dx/r);
+		acc[1] += 0.1*(dy/r);
 	} else {
         dx = pos[0]-tpos[0];
         dy = pos[1]-tpos[1];
@@ -1431,7 +1430,7 @@ void ChargeBread::charge()
 			dx = pos[0]-temp.pos[0];
 			dy = pos[1]-temp.pos[1];
 			r = (float)sqrt((dx*dx)+(dy*dy));
-			temp.setAcc(-0.005*(dx/r),-0.005*(dy/r), 0);
+			temp.setAcc(-0.1*(dx/r),-0.1*(dy/r), 0);
 			temp.setVertex();
 			effect.push_front(temp);
 			charge_need--;
