@@ -1322,7 +1322,7 @@ void EffectBox::moveEffect()
 		dx = tpos[0]-pos[0];
 		dy = tpos[1]-pos[1];
 		r = (float)sqrt((dx*dx)+(dy*dy));
-		setAcc(50*(dx/(r*r*r)),50*(dy/(r*r*r)), 0);
+		setAcc(1500*(dx/(r*r*r)),1500*(dy/(r*r*r)), 0);
 		// acc[0] += 0.1*(dx/r);
 		// acc[1] += 0.1*(dy/r);
 	} else {
@@ -1578,7 +1578,7 @@ void Donut::donutReset()
 	shelled_radius = 210.0;
 	charge_on = true;
 	charge_need = 2000;
-	hp = 10000;
+	hp = 0;
 	cd = 200;
 	count_down = cd;
 	weapon = false;
@@ -1598,6 +1598,7 @@ void Donut::moveDonut()
 			ef->moveEffect();
 			if (ef->deleteEffect()||ef->deleteEffect(inner_radius)) {
 				inner_radius += 0.1;
+				hp += 5;
 				if (next(ef) != eff.end()) {
 					ef = eff.erase(ef);
 				} else {
@@ -1616,13 +1617,13 @@ void Donut::moveDonut()
 				temp.setTpos(pos[0],pos[1]);
 				temp.setXY();
 				temp.setBools(1);
-				temp.setDim(4,4);
+				temp.setDim(2,2);
 				temp.setColor(255,192,203);
-				temp.setVel(0,0,0);
 				dx = pos[0]-temp.pos[0];
 				dy = pos[1]-temp.pos[1];
 				r = (float)sqrt((dx*dx)+(dy*dy));
-				temp.setAcc(50*(dx/(r*r*r)),50*(dy/(r*r*r)), 0);
+				temp.setVel(2*dx/r,2*dy/r,0);
+				temp.setAcc(150*(dx/(r*r*r)),150*(dy/(r*r*r)), 0);
 				temp.setVertex();
 				eff.push_front(temp);
 				g.log << "make partical" << charge_need << " " << temp.acc[0] <<
