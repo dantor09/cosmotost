@@ -1254,7 +1254,7 @@ void DonutLaser::draw()
 		glBegin(GL_QUADS);
 			glVertex2f(vertex[0],vertex[1]);
 			glVertex2f(vertex[2],vertex[3]);
-		glColor4ub(255,100,100,255);
+		glColor4ub(255,192,203,255);
 			glVertex2f(coor_two[0],coor_two[1]);
 			glVertex2f(coor_one[0],coor_one[1]);
 		glEnd();
@@ -1322,7 +1322,7 @@ void EffectBox::moveEffect()
 		dx = tpos[0]-pos[0];
 		dy = tpos[1]-pos[1];
 		r = (float)sqrt((dx*dx)+(dy*dy));
-		setAcc(1500*(dx/(r*r*r)),1500*(dy/(r*r*r)), 0);
+		setAcc(2500*(dx/(r*r*r)),2500*(dy/(r*r*r)), 0);
 		// acc[0] += 0.1*(dx/r);
 		// acc[1] += 0.1*(dy/r);
 	} else {
@@ -1688,6 +1688,9 @@ bool Donut::hpCheck()
 bool Donut::collision(Item itm) 
 {
 	float dx = pos[0] - itm.pos[0] - itm.w;
+	if (charge_on) {
+		return false;
+	}
 	if (dx > out_radius)
 		return false;
 	float dy;
@@ -1921,7 +1924,7 @@ void Donut::draw()
 					do_bul[gb].setDim(4.0,4.0);
 					do_bul[gb].setVel(-5.0, 0.0, 0.0);
 					do_bul[gb].setAcc (0.0, 0.0, 0.0);
-					do_bul[gb].setColor(255,240,255);
+					do_bul[gb].setColor(255,192,203);
 					do_bul[gb].setDamage(10);
 					do_bul[gb].trace = false;
 					do_bul[gb].item_type = 16;
@@ -1940,7 +1943,7 @@ void Donut::draw()
 					do_bul[gb].setDim(4.0,4.0);
 					do_bul[gb].setVel(5.0 * dx, 5 * dy, 0.0);
 					do_bul[gb].setAcc (0.0, 0.0, 0.0);
-					do_bul[gb].setColor(255,240,255);
+					do_bul[gb].setColor(255,192,203);
 					do_bul[gb].setDamage(10);
 					do_bul[gb].trace = false;
 					do_bul[gb].item_type = 16;
@@ -1962,7 +1965,7 @@ void Donut::draw()
 									((do_bul[gb].pos[0]-tos.pos[0])*
 									(do_bul[gb].pos[0]-tos.pos[0]));
 					do_bul[gb].setAcc (0.0, -ya, 0.0);
-					do_bul[gb].setColor(255,240,255);
+					do_bul[gb].setColor(255,192,203);
 					do_bul[gb].setDamage(10);
 					do_bul[gb].trace = false;
 					do_bul[gb].item_type = 16;
@@ -1985,7 +1988,7 @@ void Donut::draw()
 								((do_bul[gb].pos[0]-tos.pos[0]) *
 									(do_bul[gb].pos[0]-tos.pos[0]));
 					do_bul[gb].setAcc (0.0, -ya, 0.0);
-					do_bul[gb].setColor(255,240,255);
+					do_bul[gb].setColor(255,192,203);
 					do_bul[gb].setDamage(10);
 					do_bul[gb].trace = false;
 					do_bul[gb].item_type = 16;
@@ -2002,7 +2005,7 @@ void Donut::draw()
 								((do_bul[gb].pos[0]-tos.pos[0]) *
 									(do_bul[gb].pos[0]-tos.pos[0]));
 					do_bul[gb].setAcc (0.0, -ya, 0.0);
-					do_bul[gb].setColor(255,240,255);
+					do_bul[gb].setColor(255,192,203);
 					do_bul[gb].setDamage(10);
 					do_bul[gb].trace = false;
 					do_bul[gb].item_type = 16;
