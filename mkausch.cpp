@@ -1791,6 +1791,7 @@ void checkLevel()
                     g.huaiyu_active = false;
                     g.dtorres_active = false;
                     g.donut_active = true;
+                    donut.donutReset();
                     break;
                 default:    // Level 1 behavior (Bread(1))   // shouldn't need
                     g.level = LEVEL1;
