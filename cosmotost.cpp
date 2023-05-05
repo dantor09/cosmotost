@@ -667,24 +667,187 @@ int X11_wrapper::check_keys(XEvent *e)
 					return 0;
 
 
-// #ifdef USE_OPENAL_SOUND
-// 				case XK_u:	// go back to main menu
-// 					//Escape key was pressed
-// 					//Enter Pause State
-// 					sounds.toggleUserPause();
-// 					g.log << "toggling pause"  << endl;
-// 					return 0;
-// #endif
+			}
+		}
 
+	} else if (g.state == GAME && g.substate == NONE) {
+		if (e->type == KeyPress) {
+			float dusha = tos.pos[0] + 150*(g.keys[XK_d]-g.keys[XK_a]);
+			float dushb = tos.pos[1] + 150*(g.keys[XK_w]-g.keys[XK_s]);
+			switch (key) {
+				// DASH	
+				case XK_j:
+					// int a = 350;
+					if (tos.energy >= 10) {
+						tos.pos[0] = dusha;
+						tos.pos[1] = dushb;
+						tos.energy -= 10;
+
+						stats.dashes++;
+#ifdef USE_OPENAL_SOUND
+						sounds.doosh();
+#endif					
+					}
+					// pos[0] = 350;
+					// pos[0] += 50;
+					// pos[1] = 350;  			
+					// std::g.log << "move w"<<pos[1]<<std::endl;
+				// std::g.log << "move w"<<pos[1]<<std::endl;
+						return 0;
+				case XK_e:
+						tos.bulletReload();
+						return 0;
+				/*
+				case XK_p: // p was pressed - toggle Ailand's Entity State
+					if (g.entity_active == false) {
+						g.entity_active = true;
+						g.fstate = APARRIOTT;
+						fmtext.setTexture();
+						g.log << "g.entity_active set to true\n";
+					} else if (g.entity_active == true) {
+						g.entity_active = false;
+						g.fstate = REGULAR;
+						fmtext.setTexture();
+						g.log << "g.entity_active set to false\n";
+					}
+					return 0;
+				case XK_t: // t was pressed - toggle Dan's Feature Mode
+					if (g.dtorres_active == false) {
+						// g.substate = DTORRES;
+						g.dtorres_active = true;
+						g.fstate = DTORRES;
+						fmtext.setTexture();
+						g.log << "g.dtorres_active set to true\n";
+					// } else if (g.substate == DTORRES) {
+					} else if (g.dtorres_active == true) {
+						// g.substate = NONE;
+						g.dtorres_active = false;
+						g.fstate = REGULAR;
+						fmtext.setTexture();
+						g.log << "g.dtorres_active set to false\n";
+					}
+					return 0;
+				case XK_h: // h was pressed - toggle Huaiyu's Feature Mode
+					// if (g.substate == NONE) {
+					if (g.huaiyu_active == false) {
+						// g.substate = HUAIYU;
+						g.huaiyu_active = true;
+						g.fstate = HZHANG;
+						fmtext.setTexture();
+						g.log << "g.huaiyu_active set to true\n";
+					// } else if (g.substate == HUAIYU) {
+					} else if (g.huaiyu_active == true) {
+						g.huaiyu_active = false;
+						// g.substate = NONE;
+						g.fstate = REGULAR;
+						fmtext.setTexture();
+						g.log << "g.huaiyu_active set to false\n";
+					}
+					return 0;
+				case XK_k: // t was pressed - toggle Dan's Feature Mode
+					// if (g.substate == NONE) {
+					if (g.mike_active == false) {
+						// g.substate = MIKE;
+						g.mike_active = true;
+						g.fstate = MKAUSCH;
+						fmtext.setTexture();
+						// blocky = (blocky == &vblocky) ? &hblocky : &vblocky;
+						// blocky_health = (blocky_health == &vblocky_health) ? 
+						// 									&hblocky_health : &hblocky_health;
+						if (blocky == &vblocky) {
+							blocky = &v2blocky;
+							blocky_health = &v2blocky_health;
+						} else if (blocky == &v2blocky) {
+							blocky = &hblocky;
+							blocky_health = &hblocky_health;
+						} else if (blocky == &hblocky) {
+							blocky = &h2blocky;
+							blocky_health = &h2blocky_health;
+						} else {
+							blocky = &vblocky;
+							blocky_health = &vblocky_health;
+						}
+						g.log << "g.mike_active set to true\n";
+						g.log << boolalpha << "g.fstate is mkauscH: " 
+								<< (g.fstate == MKAUSCH) << endl;
+					// } else if (g.substate == MIKE) {
+					} else if (g.mike_active == true) {
+						g.mike_active = false;
+						g.fstate = REGULAR;
+						fmtext.setTexture();
+						blocky->gamereset();
+						// g.substate = NONE;
+						g.log << "g.mike_active set to false\n";
+					}
+					return 0;
+				case XK_b: // b was pressed - toggle donut feature
+					// if (g.substate == NONE) {
+					if (g.donut_active == false) {
+						donut.donutReset();
+						g.donut_active = true;
+						// g.fstate = HZHANG;
+						// fmtext.setTexture();
+						g.log << "g.donut_active set to true\n";
+					} else if (g.donut_active == true) {
+						g.donut_active = false;
+						// g.fstate = HZHANG;
+						// fmtext.setTexture();
+						g.log << "g.donut_active set to false\n";
+					}
+					return 0;
+				
+				case XK_0:	// bread active
+					g.bread_active = (g.bread_active == false) ? true : false;
+					g.log << boolalpha << "setting bread_active to: " 
+						<< g.bread_active << endl;
+					return 0;
+				*/
+				case XK_q:
+					bomb.launch();
+					stats.bombsThrown++;
+					if (g.fstate == MKAUSCH) {
+						bomb.toggleDisplayMessage();
+					}
+					return 0;
+
+				case XK_Escape:	// pause the game
+					//Escape key was pressed
+					//Enter Pause State
+					g.state = PAUSE;
+					g.gameTimer.pause();
+					g.log << "g.state was changed to PAUSE" << endl;
+
+#ifdef USE_OPENAL_SOUND
+
+					sounds.pause();
+					g.log << "pausing song " << sounds.getSongName() << endl;
+#endif
+
+					return 0;
+				case XK_F1:	// Toggle Help Menu
+					g.show_help_menu = (g.show_help_menu ? false : true);
+					g.log << "g.show_help_menu was toggled" << endl;
+					return 0;
+				case XK_F2:	// Toggle Game Over
+					g.state = GAMEOVER;
+					g.log << "g.state was changed to GAMEOVER" << endl;
+					return 0;
+
+#ifdef USE_OPENAL_SOUND
+				case XK_u:	// go back to main menu
+					//Escape key was pressed
+					//Enter Pause State
+					sounds.toggleUserPause();
+					g.log << "toggling pause"  << endl;
+					return 0;
+#endif
 			}
 		}
 		// Pause Menu State:
 		// Only valid key entries are:
 		// 		Escape: Leave Pause Menu
 		// *** Should be waiting for mouse input on the menu ***
-	} 
-	
-	else if (g.state == GAME) {
+	} else if (g.state == GAME && g.substate == DEBUG) {
 		if (e->type == KeyPress) {
 			float dusha = tos.pos[0] + 150*(g.keys[XK_d]-g.keys[XK_a]);
 			float dushb = tos.pos[1] + 150*(g.keys[XK_w]-g.keys[XK_s]);
@@ -858,6 +1021,7 @@ int X11_wrapper::check_keys(XEvent *e)
 
 			}
 		}
+
 		// Pause Menu State:
 		// Only valid key entries are:
 		// 		Escape: Leave Pause Menu
@@ -1791,22 +1955,22 @@ void physics()
 				g.BreadCD=30;
 				float alp=(((float)rand()) / (float)RAND_MAX);
 				int breadrand = (int)rand()%g.levelchance;
-				if (breadrand !=0 && (int)rand()%3 != 0) {
-					makeBread(g.xres,alp*g.yres,0.0,1,1);
-				} else {
-					makeBread(g.xres,alp*g.yres,0.0,4,1);
-				}
-				if (breadrand==0) {
-					makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1);
-				}
-				breadrand = (int)rand()%100;
-				if (breadrand == 0) {
-					makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1);	// extra life
-				} else if (breadrand == 2 || breadrand == 3) {
-					makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1);	// full health
-				} else if (breadrand == 4 || breadrand == 5) {
-					makeBread(g.xres-10 ,0.5*g.yres,0.0,5,1);	// full power
-				}
+				if (breadrand !=0 && (int)rand()%3 != 0)
+						makeBread(g.xres,alp*g.yres,0.0,1,1);
+				else
+						makeBread(g.xres,alp*g.yres,0.0,4,1);
+				
+				// moved to level change
+				// if (breadrand==0) makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1);
+
+				// breadrand = (int)rand()%100;
+				// if (breadrand == 1) {
+				// 	makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1);	// extra life
+				// } else if (breadrand == 2) {
+				// 	makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1);	// full health
+				// } else if (breadrand == 3) {
+				// 	makeBread(g.xres-10 ,0.5*g.yres,0.0,5,1);	// full power
+				// }
 			}
 		}
 

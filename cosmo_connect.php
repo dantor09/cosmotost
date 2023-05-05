@@ -7,6 +7,14 @@ error_reporting(E_ALL);
 $operation_type = $_GET['op_type'];
 $fname = "Highscore.txt";
 
+
+// TODO: POST REQUEST 
+if()
+$scoreData = file_get_contents('php://input');
+$score = json_decode($scoreData, true);
+
+$score['id']
+
 if ($operation_type == "read") {
     // echo "read was passed<br>";
 
