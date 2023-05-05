@@ -1322,8 +1322,9 @@ void EffectBox::moveEffect()
 		dx = tpos[0]-pos[0];
 		dy = tpos[1]-pos[1];
 		r = (float)sqrt((dx*dx)+(dy*dy));
-		acc[0] += 0.1*(dx/r);
-		acc[1] += 0.1*(dy/r);
+		setAcc(50*(dx/(r*r*r)),50*(dy/(r*r*r)), 0);
+		// acc[0] += 0.1*(dx/r);
+		// acc[1] += 0.1*(dy/r);
 	} else {
         dx = pos[0]-tpos[0];
         dy = pos[1]-tpos[1];
@@ -1613,6 +1614,7 @@ void Donut::moveDonut()
 				dy=(((float)rand()) / (float)RAND_MAX);
 				temp.setPos(dx*g.xres,dy*g.yres,0);
 				temp.setTpos(pos[0],pos[1]);
+				temp.setXY();
 				temp.setBools(1);
 				temp.setDim(4,4);
 				temp.setColor(255,192,203);
