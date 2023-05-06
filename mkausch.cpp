@@ -1754,11 +1754,11 @@ void checkLevel()
                     blocky = &v2blocky;
                     blocky->gamereset();
                     blocky_health = &v2blocky_health;
-                    g.mike_active = true;
+                    // g.mike_active = true;
 
                     // g.entity_active = true;
-                    g.dtorres_active = true;
-                    freeze_block_velocity_reduction_rate = 0.001;
+                    // g.dtorres_active = true;
+                    // freeze_block_velocity_reduction_rate = 0.001;
                     
                     // change blocky vars
                     break;
@@ -1773,10 +1773,10 @@ void checkLevel()
                     blocky = &hblocky;
                     blocky_health = &hblocky_health;
                     blocky->gamereset();
-                    g.mike_active = true;
+                    // g.mike_active = true;
                     // g.entity_active = true;
                     // g.dtorres_active = true;
-                    freeze_block_velocity_reduction_rate = 0.0009;
+                    // freeze_block_velocity_reduction_rate = 0.0009;
                     break;
                 case LEVEL7:
                     // Level8: HBlocky(2) + Bread(2) + Entities(2)
@@ -1788,10 +1788,10 @@ void checkLevel()
                     blocky = &h2blocky;
                     blocky_health = &h2blocky_health;
                     blocky->gamereset();
-                    g.mike_active = true;
+                    // g.mike_active = true;
                     // g.entity_active = true;
                     // g.dtorres_active = true;
-                    freeze_block_velocity_reduction_rate = 0.00019;
+                    // freeze_block_velocity_reduction_rate = 0.00019;
                     break;
                 case LEVEL8:
                     // Level9: Boss
@@ -1801,8 +1801,9 @@ void checkLevel()
                     g.log << "level changed to level 9" << endl;
                     // g.entity_active = true;
                     // unleash bossman randy savage
+                    g.entity_active = false;
                     g.huaiyu_active = true;
-                    g.dtorres_active = false;
+                    // g.dtorres_active = false;
                     break;
                 case LEVEL9:
                     // should transition to game over
