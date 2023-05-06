@@ -1822,6 +1822,12 @@ void physics()
 			// g.huaiyu_active = false;
 			if (donut.collision(tos)) {
 				tos.hpDamage(1000);
+				if (tos.hpCheck() && (tos.lives - 1 > 0)) {
+					tos.lives--;
+					tos.setHP(80);
+				} else if (tos.hpCheck()) {
+					g.state = GAMEOVER;
+				}
 			}
 			for (int i = 0; i < g.n_Bullet; i++) {
 				if (donut.collision(bul[i])) {
@@ -2428,7 +2434,8 @@ void render()
 				} 
 				catch (bad_alloc) {
 					g.log << "Freeze Block Bad Allocation" << endl;
-					exit(EXIT_FAILURE);
+					// exit(EXIT_FAILURE);
+					pfreeze_block = NULL;
 				}
 			}
 

@@ -1701,15 +1701,15 @@ void checkLevel()
             level_time != 0 &&
             // g.level != LEVEL10 &&
             ((level_time % (level_duration)) == 0)) {
-
-            makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1); // gun level up
             lvl_change = true;
             g.log << "lvl change being toggled to true\n";
             lvl_change_time = level_time; 
+            
             // level up handler
             switch (g.level) {
                 case LEVEL1:
                     // Level2: Bread(2)
+                    makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1); // gun level up
                     makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
                     g.level = LEVEL2;
                     g.log << "level changed to level 2" << endl;
@@ -1718,13 +1718,16 @@ void checkLevel()
                     break;
                 case LEVEL2:
                     // Level3: Entities(1) + Bread(1)
+                    makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1); // gun level up
                     makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
+                    makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1); // full health
                     g.level = LEVEL3;
                     g.log << "level changed to level 3" << endl;
                     g.entity_active = true;
                     break;
                 case LEVEL3:
                     // Level4: Entities(2) + Bread(2)
+                    makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1); // gun level up
                     makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
                     makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
                     g.level = LEVEL4;
@@ -1735,8 +1738,9 @@ void checkLevel()
                     break;
                 case LEVEL4:
                     // Level5: Blocky(1) + Bread(2) + Entities(2)
-                    makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
-                    makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
+                    // makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
+                    makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1); // gun level up
+                    makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1); // full health
                     g.level = LEVEL5;
                     g.log << "level changed to level 5" << endl;
                     // g.entity_active = true;
@@ -1747,6 +1751,7 @@ void checkLevel()
                     break;
                 case LEVEL5:
                     // Level6: Blocky(2) + Bread(2) + Entities(2)
+                    makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1); // gun level up
                     makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
                     makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1); // full health
                     g.level = LEVEL6;
@@ -1766,6 +1771,7 @@ void checkLevel()
                     // Level7: HBlocky(1) + Bread(2) + Entities(2)
                     g.level = LEVEL7;
                     g.log << "level changed to level 7" << endl;
+                    makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1); // gun level up
                     makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
                     makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
 
@@ -1782,8 +1788,10 @@ void checkLevel()
                     // Level8: HBlocky(2) + Bread(2) + Entities(2)
                     g.level = LEVEL8;
                     g.log << "level changed to level 8" << endl;
+                    makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1); // gun level up
                     makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
-                    makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
+                    makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1); // full health
+
                     // change HBlocky vars
                     blocky = &h2blocky;
                     blocky_health = &h2blocky_health;
@@ -1795,6 +1803,7 @@ void checkLevel()
                     break;
                 case LEVEL8:
                     // Level9: Boss
+                    makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1); // gun level up
                     makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
                     makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
                     g.level = LEVEL9;
@@ -1810,9 +1819,10 @@ void checkLevel()
                     // should transition to game over
                     // g.level = LEVEL1;
                     makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1);  // extra life
-                    makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1);  // health
+                    makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1); // full health
                     tos.disable_keys = false;
-                    g.bread_active = false;
+                    g.bread_active = true;
+                    g.entity_active = false;
                     g.huaiyu_active = false;
                     // g.dtorres_active = false;
                     donut.donutReset();
@@ -1822,6 +1832,7 @@ void checkLevel()
                     break;
                 case LEVEL10:
                     // do nothing during the boss level
+                    makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1); // full health
                     break;
                 default:    // Level 1 behavior (Bread(1))   // shouldn't need
                     g.level = LEVEL1;
