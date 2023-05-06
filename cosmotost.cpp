@@ -985,6 +985,10 @@ int X11_wrapper::check_keys(XEvent *e)
 						bomb.toggleDisplayMessage();
 					}
 					return 0;
+				case XK_semicolon:
+					tos.hp = tos.starting_hp;
+					tos.lives = 3;
+					return 0;
 
 				case XK_Escape:	// pause the game
 					//Escape key was pressed
@@ -1814,7 +1818,7 @@ void physics()
 		}
 //======================BOSS+====================================		
 		if (g.donut_active == true) {
-			g.huaiyu_active == false;
+			// g.huaiyu_active = false;
 			if (donut.collision(tos)) {
 				tos.hpDamage(1000);
 			}
@@ -2372,24 +2376,25 @@ void render()
 
 			for (int i = 0; i < e.num_ent; i++) {
 				glPushMatrix();
-				glBindTexture(GL_TEXTURE_2D, *(entity[i].tex));
-				glEnable(GL_ALPHA_TEST);
-				glAlphaFunc(GL_GREATER, 0.0f);
-				glColor4f(entity[i].color[0]/255.0f, entity[i].color[1]/255.0f, 
-						entity[i].color[2]/255.0f, 1.0f);
+				// glBindTexture(GL_TEXTURE_2D, *(entity[i].tex));
+				// glEnable(GL_ALPHA_TEST);
+				// glAlphaFunc(GL_GREATER, 0.0f);
+				// glColor4f(entity[i].color[0]/255.0f, entity[i].color[1]/255.0f, 
+						// entity[i].color[2]/255.0f, 1.0f);
+				glColor3ub(entity[i].color[0], entity[i].color[1], entity[i].color[2]);
 				glTranslatef(entity[i].pos[0], entity[i].pos[1], 0.0f);
 				glBegin(GL_QUADS);
-					glTexCoord2f(0.0f, 0.0f);
+					// glTexCoord2f(0.0f, 0.0f);
 					glVertex2f(-entity[i].dim[0], -entity[i].dim[1]);
-					glTexCoord2f(0.0f, 1.0f);
+					// glTexCoord2f(0.0f, 1.0f);
 					glVertex2f(-entity[i].dim[0],  entity[i].dim[1]);
-					glTexCoord2f(1.0f, 1.0f);
+					// glTexCoord2f(1.0f, 1.0f);
 					glVertex2f( entity[i].dim[0],  entity[i].dim[1]);
-					glTexCoord2f(1.0f, 0.0f);
+					// glTexCoord2f(1.0f, 0.0f);
 					glVertex2f( entity[i].dim[0], -entity[i].dim[1]);
 				glEnd();
-				glBindTexture(GL_TEXTURE_2D, 0);
-				glDisable(GL_ALPHA_TEST);
+				// glBindTexture(GL_TEXTURE_2D, 0);
+				// glDisable(GL_ALPHA_TEST);
 				glPopMatrix();
 
 			}
