@@ -1583,6 +1583,10 @@ void Donut::donutReset()
 	count_down = cd;
 	weapon = false;
 	shelled_on = false;
+	eff.clear();
+	dfork.clear();
+	donutlasers.clear();
+	dbready.clear();
 
 }
 

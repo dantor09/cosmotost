@@ -1828,7 +1828,8 @@ void physics()
 					bul[i] = bul[--g.n_Bullet];
 					if(donut.hpCheck()) {
 						tos.score += 30000;
-						g.state = GAMEOVER;					
+						g.state = GAMEOVER;			
+						break;		
 					}	
 				}
 				for (auto la = donut.dbready.begin(); la != 
