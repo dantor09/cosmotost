@@ -31,6 +31,7 @@ class Entity {
 	float damage;	// how much damage he does if collides with toaster
 	int point;
 	GLuint * tex;
+	float tex_color[3];
 
 	/*void set_color(unsigned char col[3]) {
 		memcpy(color,  col, sizeof(unsigned char) * 3);
@@ -49,6 +50,7 @@ class Entity {
 	void setDamage(float x);	// defined in mkausch.cpp
 	void hpDamage(Item & a);	// defined in mkausch.cpp
 	bool hpCheck();			// defined in mkausch.cpp
+	Entity & operator = (const Entity &e);
 };
 
 
@@ -63,6 +65,7 @@ class EntitySpawn {
 	void makeEntity(float pos_x, float pos_y, float init_vel_x, 
 			float init_vel_y, float curve_x, float curve_y);
 	void ResetEntity();
+
 };
 // ENTITY
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

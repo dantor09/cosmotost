@@ -27,6 +27,9 @@ Entity::Entity() {
 	setDamage(10);
 	point = 10;
     tex = &g.poptart_silhouette;
+    tex_color[0] = 0;
+    tex_color[1] = 0;
+    tex_color[2] = 0;
 }
 
 Entity::Entity(float wid, float hgt, float pos_x, float pos_y, float v_x, 
@@ -63,6 +66,9 @@ void EntitySpawn::makeEntity(float pos_x, float pos_y, float init_vel_x,
 		entity[e.num_ent].color[0] = e.randNum(80, 120);
 		entity[e.num_ent].color[1] = e.randNum(100, 180);
 		entity[e.num_ent].color[2] = e.randNum(200, 255);
+        entity[e.num_ent].tex_color[0] = entity[e.num_ent].color[0]/255.0f;
+        entity[e.num_ent].tex_color[1] = entity[e.num_ent].color[1]/255.0f;
+        entity[e.num_ent].tex_color[2] = entity[e.num_ent].color[2]/255.0f;
         entity[e.num_ent].curve[0] = curve_x;
         entity[e.num_ent].curve[1] = curve_y;
 		entity[e.num_ent].setHP(2);
@@ -126,12 +132,36 @@ void Entity::entityPhysics() {
         }
 
         // BOUNCE
-		if (entity[i].pos[1] <= g.yres_start || entity[i].pos[1] >= g.yres - 4) {			
+		if (entity[i].pos[1] <= g.yres/10.0f - 6 || entity[i].pos[1] >= g.yres - 4) {			
 			entity[i].vel[1] = -entity[i].vel[1];
         }
     
     }
 }
+
+Entity& Entity::operator=(const Entity &e)
+{
+    dim[0] = e.dim[0];
+    dim[1] = e.dim[1];
+    vel[0] = e.vel[0];
+    vel[1] = e.vel[1];
+    pos[0] = e.pos[0];
+    pos[1] = e.pos[1];
+    curve[0] = e.curve[0];
+    curve[1] = e.curve[1];
+    color[0] = e.color[0]; 
+    color[1] = e.color[1]; 
+    color[2] = e.color[2];
+    tex_color[0] = e.tex_color[0];
+    tex_color[1] = e.tex_color[1];
+    tex_color[2] = e.tex_color[2];
+    hp = e.hp;
+    damage = e.damage;
+    point = e.point;
+    tex = &g.poptart_silhouette;
+    return *this;
+}
+
 // ENTITY
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
