@@ -39,6 +39,8 @@ float maxTan(float *arr,int n);
 float minTan(float *arr,int n);
 bool pointIn(float x0, float y0, float *arr, int n);
 float getAngle(float x0, float y0, float x1, float y1);
+float calculate_dx(float x);
+float calculate_dy(float y);
 
 //===============================================================================
 // item class is the parent class for all the object might have HP in game
@@ -51,6 +53,8 @@ class Item: public Box
     //item_type show what kind of item it is
     int item_type;
     bool trace = false;
+    unsigned char texcher_color[3]; 
+    // make sure dont have same name so spell wrong
 
     // Toaster is 0;
 
@@ -77,6 +81,8 @@ class Item: public Box
     ~Item();
 
     // setters
+    void setTexcherColor();
+    void setTexcherColor(int a,int b, int c);
     void setHP(float life);
     void setCD(int x);
     void setDamage(float x);
@@ -84,7 +90,7 @@ class Item: public Box
     void setAcc(float x, float y, float z);
     void setVertex();
     // for trace Bullet
-    void setTrace(Item tos);
+    void setTrace(Item tos, bool vel);
     // to check toaster HP, if <=0 then dead
     bool hpCheck();
     // to check
