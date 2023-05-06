@@ -98,9 +98,25 @@ Item::Item()
 {
 	tex = nullptr;	// assign texture to null in the base class
 					// this var should be overridden in classes with textures
+	texcher_color[0] = 255;
+	texcher_color[1] = 255;
+	texcher_color[2] = 255;
 }
 Item::~Item()
 {
+}
+void Item::setTexcherColor()
+{
+	texcher_color[0] = color[0];
+	texcher_color[1] = color[1];
+	texcher_color[2] = color[2];
+}
+
+void Item::setTexcherColor(int a, int b ,int c)
+{
+	texcher_color[0] = a;
+	texcher_color[1] = b;
+	texcher_color[2] = c;
 }
 
 void Item::setHP(float life) 
@@ -146,7 +162,7 @@ void Item::setVertex()
 }
 
 // trace toster
-void Item::setTrace(Item tos) 
+void Item::setTrace(Item tos, bool vel) 
 {
 	float dx = pos[0] - tos.pos[0];
 	float dy = pos[1] - tos.pos[1];
@@ -160,7 +176,9 @@ void Item::setTrace(Item tos)
 	vertex[5] =  (w*dsin) - (h*dcos);
 	vertex[6] = -(w*dcos) + (h*dsin);
 	vertex[7] = -(w*dsin) - (h*dcos);
-	setVel(velocity*dcos,velocity*dsin,0.0);
+	if (vel) {
+		setVel(velocity*dcos,velocity*dsin,0.0);
+	}
 }
 
 // to check toaster hp, if <=0 then dead
@@ -237,7 +255,7 @@ void Item::draw()
 		// glColor3ub(color[0], color[1], color[2]);
 		glEnable(GL_ALPHA_TEST);
 		glAlphaFunc(GL_GREATER, 0.0f);
-		glColor4f(1.0f, 1.0f, 1.0f, 0.6f);
+		glColor4ub(texcher_color[0], texcher_color[1], texcher_color[2],155);
 		glTranslatef(pos[0], pos[1], pos[2]);
 		glBegin(GL_QUADS);
 
@@ -262,7 +280,7 @@ void Item::draw()
 void Item::draw(Item tos)
 {
 	// if (trace)
-	setTrace(tos);
+	setTrace(tos,1);
     // draw item
     // glPushMatrix();
   	// glColor3ub(color[0], color[1], color[2]);
@@ -280,7 +298,7 @@ void Item::draw(Item tos)
 	// glColor3ub(color[0], color[1], color[2]);
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.0f);
-	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+		glColor4ub(texcher_color[0], texcher_color[1], texcher_color[2],155);
 	glTranslatef(pos[0], pos[1], pos[2]);
 	glBegin(GL_QUADS);
 
@@ -1332,7 +1350,7 @@ void EffectBox::moveEffect()
 		dx = tpos[0]-pos[0];
 		dy = tpos[1]-pos[1];
 		r = (float)sqrt((dx*dx)+(dy*dy));
-		setAcc(2500*(dx/(r*r*r)),2500*(dy/(r*r*r)), 0);
+		setAcc(4000*(dx/(r*r*r)),4000*(dy/(r*r*r)), 0);
 		// acc[0] += 0.1*(dx/r);
 		// acc[1] += 0.1*(dy/r);
 	} else {
@@ -1585,6 +1603,8 @@ void Donut::donutReset()
 	pos[2] = 0;
 	out_radius = 200.0;
 	inner_radius = 0;
+	d_rotate = 0;
+	d_rotate_acc = 0;
 	shelled_radius = 210.0;
 	charge_on = true;
 	charge_need = 2000;
@@ -1610,6 +1630,9 @@ void Donut::moveDonut()
 		tos.freeze = true;
 		for (auto ef = eff.begin(); ef != eff.end();) {
 			ef->moveEffect();
+			dx = ef->pos[0]- ef->tpos[0];
+			dy = ef->pos[1]- ef->tpos[1];
+			r = sqrt((dx*dx)+(dy*dy));
 			if (ef->deleteEffect()||ef->deleteEffect(inner_radius)) {
 				inner_radius += 0.1;
 				hp += 5;
@@ -1625,8 +1648,13 @@ void Donut::moveDonut()
 		}
 		if (charge_need > 0) {
 			for (int i = 0; i < rand()%5+1; i++) {
-				dx=(((float)rand()) / (float)RAND_MAX);
-				dy=(((float)rand()) / (float)RAND_MAX);
+				if (rand()%6 != 0) {
+					r = -0.8;
+				} else {
+					r = 0.2;
+				}
+				dx= r*sqrt((((float)rand()) / (float)RAND_MAX)) + 0.8;
+				dy= (((float)rand()) / (float)RAND_MAX);
 				temp.setPos(dx*g.xres,dy*g.yres,0);
 				temp.setTpos(pos[0],pos[1]);
 				temp.setXY();
@@ -1636,7 +1664,7 @@ void Donut::moveDonut()
 				dx = pos[0]-temp.pos[0];
 				dy = pos[1]-temp.pos[1];
 				r = (float)sqrt((dx*dx)+(dy*dy));
-				temp.setVel(2*dx/r,2*dy/r,0);
+				temp.setVel((2*dx/r)+(dy/(r*sqrt(r))),(dx/(r*sqrt(r)))+(2*dy/r),0);
 				temp.setAcc(150*(dx/(r*r*r)),150*(dy/(r*r*r)), 0);
 				temp.setVertex();
 				eff.push_front(temp);
@@ -1806,7 +1834,6 @@ void Donut::draw()
 
 		}
 		glDisable(GL_BLEND);
-
 	} else {
 		glPushMatrix();
 		glBindTexture(GL_TEXTURE_2D, *dtex);
@@ -1938,6 +1965,8 @@ void Donut::draw()
 					do_bul[gb].setDim(4.0,4.0);
 					do_bul[gb].setVel(-5.0, 0.0, 0.0);
 					do_bul[gb].setAcc (0.0, 0.0, 0.0);
+					setRandColor(do_bul[gb]);
+					do_bul[gb].setTexcherColor();
 					do_bul[gb].setColor(255,192,203);
 					do_bul[gb].setDamage(10);
 					do_bul[gb].trace = false;
@@ -1957,6 +1986,8 @@ void Donut::draw()
 					do_bul[gb].setDim(4.0,4.0);
 					do_bul[gb].setVel(5.0 * dx, 5 * dy, 0.0);
 					do_bul[gb].setAcc (0.0, 0.0, 0.0);
+					setRandColor(do_bul[gb]);
+					do_bul[gb].setTexcherColor();
 					do_bul[gb].setColor(255,192,203);
 					do_bul[gb].setDamage(10);
 					do_bul[gb].trace = false;
@@ -1979,6 +2010,8 @@ void Donut::draw()
 									((do_bul[gb].pos[0]-tos.pos[0])*
 									(do_bul[gb].pos[0]-tos.pos[0]));
 					do_bul[gb].setAcc (0.0, -ya, 0.0);
+					setRandColor(do_bul[gb]);
+					do_bul[gb].setTexcherColor();
 					do_bul[gb].setColor(255,192,203);
 					do_bul[gb].setDamage(10);
 					do_bul[gb].trace = false;
@@ -2002,6 +2035,8 @@ void Donut::draw()
 								((do_bul[gb].pos[0]-tos.pos[0]) *
 									(do_bul[gb].pos[0]-tos.pos[0]));
 					do_bul[gb].setAcc (0.0, -ya, 0.0);
+					setRandColor(do_bul[gb]);
+					do_bul[gb].setTexcherColor();
 					do_bul[gb].setColor(255,192,203);
 					do_bul[gb].setDamage(10);
 					do_bul[gb].trace = false;
@@ -2019,6 +2054,8 @@ void Donut::draw()
 								((do_bul[gb].pos[0]-tos.pos[0]) *
 									(do_bul[gb].pos[0]-tos.pos[0]));
 					do_bul[gb].setAcc (0.0, -ya, 0.0);
+					setRandColor(do_bul[gb]);
+					do_bul[gb].setTexcherColor();
 					do_bul[gb].setColor(255,192,203);
 					do_bul[gb].setDamage(10);
 					do_bul[gb].trace = false;
@@ -2107,7 +2144,7 @@ void Donut::draw()
 				do_bul[gb].setPos(pos[0]+dx,pos[1]+dy,0);
 				do_bul[gb].setDim(4.0,4.0);
 				do_bul[gb].velocity = -10;
-				do_bul[gb].setTrace(tos);
+				do_bul[gb].setTrace(tos,1);
 				do_bul[gb].setAcc (0.0, 0.0, 0.0);
 				do_bul[gb].setColor(255,240,255);
 				do_bul[gb].setDamage(10);
@@ -2283,6 +2320,17 @@ float minTan(float *arr,int n)
 float getAngle(float x0, float y0, float x1, float y1)
 {
 	return atan((x1 - x0)/(y1 - y0));
+}
+
+float calculate_dx(float x) {
+    float exponent = 10 * (std::pow(x, 2) - 0.5);
+    float dx = (-1 / (1 + std::exp(exponent))) + 1;
+    return dx;
+}
+float calculate_dy(float y) {
+    float exponent = 10 * (y - 0.5);;
+    float dy = (-1.0 / (1.0 + std::exp(exponent))) + 1;
+    return dy;
 }
 
 // bool Item::collision(Item a) {

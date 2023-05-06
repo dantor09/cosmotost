@@ -1868,6 +1868,7 @@ void physics()
 			// Donut's bullets.
 			for (int i=0; i < g.n_donut_bullet; i++) {
 				do_bul[i].moveBullet();
+				// do_bul[i].setTrace(tos,0);
 				if (do_bul[i].collision(tos)) {
 					tos.hpDamage(do_bul[i]);
 					if (tos.hpCheck() && (tos.lives - 1 > 0)) {
