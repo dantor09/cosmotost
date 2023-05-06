@@ -119,7 +119,8 @@ void Entity::entityPhysics() {
         entity[i].vel[0] += entity[i].curve[0] / 32;
         entity[i].vel[1] += entity[i].curve[1] / 32;
         // DESPAWN
-        if (entity[i].pos[1] < -4 || entity[i].pos[1] > g.yres + 4 ||
+        
+        if (entity[i].pos[1] < g.yres/10.0f - 6 || entity[i].pos[1] > g.yres + 6 ||
                 entity[i].pos[0] < -4) {	
             entity[i] = entity[--e.num_ent];
         }

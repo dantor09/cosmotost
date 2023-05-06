@@ -1699,7 +1699,7 @@ void checkLevel()
         if (g.state == GAME && 
             lvl_change == false && 
             level_time != 0 &&
-            g.level != LEVEL9 &&
+            g.level != LEVEL10 &&
             ((level_time % (level_duration)) == 0)) {
 
             makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1); // gun level up
@@ -1799,8 +1799,9 @@ void checkLevel()
                     g.bread_active = false;
                     g.huaiyu_active = false;
                     g.dtorres_active = false;
-                    g.donut_active = true;
-                    donut.donutReset();
+                    // donut.donutReset();
+                    // g.donut_active = true;
+                    // g.level = LEVEL10;
                     break;
                 case LEVEL10:
                     // do nothing during the boss level
@@ -1811,6 +1812,8 @@ void checkLevel()
             }
         }      
 
+    } else {
+        tos.bullet_type_prime = 4;
     }
 
     if (g.state == GAMEOVER) {
