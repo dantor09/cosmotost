@@ -1685,7 +1685,7 @@ void checkLevel()
     static bool lvl_change = false;
 
     if (g.substate != DEBUG) {
-        int level_duration = 20; // 20 second levels at the moment
+        int level_duration = 10; // 20 second levels at the moment
         int level_time = g.gameTimer.getTime('n');
         
         static int lvl_change_time;
@@ -1699,7 +1699,7 @@ void checkLevel()
         if (g.state == GAME && 
             lvl_change == false && 
             level_time != 0 &&
-            g.level != LEVEL10 &&
+            // g.level != LEVEL10 &&
             ((level_time % (level_duration)) == 0)) {
 
             makeBread(g.xres-10 ,0.5*g.yres,0.0,2,1); // gun level up
@@ -1712,27 +1712,34 @@ void checkLevel()
                     // Level2: Bread(2)
                     makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
                     g.level = LEVEL2;
-                    g.bread_active = true;
+                    g.log << "level changed to level 2" << endl;
+                    // g.bread_active = true;
                     // change bread vars
                     break;
                 case LEVEL2:
                     // Level3: Entities(1) + Bread(1)
                     makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
                     g.level = LEVEL3;
+                    g.log << "level changed to level 3" << endl;
                     g.entity_active = true;
                     break;
                 case LEVEL3:
                     // Level4: Entities(2) + Bread(2)
-                    g.level = LEVEL4;
-                    g.entity_active = true;
                     makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
+                    makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
+                    g.level = LEVEL4;
+                    g.log << "level changed to level 4" << endl;
+
+                    // g.entity_active = true;
                     // change entity vars
                     break;
                 case LEVEL4:
                     // Level5: Blocky(1) + Bread(2) + Entities(2)
+                    makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
                     makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
                     g.level = LEVEL5;
-                    g.entity_active = true;
+                    g.log << "level changed to level 5" << endl;
+                    // g.entity_active = true;
                     g.mike_active = true;
                     blocky = &vblocky;
                     blocky->gamereset();
@@ -1740,15 +1747,16 @@ void checkLevel()
                     break;
                 case LEVEL5:
                     // Level6: Blocky(2) + Bread(2) + Entities(2)
+                    makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
                     makeBread(g.xres-10 ,0.75*g.yres,0.0,6,1); // full health
                     g.level = LEVEL6;
-
+                    g.log << "level changed to level 6" << endl;
                     blocky = &v2blocky;
                     blocky->gamereset();
                     blocky_health = &v2blocky_health;
                     g.mike_active = true;
 
-                    g.entity_active = true;
+                    // g.entity_active = true;
                     g.dtorres_active = true;
                     freeze_block_velocity_reduction_rate = 0.001;
                     
@@ -1757,6 +1765,8 @@ void checkLevel()
                 case LEVEL6:
                     // Level7: HBlocky(1) + Bread(2) + Entities(2)
                     g.level = LEVEL7;
+                    g.log << "level changed to level 7" << endl;
+                    makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
                     makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
 
                     // change blocky to horizontal
@@ -1764,28 +1774,32 @@ void checkLevel()
                     blocky_health = &hblocky_health;
                     blocky->gamereset();
                     g.mike_active = true;
-                    g.entity_active = true;
-                    g.dtorres_active = true;
+                    // g.entity_active = true;
+                    // g.dtorres_active = true;
                     freeze_block_velocity_reduction_rate = 0.0009;
                     break;
                 case LEVEL7:
                     // Level8: HBlocky(2) + Bread(2) + Entities(2)
                     g.level = LEVEL8;
+                    g.log << "level changed to level 8" << endl;
+                    makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
                     makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
                     // change HBlocky vars
                     blocky = &h2blocky;
                     blocky_health = &h2blocky_health;
                     blocky->gamereset();
                     g.mike_active = true;
-                    g.entity_active = true;
-                    g.dtorres_active = true;
+                    // g.entity_active = true;
+                    // g.dtorres_active = true;
                     freeze_block_velocity_reduction_rate = 0.00019;
                     break;
                 case LEVEL8:
                     // Level9: Boss
+                    makeBread(g.xres-10 ,0.25*g.yres,0.0,7,1); // extra life
                     makeBread(g.xres-10 ,0.35*g.yres,0.0,5,1); // full power
                     g.level = LEVEL9;
-                    g.entity_active = true;
+                    g.log << "level changed to level 9" << endl;
+                    // g.entity_active = true;
                     // unleash bossman randy savage
                     g.huaiyu_active = true;
                     g.dtorres_active = false;
@@ -1798,10 +1812,11 @@ void checkLevel()
                     tos.disable_keys = false;
                     g.bread_active = false;
                     g.huaiyu_active = false;
-                    g.dtorres_active = false;
-                    // donut.donutReset();
-                    // g.donut_active = true;
-                    // g.level = LEVEL10;
+                    // g.dtorres_active = false;
+                    donut.donutReset();
+                    g.donut_active = true;
+                    g.level = LEVEL10;
+                    g.log << "level changed to level 10" << endl;
                     break;
                 case LEVEL10:
                     // do nothing during the boss level

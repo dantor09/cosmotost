@@ -48,6 +48,10 @@ FreezeBlock::FreezeBlock()
 
 FreezeBlock::~FreezeBlock()
 {
+	if (pFreezeTimer) {
+		delete pFreezeTimer;
+		pFreezeTimer = NULL;
+	}
 }
 
 void FreezeBlock::draw()

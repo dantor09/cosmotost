@@ -1672,6 +1672,7 @@ void physics()
 
 					stats.shotsHit++;
 					bul[j] = bul[--g.n_Bullet];
+					continue;
 				}
 
 				if (blocky->gun_active) {
@@ -1981,8 +1982,11 @@ void physics()
 		// move of all bullet
 		for (int i=0; i < g.n_Bullet; i++) {
 			// testing to see if this fixes crash
-				if (bul[i].screenOut()) 
+				if (bul[i].screenOut()) {
 					bul[i] = bul[--g.n_Bullet];
+					continue;
+				}
+					
 				bul[i].moveBullet();
 				if (g.donut_active) {
 					for (int i = 0; i < g.n_laser; i++) {
@@ -2026,8 +2030,8 @@ void physics()
 					if(bread[i].hpCheck()) {
 						bread[i] = bread[--g.n_Bread];
 						stats.UpdateKills();
-						continue;
 					}
+					continue;
 				}
 				// powerup handling
 				if (bread[i].item_type == 12) {	// gun level up
@@ -2304,30 +2308,6 @@ void render()
 		{
 			mm.draw();
 		} else if (g.substate == SETTINGS) {
-			// Box settings_b;
-			// settings_b.setColor(61, 90, 115);
-			// glColor3ubv(settings_b.color);
-			// settings_b.setDim(100.0f, 100.0f);
-			// settings_b.setPos(g.xres/2.0f, g.yres * (2.0/3.0f), 0);
-
-			// glPushMatrix();
-			// glTranslatef(settings_b.pos[0], settings_b.pos[1], 
-			// settings_b.pos[2]);
-			// glBegin(GL_QUADS);
-			// 	glVertex2f(-settings_b.w, -settings_b.h);
-			// 	glVertex2f(-settings_b.w,  settings_b.h);
-			// 	glVertex2f( settings_b.w,  settings_b.h);
-			// 	glVertex2f( settings_b.w, -settings_b.h);
-			// glEnd();
-			// glPopMatrix();
-
-			// Rect settings_msg;
-			// settings_msg.bot = settings_b.pos[1];
-			// settings_msg.left = settings_b.pos[0];
-			// settings_msg.center = 1;
-
-			// ggprint8b(&settings_msg, 0, 0x00ffff00, "Settings Img 
-			// Placeholder");
 
 			vol_slider.draw();
 			sfx_slider.draw();
@@ -2342,8 +2322,6 @@ void render()
 		}
 
 	} else if (g.state == GAME || g.state == PAUSE ) {
-
-		
 
 		// State Message
 
@@ -2376,25 +2354,25 @@ void render()
 
 			for (int i = 0; i < e.num_ent; i++) {
 				glPushMatrix();
-				// glBindTexture(GL_TEXTURE_2D, *(entity[i].tex));
-				// glEnable(GL_ALPHA_TEST);
-				// glAlphaFunc(GL_GREATER, 0.0f);
-				// glColor4f(entity[i].color[0]/255.0f, entity[i].color[1]/255.0f, 
-						// entity[i].color[2]/255.0f, 1.0f);
+				glBindTexture(GL_TEXTURE_2D, *(entity[i].tex));
+				glEnable(GL_ALPHA_TEST);
+				glAlphaFunc(GL_GREATER, 0.0f);
+				glColor4f(entity[i].tex_color[0], entity[i].tex_color[1], 
+						entity[i].tex_color[2], 1.0f);
 				glColor3ub(entity[i].color[0], entity[i].color[1], entity[i].color[2]);
 				glTranslatef(entity[i].pos[0], entity[i].pos[1], 0.0f);
 				glBegin(GL_QUADS);
-					// glTexCoord2f(0.0f, 0.0f);
+					glTexCoord2f(0.0f, 0.0f);
 					glVertex2f(-entity[i].dim[0], -entity[i].dim[1]);
-					// glTexCoord2f(0.0f, 1.0f);
+					glTexCoord2f(0.0f, 1.0f);
 					glVertex2f(-entity[i].dim[0],  entity[i].dim[1]);
-					// glTexCoord2f(1.0f, 1.0f);
+					glTexCoord2f(1.0f, 1.0f);
 					glVertex2f( entity[i].dim[0],  entity[i].dim[1]);
-					// glTexCoord2f(1.0f, 0.0f);
+					glTexCoord2f(1.0f, 0.0f);
 					glVertex2f( entity[i].dim[0], -entity[i].dim[1]);
 				glEnd();
-				// glBindTexture(GL_TEXTURE_2D, 0);
-				// glDisable(GL_ALPHA_TEST);
+				glBindTexture(GL_TEXTURE_2D, 0);
+				glDisable(GL_ALPHA_TEST);
 				glPopMatrix();
 
 			}
@@ -2426,6 +2404,7 @@ void render()
 
 			if (pfreeze_block == NULL) {
 				try {
+					g.log << "making a new freeze block" << endl;
 					pfreeze_block = new FreezeBlock;
 					pfreeze_block->setColor(162, 210, 223); // Sky blue
 					// set min and max freeze block dimensions
@@ -2443,6 +2422,7 @@ void render()
 							(rand() % (int)(g.yres - pfreeze_block->h)), 0);
 					pfreeze_block->position_set = true;
 					pfreeze_block->setFollowTimer(3);
+					g.log << "finished initializing freeze block" << endl;
 				} 
 				catch (bad_alloc) {
 					g.log << "Freeze Block Bad Allocation" << endl;
@@ -2452,7 +2432,9 @@ void render()
 
 			// Follow the item passed into followItem() 
 			// Freeze block could be set to follow any Item object
-			if (pfreeze_block->position_set && tos.disable_keys == false) {
+			if (pfreeze_block != NULL && 
+				pfreeze_block->position_set && 
+				tos.disable_keys == false) {
 				
 				(!pfreeze_block->pFollowTimer->isDone()) ? 
 						pfreeze_block->followItem(tos) : 
@@ -2472,7 +2454,9 @@ void render()
 
 			// Freeze the toster as soon as collision is detected and freeze 
 			// for pre-determined amount of seconds
-			if (pfreeze_block->collision(tos) && !tos.disable_keys) {
+			if (pfreeze_block != NULL && 
+					pfreeze_block->collision(tos) && 
+					!tos.disable_keys) {
 				tos.disable_keys = true;
 				pfreeze_block->position_set = false;
 				pfreeze_block->setFreezeTimer(2);
@@ -2480,16 +2464,25 @@ void render()
 
 			// Unfreeze the toaster after timer is done or freeze block melted 
 			// away
-			if (tos.disable_keys && pfreeze_block->pFreezeTimer->isDone() 
+			g.log << "checking the freeze timer" << endl;
+			if (tos.disable_keys && 
+				pfreeze_block->pFreezeTimer &&
+				pfreeze_block->pFreezeTimer->isDone() 
 			   		|| pfreeze_block -> h <= 0
 			   		|| pfreeze_block -> w <= 0 ) {
-
-				delete pfreeze_block->pFreezeTimer;
-				pfreeze_block->pFreezeTimer = NULL;
+				
 				delete pfreeze_block;
+				g.log << "deleted freeze block" << endl;
 				pfreeze_block = NULL;
 				tos.disable_keys = false;
 			}
+		}
+
+		if (g.dtorres_active == false && pfreeze_block != NULL) {
+			delete pfreeze_block;
+			g.log << "deleted freeze block 2" << endl;
+			pfreeze_block = NULL;
+			tos.disable_keys = false;
 		}
 //================================Boss===================================
 		if (g.donut_active == true &&
