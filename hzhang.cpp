@@ -19,57 +19,57 @@ void makeBullet(float x, float y,float z, int bullet_type)
 {
 	stats.UpdateShots(bullet_type);
 
-	switch(bullet_type){
+	switch (bullet_type) {
 	case 1:
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y, z, 1);
 			++g.n_Bullet;
 		}
 		break;
 	case 2:
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y+5, z, 1);
 			++g.n_Bullet;
 		}
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y-5, z, 1);
 			++g.n_Bullet;
 		}
 		break;
 	case 3:
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y, z, 1);
 			++g.n_Bullet;
 		}
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y+5, z, 2);
 			++g.n_Bullet;
 		}
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y-5, z, 3);
 			++g.n_Bullet;
 		}
 		break;
 	case 4:
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y-5, z, 1);
 			++g.n_Bullet;
 		}
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y+5, z, 1);
 			++g.n_Bullet;
 		}
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y+8, z, 2);
 			++g.n_Bullet;
 		}
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y-8, z, 3);
 			++g.n_Bullet;
 		}
 		break;
 	case 5:
-		if (g.n_Bullet < MAX_bullet){
+		if (g.n_Bullet < MAX_bullet) {
 			bul[g.n_Bullet].setBullet(x, y, z, 1);
 			++g.n_Bullet;
 		}
@@ -78,7 +78,7 @@ void makeBullet(float x, float y,float z, int bullet_type)
 
 void makeBread(float x, float y,float z, int Bread_t, int type) 
 {
-  	if (g.n_Bread < MAX_bread){
+  	if (g.n_Bread < MAX_bread) {
 		bread[g.n_Bread].setBread(x, y, z, Bread_t, type);
 		++g.n_Bread;
     }
@@ -480,7 +480,8 @@ void Toaster::moveToster()
 	}
 }
 
-void Toaster::bulletReload() {
+void Toaster::bulletReload() 
+{
 	int temp;
 	temp = bullet_type_prime;
 	bullet_type_prime = bullet_type_minor;
@@ -488,7 +489,8 @@ void Toaster::bulletReload() {
 	laserOn = false;
 }
 
-void Toaster::tdraw() {
+void Toaster::tdraw() 
+{
 	int colorrand = rand()%200 + 55;
 	if (laserOn && energy > 5) {
 		glPushMatrix();
@@ -577,7 +579,8 @@ Bullet::Bullet()
     item_type = 41;
 	tex = &g.elec_bul_silhouette;
 }
-Bullet::~Bullet() {}
+Bullet::~Bullet() 
+{}
 
 void Bullet::setBullet(float x, float y, float z, int type) 
 {
@@ -649,7 +652,8 @@ Bread::Bread()
     item_type = 11;
 	
 }
-Bread::~Bread() {}
+Bread::~Bread() 
+{}
 
 void Bread::setBread(float x, float y,float z, int Bread_t, int type) 
 {
@@ -770,8 +774,12 @@ void Bread::moveBread()
     vel[2] += acc[2];
 }
 
-Spear::Spear(){tex = &g.fork_silhouette;}
-Spear::~Spear(){}
+Spear::Spear()
+{
+	tex = &g.fork_silhouette;
+}
+Spear::~Spear()
+{}
 
 void Spear::setSpear(float x, float y,float z, int cd) 
 {
@@ -861,7 +869,7 @@ void DonutLaser::setVertex()
 			vertex[4] = coor_two[0] + dim;
 			vertex[5] = coor_two[1];
 		}
-		else if (slop < limit_angle[0] || slop > limit_angle[3]){
+		else if (slop < limit_angle[0] || slop > limit_angle[3]) {
 			// right
 			vertex[2] = coor_two[0];
 			vertex[3] = coor_two[1] - dim;
@@ -1010,7 +1018,8 @@ void DonutLaser::setDonutLaser(float xcenter, float ycenter, float r,
 	}
 }
 
-void DonutLaser::moveLaser() {
+void DonutLaser::moveLaser() 
+{
 	// g.log << slop << endl;
 	if (charge_on) {
 	// charge and chclearange alpha
@@ -1083,7 +1092,8 @@ void DonutLaser::moveLaser() {
 	}
 }
 
-bool DonutLaser::collision(Item itm){
+bool DonutLaser::collision(Item itm)
+{
 	if (!(charge_on||lag_on)) {
 		if (laser_type == 1) {
 			// horizental line move up or down
@@ -1817,7 +1827,7 @@ void Donut::draw()
 			float x0,x1,y0,y1;
 			glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_BLEND);
-			for(int i=0; i<20; i++){
+			for (int i=0; i<20; i++) {
 				x0= pos[0] + shelled_radius *cos(i*anglein);
 				y0= pos[1] + shelled_radius *sin(i*anglein);
 				x1= pos[0] + shelled_radius *cos((i+1)*anglein);
@@ -1850,7 +1860,7 @@ void Donut::draw()
  {
 	if (!weapon) {
 		weapon_id = num;
-		if (num == 1 || num == 2 || num == 9){
+		if (num == 1 || num == 2 || num == 9) {
 			weapon_outer_count = 10;
 			weapon_inner_count = 20;
 			donut_count = weapon_inner_count;
@@ -2278,7 +2288,7 @@ float getAngle(float x0, float y0, float x1, float y1)
 // bool Item::collision(Item a) {
 // 	float arr[8];
 // 	float aArr[8];
-// 	for(int i = 0; i < 4; i++)
+// 	for (int i = 0; i < 4; i++)
 // 	{
 // 		arr[i*2] = pos[0] + vertex[i*2];
 // 		arr[i*2+1] = pos[1] + vertex[i*2];
@@ -2297,12 +2307,12 @@ float getAngle(float x0, float y0, float x1, float y1)
 // 		return false;
 // 	else {
 // 		bool delta = false;
-// 		for(int i = 0; i < 4; i++) {
+// 		for (int i = 0; i < 4; i++) {
 // 			if (!delta)
 // 				delta = pointIn(pos[0]+vertex[i*2],
 										// pos[1]+vertex[i*2+1],aArr,8);
 // 		}
-// 		for(int i = 0; i < 4; i++) {
+// 		for (int i = 0; i < 4; i++) {
 // 			if (!delta)
 // 				delta = pointIn(a.pos[0]+a.vertex[i*2],
 										// a.pos[1]+a.vertex[i*2+1],arr,8);
