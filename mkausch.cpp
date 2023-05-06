@@ -1688,7 +1688,7 @@ void checkLevel()
     static bool lvl_change = false;
 
     if (g.substate != DEBUG) {
-        int level_duration = 15; // 20 second levels at the moment
+        int level_duration = 20; // 20 second levels at the moment
         int level_time = g.gameTimer.getTime('n');
         
         static int lvl_change_time;
@@ -1783,6 +1783,7 @@ void checkLevel()
                     // unleash bossman randy savage
                     g.huaiyu_active = true;
                     g.dtorres_active = false;
+                    tos.disable_keys = false;
                     break;
                 case LEVEL9:
                     // should transition to game over
