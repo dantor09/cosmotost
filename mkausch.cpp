@@ -1257,7 +1257,7 @@ void Blocky::draw()
     // TODO 
 
         glPushMatrix();
-        glBindTexture(GL_TEXTURE_2D, *(blocky->tex));
+        glBindTexture(GL_TEXTURE_2D, *tex);
         // glColor3ub(color[0], color[1], color[2]);
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.0f);

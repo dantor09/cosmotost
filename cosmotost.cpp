@@ -1436,7 +1436,7 @@ void physics()
 								stats.blockyCollateral++;
 							} 
 						}
-					} else if (!blocky->explode_done) {
+					} else if (blocky && !blocky->explode_done) {
 						if (blocky->subBoxCollision(entity[i])) {
 							entity[i].hpDamage(*blocky);
 							if (entity[i].hpCheck()) {
@@ -1626,7 +1626,7 @@ void physics()
 					blocky->reset();
 				}
 
-			} else if (!blocky->explode_done) {
+			} else if (blocky && !blocky->explode_done) {
 				// sub-blocky's collision with bread
 				for (int i = 0; i < g.n_Bread; i++) {
 					if (blocky->subBoxCollision(bread[i])) {
