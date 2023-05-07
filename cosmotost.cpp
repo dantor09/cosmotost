@@ -697,111 +697,7 @@ int X11_wrapper::check_keys(XEvent *e)
 				case XK_e:
 						tos.bulletReload();
 						return 0;
-				/*
-				case XK_p: // p was pressed - toggle Ailand's Entity State
-					if (g.entity_active == false) {
-						g.entity_active = true;
-						g.fstate = APARRIOTT;
-						fmtext.setTexture();
-						g.log << "g.entity_active set to true\n";
-					} else if (g.entity_active == true) {
-						g.entity_active = false;
-						g.fstate = REGULAR;
-						fmtext.setTexture();
-						g.log << "g.entity_active set to false\n";
-					}
-					return 0;
-				case XK_t: // t was pressed - toggle Dan's Feature Mode
-					if (g.dtorres_active == false) {
-						// g.substate = DTORRES;
-						g.dtorres_active = true;
-						g.fstate = DTORRES;
-						fmtext.setTexture();
-						g.log << "g.dtorres_active set to true\n";
-					// } else if (g.substate == DTORRES) {
-					} else if (g.dtorres_active == true) {
-						// g.substate = NONE;
-						g.dtorres_active = false;
-						g.fstate = REGULAR;
-						fmtext.setTexture();
-						g.log << "g.dtorres_active set to false\n";
-					}
-					return 0;
-				case XK_h: // h was pressed - toggle Huaiyu's Feature Mode
-					// if (g.substate == NONE) {
-					if (g.huaiyu_active == false) {
-						// g.substate = HUAIYU;
-						g.huaiyu_active = true;
-						g.fstate = HZHANG;
-						fmtext.setTexture();
-						g.log << "g.huaiyu_active set to true\n";
-					// } else if (g.substate == HUAIYU) {
-					} else if (g.huaiyu_active == true) {
-						g.huaiyu_active = false;
-						// g.substate = NONE;
-						g.fstate = REGULAR;
-						fmtext.setTexture();
-						g.log << "g.huaiyu_active set to false\n";
-					}
-					return 0;
-				case XK_k: // t was pressed - toggle Dan's Feature Mode
-					// if (g.substate == NONE) {
-					if (g.mike_active == false) {
-						// g.substate = MIKE;
-						g.mike_active = true;
-						g.fstate = MKAUSCH;
-						fmtext.setTexture();
-						// blocky = (blocky == &vblocky) ? &hblocky : &vblocky;
-						// blocky_health = (blocky_health == &vblocky_health) ? 
-						// 									&hblocky_health : &hblocky_health;
-						if (blocky == &vblocky) {
-							blocky = &v2blocky;
-							blocky_health = &v2blocky_health;
-						} else if (blocky == &v2blocky) {
-							blocky = &hblocky;
-							blocky_health = &hblocky_health;
-						} else if (blocky == &hblocky) {
-							blocky = &h2blocky;
-							blocky_health = &h2blocky_health;
-						} else {
-							blocky = &vblocky;
-							blocky_health = &vblocky_health;
-						}
-						g.log << "g.mike_active set to true\n";
-						g.log << boolalpha << "g.fstate is mkauscH: " 
-								<< (g.fstate == MKAUSCH) << endl;
-					// } else if (g.substate == MIKE) {
-					} else if (g.mike_active == true) {
-						g.mike_active = false;
-						g.fstate = REGULAR;
-						fmtext.setTexture();
-						blocky->gamereset();
-						// g.substate = NONE;
-						g.log << "g.mike_active set to false\n";
-					}
-					return 0;
-				case XK_b: // b was pressed - toggle donut feature
-					// if (g.substate == NONE) {
-					if (g.donut_active == false) {
-						donut.donutReset();
-						g.donut_active = true;
-						// g.fstate = HZHANG;
-						// fmtext.setTexture();
-						g.log << "g.donut_active set to true\n";
-					} else if (g.donut_active == true) {
-						g.donut_active = false;
-						// g.fstate = HZHANG;
-						// fmtext.setTexture();
-						g.log << "g.donut_active set to false\n";
-					}
-					return 0;
-				
-				case XK_0:	// bread active
-					g.bread_active = (g.bread_active == false) ? true : false;
-					g.log << boolalpha << "setting bread_active to: " 
-						<< g.bread_active << endl;
-					return 0;
-				*/
+	
 				case XK_q:
 					bomb.launch();
 					stats.bombsThrown++;
@@ -927,9 +823,6 @@ int X11_wrapper::check_keys(XEvent *e)
 						g.mike_active = true;
 						g.fstate = MKAUSCH;
 						fmtext.setTexture();
-						// blocky = (blocky == &vblocky) ? &hblocky : &vblocky;
-						// blocky_health = (blocky_health == &vblocky_health) ? 
-						// 									&hblocky_health : &hblocky_health;
 						if (blocky == &vblocky) {
 							blocky = &v2blocky;
 							blocky_health = &v2blocky_health;
@@ -951,8 +844,9 @@ int X11_wrapper::check_keys(XEvent *e)
 						g.mike_active = false;
 						g.fstate = REGULAR;
 						fmtext.setTexture();
-						blocky->gamereset();
-						// g.substate = NONE;
+						if (blocky) {
+							blocky->gamereset();
+						}
 						g.log << "g.mike_active set to false\n";
 					}
 					return 0;
@@ -1531,26 +1425,28 @@ void physics()
 				entity[i].vel[1] += entity[i].curve[1] / 32;
 
 				
-				if (blocky->isAlive() && blocky->explode_done)  {
-					if (entity[i].collision(*blocky)) {
-						entity[i].hpDamage(*blocky);
-						if (entity[i].hpCheck()) {
-							entity[i] = entity[--e.num_ent];
+				if (blocky != nullptr) {
+					if (blocky->isAlive() && blocky->explode_done)  {
+						if (entity[i].collision(*blocky)) {
+							entity[i].hpDamage(*blocky);
+							if (entity[i].hpCheck()) {
+								entity[i] = entity[--e.num_ent];
 
-							stats.UpdateKills();
-							stats.blockyCollateral++;
-						} 
-					}
-				} else if (!blocky->explode_done) {
-					if (blocky->subBoxCollision(entity[i])) {
-						entity[i].hpDamage(*blocky);
-						if (entity[i].hpCheck()) {
-							entity[i] = entity[--e.num_ent];
-							tos.score += entity[i].point;
+								stats.UpdateKills();
+								stats.blockyCollateral++;
+							} 
+						}
+					} else if (!blocky->explode_done) {
+						if (blocky->subBoxCollision(entity[i])) {
+							entity[i].hpDamage(*blocky);
+							if (entity[i].hpCheck()) {
+								entity[i] = entity[--e.num_ent];
+								tos.score += entity[i].point;
 
-							stats.UpdateKills();
-							stats.blockyCollateral++;
-						} 
+								stats.UpdateKills();
+								stats.blockyCollateral++;
+							} 
+						}
 					}
 				}
 
@@ -1621,7 +1517,7 @@ void physics()
 				}
 			}
 		}
-		if (g.mike_active == true) {
+		if (g.mike_active == true && blocky != nullptr) {
 			blocky->move();
 			if (tos.laserCollision(*blocky)) {
 				whichBread = -2;
@@ -1797,7 +1693,7 @@ void physics()
 						spear[i].hp = 0;	// wipe out all health
 						tos.score += spear[i].point;
 						spear[i]=spear[--g.n_Spear];
-						blocky->reset();
+						// blocky->reset();
 					}
 					if (spear[i].screenOut()) {
 						spear[i]=spear[--g.n_Spear];
@@ -1945,7 +1841,7 @@ void physics()
 					spear[i].hp = 0;	// wipe out all health
 					tos.score += spear[i].point;
 					spear[i]=spear[--g.n_Spear];
-					blocky->reset();
+					// blocky->reset();
 				}
 			}
 
@@ -2118,7 +2014,7 @@ void physics()
 		if (tos.laserOn)  {
 			if (whichBread == -2) {
 				tos.laserDamage(*blocky);
-				if (blocky->hpCheck()) {
+				if (blocky != nullptr && blocky->hpCheck()) {
 					tos.score += blocky->point;
 					blocky->reset();
 					
@@ -2390,7 +2286,8 @@ void render()
 		// 	(blocky.isAlive() || !blocky.explode_done)) {
 		if ((g.mike_active == true &&
 			(g.state == GAME || g.state == PAUSE)) &&
-			(blocky->isAlive() || !blocky->explode_done)) {
+			blocky != nullptr && 
+			((blocky->isAlive() || !blocky->explode_done))) {
 
 			blocky->draw();
 			blocky_health->draw();
