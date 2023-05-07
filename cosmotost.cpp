@@ -2422,12 +2422,9 @@ void render()
 					// random height
 					pfreeze_block->h = pfreeze_block->randomDimension(); 
 
-					// set position of freeze block to random location on 
-					// screen to ensure freeze block is within screen bounds
-					pfreeze_block->setPos(pfreeze_block->w + (rand() % 
-							(int)(g.xres - pfreeze_block->w)), 
-							(pfreeze_block->h + (info_board_1.h * 2)) + 
-							(rand() % (int)(g.yres - pfreeze_block->h)), 0);
+					// Spawn freeze block at random location on right side of the screen
+					pfreeze_block->setPos(g.xres - pfreeze_block->w, (pfreeze_block->h + (info_board_1.h * 2)) + (rand() % (int)(g.yres - pfreeze_block->h)), 0);
+
 					pfreeze_block->position_set = true;
 					pfreeze_block->setFollowTimer(3);
 					g.log << "finished initializing freeze block" << endl;

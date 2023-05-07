@@ -1685,7 +1685,7 @@ void checkLevel()
     static bool lvl_change = false;
 
     if (g.substate != DEBUG) {
-        int level_duration = 15; // 20 second levels at the moment
+        int level_duration = 20; // 20 second levels at the moment
         int level_time = g.gameTimer.getTime('n');
         
         static int lvl_change_time;
@@ -1762,8 +1762,8 @@ void checkLevel()
                     // g.mike_active = true;
 
                     // g.entity_active = true;
-                    // g.dtorres_active = true;
-                    // freeze_block_velocity_reduction_rate = 0.001;
+                    g.dtorres_active = true;
+                    freeze_block_velocity_reduction_rate = 0.001;
                     
                     // change blocky vars
                     break;
@@ -1781,8 +1781,8 @@ void checkLevel()
                     blocky->gamereset();
                     // g.mike_active = true;
                     // g.entity_active = true;
-                    // g.dtorres_active = true;
-                    // freeze_block_velocity_reduction_rate = 0.0009;
+                     g.dtorres_active = true;
+                     freeze_block_velocity_reduction_rate = 0.0009;
                     break;
                 case LEVEL7:
                     // Level8: HBlocky(2) + Bread(2) + Entities(2)
@@ -1798,8 +1798,8 @@ void checkLevel()
                     blocky->gamereset();
                     // g.mike_active = true;
                     // g.entity_active = true;
-                    // g.dtorres_active = true;
-                    // freeze_block_velocity_reduction_rate = 0.00019;
+                    g.dtorres_active = true;
+                    freeze_block_velocity_reduction_rate = 0.00019;
                     break;
                 case LEVEL8:
                     // Level9: Boss
