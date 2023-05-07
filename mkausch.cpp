@@ -2533,7 +2533,7 @@ void Bomb::draw()
         glVertex2f(0,0);
         for (int i = 1; i < 102; i++) {
             // glColor3ubv(color);
-            glColor4ub(color[0], color[1], color[2], 100);
+            glColor4ub(color[0], color[1], color[2], 50);
             glVertex2f(vert1[0], vert1[1]);
             // g.log << "vert1: " << vert1[0] << "," << vert1[1] << endl; 
 
