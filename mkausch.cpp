@@ -1762,7 +1762,7 @@ void checkLevel()
                     // g.mike_active = true;
 
                     // g.entity_active = true;
-                    // g.dtorres_active = true;
+                    g.dtorres_active = true;
                     // freeze_block_velocity_reduction_rate = 0.001;
                     
                     // change blocky vars

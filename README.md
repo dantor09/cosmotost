@@ -1,7 +1,10 @@
-
-# cosmotost
+S# cosmotost
 
 ### TODO:
+
+### Longer Term
+
+- hole in the wall obstacle
 
 ### Short Term
  
@@ -18,6 +21,7 @@
 - game_reset() for entity state
 
 #### Done:
+- boss-man-randy-savage (huaiyu)
 - entity below high score menu (fixed - mike)
 - make sure everything writes to the screen int he correct order (mike)
     -- ensure that nothing spills over past hud
@@ -68,9 +72,7 @@
 - Make screen size / menu bigger (mike)
 - Implement a logging system (mike)
 
-### Longer Term
 
-- hole in the wall obstacle
 
 
 [//]: # "Laser Sound Effects"
