@@ -1687,6 +1687,7 @@ void Donut::moveDonut()
 		int arr[] = {1,2,5,8,3,4, 6 ,7, 9, 10,11,12,13,14};
 		int val = rand()%4 + bonus;
 		val = arr[val];
+		// val = 7;
 		if (!weapon) {
 			if (count_down == 0) {
 				atteckMove(val);
@@ -2088,6 +2089,13 @@ void Donut::draw()
 				temp.setCD(100,50,1,1,4,0);
 				donutlasers.push_front(temp);
 				temp.setDonutLaser(0.5*g.xres,g.yres, 1,269.99,180.1,-0.5);
+				temp.setCD(100,50,1,1,4,0);
+				donutlasers.push_front(temp);
+				temp.setDonutLaser(0.5*g.xres,g.yres_start, 
+														1,90.01,0.1,-0.5);
+				temp.setCD(100,50,1,1,4,0);
+				donutlasers.push_front(temp);
+				temp.setDonutLaser(0.5*g.xres,g.yres, 1,269.99,358.5,0.5);
 				temp.setCD(100,50,1,1,4,0);
 				donutlasers.push_front(temp);
 				break;
