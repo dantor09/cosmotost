@@ -2119,7 +2119,7 @@ void Donut::draw()
 				break;
 			case 9:
 				accangle = 3.1415926/8;
-				for (int i = 0; i < 9; i++) {
+				for (int i = 0; i < 10; i++) {
 					dx = out_radius * cos(1.57 + (i * accangle));
 					dy = out_radius * sin(1.57 + (i * accangle));
 					gb = g.n_donut_bullet;
